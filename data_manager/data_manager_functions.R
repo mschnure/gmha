@@ -55,11 +55,20 @@ get.surveillance.data = function(data.manager,
                                  data.type,
                                  years = 2010:2015,
                                  ages = data.manager[[data.type]]$AGES, 
-                                 sexes = data.manager[[data.type]]$SEXES, #only works for population now, not incidence/prevalence
+                                 sexes = data.manager[[data.type]]$SEXES, 
                                  locations = data.manager[[data.type]]$LOCATIONS,
                                  keep.dimensions = 'year'){
-    # keep.dimensions must have year; or if we ask for some ages but don't keep ages, for example
-    # check for these conditions ^; if they occur, give an error
+    if(!("year" %in% keep.dimensions))
+        stop("Must keep dimension 'year'")
+    
+    if(!setequal(ages,data.manager[[data.type]]$AGES) & !("age" %in% keep.dimensions))
+        stop("Ages are specified; must include ages in keep.dimensions")
+    
+    if(!setequal(sexes,data.manager[[data.type]]$SEXES) & !("sex" %in% keep.dimensions))
+        stop("Sexes are specified; must include sexes in keep.dimensions")
+    
+    if(!setequal(locations,data.manager[[data.type]]$LOCATIONS) & !("location" %in% keep.dimensions))
+        stop("Locations are specified; must include locations in keep.dimensions")
     
     pull.years = TRUE
     pull.ages = any(keep.dimensions=='age') 
@@ -81,21 +90,21 @@ get.surveillance.data = function(data.manager,
                dimnames = dim.names)
     
     if(setequal(pull.dimensions, 'year'))
-        data.element = 'global'
+        data.element = 'year'
     if(setequal(pull.dimensions, c('year','age')))
-        data.element = 'age'
+        data.element = 'year.age'
     if(setequal(pull.dimensions, c('year','sex')))
-        data.element = 'sex'
+        data.element = 'year.sex'
     if(setequal(pull.dimensions, c('year','location')))
-        data.element = 'location'
+        data.element = 'year.location'
     if(setequal(pull.dimensions, c('year','age','sex')))
-        data.element = 'age.sex'
+        data.element = 'year.age.sex'
     if(setequal(pull.dimensions, c('year','age','location')))
-        data.element = 'age.location'
+        data.element = 'year.age.location'
     if(setequal(pull.dimensions, c('year','sex','location')))
-        data.element = 'sex.location'
+        data.element = 'year.sex.location'
     if(setequal(pull.dimensions, c('year','age','sex','location'))) 
-        data.element = 'age.sex.location'
+        data.element = 'year.age.sex.location'
     
     data = data.manager[[data.type]][[data.element]]
     
@@ -169,21 +178,21 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$incidence$AGE.LOWERS = c(0,10,15,15,15,50)
     rv$incidence$AGE.UPPERS = c(15,20,25,50,Inf,Inf)
     rv$incidence$SEXES = c('male','female')
-    rv$incidence$LOCATIONS = dimnames(rv$incidence$location)$location
+    rv$incidence$LOCATIONS = dimnames(rv$incidence$year.location)$location
     
     rv$prevalence = read.surveillance.data.type(data.type = 'prevalence', suffix = "")
     rv$prevalence$AGES = c('0-14','10-19','15-24','15-49','15+','50 and over')
     rv$prevalence$AGE.LOWERS = c(0,10,15,15,15,50)
     rv$prevalence$AGE.UPPERS = c(15,20,25,50,Inf,Inf)
     rv$prevalence$SEXES = c('male','female')
-    rv$prevalence$LOCATIONS = dimnames(rv$prevalence$location)$location
+    rv$prevalence$LOCATIONS = dimnames(rv$prevalence$year.location)$location
     
     rv$hiv.mortality = read.surveillance.data.type(data.type = 'hiv.mortality', suffix = "")
     rv$hiv.mortality$AGES = c('0-14','10-19','15-24','15-49','15+','50 and over')
     rv$hiv.mortality$AGE.LOWERS = c(0,10,15,15,15,50)
     rv$hiv.mortality$AGE.UPPERS = c(15,20,25,50,Inf,Inf)
     rv$hiv.mortality$SEXES = NULL
-    rv$hiv.mortality$LOCATIONS = dimnames(rv$hiv.mortality$location)$location
+    rv$hiv.mortality$LOCATIONS = dimnames(rv$hiv.mortality$year.location)$location
     
     ## Awareness denominator = all PLHIV
     rv$awareness = read.cascade.data.type(sub.data.type = "status", denominator = "allPLHIV", suffix = "")
@@ -191,7 +200,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$awareness$AGE.LOWERS = c(15)
     rv$awareness$AGE.UPPERS = c(Inf)
     rv$awareness$SEXES = c('male','female')
-    rv$awareness$LOCATIONS = dimnames(rv$awareness$location)$location
+    rv$awareness$LOCATIONS = dimnames(rv$awareness$year.location)$location
 
     ## Default engagement denominator = all aware PLHIV (option for all PLHIV below)
     rv$engagement = read.cascade.data.type(sub.data.type = "ART", denominator = "aware", suffix = "")
@@ -199,34 +208,34 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$engagement$AGE.LOWERS = c(15)
     rv$engagement$AGE.UPPERS = c(Inf)
     rv$engagement$SEXES = c('male','female')
-    rv$engagement$LOCATIONS = dimnames(rv$engagement$location)$location
+    rv$engagement$LOCATIONS = dimnames(rv$engagement$year.location)$location
         
     rv$engagement.allPLHIV = read.cascade.data.type(sub.data.type = "ART", denominator = "allPLHIV", suffix = "")
     rv$engagement.allPLHIV$AGES = c('15+')
     rv$engagement.allPLHIV$AGE.LOWERS = c(15)
     rv$engagement.allPLHIV$AGE.UPPERS = c(Inf)
     rv$engagement.allPLHIV$SEXES = c('male','female')
-    rv$engagement.allPLHIV$LOCATIONS = dimnames(rv$engagement.allPLHIV$location)$location
+    rv$engagement.allPLHIV$LOCATIONS = dimnames(rv$engagement.allPLHIV$year.location)$location
     
     ## Default suppression denominator = all aware PLHIV (option for all PLHIV below)
     rv$suppression = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "")
     rv$suppression$global = (rv$suppression$global*rv$engagement$global)
     rv$suppression$location = (rv$suppression$location*rv$engagement$location)
-    rv$suppression$age.sex = (rv$suppression$age.sex*rv$engagement$age.sex)
-    rv$suppression$age.sex.location = (rv$suppression$age.sex.location*rv$engagement$age.sex.location)
+    rv$suppression$year.age.sex = (rv$suppression$year.age.sex*rv$engagement$year.age.sex)
+    rv$suppression$year.age.sex.location = (rv$suppression$year.age.sex.location*rv$engagement$year.age.sex.location)
     
     rv$suppression$AGES = c('15+')
     rv$suppression$AGE.LOWERS = c(15)
     rv$suppression$AGE.UPPERS = c(Inf)
     rv$suppression$SEXES = c('male','female')
-    rv$suppression$LOCATIONS = dimnames(rv$suppression$location)$location
+    rv$suppression$LOCATIONS = dimnames(rv$suppression$year.location)$location
     
     rv$suppression.allPLHIV = read.cascade.data.type(sub.data.type = "suppress", denominator = "allPLHIV", suffix = "")
     rv$suppression.allPLHIV$AGES = c('15+')
     rv$suppression.allPLHIV$AGE.LOWERS = c(15)
     rv$suppression.allPLHIV$AGE.UPPERS = c(Inf)
     rv$suppression.allPLHIV$SEXES = c('male','female')
-    rv$suppression.allPLHIV$LOCATIONS = dimnames(rv$suppression.allPLHIV$location)$location
+    rv$suppression.allPLHIV$LOCATIONS = dimnames(rv$suppression.allPLHIV$year.location)$location
     
     
     
@@ -238,7 +247,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$incidence.lowers$AGE.LOWERS = rv$incidence.uppers$AGE.LOWERS = c(0,10,15,15,15,50)
     rv$incidence.lowers$AGE.UPPERS = rv$incidence.uppers$AGE.UPPERS = c(15,20,25,50,Inf,Inf)
     rv$incidence.lowers$SEXES = rv$incidence.uppers$SEXES = c('male','female')
-    rv$incidence.lowers$LOCATIONS = rv$incidence.uppers$LOCATIONS = dimnames(rv$incidence.lowers$location)$location
+    rv$incidence.lowers$LOCATIONS = rv$incidence.uppers$LOCATIONS = dimnames(rv$incidence.lowers$year.location)$location
 
     rv$prevalence.lowers = read.surveillance.data.type(data.type = 'prevalence', suffix = "_lower")
     rv$prevalence.uppers = read.surveillance.data.type(data.type = 'prevalence', suffix = "_upper")
@@ -246,7 +255,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$prevalence.lowers$AGE.LOWERS = rv$prevalence.uppers$AGE.LOWERS = c(0,10,15,15,15,50)
     rv$prevalence.lowers$AGE.UPPERS = rv$prevalence.uppers$AGE.UPPERS = c(15,20,25,50,Inf,Inf)
     rv$prevalence.lowers$SEXES = rv$prevalence.uppers$SEXES = c('male','female')
-    rv$prevalence.lowers$LOCATIONS = rv$prevalence.uppers$LOCATIONS = dimnames(rv$prevalence.lowers$location)$location
+    rv$prevalence.lowers$LOCATIONS = rv$prevalence.uppers$LOCATIONS = dimnames(rv$prevalence.lowers$year.location)$location
     
     rv$hiv.mortality.lowers = read.surveillance.data.type(data.type = 'hiv.mortality', suffix = "_lower")
     rv$hiv.mortality.uppers = read.surveillance.data.type(data.type = 'hiv.mortality', suffix = "_upper")
@@ -254,7 +263,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$hiv.mortality.lowers$AGE.LOWERS = rv$hiv.mortality.uppers$AGE.LOWERS = c(0,10,15,15,15,50)
     rv$hiv.mortality.lowers$AGE.UPPERS = rv$hiv.mortality.uppers$AGE.UPPERS = c(15,20,25,50,Inf,Inf)
     rv$hiv.mortality.lowers$SEXES = rv$hiv.mortality.uppers$SEXES = NULL
-    rv$hiv.mortality.lowers$LOCATIONS = rv$hiv.mortality.uppers$LOCATIONS = dimnames(rv$hiv.mortality.lowers$location)$location
+    rv$hiv.mortality.lowers$LOCATIONS = rv$hiv.mortality.uppers$LOCATIONS = dimnames(rv$hiv.mortality.lowers$year.location)$location
     
     rv$awareness.lowers = read.cascade.data.type(sub.data.type = "status", denominator = "allPLHIV", suffix = "_lower")
     rv$awareness.uppers = read.cascade.data.type(sub.data.type = "status", denominator = "allPLHIV", suffix = "_upper")
@@ -262,7 +271,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$awareness.lowers$AGE.LOWERS = rv$awareness.uppers$AGE.LOWERS = c(15)
     rv$awareness.lowers$AGE.UPPERS = rv$awareness.uppers$AGE.UPPERS = c(Inf)
     rv$awareness.lowers$SEXES = rv$awareness.uppers$SEXES = c('male','female')
-    rv$awareness.lowers$LOCATIONS = rv$awareness.uppers$LOCATIONS = dimnames(rv$awareness.lowers$location)$location
+    rv$awareness.lowers$LOCATIONS = rv$awareness.uppers$LOCATIONS = dimnames(rv$awareness.lowers$year.location)$location
     
     ## Default engagement denominator = all aware PLHIV (option for all PLHIV below)
     rv$engagement.lowers = read.cascade.data.type(sub.data.type = "ART", denominator = "aware", suffix = "_lower")
@@ -271,7 +280,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$engagement.lowers$AGE.LOWERS = rv$engagement.uppers$AGE.LOWERS = c(15)
     rv$engagement.lowers$AGE.UPPERS = rv$engagement.uppers$AGE.UPPERS = c(Inf)
     rv$engagement.lowers$SEXES = rv$engagement.uppers$SEXES = c('male','female')
-    rv$engagement.lowers$LOCATIONS = rv$engagement.uppers$LOCATIONS = dimnames(rv$engagement.lowers$location)$location
+    rv$engagement.lowers$LOCATIONS = rv$engagement.uppers$LOCATIONS = dimnames(rv$engagement.lowers$year.location)$location
     
     rv$engagement.allPLHIV.lowers = read.cascade.data.type(sub.data.type = "ART", denominator = "allPLHIV", suffix = "_lower")
     rv$engagement.allPLHIV.uppers = read.cascade.data.type(sub.data.type = "ART", denominator = "allPLHIV", suffix = "_upper")
@@ -280,25 +289,25 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$engagement.allPLHIV.lowers$AGE.UPPERS = rv$engagement.allPLHIV.uppers$AGE.UPPERS = c(Inf)
     rv$engagement.allPLHIV.lowers$SEXES = rv$engagement.allPLHIV.uppers$SEXES = c('male','female')
     rv$engagement.allPLHIV.lowers$LOCATIONS = rv$engagement.allPLHIV.uppers$LOCATIONS = 
-        dimnames(rv$engagement.allPLHIV.lowers$location)$location
+        dimnames(rv$engagement.allPLHIV.lowers$year.location)$location
     
     ## Default suppression denominator = all aware PLHIV (option for all PLHIV below)
     rv$suppression.lowers = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "_lower")
     rv$suppression.lowers$global = (rv$suppression.lowers$global*rv$engagement.lowers$global)
     rv$suppression.lowers$location = (rv$suppression.lowers$location*rv$engagement.lowers$location)
-    rv$suppression.lowers$age.sex = (rv$suppression.lowers$age.sex*rv$engagement.lowers$age.sex)
-    rv$suppression.lowers$age.sex.location = (rv$suppression.lowers$age.sex.location*rv$engagement.lowers$age.sex.location)
+    rv$suppression.lowers$year.age.sex = (rv$suppression.lowers$year.age.sex*rv$engagement.lowers$year.age.sex)
+    rv$suppression.lowers$year.age.sex.location = (rv$suppression.lowers$year.age.sex.location*rv$engagement.lowers$year.age.sex.location)
     rv$suppression.uppers = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "_upper")
     rv$suppression.uppers$global = (rv$suppression.uppers$global*rv$engagement.uppers$global)
     rv$suppression.uppers$location = (rv$suppression.uppers$location*rv$engagement.uppers$location)
-    rv$suppression.uppers$age.sex = (rv$suppression.uppers$age.sex*rv$engagement.uppers$age.sex)
-    rv$suppression.uppers$age.sex.location = (rv$suppression.uppers$age.sex.location*rv$engagement.uppers$age.sex.location)
+    rv$suppression.uppers$year.age.sex = (rv$suppression.uppers$year.age.sex*rv$engagement.uppers$year.age.sex)
+    rv$suppression.uppers$year.age.sex.location = (rv$suppression.uppers$year.age.sex.location*rv$engagement.uppers$year.age.sex.location)
     
     rv$suppression.lowers$AGES = rv$suppression.uppers$AGES = c('15+')
     rv$suppression.lowers$AGE.LOWERS = rv$suppression.uppers$AGE.LOWERS = c(15)
     rv$suppression.lowers$AGE.UPPERS = rv$suppression.uppers$AGE.UPPERS = c(Inf)
     rv$suppression.lowers$SEXES = rv$suppression.uppers$SEXES = c('male','female')
-    rv$suppression.lowers$LOCATIONS = rv$suppression.uppers$LOCATIONS = dimnames(rv$suppression.lowers$location)$location
+    rv$suppression.lowers$LOCATIONS = rv$suppression.uppers$LOCATIONS = dimnames(rv$suppression.lowers$year.location)$location
     
     rv$suppression.allPLHIV.lowers = read.cascade.data.type(sub.data.type = "suppress", denominator = "allPLHIV", suffix = "_lower")
     rv$suppression.allPLHIV.uppers = read.cascade.data.type(sub.data.type = "suppress", denominator = "allPLHIV", suffix = "_upper")
@@ -307,7 +316,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$suppression.allPLHIV.lowers$AGE.UPPERS = rv$suppression.allPLHIV.uppers$AGE.UPPERS = c(Inf)
     rv$suppression.allPLHIV.lowers$SEXES = rv$suppression.allPLHIV.uppers$SEXES = c('male','female')
     rv$suppression.allPLHIV.lowers$LOCATIONS = rv$suppression.allPLHIV.uppers$LOCATIONS = 
-        dimnames(rv$suppression.allPLHIV.lowers$location)$location
+        dimnames(rv$suppression.allPLHIV.lowers$year.location)$location
     
     
     
@@ -324,7 +333,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$population$AGE.LOWERS = c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80)
     rv$population$AGE.UPPERS = c(5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,Inf)
     rv$population$SEXES = c('male','female')
-    rv$population$LOCATIONS = dimnames(rv$population$location)$location 
+    rv$population$LOCATIONS = dimnames(rv$population$year.location)$location 
     
     # Full population data - population data kept in full age stratification 
     rv$population.full = read.population.data.files.all.locations(data.type = "population",
@@ -338,28 +347,31 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$population.full$AGE.LOWERS = c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100)
     rv$population.full$AGE.UPPERS = c(5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,Inf)
     rv$population.full$SEXES = c('male','female')
-    rv$population.full$LOCATIONS = dimnames(rv$population.full$location)$location 
+    rv$population.full$LOCATIONS = dimnames(rv$population.full$year.location)$location 
     
     # Age-specific fertility rate 
-    rv$fertility = read.fertility.data.files(data.type = "population")
+    rv$fertility = read.fertility.data.files(data.type = "population",
+                                             countries.to.pull = COUNTRIES.TO.PULL.POP)
     rv$fertility$YEARS = c("1953","1958","1963","1968","1973","1978","1983","1988","1993","1998","2003",
                            "2008","2013","2018","2023","2028","2033","2038","2043","2048","2053","2058",
                            "2063","2068","2073","2078","2083","2088","2093","2098")
     rv$fertility$AGES = c("15-19","20-24","25-29","30-34","35-39","40-44","45-49")
     rv$fertility$AGE.LOWERS = c(15,20,25,30,35,40,45)
     rv$fertility$AGE.UPPERS = c(20,25,30,35,40,45,50)
+    rv$fertility$LOCATIONS = dimnames(rv$fertility$year.age.location)$location 
 
     #Deaths
-    rv$deaths = read.death.data.files(data.type = "population")
-    rv$deaths$YEARS = c("1950 - 1955","1955 - 1960","1960 - 1965","1965 - 1970","1970 - 1975","1975 - 1980","1980 - 1985",
-                        "1985 - 1990","1990 - 1995","1995 - 2000","2000 - 2005","2005 - 2010","2010 - 2015","2015 - 2020")
+    rv$deaths = read.death.data.files(data.type = "population",
+                                      countries.to.pull = COUNTRIES.TO.PULL.POP,
+                                      age.mapping = DEATHS.AGE.MAPPING.HARD.CODE)
+    rv$deaths$YEARS = as.character(1950:2021)
     rv$deaths$AGES = c('0-4', '5-9','10-14','15-19','20-24','25-29','30-34',
                        '35-39','40-44','45-49','50-54','55-59','60-64','65-69',
-                       '70-74','75-79','80-84','85-89','90-94','95+')
-    rv$deaths$AGE.LOWERS = c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95)
-    rv$deaths$AGE.UPPERS = c(5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,Inf)
+                       '70-74','75-79',"80 and over")
+    rv$deaths$AGE.LOWERS = c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80)
+    rv$deaths$AGE.UPPERS = c(5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,Inf)
     rv$deaths$SEXES = c('male','female')
-    rv$deaths$LOCATIONS = dimnames(rv$incidence$location)$location ## NO POPULATION LOCATIONS FOR NOW
+    rv$deaths$LOCATIONS = dimnames(rv$deaths$year.location)$location 
     
     rv
 }
@@ -376,23 +388,23 @@ read.surveillance.data.type = function(data.type,
                                        suffix){
     rv=list()
     
-    rv$global = read.surveillance.data.files(data.type=data.type, 
+    rv$year = read.surveillance.data.files(data.type=data.type, 
                                             age='All ages',
                                             suffix = suffix)
     
     
-    rv$location = read.surveillance.data.files(data.type=data.type,
+    rv$year.location = read.surveillance.data.files(data.type=data.type,
                                                age='All ages',
                                                include.countries = T,
                                                suffix = suffix)
     
     ## Ages ##
-    rv$age = read.surveillance.data.stratified(data.type=data.type,
+    rv$year.age = read.surveillance.data.stratified(data.type=data.type,
                                                strata = 'age',
                                                include.countries = F,
                                                suffix = suffix)
     
-    rv$age.location = read.surveillance.data.stratified(data.type=data.type,
+    rv$year.age.location = read.surveillance.data.stratified(data.type=data.type,
                                                         strata = 'age',
                                                         include.countries = T,
                                                         suffix = suffix)
@@ -400,8 +412,8 @@ read.surveillance.data.type = function(data.type,
     ## Sexes ##
     if(data.type!="hiv.mortality")
     {
-        rv$age.sex = read.surveillance.data.stratified(data.type=data.type,
-                                                       strata = 'age.sex',
+        rv$year.age.sex = read.surveillance.data.stratified(data.type=data.type,
+                                                       strata = 'year.age.sex',
                                                        include.countries = F,
                                                        suffix = suffix) 
         
@@ -420,8 +432,8 @@ read.surveillance.data.stratified = function(data.type,
                                              include.countries=T,
                                              suffix){
     ages=c('0-14','10-19','15-24','15-49','15+','50 and over','All ages')
-    sexes = c("female","male")
-    
+    sexes = c("male","female")
+
     ## Pull array for age
     if(strata=='age')
     {
@@ -471,7 +483,7 @@ read.surveillance.data.stratified = function(data.type,
         
     }
     
-    else if(strata=='age.sex')
+    else if(strata=='year.age.sex')
     {
         female = combine.pdf.years(data.type=data.type,
                                    sex = "female",
@@ -487,7 +499,7 @@ read.surveillance.data.stratified = function(data.type,
                                   suffix=suffix)
             rv[,,i] = x }
     }
-    else stop("only currently set up for age and age.sex strata")
+    else stop("only currently set up for age and year.age.sex strata")
     
     rv
     
@@ -565,7 +577,7 @@ read.cascade.data.type = function(data.type="cascade",
                                   suffix){
     rv=list()
     
-    rv$global = read.cascade.data.files(data.type=data.type, 
+    rv$year = read.cascade.data.files(data.type=data.type, 
                                        sub.data.type=sub.data.type,
                                        denominator=denominator,
                                        age='All ages',
@@ -573,7 +585,7 @@ read.cascade.data.type = function(data.type="cascade",
                                        suffix = suffix)
     
     
-    rv$location = read.cascade.data.files(data.type=data.type,
+    rv$year.location = read.cascade.data.files(data.type=data.type,
                                           sub.data.type=sub.data.type,
                                           denominator=denominator,
                                           age='All ages',
@@ -581,14 +593,14 @@ read.cascade.data.type = function(data.type="cascade",
                                           include.countries = T,
                                           suffix = suffix)
     
-    ## Age.Sex ##
-    rv$age.sex = read.cascade.data.stratified(data.type=data.type,
+    ## Year.Age.Sex ##
+    rv$year.age.sex = read.cascade.data.stratified(data.type=data.type,
                                               sub.data.type=sub.data.type,
                                               denominator=denominator,
                                               include.countries = F,
                                               suffix = suffix)
-    ## Age.Sex.Country ##
-    rv$age.sex.location = read.cascade.data.stratified(data.type=data.type,
+    ## Year.Age.Sex.Country ##
+    rv$year.age.sex.location = read.cascade.data.stratified(data.type=data.type,
                                                        sub.data.type=sub.data.type,
                                                        denominator=denominator,
                                                        include.countries = T,
@@ -605,7 +617,7 @@ read.cascade.data.stratified = function(data.type,
     ## Pull AGE array by COUNTRY
     if(include.countries)
     {
-        age.sex.location = read.cascade.data.files(data.type=data.type,
+        year.age.sex.location = read.cascade.data.files(data.type=data.type,
                                                    sub.data.type = sub.data.type,
                                                    denominator = denominator,
                                                    age="15+",
@@ -613,14 +625,14 @@ read.cascade.data.stratified = function(data.type,
                                                    include.countries = T,
                                                    suffix = suffix)
         
-        dim.names = c(dimnames(age.sex.location),list(age = "15+"),list(sex=c("male","female")))
+        dim.names = c(dimnames(year.age.sex.location),list(age = "15+"),list(sex=c("male","female")))
         dim.names = dim.names[c(1,3,4,2)]
         
         rv = array(NA,
                    dim = sapply(dim.names, length),
                    dimnames = dim.names)
         
-        rv[,,"female",] = age.sex.location
+        rv[,,"female",] = year.age.sex.location
         rv[,,"male",] = read.cascade.data.files(data.type=data.type,
                                                 sub.data.type = sub.data.type,
                                                 denominator = denominator,
@@ -632,7 +644,7 @@ read.cascade.data.stratified = function(data.type,
     ## Pull TOTAL AGE array
     else 
     {
-        age.sex = read.cascade.data.files(data.type=data.type,
+        year.age.sex = read.cascade.data.files(data.type=data.type,
                                           sub.data.type = sub.data.type,
                                           denominator = denominator,
                                           age="15+",
@@ -640,13 +652,13 @@ read.cascade.data.stratified = function(data.type,
                                           include.countries = F,
                                           suffix = suffix)
         
-        dim.names = c(dimnames(age.sex),list(age = "15+"),list(sex=c("male","female")))
+        dim.names = c(dimnames(year.age.sex),list(age = "15+"),list(sex=c("male","female")))
         
         rv = array(NA,
                    dim = sapply(dim.names, length),
                    dimnames = dim.names)
         
-        rv[,,"male"] = age.sex
+        rv[,,"male"] = year.age.sex
         rv[,,"female"] = read.cascade.data.files(data.type=data.type,
                                                  sub.data.type = sub.data.type,
                                                  denominator = denominator,
@@ -838,27 +850,27 @@ read.population.data.files.all.locations = function(dir = 'data_manager/data',
     rv=list()
     
     # Global
-    rv$global = no.countries$total
+    rv$year = no.countries$year
     
     ## Age ## 
-    rv$age = no.countries$age
+    rv$year.age = no.countries$year.age
     
     ## Sex ##
-    rv$sex = no.countries$sex
-    ## Age.Sex ##
-    rv$age.sex = no.countries$age.sex
+    rv$year.sex = no.countries$year.sex
+    ## Year.Age.Sex ##
+    rv$year.age.sex = no.countries$year.age.sex
     
     # Location 
-    rv$location = countries$total
+    rv$year.location = countries$year
     
     ## Age.Location ## 
-    rv$age.location = countries$age
+    rv$year.age.location = countries$year.age
     
     ## Sex.Location ##
-    rv$sex.location = countries$sex
+    rv$year.sex.location = countries$year.sex
     
-    ## Age.Sex.Location ##
-    rv$age.sex.location = countries$age.sex
+    ## Year.Age.Sex.Location ##
+    rv$year.age.sex.location = countries$year.age.sex
     
     rv
 }
@@ -914,6 +926,7 @@ read.population.data.files = function(dir = 'data_manager/data',
         
         ## Age.Sex array
         sexes = c("male","female")
+
         age.sex.dim.names = list(year = as.character(years),
                                  location = countries.to.pull,
                                  age = ages,
@@ -1017,10 +1030,10 @@ read.population.data.files = function(dir = 'data_manager/data',
         }
         
         rv = list()
-        rv$total = total
-        rv$age = age
-        rv$sex = sex
-        rv$age.sex = age.sex
+        rv$year = total
+        rv$year.age = aperm(age,c(1,3,2))
+        rv$year.sex = aperm(sex,c(1,3,2))
+        rv$year.age.sex = aperm(age.sex,c(1,3,4,2))
         
     } else{
         df = df[df$Location=="World",]
@@ -1126,10 +1139,10 @@ read.population.data.files = function(dir = 'data_manager/data',
         
         ## Returns a list
         rv = list()
-        rv$total = total
-        rv$age = age
-        rv$sex = sex
-        rv$age.sex = age.sex
+        rv$year = total
+        rv$year.age = age
+        rv$year.sex = sex
+        rv$year.age.sex = age.sex
         
     }
     rv
@@ -1137,7 +1150,8 @@ read.population.data.files = function(dir = 'data_manager/data',
 
 # Reads in age-specific fertility rate
 read.fertility.data.files = function(dir = 'data_manager/data',
-                                     data.type){
+                                     data.type,
+                                     countries.to.pull){
     sub.dir = file.path(dir, data.type)
     
     files = list.files(file.path(sub.dir))
@@ -1149,300 +1163,126 @@ read.fertility.data.files = function(dir = 'data_manager/data',
         stop("can only pull one file at a time")
     
     df = read.csv(file.path(sub.dir,file))
-    df = df[df$Location=="Kenya",]
+    df = df[df$Variant=="Medium",]
+    
+    countries.to.pull = c(countries.to.pull,"World")
+    
+    df = df[df$Location %in% countries.to.pull,]
+    #df = df[df$Location=="Kenya",]
     years = unique(df$MidPeriod)
     ages = unique(df$AgeGrp)
+    locations = unique(df$Location)
     
     # reverse dim order so that array fills correctly (will transpose later)
     dim.names = list(age = ages,
-                     year = as.character(years))
+                     year = as.character(years),
+                     location = locations)
     
     fertility.rate = array(df$ASFR/1000,
                            dim = sapply(dim.names, length),
                            dimnames = dim.names)
     
-    fertility.rate = t(fertility.rate) # transpose so that year dimension is now first
-    
-    # combine 30-34 and 35-39 into 30-39; same for 40-49 - REMOVING THIS BECAUSE RETURNING TO JUST 5-YEAR AGE GROUPS
-    # ages.new = c(ages[1:3], "30-39","40-49")
-    # new.dim.names = list(year = as.character(years),
-    #                      age = ages.new)
-    # 
-    # fertility.rate.new = array(c(fertility.rate[,c(1:3)],(fertility.rate[,4]+fertility.rate[,5])/2,(fertility.rate[,6]+fertility.rate[,7])/2),
-    #                            dim = sapply(new.dim.names, length),
-    #                            dimnames = new.dim.names)
+    fertility.rate = aperm(fertility.rate,c(2,1,3)) # change dimension order 
     
     rv = list()
-    rv$age = fertility.rate
+    rv$year.age.location = fertility.rate
+    rv$year.age = fertility.rate[,,"World"]
     
     rv
 }
 
 # Reads in age/sex-specific death data 
 read.death.data.files = function(dir = 'data_manager/data',
-                                 data.type){
+                                 data.type,
+                                 countries.to.pull,
+                                 age.mapping){
     sub.dir = file.path(dir, data.type)
     
     files = list.files(file.path(sub.dir))
     
-    pop.file = "NumberDeaths"
+    pop.file = "DeathsBySingleAgeSex"
     file = files[grepl(pop.file,files)]
     
     if (length(file)!=1)
         stop("can only pull one file at a time")
     
     df = read.csv(file.path(sub.dir,file))
-    df = cbind(df[,c(-1,-2,-5)],df[,5])
-    colnames(df) = df[1,]
-    ages = as.character(df[1,3:(ncol(df)-1)])
-    df = df[-5:-1,]
+    df = df[,c("Location","Time","AgeGrp","DeathMale","DeathFemale","DeathTotal")]
+    countries.to.pull = c(countries.to.pull,"World")
+    df = df[df$Location %in% countries.to.pull,]
     
     years = unique(df$Time)
-    
-    ## Age array
-    age.dim.names = list(year = as.character(years),
-                         age = ages)
-    
-    age = array(0,
-                dim = sapply(age.dim.names, length), 
-                dimnames = age.dim.names)
-    
-    for (i in 3:(ncol(df)-1)){
-        age[,(i-2)] = as.integer(gsub(" ","",df[df$Sex=="Both sexes combined",i]))*1000
-    }
-    
-    ## Total array 
-    global = array(as.integer(gsub(" ","",df[df$Sex=="Both sexes combined",ncol(df)]))*1000,
-                  dimnames = list(year = as.character(years)))
-    
-    ## Age.sex array
+    ages.full = unique(df$AgeGrp)
+    locations = unique(df$Location)
     sexes = c("male","female")
-    age.sex.dim.names = list(year = as.character(years),
-                             age = ages,
-                             sex = sexes)
-    male.age = array(0,
-                     dim = sapply(age.dim.names, length), 
-                     dimnames = age.dim.names)
     
-    for (i in 3:(ncol(df)-1)){
-        male.age[,(i-2)] = as.integer(gsub(" ","",df[df$Sex=="Male",i]))*1000
+    dim.names = list(year = as.character(years),
+                     age = names(age.mapping),
+                     sex = sexes,
+                     location = locations)
+    
+    year.age.full.dim.names = list(age = ages.full,
+                                   year = as.character(years))
+    
+    year.age.sex.location = array(0,
+                                  dim = sapply(dim.names, length),
+                                  dimnames = dim.names)
+    
+    for(location in locations){
+        female.age.full = male.age.full = array(0,
+                                                dim = sapply(year.age.full.dim.names, length), 
+                                                dimnames = year.age.full.dim.names)
+        
+        male.age.full[] = (df[df$Location==location,"DeathMale"])*1000
+        female.age.full[] = (df[df$Location==location,"DeathFemale"])*1000
+        
+        male.age.full = aperm(male.age.full)
+        female.age.full = aperm(female.age.full)
+        
+        male.age = sapply(1:length(age.mapping), function(a){
+            sapply(1:length(years), function(y){
+                age.to = names(age.mapping)[a] 
+                ages.from = age.mapping[[a]] 
+                sum(male.age.full[y,ages.from])
+            })
+        })
+        
+        female.age = sapply(1:length(age.mapping), function(a){
+            sapply(1:length(years), function(y){
+                age.to = names(age.mapping)[a] 
+                ages.from = age.mapping[[a]] 
+                sum(female.age.full[y,ages.from])
+            })
+        })
+        
+        dimnames(male.age) = dimnames(female.age) = list(year = as.character(years),
+                                                         age = names(age.mapping))
+        
+        year.age.sex.location[,,"female",location] = female.age
+        year.age.sex.location[,,"male",location] = male.age
     }
+
     
-    female.age = array(0,
-                       dim = sapply(age.dim.names, length), 
-                       dimnames = age.dim.names)
+    year.sex.location = apply(year.age.sex.location,c("year","sex","location"),sum)
+    year.age.location = apply(year.age.sex.location,c("year","age","location"),sum)
+    year.location = apply(year.age.sex.location,c("year","location"),sum)
     
-    for (i in 3:(ncol(df)-1)){
-        female.age[,(i-2)] = as.integer(gsub(" ","",df[df$Sex=="Female",i]))*1000
-    }
+    year.age = apply(year.age.sex.location[,,,"World"],c("year","age"),sum)
+    year.sex = apply(year.age.sex.location[,,,"World"],c("year","sex"),sum)
+    year.age.sex = apply(year.age.sex.location[,,,"World"],c("year","age","sex"),sum)
     
-    age.sex = array(0,
-                    dim = sapply(age.sex.dim.names, length), 
-                    dimnames = age.sex.dim.names)
-    
-    age.sex[,,"male"] = male.age
-    age.sex[,,"female"] = female.age
-    
-    ## Sex array 
-    male = array(as.integer(gsub(" ","",df[df$Sex=="Male",ncol(df)]))*1000,
-                 dimnames = list(year = as.character(years)))
-    
-    female = array(as.integer(gsub(" ","",df[df$Sex=="Female",ncol(df)]))*1000,
-                   dimnames = list(year = as.character(years)))
-    
-    sex.dim.names = list(year = as.character(years),
-                         sex = sexes)
-    
-    sex = array(0,
-                dim = sapply(sex.dim.names, length), 
-                dimnames = sex.dim.names)
-    
-    sex[,"male"] = male
-    sex[,"female"] = female
+    global = apply(year.age.sex.location[,,,"World"],c("year"),sum)
     
     ## Returns a list
     rv = list()
-    rv$global = global
-    rv$age = age
-    rv$sex = sex
-    rv$age.sex = age.sex
+    rv$year = global
+    rv$year.age = year.age
+    rv$year.sex = year.sex
+    rv$year.age.sex = year.age.sex
+    rv$year.location = year.location
+    rv$year.age.location = year.age.location
+    rv$year.sex.location = year.sex.location
+    rv$year.age.sex.location = year.age.sex.location
     
     rv
 }
-
-
-## DELETE ONCE I'M SURE THIS WORKS 
-# 
-# # Calls read.population.data.files.model.ages for global then by location 
-# read.population.data.files.model.ages.all.locations = function(dir = 'data_manager/data',
-#                                                                data.type,
-#                                                                age.mapping,
-#                                                                countries.to.pull){
-#     no.countries = read.population.data.files.model.ages(data.type = data.type, 
-#                                                          age.mapping = age.mapping,
-#                                                          include.countries=F,
-#                                                          countries.to.pull=NULL)
-#     countries = read.population.data.files.model.ages(data.type = data.type, 
-#                                                       age.mapping = age.mapping,
-#                                                       include.countries=T,
-#                                                       countries.to.pull=countries.to.pull)
-#     rv=list()
-#     
-#     # Global
-#     rv$global = no.countries$total
-#     
-#     ## Age ## 
-#     rv$age = no.countries$age
-#     
-#     ## Sex ##
-#     rv$sex = no.countries$sex
-#     ## Age.Sex ##
-#     rv$age.sex = no.countries$age.sex
-#     
-#     # Location 
-#     rv$location = countries$total
-#     
-#     ## Age.Location ## 
-#     rv$age.location = countries$age
-#     
-#     ## Sex.Location ##
-#     rv$sex.location = countries$sex
-#     
-#     ## Age.Sex.Location ##
-#     rv$age.sex.location = countries$age.sex
-#     
-#     rv
-# }
-# 
-# # Reads in population data files and returns data in the AGE BRACKETS FOR MODEL; returns list with 
-# # an array for each stratification (global, age, sex, age*sex) 
-# read.population.data.files.model.ages = function(dir = 'data_manager/data',
-#                                                  data.type,
-#                                                  include.countries = F,
-#                                                  countries.to.pull,
-#                                                  age.mapping){ 
-#     sub.dir = file.path(dir, data.type)
-#     
-#     files = list.files(file.path(sub.dir))
-#     
-#     pop.file = "PopulationByAgeSex"
-#     file = files[grepl(pop.file,files)]
-#     
-#     if (length(file)!=1)
-#         stop("can only pull one file at a time")
-#     
-#     df = read.csv(file.path(sub.dir,file))
-#     years = as.numeric(unique(df$Time))
-#     ages = unique(df$AgeGrp)
-#     ages = c(ages[-length(ages)],"100 and over")
-#     
-#     if(include.countries){
-#         stop("add this code!")
-#     } else {
-#         df = df[df$Location=="World",]
-#         
-#         df$AgeGrp = factor(df$AgeGrp, levels = ages)
-#         df.sorted = df[order(df$AgeGrp),]
-#         
-#         ## Age array
-#         age.dim.names = list(year = as.character(years),
-#                              age = ages)
-#         
-#         age.full = array(0,
-#                          dim = sapply(age.dim.names, length), 
-#                          dimnames = age.dim.names)
-#         
-#         age.full[] = as.numeric(df.sorted[,"PopTotal"])*1000
-#         
-#         # MAP TO MODEL AGES
-#         age = sapply(1:length(age.mapping), function(a){
-#             sapply(1:length(years), function(y){
-#                 age.to = names(age.mapping)[a] # names of mapping are the model ages - what I want to map TO
-#                 ages.from = age.mapping[[a]] # list elements are the population ages - what I want to map FROM
-#                 sum(age.full[y,ages.from])
-#             })
-#         })
-#         
-#         dimnames(age) = list(year = as.character(years),
-#                              age = names(age.mapping))
-#         
-#         ## Total array
-#         total = array(rowSums(age),
-#                       dimnames = list(year = as.character(years)))
-#         
-#         ## Age.Sex array
-#         sexes = c("male","female")
-#         age.sex.dim.names = list(year = as.character(years),
-#                                  age = names(age.mapping),
-#                                  sex = sexes)
-#         
-#         male.age.full = array(0,
-#                               dim = sapply(age.dim.names, length), 
-#                               dimnames = age.dim.names)
-#         
-#         male.age.full[] = as.numeric(df.sorted[,"PopMale"])*1000
-#         
-#         # MAP TO MODEL AGES
-#         male.age = sapply(1:length(age.mapping), function(a){
-#             sapply(1:length(years), function(y){
-#                 age.to = names(age.mapping)[a] # names of mapping are the model ages - what I want to map TO
-#                 ages.from = age.mapping[[a]] # list elements are the population ages - what I want to map FROM
-#                 sum(male.age.full[y,ages.from])
-#             })
-#         })
-#         
-#         dimnames(male.age) = list(year = as.character(years),
-#                                   age = names(age.mapping))
-#         
-#         female.age.full = array(0,
-#                                 dim = sapply(age.dim.names, length), 
-#                                 dimnames = age.dim.names)
-#         
-#         female.age.full[] = as.numeric(df.sorted[,"PopFemale"])*1000
-#         
-#         # MAP TO MODEL AGES
-#         female.age = sapply(1:length(age.mapping), function(a){
-#             sapply(1:length(years), function(y){
-#                 age.to = names(age.mapping)[a] # names of mapping are the model ages - what I want to map TO
-#                 ages.from = age.mapping[[a]] # list elements are the population ages - what I want to map FROM
-#                 sum(female.age.full[y,ages.from])
-#             })
-#         })
-#         
-#         dimnames(female.age) = list(year = as.character(years),
-#                                     age = names(age.mapping))
-#         
-#         age.sex = array(0,
-#                         dim = sapply(age.sex.dim.names, length), 
-#                         dimnames = age.sex.dim.names)
-#         
-#         age.sex[,,"male"] = male.age
-#         age.sex[,,"female"] = female.age
-#         
-#         ## Sex array
-#         male = array(rowSums(male.age),
-#                      dimnames = list(year = as.character(years)))
-#         
-#         female = array(rowSums(female.age),
-#                        dimnames = list(year = as.character(years)))
-#         
-#         sex.dim.names = list(year = as.character(years),
-#                              sex = sexes)
-#         
-#         sex = array(0,
-#                     dim = sapply(sex.dim.names, length), 
-#                     dimnames = sex.dim.names)
-#         
-#         sex[,"male"] = male
-#         sex[,"female"] = female
-#         
-#         ## Returns a list
-#         rv = list()
-#         rv$total = total
-#         rv$age = age
-#         rv$sex = sex
-#         rv$age.sex = age.sex
-#     }
-#     
-#     rv
-# }

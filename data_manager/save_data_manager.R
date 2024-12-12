@@ -1,12 +1,10 @@
 source('data_manager/data_manager_functions.R')
 source('model/age_mappings.R') 
-#source('model/diffeq.R')
 #source('calibration/scaling_prevalence.R')
 
-scale.data = T
+scale.data = F # CHECK BACK ON THIS LATER
 
-#LOCATION = "kenya"
-COUNTRIES.TO.PULL.POP = c("Kenya","Nigeria","Haiti","Netherlands")
+COUNTRIES.TO.PULL.POP = c("Cambodia","Kenya","South Africa","Chile","Thailand","Netherlands","France")
 
 DATA.MANAGER = read.surveillance.data() 
 

@@ -88,6 +88,26 @@ POPULATION.AGE.MAPPING.HARD.CODE = list(
     "80 and over" = c("80-84","85-89","90-94","95-99","100 and over")
 )
 
+DEATHS.AGE.MAPPING.HARD.CODE = list(
+    "0-4"= as.character(0:4),
+    "5-9" = as.character(5:9),
+    "10-14" = as.character(10:14),
+    "15-19" = as.character(15:19),
+    "20-24" = as.character(20:24),
+    "25-29" = as.character(25:29),
+    "30-34" = as.character(30:34),
+    "35-39" = as.character(35:39),
+    "40-44" = as.character(40:44),
+    "45-49" = as.character(45:49),
+    "50-54" = as.character(50:54),
+    "55-59" = as.character(55:59),
+    "60-64" = as.character(60:64),
+    "65-69" = as.character(65:69),
+    "70-74" = as.character(70:74),
+    "75-79" = as.character(75:79),
+    "80 and over" = c(as.character(80:99),"100+")
+)
+
 # Creates list of necessary age brackets based on mapping list; called in extract_data functions 
 # For now, uses hard-coded/specific mappings; created generic functions below but these are not really being used fully 
 map.ages = function(to.map,
