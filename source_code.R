@@ -1,9 +1,10 @@
+source('convert_strings.R')
 source('data_manager/data_manager_functions.R')
 source('model/diffeq.R')
 source('model/age_mappings.R') 
 NO.INTERVENTION = c()
 
-load('cached/data.manager_global_2024-11-19.Rdata') # without scaling calibration targets
+load('cached/data.manager_global_2024-12-20.Rdata') # WITHOUT scaling calibration targets
 source('calibration/parameter_mappings/age_mixing.R')
 source('calibration/parameter_mappings/testing_projection.R')
 source('calibration/parameter_mappings/age_sex_mixing_proportions.R')
@@ -11,5 +12,7 @@ source('calibration/parameter_mappings/age_sex_transmission_multipliers.R')
 source('calibration/parameter_mappings/engagement_disengagement_data.R')
 source('model/parameters.R')
 source('model/simplot.R')
-#source('calibration/likelihood/likelihood.R')
-#source('calibration/parameter_mappings/prior_distributions.R')
+source('calibration/likelihood/likelihood.R')
+#source("calibration/likelihood/individual_likelihoods.R")
+source('calibration/parameter_mappings/prior_distributions.R')
+source('calibration/parameter_mappings/transformations_sds.R')
