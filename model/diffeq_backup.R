@@ -51,11 +51,6 @@ compute.dx <- function(time,
                            subgroup=parameters$SUBGROUPS,
                            hiv.status=parameters$HIV.STATUS)
     
-    prev.dim.names = list(age=parameters$AGES, 
-                          sex=parameters$SEXES,
-                          subgroup=parameters$SUBGROUPS,
-                          hiv.status=parameters$HIV.STATES)
-    
     trans.dim.names = list(age=parameters$AGES, 
                            sex=parameters$SEXES,
                            subgroup=parameters$SUBGROUPS)
@@ -75,9 +70,6 @@ compute.dx <- function(time,
     dx.state = array(0, 
                      dim = sapply(state.dim.names, length), 
                      dimnames = state.dim.names)#indexed [age, sex, subgroup, hiv-status]
-    dx.prevalence = array(0,
-                          dim = sapply(prev.dim.names, length), 
-                          dimnames = prev.dim.names)#indexed [age, sex, subgroup, hiv-status (only HIV+)]
     dx.incidence = array(0, 
                          dim = sapply(trans.dim.names, length), 
                          dimnames = trans.dim.names)#indexed [age, sex, subgroup]
@@ -259,8 +251,7 @@ compute.dx <- function(time,
     dx.state[,,,'engaged_unsuppressed'] = as.numeric(dx.state[,,,'engaged_unsuppressed']) + unsuppressed
     
     
-    #-- RECORD PREVALENCE --#
-    dx.prevalence = dx.state[,,,-1]
+    
     
     ##------------------------------##
     ##-- PACKAGE IT UP AND RETURN --##
@@ -268,8 +259,7 @@ compute.dx <- function(time,
     #flatten out all our arrays
     #return a vector of length = length(y) that represents the change in each element in y
     # when data elements have different dimensions, using as.numeric makes sure that we can collapse them into a 1D vector
-    rv = c(as.numeric(dx.state),  
-           as.numeric(dx.prevalence),
+    rv = c(as.numeric(dx.state),   
            as.numeric(dx.incidence), 
            as.numeric(dx.diagnoses), 
            as.numeric(dx.hiv.mortality), 
@@ -294,12 +284,9 @@ set.up.initial.diffeq.vector <- function(initial.state,
                                          parameters){
     # y is 1-D aray including the model state and main transitions that we are interested in (incidence, diagnosis, hiv/non-hiv mortality)
     state.length = length(parameters$AGES)*length(parameters$SEXES)*length(parameters$SUBGROUPS)*length(parameters$HIV.STATUS)
-    prev.length = length(parameters$AGES)*length(parameters$SEXES)*length(parameters$SUBGROUPS)*length(parameters$HIV.STATES)
     trans.length = length(parameters$AGES)*length(parameters$SEXES)*length(parameters$SUBGROUPS)
     
-    total.length = 
-        3 * state.length + #state plus two mortality arrays
-        1 * prev.length + # prevalence array (doesn't have hiv negative)
+    total.length = 3 * state.length + #state plus two mortality arrays
         2 * trans.length + #incidence plus new diagnoses
         4 * trans.length #engagement, disengagement x2, suppression
     
@@ -366,18 +353,12 @@ process.ode.results <- function(ode.results,
                            subgroup=parameters$SUBGROUPS,
                            hiv.status=parameters$HIV.STATUS)
     
-    prev.dim.names = list(age=parameters$AGES, 
-                          sex=parameters$SEXES,
-                          subgroup=parameters$SUBGROUPS,
-                          hiv.status=parameters$HIV.STATES)
-    
     trans.dim.names = list(year=keep.years,
                            age=parameters$AGES, 
                            sex=parameters$SEXES,
                            subgroup=parameters$SUBGROUPS)
     
     state.length = length(parameters$AGES)* length(parameters$SEXES) * length(parameters$SUBGROUPS) * length(parameters$HIV.STATUS)
-    prev.length = length(parameters$AGES)*length(parameters$SEXES)*length(parameters$SUBGROUPS)*length(parameters$HIV.STATES)
     trans.length =  length(parameters$AGES)* length(parameters$SEXES) * length(parameters$SUBGROUPS)
     
     #using a list will allow us to have elements of different size
@@ -399,11 +380,6 @@ process.ode.results <- function(ode.results,
                         dim = sapply(state.dim.names,length),
                         dimnames = state.dim.names)
     index=index+state.length
-    
-    rv$prevalence=array(ode.results[keep.years,index+1:prev.length],
-                        dim = sapply(state.dim.names,length),
-                        dimnames = state.dim.names)
-    index=index+prev.length
     
     #incidence
     rv$incidence=array(ode.results[keep.years,index+1:trans.length]-ode.results[previous.years,index+1:trans.length],
