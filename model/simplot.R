@@ -38,11 +38,6 @@ simplot = function(...,
     if(any(data.types=="hiv.mortality") & any(keep.dimensions=="sex"))
         stop("no hiv mortality data by sex")
     
-    if(length(unique(sapply(sims, function(sim){sim$location})))!=1)
-        stop("Can currently only plot sims from the same location")
-    
-    location = sims[[1]]$location
-    
     ##----------------------##
     ##----- SIM OUTPUT -----##
     ##----------------------##
@@ -52,11 +47,16 @@ simplot = function(...,
         
         for(i in 1:length(sims)){
             
-            if(is(sims[[i]],"simset")) # if this is an MCMC results, i.e., a simset
+            if(is(sims[[i]],"simset")) {# if this is an MCMC results, i.e., a simset
                 sims.for.i = sims[[i]]@simulations
             
+                if(length(unique(sapply(sims.for.i, function(sim){sim$location})))!=1)
+                    stop("Can currently only plot sims from the same location")
+                
+                location = sims.for.i[[1]]$location
+                
             # for plotting single simulations
-            else {
+            } else {
                 sim = sims[[i]]
                 sims.for.i = list(sim)}
             
@@ -185,6 +185,8 @@ simplot = function(...,
     df.truth = NULL  
     for(d in data.types){
         # Extract the data from simulation
+        location = sims.for.i[[1]]$location
+        
         value = get.surveillance.data(data.manager = data.manager, 
                                       years = years, 
                                       age = ages, 
