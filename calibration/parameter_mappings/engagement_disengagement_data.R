@@ -1,15 +1,15 @@
 
 get.disengagement.model = function(location){
-    if(location!="Kenya")
-        print("Using Kenya-specific disengagement for now")
+    # if(location!="Kenya")
+    #     print("Using Kenya-specific disengagement for now")
     
     rv = get.disengagement.model.kenya()
     rv
 }
 
 get.engagement.model = function(location){
-    if(location!="Kenya")
-        print("Using Kenya-specific engagement for now")
+    # if(location!="Kenya")
+    #     print("Using Kenya-specific engagement for now")
     
     rv = get.engagement.model.kenya()
     rv

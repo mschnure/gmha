@@ -64,8 +64,8 @@ create.model.parameters <- function(location,
 # called in “run_systematic” code with the option to change values
 get.default.parameters = function(location){
     
-    if(location!="Kenya")
-        print("Using Kenya-specific parameters for now; need to update with other locations")
+    # if(location!="Kenya")
+    #     print("Using Kenya-specific parameters for now; need to update with other locations")
     
     rv = c(
         ## Transmission parameters ##

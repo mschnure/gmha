@@ -1,7 +1,7 @@
 
 get.all.age.sex.transmission.multipliers = function(location){
-    if(location!="Kenya")
-        print("Using Kenya-specific transmission multipliers by age and sex for now")
+    # if(location!="Kenya")
+    #     print("Using Kenya-specific transmission multipliers by age and sex for now")
     
     rv = list()
     rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.multipliers.kenya(sex="female",year=2003)

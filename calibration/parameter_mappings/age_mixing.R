@@ -11,15 +11,15 @@
 
 
 get.male.to.female.age.model = function(location){
-    if(location!="Kenya")
-        print("Using Kenya-specific male-to-female sexual partnerships by age for now")
+    # if(location!="Kenya")
+    #     print("Using Kenya-specific male-to-female sexual partnerships by age for now")
     
     rv = get.male.to.female.age.model.kenya()
     rv
 }
 get.female.to.male.age.model = function(location){
-    if(location!="Kenya")
-        print("Using Kenya-specific female-to-male sexual partnerships by age for now")
+    # if(location!="Kenya")
+    #     print("Using Kenya-specific female-to-male sexual partnerships by age for now")
     
     rv = get.female.to.male.age.model.kenya()
     rv

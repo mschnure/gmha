@@ -1,8 +1,8 @@
 source('model/age_mappings.R')
 
 get.testing.model = function(location){
-    if(location!="Kenya")
-        print("Using Kenya-specific testing model for now")
+    # if(location!="Kenya")
+    #     print("Using Kenya-specific testing model for now")
     
     rv = get.testing.model.kenya()
     rv
