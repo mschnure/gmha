@@ -8,7 +8,7 @@
 
 # Project-specific
 data_manager/data
-mcmcruns
+mcmc_runs
 cached
 
 # Project-specific
