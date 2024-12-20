@@ -16,6 +16,12 @@ if(1==2){
     parameters = map.model.parameters(parameters,location = LOCATION)
 }
 
+# Function to call in MCMC - calls run.model.for.parameters
+SIMULATION.FUNCTION = function(sampled.parameters){
+    run.model.for.parameters(variable.parameters = sampled.parameters,
+                             parameters = create.model.parameters(location = LOCATION),
+                             location = LOCATION)
+}
 
 
 # Single function that is analogous to all the code in the test_case file, but also allows for
