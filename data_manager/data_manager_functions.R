@@ -14,11 +14,10 @@ library(data.table)
 #     5. read.cascade.data.stratified 
 #     6. read.cascade.data.files 
 # Specialty functions
-#     1. combine.pdf.years 
-#     2. read.pdf.data.files
-#     3. read.population.data.files
-#     4. read.fertility.data.files
-#     5. read.death.data.files
+#     1. read.pdf.data
+#     2. read.population.data.files
+#     3. read.fertility.data.files
+#     4. read.death.data.files
 
 # Population data from 2019 WPP archive: https://population.un.org/wpp/Download/Archive/CSV/ 
     # 2022 data
@@ -191,7 +190,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$hiv.mortality$AGES = c('0-14','10-19','15-24','15-49','15+','50 and over')
     rv$hiv.mortality$AGE.LOWERS = c(0,10,15,15,15,50)
     rv$hiv.mortality$AGE.UPPERS = c(15,20,25,50,Inf,Inf)
-    rv$hiv.mortality$SEXES = NULL
+    rv$hiv.mortality$SEXES = c('male','female')
     rv$hiv.mortality$LOCATIONS = dimnames(rv$hiv.mortality$year.location)$location
     
     ## Awareness denominator = all PLHIV
@@ -410,23 +409,20 @@ read.surveillance.data.type = function(data.type,
                                                         suffix = suffix)
     
     ## Sexes ##
-    if(data.type!="hiv.mortality")
-    {
-        rv$year.age.sex = read.surveillance.data.stratified(data.type=data.type,
-                                                       strata = 'year.age.sex',
-                                                       include.countries = F,
-                                                       suffix = suffix) 
-        
-        rv$sex.location = NULL
-    }
+    rv$year.age.sex.location = read.surveillance.data.stratified(data.type=data.type,
+                                                                 strata = 'year.age.sex',
+                                                                 include.countries = T,
+                                                                 suffix = suffix) 
     
+    rv$sex.location = NULL
+
     rv
 }
 
 # Called once for each dimension (age/sex) within read.surveillance.data.type; loops through lower-level 
 # function for each stratum of that dimension (i.e., calls function once for every age group) 
 #     Age: read.surveillance.data.files
-#     Sex: combine.pdf.years
+#     Sex: read.pdf.data
 read.surveillance.data.stratified = function(data.type,
                                              strata,
                                              include.countries=T,
@@ -435,11 +431,9 @@ read.surveillance.data.stratified = function(data.type,
     sexes = c("male","female")
 
     ## Pull array for age
-    if(strata=='age')
-    {
+    if(strata=='age') {
         ## Pull AGE array by COUNTRY
-        if(include.countries)
-        {
+        if(include.countries) {
             age1 = read.surveillance.data.files(data.type=data.type,
                                                 age=ages[1],
                                                 include.countries = T,
@@ -459,11 +453,8 @@ read.surveillance.data.stratified = function(data.type,
                 
                 rv[,i,] = x 
             }
-        }
-        
+        } else {
         ## Pull TOTAL AGE array
-        else 
-        {
             age1 = read.surveillance.data.files(data.type=data.type,
                                                 age=ages[1],
                                                 include.countries = F,
@@ -480,24 +471,10 @@ read.surveillance.data.stratified = function(data.type,
                                                  suffix = suffix)
                 rv[,i] = x }
         }
-        
-    }
-    
-    else if(strata=='year.age.sex')
-    {
-        female = combine.pdf.years(data.type=data.type,
-                                   sex = "female",
-                                   suffix=suffix)
-        dim.names = c(dimnames(female), list(sex=sexes))
-        rv = array(NA,
-                   dim = sapply(dim.names, length),
-                   dimnames = dim.names)
-        
-        for(i in 1:length(sexes)){
-            x = combine.pdf.years(data.type=data.type,
-                                  sex = sexes[i],
-                                  suffix=suffix)
-            rv[,,i] = x }
+    } else if(strata=='year.age.sex') {
+        rv = read.pdf.data(data.type=data.type,
+                           suffix=suffix)
+        print("need age/sex pdfs for countries other than Kenya, South Africa, and France")
     }
     else stop("only currently set up for age and year.age.sex strata")
     
@@ -734,96 +711,51 @@ read.cascade.data.files = function(dir = 'data_manager/data',
 ##-------------------------##
 ##-- SPECIALTY FUNCTIONS --##
 ##-------------------------##
-
-
-# 1. Called for sex-specific incidence/prevalence data in read.surveillance.data.stratified
-# 2. Combines multiple pdfs from different years; calls read.pdf.data.files for each year
-combine.pdf.years = function(dir = 'data_manager/data/pdfs',
-                             data.type,
-                             pdf.years.to.combine = 2018:2019,
-                             sex,
-                             suffix){
+# Called for sex-specific incidence/prevalence/hiv mortality data in read.surveillance.data.stratified
+read.pdf.data = function(dir = 'data_manager/data/pdfs',
+                         data.type,
+                         suffix){
     
-    # RIGHT NOW HARD-CODED FOR ONLY 2 YEARS OF PDFS
-    year.1 = read.pdf.data.files(data.type=data.type,
-                                 pdf.year=pdf.years.to.combine[1],
-                                 sex=sex,
-                                 suffix=suffix)
-    
-    year.2 = read.pdf.data.files(data.type=data.type,
-                                 pdf.year=pdf.years.to.combine[2],
-                                 sex=sex,
-                                 suffix=suffix)
-    
-    
-    other.years = dimnames(year.1)[[1]]
-    most.recent.years = dimnames(year.2)[[1]]
-    other.years.to.keep = other.years[!(other.years %in% most.recent.years)]
-    all.years = c(other.years.to.keep, most.recent.years)
-    dim.names = list(year = all.years,
-                     age = "15+")
-    
-    rv = array(c(year.1[other.years.to.keep], year.2),
-               dim = sapply(dim.names, length),
-               dimnames = dim.names)
-    
-    years.sorted = sort(all.years)
-    rv = rv[years.sorted,]
-    
-    dim.names.sorted = list(year = years.sorted,
-                     age = "15+")
-    
-    dim(rv) = sapply(dim.names.sorted,length)
-    dimnames(rv) = dim.names.sorted
-    
-    rv
-}
-
-
-
-# For each pdf year, read in csv file from tabula, return sex-specific incidence or prevalence 
-read.pdf.data.files = function(dir = 'data_manager/data/pdfs',
-                               data.type,
-                               pdf.year,
-                               sex,
-                               suffix){
-    files = list.files(file.path(dir,paste0(pdf.year,suffix)))
-    file = files[grepl(data.type,files)]
-    
+    file = file.path(dir,"combined_pdfs.csv")
     if (length(file)!=1)
         stop("can only pull one file at a time")
     
-    df = read.csv(file.path(dir,paste0(as.character(pdf.year),suffix),file))
-    df = df[-1,]
-    var.names = df[,1]
-    var.names = var.names[var.names!=""]
+    df = read.csv(file,header = T)
+    rownames(df) = df[,1]
+    years = substr(names(df),2,5)[-1]
+    df = df[-1,-1]
+    colnames(df) = years
     
-    if(data.type=="incidence"){
-        var.names = var.names[-length(var.names)]
-    }
+    if(suffix=="")
+        df = df[!grepl("upper",rownames(df)) & !grepl("lower",rownames(df)),]
     
-    years = substr(names(df),2,5)
-    years = years[-1]
+    df = df[grepl(suffix,rownames(df)),]
+    df = df[grepl(data.type,rownames(df)),]
     
-    values = c(t(df[,-1]))
-    values = values[(values!="" & !grepl("]", values))]
+    # put the data in the order of COUNTRIES.TO.PULL.PDFS
+    locations_lower = convert_string(COUNTRIES.TO.PULL.PDFS)
+    row_countries = gsub(paste0("_female_15_",data.type,suffix), "", rownames(df))
+    row_countries = gsub(paste0("_male_15_",data.type,suffix), "", row_countries)
+    custom_order = factor(row_countries, levels = locations_lower)
+    df = df[order(custom_order, rownames(df)), ]
     
-    dim.names = list(year = years,
-                     var = var.names)
+    ages = "15+"
+    sexes = c("female","male") # will reverse this; just to pull in the correct order
+    locations = COUNTRIES.TO.PULL.PDFS
     
-    rv = array(as.numeric(gsub(" ","",values)),
-               dim = sapply(dim.names, length),
-               dimnames = dim.names)        
+    dim.names = list(sex = sexes,
+                     location = locations,
+                     year = years,
+                     age = ages)
+
+    rv = array(as.numeric(unname(unlist(df))),
+               dim = sapply(dim.names,length),
+               dimnames = dim.names)
     
-    if (sex=="female"){
-        rv = array(rv[,grepl("women",dimnames(rv)$var)],
-                   dim = length(years),
-                   dimnames = list(years = years))}
+    rv = aperm(rv,c(3,4,1,2))
     
-    if (sex=="male"){
-        rv = array(rv[,(grepl("men",dimnames(rv)$var) & !grepl("women", dimnames(rv)$var))],
-                   dim = length(years),
-                   dimnames = list(years = years))}
+    rv[,1,,] = rv[,,c(2,1),]
+    dimnames(rv)$sex = c("male","female")
     
     rv
 }
@@ -1286,3 +1218,97 @@ read.death.data.files = function(dir = 'data_manager/data',
     
     rv
 }
+
+
+
+# # 1. Called for sex-specific incidence/prevalence data in read.surveillance.data.stratified
+# # 2. Combines multiple pdfs from different years; calls read.pdf.data.files for each year
+# combine.pdf.years = function(dir = 'data_manager/data/pdfs',
+#                              data.type,
+#                              pdf.years.to.combine = 2018:2019,
+#                              sex,
+#                              suffix){
+#     
+#     # RIGHT NOW HARD-CODED FOR ONLY 2 YEARS OF PDFS
+#     year.1 = read.pdf.data.files(data.type=data.type,
+#                                  pdf.year=pdf.years.to.combine[1],
+#                                  sex=sex,
+#                                  suffix=suffix)
+#     
+#     year.2 = read.pdf.data.files(data.type=data.type,
+#                                  pdf.year=pdf.years.to.combine[2],
+#                                  sex=sex,
+#                                  suffix=suffix)
+#     
+#     
+#     other.years = dimnames(year.1)[[1]]
+#     most.recent.years = dimnames(year.2)[[1]]
+#     other.years.to.keep = other.years[!(other.years %in% most.recent.years)]
+#     all.years = c(other.years.to.keep, most.recent.years)
+#     dim.names = list(year = all.years,
+#                      age = "15+")
+#     
+#     rv = array(c(year.1[other.years.to.keep], year.2),
+#                dim = sapply(dim.names, length),
+#                dimnames = dim.names)
+#     
+#     years.sorted = sort(all.years)
+#     rv = rv[years.sorted,]
+#     
+#     dim.names.sorted = list(year = years.sorted,
+#                      age = "15+")
+#     
+#     dim(rv) = sapply(dim.names.sorted,length)
+#     dimnames(rv) = dim.names.sorted
+#     
+#     rv
+# }
+# 
+# 
+# 
+# # For each pdf year, read in csv file from tabula, return sex-specific incidence or prevalence 
+# read.pdf.data.files = function(dir = 'data_manager/data/pdfs',
+#                                data.type,
+#                                pdf.year,
+#                                sex,
+#                                suffix){
+#     files = list.files(file.path(dir,paste0(pdf.year,suffix)))
+#     file = files[grepl(data.type,files)]
+#     
+#     if (length(file)!=1)
+#         stop("can only pull one file at a time")
+#     
+#     df = read.csv(file.path(dir,paste0(as.character(pdf.year),suffix),file))
+#     df = df[-1,]
+#     var.names = df[,1]
+#     var.names = var.names[var.names!=""]
+#     
+#     if(data.type=="incidence"){
+#         var.names = var.names[-length(var.names)]
+#     }
+#     
+#     years = substr(names(df),2,5)
+#     years = years[-1]
+#     
+#     values = c(t(df[,-1]))
+#     values = values[(values!="" & !grepl("]", values))]
+#     
+#     dim.names = list(year = years,
+#                      var = var.names)
+#     
+#     rv = array(as.numeric(gsub(" ","",values)),
+#                dim = sapply(dim.names, length),
+#                dimnames = dim.names)        
+#     
+#     if (sex=="female"){
+#         rv = array(rv[,grepl("women",dimnames(rv)$var)],
+#                    dim = length(years),
+#                    dimnames = list(years = years))}
+#     
+#     if (sex=="male"){
+#         rv = array(rv[,(grepl("men",dimnames(rv)$var) & !grepl("women", dimnames(rv)$var))],
+#                    dim = length(years),
+#                    dimnames = list(years = years))}
+#     
+#     rv
+# }
