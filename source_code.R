@@ -1,4 +1,4 @@
-source('convert_strings.R')
+source('helpers/convert_strings.R')
 source('data_manager/data_manager_functions.R')
 source('model/diffeq.R')
 source('model/age_mappings.R') 
