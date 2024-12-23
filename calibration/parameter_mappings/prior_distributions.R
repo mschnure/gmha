@@ -118,9 +118,9 @@ KENYA.PRIOR = join.distributions(
     unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.1392621), log(4)/2),
     suppressed.disengagement.rates = Lognormal.Distribution(log(0.1025866), log(4)/2),
     
-    suppression.rate.0 = Lognormal.Distribution(log(0.6732885), log(4)/2),
-    suppression.rate.1 = Lognormal.Distribution(log(0.6732885), log(4)/2),
-    unsuppression.rates = Lognormal.Distribution(log(0.1971601), log(4)/2), # 2024 MELISSA FIX THIS 
+    suppression.rate.0 = Lognormal.Distribution(log(1.118678), log(4)/2), # 12/23/2024: corrected this from probability (0.6732885) to rate 
+    suppression.rate.1 = Lognormal.Distribution(log(1.118678), log(4)/2), # 12/23/2024: corrected this from probability (0.6732885) to rate 
+    unsuppression.rates = Lognormal.Distribution(log(0.2196), log(4)/2), # 12/23/2024: corrected this from probability (0.1971601) to rate 
     
     male.awareness.multiplier = Lognormal.Distribution(log(1), log(4)/2),
     male.engagement.multiplier = Lognormal.Distribution(log(1), log(4)/2),
