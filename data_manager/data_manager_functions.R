@@ -20,6 +20,8 @@ library(data.table)
 #     4. read.death.data.files
 
 # Population data from 2019 WPP archive: https://population.un.org/wpp/Download/Archive/CSV/ 
+    #  NEW DEATHS DATA, 12/23/24: https://population.un.org/wpp/downloads    
+        # WPP2024_MORT_F01_2_DEATHS_SINGLE_AGE_MALE.xlsx and female 
     # 2022 data
         # WPP2022_DeathsBySingleAgeSex_Medium_1950-2021.csv
         # Can't find original file: NumberDeaths-20220407095117.csv
@@ -360,17 +362,31 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$fertility$LOCATIONS = dimnames(rv$fertility$year.age.location)$location 
 
     #Deaths
-    rv$deaths = read.death.data.files(data.type = "population",
+    # rv$deaths.old = read.death.data.files(data.type = "population",
+    #                                   countries.to.pull = COUNTRIES.TO.PULL.POP,
+    #                                   age.mapping = DEATHS.AGE.MAPPING.HARD.CODE)
+    # rv$deaths.old$YEARS = as.character(1950:2021)
+    # rv$deaths.old$AGES = c('0-4', '5-9','10-14','15-19','20-24','25-29','30-34',
+    #                    '35-39','40-44','45-49','50-54','55-59','60-64','65-69',
+    #                    '70-74','75-79',"80 and over")
+    # rv$deaths.old$AGE.LOWERS = c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80)
+    # rv$deaths.old$AGE.UPPERS = c(5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,Inf)
+    # rv$deaths.old$SEXES = c('male','female')
+    # rv$deaths.old$LOCATIONS = dimnames(rv$deaths.old$year.location)$location 
+    
+    # DEATHS FROM NEW DATA SOURCE
+    rv$total.mortality = read.death.data.files.V2(data.type = "population",
                                       countries.to.pull = COUNTRIES.TO.PULL.POP,
                                       age.mapping = DEATHS.AGE.MAPPING.HARD.CODE)
-    rv$deaths$YEARS = as.character(1950:2021)
-    rv$deaths$AGES = c('0-4', '5-9','10-14','15-19','20-24','25-29','30-34',
+    rv$total.mortality$YEARS = as.character(1950:2023)
+    rv$total.mortality$AGES = c('0-4', '5-9','10-14','15-19','20-24','25-29','30-34',
                        '35-39','40-44','45-49','50-54','55-59','60-64','65-69',
                        '70-74','75-79',"80 and over")
-    rv$deaths$AGE.LOWERS = c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80)
-    rv$deaths$AGE.UPPERS = c(5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,Inf)
-    rv$deaths$SEXES = c('male','female')
-    rv$deaths$LOCATIONS = dimnames(rv$deaths$year.location)$location 
+    rv$total.mortality$AGE.LOWERS = c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80)
+    rv$total.mortality$AGE.UPPERS = c(5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,Inf)
+    rv$total.mortality$SEXES = c('male','female')
+    rv$total.mortality$LOCATIONS = dimnames(rv$total.mortality$year.location)$location 
+    
     
     rv
 }
@@ -1219,96 +1235,102 @@ read.death.data.files = function(dir = 'data_manager/data',
     rv
 }
 
-
-
-# # 1. Called for sex-specific incidence/prevalence data in read.surveillance.data.stratified
-# # 2. Combines multiple pdfs from different years; calls read.pdf.data.files for each year
-# combine.pdf.years = function(dir = 'data_manager/data/pdfs',
-#                              data.type,
-#                              pdf.years.to.combine = 2018:2019,
-#                              sex,
-#                              suffix){
-#     
-#     # RIGHT NOW HARD-CODED FOR ONLY 2 YEARS OF PDFS
-#     year.1 = read.pdf.data.files(data.type=data.type,
-#                                  pdf.year=pdf.years.to.combine[1],
-#                                  sex=sex,
-#                                  suffix=suffix)
-#     
-#     year.2 = read.pdf.data.files(data.type=data.type,
-#                                  pdf.year=pdf.years.to.combine[2],
-#                                  sex=sex,
-#                                  suffix=suffix)
-#     
-#     
-#     other.years = dimnames(year.1)[[1]]
-#     most.recent.years = dimnames(year.2)[[1]]
-#     other.years.to.keep = other.years[!(other.years %in% most.recent.years)]
-#     all.years = c(other.years.to.keep, most.recent.years)
-#     dim.names = list(year = all.years,
-#                      age = "15+")
-#     
-#     rv = array(c(year.1[other.years.to.keep], year.2),
-#                dim = sapply(dim.names, length),
-#                dimnames = dim.names)
-#     
-#     years.sorted = sort(all.years)
-#     rv = rv[years.sorted,]
-#     
-#     dim.names.sorted = list(year = years.sorted,
-#                      age = "15+")
-#     
-#     dim(rv) = sapply(dim.names.sorted,length)
-#     dimnames(rv) = dim.names.sorted
-#     
-#     rv
-# }
-# 
-# 
-# 
-# # For each pdf year, read in csv file from tabula, return sex-specific incidence or prevalence 
-# read.pdf.data.files = function(dir = 'data_manager/data/pdfs',
-#                                data.type,
-#                                pdf.year,
-#                                sex,
-#                                suffix){
-#     files = list.files(file.path(dir,paste0(pdf.year,suffix)))
-#     file = files[grepl(data.type,files)]
-#     
-#     if (length(file)!=1)
-#         stop("can only pull one file at a time")
-#     
-#     df = read.csv(file.path(dir,paste0(as.character(pdf.year),suffix),file))
-#     df = df[-1,]
-#     var.names = df[,1]
-#     var.names = var.names[var.names!=""]
-#     
-#     if(data.type=="incidence"){
-#         var.names = var.names[-length(var.names)]
-#     }
-#     
-#     years = substr(names(df),2,5)
-#     years = years[-1]
-#     
-#     values = c(t(df[,-1]))
-#     values = values[(values!="" & !grepl("]", values))]
-#     
-#     dim.names = list(year = years,
-#                      var = var.names)
-#     
-#     rv = array(as.numeric(gsub(" ","",values)),
-#                dim = sapply(dim.names, length),
-#                dimnames = dim.names)        
-#     
-#     if (sex=="female"){
-#         rv = array(rv[,grepl("women",dimnames(rv)$var)],
-#                    dim = length(years),
-#                    dimnames = list(years = years))}
-#     
-#     if (sex=="male"){
-#         rv = array(rv[,(grepl("men",dimnames(rv)$var) & !grepl("women", dimnames(rv)$var))],
-#                    dim = length(years),
-#                    dimnames = list(years = years))}
-#     
-#     rv
-# }
+read.death.data.files.V2 = function(dir = 'data_manager/data',
+                                 data.type,
+                                 countries.to.pull,
+                                 age.mapping){
+    countries.to.pull = c(countries.to.pull,"World")
+    
+    sub.dir = file.path(dir, data.type)
+    files = list.files(file.path(sub.dir))
+    female.file = files[grepl("DEATHS_SINGLE_AGE_FEMALE",files)]
+    male.file = files[grepl("DEATHS_SINGLE_AGE_MALE",files)]
+    
+    if (length(female.file)!=1)
+        stop("can only pull one file at a time")
+    
+    if (length(male.file)!=1)
+        stop("can only pull one file at a time")
+    
+    female.df = suppressWarnings(readxl::read_xlsx(file.path(sub.dir,female.file),skip = 16,col_names = T))
+    female.df = female.df[,c(3,11:ncol(female.df))]
+    colnames(female.df)[1] = "Location"
+    female.df = female.df[female.df$Location %in% countries.to.pull,]
+    
+    male.df = suppressWarnings(readxl::read_xlsx(file.path(sub.dir,male.file),skip = 16,col_names = T))
+    male.df = male.df[,c(3,11:ncol(male.df))]
+    colnames(male.df)[1] = "Location"
+    male.df = male.df[male.df$Location %in% countries.to.pull,]
+    
+    years = unique(female.df$Year)
+    ages.full = colnames(female.df)[-c(1:2)]
+    locations = unique(female.df$Location)
+    sexes = c("male","female")
+    
+    dim.names = list(year = as.character(years),
+                     age = names(age.mapping),
+                     sex = sexes,
+                     location = locations)
+    
+    year.age.full.dim.names = list(year = as.character(years),
+                                   age = ages.full)
+    
+    year.age.sex.location = array(0,
+                                  dim = sapply(dim.names, length),
+                                  dimnames = dim.names)
+    
+    for(location in locations){
+        female.age.full = male.age.full = array(0,
+                                                dim = sapply(year.age.full.dim.names, length), 
+                                                dimnames = year.age.full.dim.names)
+        
+        male.age.full[] = (as.numeric(unlist(male.df[male.df$Location==location,c(3:ncol(male.df))])))*1000
+        female.age.full[] = (as.numeric(unlist(female.df[female.df$Location==location,c(3:ncol(female.df))])))*1000
+        
+        male.age = sapply(1:length(age.mapping), function(a){
+            sapply(1:length(years), function(y){
+                age.to = names(age.mapping)[a] 
+                ages.from = age.mapping[[a]] 
+                sum(male.age.full[y,ages.from])
+            })
+        })
+        
+        female.age = sapply(1:length(age.mapping), function(a){
+            sapply(1:length(years), function(y){
+                age.to = names(age.mapping)[a] 
+                ages.from = age.mapping[[a]] 
+                sum(female.age.full[y,ages.from])
+            })
+        })
+        
+        dimnames(male.age) = dimnames(female.age) = list(year = as.character(years),
+                                                         age = names(age.mapping))
+        
+        year.age.sex.location[,,"female",location] = female.age
+        year.age.sex.location[,,"male",location] = male.age
+    }
+    
+    
+    year.sex.location = apply(year.age.sex.location,c("year","sex","location"),sum)
+    year.age.location = apply(year.age.sex.location,c("year","age","location"),sum)
+    year.location = apply(year.age.sex.location,c("year","location"),sum)
+    
+    year.age = apply(year.age.sex.location[,,,"World"],c("year","age"),sum)
+    year.sex = apply(year.age.sex.location[,,,"World"],c("year","sex"),sum)
+    year.age.sex = apply(year.age.sex.location[,,,"World"],c("year","age","sex"),sum)
+    
+    global = apply(year.age.sex.location[,,,"World"],c("year"),sum)
+    
+    ## Returns a list
+    rv = list()
+    rv$year = global
+    rv$year.age = year.age
+    rv$year.sex = year.sex
+    rv$year.age.sex = year.age.sex
+    rv$year.location = year.location
+    rv$year.age.location = year.age.location
+    rv$year.sex.location = year.sex.location
+    rv$year.age.sex.location = year.age.sex.location
+    
+    rv
+}

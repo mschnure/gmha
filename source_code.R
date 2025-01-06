@@ -4,7 +4,7 @@ source('model/diffeq.R')
 source('model/age_mappings.R') 
 NO.INTERVENTION = c()
 
-load('cached/data.manager_global_2024-12-20.Rdata') # WITHOUT scaling calibration targets
+load('cached/data.manager_global_2024-12-30.Rdata') # WITHOUT scaling calibration targets
 source('calibration/parameter_mappings/age_mixing.R')
 source('calibration/parameter_mappings/testing_projection.R')
 source('calibration/parameter_mappings/age_sex_mixing_proportions.R')
