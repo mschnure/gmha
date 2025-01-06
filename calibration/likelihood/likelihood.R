@@ -64,7 +64,12 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              hiv.mortality.years=1980:2020,
                              hiv.mortality.weight=1/256, 
                              hiv.mortality.obs.correlation=0.5, 
-                             hiv.mortality.correlation.structure="auto.regressive"
+                             hiv.mortality.correlation.structure="auto.regressive",
+                             #total.mortality
+                             total.mortality.years=years,
+                             total.mortality.weight=1/200000, # to start, trying same weight as population 
+                             total.mortality.obs.correlation=0.5, 
+                             total.mortality.correlation.structure="auto.regressive"
                              ){ 
     
     incidence.lik = create.likelihood.for.data.type(data.type = "incidence",
@@ -154,6 +159,22 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                         use.age=T,
                                                         use.age.sex=F)
     
+    total.mortality.lik = create.likelihood.for.data.type(data.type = "total.mortality",
+                                                     data.manager=data.manager,
+                                                     years=total.mortality.years,
+                                                     location=location,
+                                                     parameters=parameters,
+                                                     denominator.data.type=NULL, 
+                                                     obs.is.proportion=F,
+                                                     weight=total.weight*total.mortality.weight,
+                                                     obs.correlation=total.mortality.obs.correlation,
+                                                     correlation.structure=total.mortality.correlation.structure,
+                                                     calculate.sds.from.ci=F,
+                                                     use.total=F,
+                                                     use.sex=F,
+                                                     use.age=F,
+                                                     use.age.sex=T) 
+    
     awareness.trend.lik = create.likelihood.for.trend(data.type = "awareness",
                                                       year.1=2025,
                                                       year.2=2030,
@@ -173,6 +194,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                       suppression=suppression.lik,
                       population=population.lik,
                       hiv.mortality=hiv.mortality.lik,
+                      total.mortality.lik,
                       awareness.trend=awareness.trend.lik) # CHANGE THIS IF SWITCHING ABOVE 
     
     rv = function(sim){ 
