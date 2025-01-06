@@ -90,6 +90,9 @@ compute.dx <- function(time,
     dx.non.hiv.mortality = array(0, 
                                  dim = sapply(state.dim.names, length), 
                                  dimnames = state.dim.names)#indexed [age, sex, subgroup, hiv-status]
+    dx.total.mortality = array(0, 
+                               dim = sapply(state.dim.names, length), 
+                               dimnames = state.dim.names)#indexed [age, sex, subgroup, hiv-status]
     dx.engagement = array(0,
                           dim = sapply(trans.dim.names, length),
                           dimnames = trans.dim.names)#indexed [age, sex, subgroup]
@@ -143,6 +146,9 @@ compute.dx <- function(time,
     non.hiv.mortality = state * pp$NON.HIV.MORTALITY.RATES #indexed [age, sex, subgroup, hiv-status]
     dx.state = dx.state - non.hiv.mortality
     dx.non.hiv.mortality = dx.non.hiv.mortality + non.hiv.mortality
+    
+    # total mortality # 
+    dx.total.mortality = dx.hiv.mortality + dx.non.hiv.mortality
     
     #-- CHANGES in SEX --#
     # (assuming sex is immutable)
@@ -274,6 +280,7 @@ compute.dx <- function(time,
            as.numeric(dx.diagnoses), 
            as.numeric(dx.hiv.mortality), 
            as.numeric(dx.non.hiv.mortality),
+           as.numeric(dx.total.mortality),
            as.numeric(dx.engagement),
            as.numeric(dx.disengagement.unsuppressed),
            as.numeric(dx.disengagement.suppressed),
@@ -292,13 +299,13 @@ compute.dx <- function(time,
 # recorded (e.g.,incidence, diagnosis, etc)
 set.up.initial.diffeq.vector <- function(initial.state,
                                          parameters){
-    # y is 1-D aray including the model state and main transitions that we are interested in (incidence, diagnosis, hiv/non-hiv mortality)
+    # y is 1-D aray including the model state and main transitions that we are interested in (incidence, diagnosis, total + hiv/non-hiv mortality)
     state.length = length(parameters$AGES)*length(parameters$SEXES)*length(parameters$SUBGROUPS)*length(parameters$HIV.STATUS)
     prev.length = length(parameters$AGES)*length(parameters$SEXES)*length(parameters$SUBGROUPS)*length(parameters$HIV.STATES)
     trans.length = length(parameters$AGES)*length(parameters$SEXES)*length(parameters$SUBGROUPS)
     
     total.length = 
-        3 * state.length + #state plus two mortality arrays
+        4 * state.length + #state plus three mortality arrays
         1 * prev.length + # prevalence array (doesn't have hiv negative)
         2 * trans.length + #incidence plus new diagnoses
         4 * trans.length #engagement, disengagement x2, suppression
@@ -425,6 +432,12 @@ process.ode.results <- function(ode.results,
     
     #non.hiv mortality (reported as cumulative value)
     rv$non.hiv.mortality=array(ode.results[keep.years,index+1:state.length]-ode.results[previous.years,index+1:state.length], 
+                               dim = sapply(state.dim.names,length),
+                               dimnames = state.dim.names)
+    index=index+state.length
+    
+    #total mortality (reported as cumulative value)
+    rv$total.mortality=array(ode.results[keep.years,index+1:state.length]-ode.results[previous.years,index+1:state.length], 
                                dim = sapply(state.dim.names,length),
                                dimnames = state.dim.names)
     index=index+state.length

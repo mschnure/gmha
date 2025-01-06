@@ -14,12 +14,13 @@
 #     8. extract.new.diagnoses
 #     9. extract.hiv.mortality
 #     10. extract.hiv.mortality
-#     11. extract.total.suppressed
-#     12. extract.annual.suppression
-#     13. extract.total.engaged
-#     14. extract.annual.engagement
-#     15. extract.disengagement.suppressed
-#     16. extract.disengagement.unsuppressed
+#     11. extract.total.mortality
+#     12. extract.total.suppressed
+#     13. extract.annual.suppression
+#     14. extract.total.engaged
+#     15. extract.annual.engagement
+#     16. extract.disengagement.suppressed
+#     17. extract.disengagement.unsuppressed
 
 
 
@@ -87,6 +88,14 @@ extract.data = function(sim,
     
     else if (data.type=='non.hiv.mortality')
         rv = extract.non.hiv.mortality(sim,
+                                       years=years, 
+                                       ages=ages,
+                                       sexes=sexes,
+                                       subgroups=subgroups,
+                                       keep.dimensions=keep.dimensions)
+    
+    else if (data.type=='total.mortality')
+        rv = extract.total.mortality(sim,
                                        years=years, 
                                        ages=ages,
                                        sexes=sexes,
@@ -468,6 +477,26 @@ extract.non.hiv.mortality <- function(sim,
     do.extract.4D(
         sim = sim,
         arr = sim$non.hiv.mortality,
+        years = years,
+        ages = ages,
+        subgroups = subgroups,
+        sexes = sexes,
+        hiv.status = hiv.status,
+        keep.dimensions = keep.dimensions
+    )
+}
+
+# Call to do.extract.4D; pulls non hiv mortality
+extract.total.mortality <- function(sim,
+                                      years = sim$years,
+                                      ages = sim$AGES,
+                                      subgroups = sim$SUBGROUPS,
+                                      sexes = sim$SEXES,
+                                      hiv.status = sim$HIV.STATUS,
+                                      keep.dimensions = 'year'){
+    do.extract.4D(
+        sim = sim,
+        arr = sim$total.mortality,
         years = years,
         ages = ages,
         subgroups = subgroups,
