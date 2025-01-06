@@ -976,10 +976,10 @@ calculate.all.death.rates = function(data.manager,
                                                  data.type = "population", 
                                                  model.age.cutoffs = model.age.cutoffs)
     
-    years = data.manager$deaths$YEARS
-    deaths.ages = data.manager$deaths$AGES
+    years = data.manager$total.mortality$YEARS
+    deaths.ages = data.manager$total.mortality$AGES
     #deaths.ages.rev = c(deaths.ages[-length(deaths.ages)],"95-99","100 and over")
-    deaths.sexes = data.manager$deaths$SEXES
+    deaths.sexes = data.manager$total.mortality$SEXES
     
     age.dim.names = list(year = years,
                          age = deaths.ages) 
@@ -996,7 +996,7 @@ calculate.all.death.rates = function(data.manager,
     ## Pull deaths
     deaths = get.surveillance.data(data.manager = data.manager,
                                    location = location,
-                                   data.type = "deaths",
+                                   data.type = "total.mortality",
                                    years = years,
                                    keep.dimensions = keep.dimensions)
     ## Pull population
