@@ -326,7 +326,7 @@ simplot = function(...,
     
 
     
-    suppressWarnings(print(plot))
+    suppressWarnings(print(plot) + ggtitle(location))
     
 }
 
