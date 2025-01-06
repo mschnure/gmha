@@ -14,21 +14,23 @@ sim.cambodia = run.model.for.parameters(location="Cambodia",variable.parameters 
 sim.thailand = run.model.for.parameters(location="Thailand",variable.parameters = variable.parameters.thailand)
 
 # these two don't work without deaths data  
-#sim.netherlands = run.model.for.parameters(location="Netherlands",variable.parameters = variable.parameters.netherlands)
-#sim.france = run.model.for.parameters(location="France",variable.parameters = variable.parameters.france)
+sim.netherlands = run.model.for.parameters(location="Netherlands",variable.parameters = variable.parameters.netherlands)
+sim.france = run.model.for.parameters(location="France",variable.parameters = variable.parameters.france)
     
 
 simplot(#sim.kenya,
-        sim.south.africa,
+        #sim.south.africa,
         #sim.cambodia,
         #sim.thailand,
+        sim.france,
         years=c(1970:2020),
         data.types = c("incidence","prevalence"))
 
 simplot(#sim.kenya,
-        sim.south.africa,
+        #sim.south.africa,
         #sim.cambodia,
         #sim.thailand,
+        sim.france,
         years=c(1980:2020),
         data.types = c("incidence"),
         facet.by = 'age')
@@ -36,22 +38,33 @@ simplot(#sim.kenya,
 simplot(#sim.kenya,
         #sim.south.africa,
         #sim.cambodia,
-        sim.thailand,
+        #sim.thailand,
         #sim.netherlands,
+        sim.france,
         years=c(1980:2020),
         data.types = c("prevalence"),
         facet.by = 'age')
+
+simplot(#sim.kenya,
+        #sim.south.africa,
+        #sim.cambodia,
+        #sim.thailand,
+        sim.france,
+        years=c(1970:2020),
+        data.types = "population")
+ 
+simplot(#sim.kenya,
+        #sim.south.africa,
+        #sim.cambodia,
+        #sim.thailand,
+        sim.france,
+        years=c(1970:2020),
+        data.types = "population", facet.by = 'age')
 
 simplot(sim.kenya,
         #sim.south.africa,
         #sim.cambodia,
         #sim.thailand,
+        #sim.france,
         years=c(1970:2020),
-        data.types = "population")
- 
-simplot(sim.kenya,
-        #sim.south.africa,
-        #sim.cambodia,
-        #sim.thailand,
-        years=c(1970:2020),
-        data.types = "population", facet.by = 'age')
+        data.types = "total.mortality", facet.by = 'age')
