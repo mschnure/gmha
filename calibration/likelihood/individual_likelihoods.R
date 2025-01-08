@@ -48,7 +48,12 @@ create.individual.likelihood = function(data.type,
                                         hiv.mortality.years=1980:2020,
                                         hiv.mortality.weight=1/256, 
                                         hiv.mortality.obs.correlation=0.5, 
-                                        hiv.mortality.correlation.structure="auto.regressive"
+                                        hiv.mortality.correlation.structure="auto.regressive",
+                                        #total.mortality
+                                        total.mortality.years=years,
+                                        total.mortality.weight=1/1000, # 1/7 changed from 200000 to 1000 
+                                        total.mortality.obs.correlation=0.5, 
+                                        total.mortality.correlation.structure="auto.regressive"
 ){
     
     if(data.type=="incidence"){
@@ -145,6 +150,22 @@ create.individual.likelihood = function(data.type,
                                           year.2=2030,
                                           probability.of.decrease=.1,
                                           use.strata=F)
+    } else if (data.type=="total.mortality"){
+        lik = create.likelihood.for.data.type(data.type = "total.mortality",
+                                                              data.manager=data.manager,
+                                                              years=total.mortality.years,
+                                                              location=location,
+                                                              parameters=parameters,
+                                                              denominator.data.type=NULL, 
+                                                              obs.is.proportion=F,
+                                                              weight=total.mortality.weight, # *total.weight # removed 1/8
+                                                              obs.correlation=total.mortality.obs.correlation,
+                                                              correlation.structure=total.mortality.correlation.structure,
+                                                              calculate.sds.from.ci=F,
+                                                              use.total=F,
+                                                              use.sex=F,
+                                                              use.age=F,
+                                                              use.age.sex=T) 
     } else
         stop("invalid data type")
     
@@ -190,4 +211,19 @@ hiv.mortality.lik.kenya = create.individual.likelihood(data.type = "hiv.mortalit
 aware.trend.lik.kenya = create.individual.likelihood(data.type = "awareness.trend",
                                                parameters = BASE.PARAMETERS.KENYA,
                                                location = "Kenya")
+total.mortality.lik.kenya = create.individual.likelihood(data.type = "total.mortality",
+                                                  parameters = BASE.PARAMETERS.KENYA,
+                                                  location = "Kenya")
+
+exp(total.mortality.lik.kenya(simset.new@simulations[[simset.new@n.sim]]) - 
+        total.mortality.lik.kenya(simset.old@simulations[[simset.old@n.sim]]))
+
+exp(incidence.lik.kenya(simset.new@simulations[[simset.new@n.sim]]) - 
+        incidence.lik.kenya(simset.old@simulations[[simset.old@n.sim]]))
+
+exp(prev.lik.kenya(simset.new@simulations[[simset.new@n.sim]]) - 
+        prev.lik.kenya(simset.old@simulations[[simset.old@n.sim]]))
+
+exp(pop.lik.kenya(simset.new@simulations[[simset.new@n.sim]]) - 
+        pop.lik.kenya(simset.old@simulations[[simset.old@n.sim]]))
 

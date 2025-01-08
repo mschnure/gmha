@@ -67,7 +67,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              hiv.mortality.correlation.structure="auto.regressive",
                              #total.mortality
                              total.mortality.years=years,
-                             total.mortality.weight=1/200000, # to start, trying same weight as population 
+                             total.mortality.weight=1/1000, # 1/7 changed from 200000 to 1000 
                              total.mortality.obs.correlation=0.5, 
                              total.mortality.correlation.structure="auto.regressive"
                              ){ 
@@ -160,20 +160,20 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                         use.age.sex=F)
     
     total.mortality.lik = create.likelihood.for.data.type(data.type = "total.mortality",
-                                                     data.manager=data.manager,
-                                                     years=total.mortality.years,
-                                                     location=location,
-                                                     parameters=parameters,
-                                                     denominator.data.type=NULL, 
-                                                     obs.is.proportion=F,
-                                                     weight=total.weight*total.mortality.weight,
-                                                     obs.correlation=total.mortality.obs.correlation,
-                                                     correlation.structure=total.mortality.correlation.structure,
-                                                     calculate.sds.from.ci=F,
-                                                     use.total=F,
-                                                     use.sex=F,
-                                                     use.age=F,
-                                                     use.age.sex=T) 
+                                                          data.manager=data.manager,
+                                                          years=total.mortality.years,
+                                                          location=location,
+                                                          parameters=parameters,
+                                                          denominator.data.type=NULL, 
+                                                          obs.is.proportion=F,
+                                                          weight=total.mortality.weight, # *total.weight # removed 1/8
+                                                          obs.correlation=total.mortality.obs.correlation,
+                                                          correlation.structure=total.mortality.correlation.structure,
+                                                          calculate.sds.from.ci=F,
+                                                          use.total=F,
+                                                          use.sex=F,
+                                                          use.age=F,
+                                                          use.age.sex=T) 
     
     awareness.trend.lik = create.likelihood.for.trend(data.type = "awareness",
                                                       year.1=2025,
@@ -194,7 +194,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                       suppression=suppression.lik,
                       population=population.lik,
                       hiv.mortality=hiv.mortality.lik,
-                      total.mortality.lik,
+                      total.mortality.lik=total.mortality.lik,
                       awareness.trend=awareness.trend.lik) # CHANGE THIS IF SWITCHING ABOVE 
     
     rv = function(sim){ 
@@ -473,6 +473,7 @@ get.likelihood.elements.by.data.type.and.dimension = function(data.type,
                                                               keep.dimensions,
                                                               parameters,
                                                               calculate.sds.from.ci=T){
+    
     obs.data = get.surveillance.data(data.manager = data.manager,
                                      data.type = data.type,
                                      years = years,
@@ -535,7 +536,7 @@ get.likelihood.elements.by.data.type.and.dimension = function(data.type,
             if(all(names(obs.data.long)!="age")){ # if no age strata, assign all ages
                 ages.to.pull = "All ages"}
             
-            if(data.type!="population")
+            if(!(data.type %in% c("population","total.mortality")))
                 ages.to.pull = MODEL.TO.SURVEILLANCE.AGE.MAPPING[[as.character(ages.to.pull)]] # MELISSA CHECK IF ALL OTHER DATA TYPES USE THIS
             
             if(all(names(obs.data.long)!="sex")){ # if no sex strata, assign both sexes
