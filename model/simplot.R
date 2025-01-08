@@ -35,6 +35,12 @@ simplot = function(...,
     sims = list(...)
     keep.dimensions = union(c('year','location'),union(facet.by, split.by))
 
+    if(!setequal(ages,data.manager[[data.types[1]]]$AGES))
+        keep.dimensions = c(keep.dimensions,"age")
+    
+    if(!setequal(sexes,data.manager[[data.types[1]]]$SEXES))
+        keep.dimensions = c(keep.dimensions,"sex")
+    
     if(any(data.types=="hiv.mortality") & any(keep.dimensions=="sex"))
         stop("no hiv mortality data by sex")
     
@@ -326,7 +332,7 @@ simplot = function(...,
     
 
     
-    suppressWarnings(print(plot) + ggtitle(location))
+    suppressWarnings(print(plot + ggtitle(location)))
     
 }
 
