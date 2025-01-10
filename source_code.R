@@ -1,3 +1,4 @@
+library(data.table)
 source('helpers/convert_strings.R')
 source('data_manager/data_manager_functions.R')
 source('model/diffeq.R')

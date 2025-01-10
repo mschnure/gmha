@@ -5,7 +5,7 @@ source("model/run_systematic.R")
 
 set.seed(4321) # all runs so far with seed 4321
 
-LOCATION = "France" 
+LOCATION = "Kenya" 
 
 LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION)
 
@@ -21,9 +21,9 @@ control = create.adaptive.blockwise.metropolis.control(var.names = LOCATION.DETA
 
 # set starting.values 
 mcmc = run.mcmc.with.cache(control = control,
-                           n.iter = 10000,
+                           n.iter = 30000,
                            starting.values = LOCATION.DETAILS$params.start.values, 
-                           update.frequency = 5,
+                           update.frequency = 100,
                            cache.frequency = 200,
                            cache.dir = file.path("mcmc_cache",convert_string(LOCATION))
 )
