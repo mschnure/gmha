@@ -5,33 +5,24 @@ source("model/run_systematic.R")
 
 set.seed(4321) # all runs so far with seed 4321
 
-KENYA.LIK = create.likelihood(parameters = create.model.parameters(location = "Kenya"),
-                              location="Kenya")
-SOUTH.AFRICA.LIK = create.likelihood(parameters = create.model.parameters(location = "South Africa"),
-                                     location="South Africa")
-FRANCE.LIK = create.likelihood(parameters = create.model.parameters(location = "France"),
-                               location="France")
-
-#### CHANGE THESE TWO LINES (and the last line of prior_distributions) WHEN RUNNING A NEW COUNTRY ####
 LOCATION = "France" 
-LIKELIHOOD.TO.RUN = FRANCE.LIK 
 
-# PRIOR is set to country-specific prior at the end of prior_distributions.R - CHANGE FOR EACH COUNTRY 
-# (for now, using Kenya for all)
-control = create.adaptive.blockwise.metropolis.control(var.names = PRIOR@var.names,
+LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION)
+
+control = create.adaptive.blockwise.metropolis.control(var.names = LOCATION.DETAILS$prior@var.names,
                                                        simulation.function = SIMULATION.FUNCTION,
-                                                       log.prior.distribution = get.density.function(PRIOR,default.log = T),
-                                                       log.likelihood = LIKELIHOOD.TO.RUN,
-                                                       var.blocks = PARAMETER.VAR.BLOCKS,
-                                                       transformations = TRANSFORMATIONS,
-                                                       initial.covariance.mat = diag((SDS/20)^2), # step size
+                                                       log.prior.distribution = get.density.function(LOCATION.DETAILS$prior,default.log = T),
+                                                       log.likelihood = LOCATION.DETAILS$likelihood.to.run,
+                                                       var.blocks = PARAMETER.VAR.BLOCKS, # set in calibration/prior_distributions/var_blocks.R
+                                                       transformations = LOCATION.DETAILS$transformations,
+                                                       initial.covariance.mat = diag((LOCATION.DETAILS$sds/20)^2), # step size
                                                        burn = 0,
                                                        thin = 5) 
 
 # set starting.values 
 mcmc = run.mcmc.with.cache(control = control,
                            n.iter = 10000,
-                           starting.values = PARAMS.START.VALUES, 
+                           starting.values = LOCATION.DETAILS$params.start.values, 
                            update.frequency = 5,
                            cache.frequency = 200,
                            cache.dir = file.path("mcmc_cache",convert_string(LOCATION))
