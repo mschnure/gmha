@@ -3,7 +3,7 @@ library(distributions)
 library(ggplot2) 
 source("model/run_systematic.R")
 
-set.seed(4321) # kenya 12/17, 12/31 ran with seed 4321
+set.seed(4321) # all runs so far with seed 4321
 
 KENYA.LIK = create.likelihood(parameters = create.model.parameters(location = "Kenya"),
                               location="Kenya")
@@ -29,24 +29,24 @@ control = create.adaptive.blockwise.metropolis.control(var.names = PRIOR@var.nam
                                                        thin = 5) 
 
 # set starting.values 
-mcmc.test = run.mcmc.with.cache(control = control,
-                                n.iter = 10000,
-                                starting.values = params.start.values, 
-                                update.frequency = 5,
-                                cache.frequency = 200,
-                                cache.dir = file.path("mcmc_cache",convert_string(LOCATION))
+mcmc = run.mcmc.with.cache(control = control,
+                           n.iter = 10000,
+                           starting.values = PARAMS.START.VALUES, 
+                           update.frequency = 5,
+                           cache.frequency = 200,
+                           cache.dir = file.path("mcmc_cache",convert_string(LOCATION))
 )
 
-# mcmc.test = run.mcmc.from.cache(dir="mcmc_cache",
+# mcmc = run.mcmc.from.cache(dir="mcmc_cache",
 #                            update.frequency = 5)
 
 
 # run.mcmc.from.cache(dir = "mcmc_cache/")
 
-save(mcmc.test,file=paste0("mcmc_runs/mcmc_test_",convert_string(LOCATION),"_",Sys.Date(),".Rdata"))
+save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_",Sys.Date(),".Rdata"))
 
-simset.test = extract.simset(mcmc.test,
-                             additional.burn=200,
-                             additional.thin=20)
+simset = extract.simset(mcmc,
+                        additional.burn=200,
+                        additional.thin=20)
 
-save(simset.test,file=paste0("mcmc_runs/simset.test_",convert_string(LOCATION),"_",Sys.Date(),".Rdata"))
+save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_",Sys.Date(),".Rdata"))

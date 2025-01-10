@@ -9,20 +9,26 @@ source("model/run_systematic.R")
 # 
 # save(simset.test,file=paste0("mcmc_runs/simset.test_",LOCATION.FOR.SAVING,"_",Sys.Date(),".Rdata"))
 
-#load("mcmc_runs/simset.test_south_africa_2024-12-31.Rdata")
-#load("mcmc_runs/simset.test_france_2025-01-01.Rdata")
-load("mcmc_runs/simset.test_kenya_2024-12-31.Rdata")
+load("mcmc_runs/simset_south_africa_2025-01-09.Rdata")
+load("mcmc_runs/simset_france_2025-01-10.Rdata")
+load("mcmc_runs/simset_kenya_2025-01-09.Rdata")
 
-simplot(simset.test,  
+simplot(#simset.kenya,
+        #simset.sa,
+        simset.france,
+        # simset.old,
+        # simset.new,
         years = 1980:2030, 
         show.individual.sims = F)
 
-simplot(simset.test,  
+simplot(simset.test, #@simulations[[simset.test@n.sim]],
         years = 1980:2030, 
         data.types = "population",
         show.individual.sims = F)
 
-simplot(simset.test,  
+simplot(simset.test, #@simulations[[simset.test@n.sim]],
+        # simset.old@simulations[[simset.old@n.sim]],
+        # simset.new@simulations[[simset.new@n.sim]],
         years = 1980:2030, 
         data.types = "population",
         facet.by='age', 
@@ -60,28 +66,68 @@ simplot(simset.test,
         data.types='hiv.mortality', 
         show.individual.sims = F)
 
-simplot(simset.test, 
+simplot(simset.test, #@simulations[[simset.test@n.sim]],  
+        # simset.old,
+        # simset.new, 
         years=1980:2030, 
         data.types='total.mortality', 
         show.individual.sims = F)
 
+simplot(simset.test, #@simulations[[simset.test@n.sim]],
+        #simset.old@simulations[[simset.old@n.sim]],
+        #simset.new@simulations[[simset.new@n.sim]],
+        years=1980:2030, 
+        facet.by=c('age'), 
+        #sexes = "male",
+        data.types='total.mortality', 
+        show.individual.sims = F)
+
+simplot(simset.test, 
+        years=1980:2020, 
+        #facet.by=c('age','sex'), 
+        data.types='engagement', 
+        proportion=T,
+        show.individual.sims = F)
+
+simplot(simset.test, 
+        years=1980:2020, 
+        facet.by=c('age','sex'),
+        # ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='suppression', 
+        proportion=T,
+        show.individual.sims = F)
+
+
+# THESE PLOTS DON'T WORK
 simplot(simset.test, 
         years=1980:2030, 
         facet.by=c('age'), 
-        data.types='total.mortality', 
+        data.types='hiv.mortality', 
+        proportion = T,
         show.individual.sims = F)
 
-simplot(simset.no.int.28.sampled, sub.simset, years=1980:2020, facet.by='age', data.types='hiv.mortality',proportion = T, show.individual.sims = F)
-simplot(simset.29.sampled, years=2010:2040, data.types=c('awareness',"engagement","suppression"), proportion=T, show.individual.sims = F)
-simplot(simset.no.int.28.sampled, sub.simset, years=2010:2040, data.types=c('awareness',"engagement","suppression"), facet.by=c('age','sex'), proportion=T, show.individual.sims = F)
-simplot(simset.30.sampled, years=1980:2040, data.types='awareness', proportion=T)
-simplot(simset.29.sampled, years=1980:2040, facet.by=c('age','sex'), data.types='awareness', proportion=T)
-simplot(simset.29.sampled, years=1980:2040, facet.by=c('age','sex'), data.types='awareness', proportion=T, show.individual.sims = F)
+simplot(simset.test,
+        years=2010:2040, 
+        data.types=c('awareness',"engagement","suppression"), 
+        proportion=T, 
+        show.individual.sims = F)
 
-simplot(simset, years=1980:2020, facet.by=c('age','sex'), data.types='engagement', proportion=T)
-simplot(simset, years=1980:2020, facet.by=c('age','sex'), data.types='suppression', proportion=T)
+simplot(simset.test,
+        years=2010:2040, 
+        data.types=c('awareness',"engagement","suppression"), 
+        facet.by=c('age','sex'), 
+        proportion=T, 
+        show.individual.sims = F)
 
-simplot(simset.no.int.28.sampled, sub.simset, years=1980:2040, facet.by='age', data.types='population', show.individual.sims = F)
-simplot(simset.no.int.23, years=1980:2030, facet.by='age', data.types='population', 
-        ages = c("60-64","65-69","70-74","75-79","80 and over"), show.individual.sims = F)
+simplot(simset.test, 
+        years=1980:2040, 
+        data.types='awareness', 
+        proportion=T)
+simplot(simset.test, 
+        years=1980:2040, 
+        facet.by=c('age','sex'), 
+        data.types='awareness', 
+        proportion=T, 
+        show.individual.sims = F)
+
 

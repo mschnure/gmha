@@ -3,8 +3,14 @@
 # PRIOR is set to country-specific prior in prior_distributions.R
 
 # loads params.start.values object 
-load("calibration/starting_values/starting_values_03-27.Rdata") 
-PARAMS.START.VALUES = params.start.values
+load("calibration/starting_values/2025_01_10_kenya_start_values.Rdata") 
+PARAMS.START.VALUES.KENYA = params.start.values
+
+load("calibration/starting_values/2025_01_10_south_africa_start_values.Rdata") 
+PARAMS.START.VALUES.SOUTH.AFRICA = params.start.values
+
+load("calibration/starting_values/2025_01_10_france_start_values.Rdata") 
+PARAMS.START.VALUES.FRANCE = params.start.values
 
 TRANSFORMATIONS = unlist(sapply(PRIOR@subdistributions,function(dist){
     
