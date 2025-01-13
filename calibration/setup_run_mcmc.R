@@ -5,7 +5,7 @@ source("model/run_systematic.R")
 
 set.seed(4321) # all runs so far with seed 4321
 
-LOCATION = "Kenya" 
+LOCATION = "France" 
 
 LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION)
 

@@ -15,18 +15,18 @@ load("mcmc_runs/simset_kenya_2025-01-09.Rdata")
 
 simplot(#simset.kenya,
         #simset.sa,
-        simset.france,
+        simset,
         # simset.old,
         # simset.new,
         years = 1980:2030, 
         show.individual.sims = F)
 
-simplot(simset.test, #@simulations[[simset.test@n.sim]],
+simplot(simset, #@simulations[[simset@n.sim]],
         years = 1980:2030, 
         data.types = "population",
         show.individual.sims = F)
 
-simplot(simset.test, #@simulations[[simset.test@n.sim]],
+simplot(simset, #@simulations[[simset@n.sim]],
         # simset.old@simulations[[simset.old@n.sim]],
         # simset.new@simulations[[simset.new@n.sim]],
         years = 1980:2030, 
@@ -34,46 +34,46 @@ simplot(simset.test, #@simulations[[simset.test@n.sim]],
         facet.by='age', 
         show.individual.sims = F)
 
-simplot(simset.test, 
+simplot(simset, 
         years=1980:2030, 
         facet.by='age', 
         data.types='incidence', 
         show.individual.sims = F)
 
-simplot(simset.test, 
+simplot(simset, 
         years=1980:2030, 
         facet.by='age', 
         data.types='prevalence', 
         show.individual.sims = F)
 
-simplot(simset.test, 
+simplot(simset, 
         years=1980:2030, 
         facet.by=c('age',"sex"), 
         ages = "15+", 
         data.types='prevalence', 
         show.individual.sims = F)
 
-simplot(simset.test, 
+simplot(simset, 
         years=1980:2030, 
         facet.by=c('age',"sex"), 
         ages = "15+", 
         data.types='incidence', 
         show.individual.sims = F)
 
-simplot(simset.test, 
+simplot(simset, 
         years=1980:2030, 
         facet.by=c('age'), 
         data.types='hiv.mortality', 
         show.individual.sims = F)
 
-simplot(simset.test, #@simulations[[simset.test@n.sim]],  
+simplot(simset, #@simulations[[simset@n.sim]],  
         # simset.old,
         # simset.new, 
         years=1980:2030, 
         data.types='total.mortality', 
         show.individual.sims = F)
 
-simplot(simset.test, #@simulations[[simset.test@n.sim]],
+simplot(simset, #@simulations[[simset@n.sim]],
         #simset.old@simulations[[simset.old@n.sim]],
         #simset.new@simulations[[simset.new@n.sim]],
         years=1980:2030, 
@@ -82,14 +82,14 @@ simplot(simset.test, #@simulations[[simset.test@n.sim]],
         data.types='total.mortality', 
         show.individual.sims = F)
 
-simplot(simset.test, 
+simplot(simset, 
         years=1980:2020, 
         #facet.by=c('age','sex'), 
         data.types='engagement', 
         proportion=T,
         show.individual.sims = F)
 
-simplot(simset.test, 
+simplot(simset, 
         years=1980:2020, 
         facet.by=c('age','sex'),
         # ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
