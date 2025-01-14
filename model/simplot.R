@@ -287,6 +287,7 @@ simplot = function(...,
                 geom_ribbon(data = df.sim, aes(x = year, ymin = lower, ymax = upper, fill = sim.id),alpha = 0.3) + 
                 geom_line(data = df.sim, aes(x = year, y = value, color = sim.id, group = group.id)) +
                 geom_point(data = df.truth, aes(x = year, y = value, color = sim.id, group = group.id, shape = split)) +
+                ggtitle(location) + 
                 facet_wrap(facet_formula, scales = "free_y") + 
                 ylim(0,NA)
         }
@@ -324,6 +325,7 @@ simplot = function(...,
                 geom_ribbon(data = df.sim, aes(x = year, ymin = lower, ymax = upper, fill = sim.id),alpha = 0.3) + 
                 geom_line(data = df.sim, aes(x = year, y = value, color = sim.id, group = group.id)) +
                 geom_point(data = df.truth, aes(x = year, y = value, color = sim.id, group = group.id, shape = split)) +
+                ggtitle(location) + 
                 facet_wrap(facet_formula, scales = "free_y") + 
                 ylim(0,NA)
         }
@@ -332,7 +334,7 @@ simplot = function(...,
     
 
     
-    suppressWarnings(print(plot + ggtitle(location)))
+    suppressWarnings(print(plot))
     
 }
 
