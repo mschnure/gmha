@@ -37,12 +37,14 @@ simplot(simset, #@simulations[[simset@n.sim]],
 simplot(simset, 
         years=1980:2030, 
         facet.by='age', 
+        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='incidence', 
         show.individual.sims = F)
 
 simplot(simset, 
         years=1980:2030, 
         facet.by='age', 
+        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='prevalence', 
         show.individual.sims = F)
 

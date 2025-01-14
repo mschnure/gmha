@@ -1,3 +1,49 @@
+### 1/14 scratch 
+
+load("~/Library/CloudStorage/Dropbox/Documents_local/Hopkins/PhD/Dissertation/ABM/kenya_hivncd/cached/all.results_2023-04-12.Rdata")
+simset.old = simset.list.full$no.int
+
+sim.old = simset.list.full$no.int@simulations[[simset.list.full$no.int@n.sim]]
+sim.old$location = "Kenya"
+full.results.array.old = full.results.array
+
+full.results.array.old[,,,,c(1:101),] = full.results.array.old[,,,,c(102),] # if I do this, the plot is similarly weird
+
+load("~/Library/CloudStorage/Dropbox/Documents_local/Hopkins/SOM_Job/3_Aging_multimorbidity/gmha/cached/all.results_kenya_2025-01-13.Rdata")
+sim.new = simset.list.full$no.int@simulations[[simset.list.full$no.int@n.sim]]
+full.results.array.new = full.results.array
+
+full.results.array.new.short = generate.full.results.array(simset.list = simset.list.full) # thinned to two sims
+
+simplot(sim.old, sim.new,
+        years=1980:2040, 
+        facet.by='age', 
+        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='prevalence', 
+        show.individual.sims = F) + geom_vline(xintercept = 2025, linetype="dashed",alpha=0.5) 
+
+generate.age.distribution(full.results.array.new.short, 
+                          outcome="prevalence", 
+                          intervention.1 = "no.int",year.1="2025",
+                          intervention.2 = "no.int",year.2="2040",
+                          intervention.3 = "no.int",year.3="2040",
+                          percent=F,
+                          sexes = c("female","male"),
+                          plot.limits=c(0,200000)) +  # 200000 for kenya; 1000000 for south africa 
+    scale_fill_manual(labels = c("no.int/2025" = "2025",
+                                 "no.int/2040" = "Status quo, 2040",
+                                 "no.int/2040" = "Full intervention, 2040"), 
+                      values=alpha(c("no.int/2025" = pal[1],
+                                     "no.int/2040" = pal[2],
+                                     "no.int/2040" = pal[3]),alpha), # change legend and color scheme  
+                      name=NULL) +
+    theme(text = element_text(size = 20),
+          axis.title.y = element_text(colour = "grey37"))+
+    labs(title = NULL,subtitle = NULL) +
+    ylab(label = "Number of people living with HIV")+
+    guides(x =  guide_axis(angle = 45))
+
+
 ### 1/10 scratch 
 
 params = simset@parameters[simset@n.sim,] 
