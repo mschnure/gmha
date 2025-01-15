@@ -4,6 +4,8 @@
 # multiple sexual partners, figure 3.8
 # condom use last sex, figure 3.10
 
+## HI Allison!
+
 # @Allison: Just to orient yourself to what you are building below, run this line:
 data = data.frame(
     ages = c("15-24","25-49","50+"),
