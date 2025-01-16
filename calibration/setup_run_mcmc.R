@@ -5,7 +5,7 @@ source("model/run_systematic.R")
 
 set.seed(4321) # all runs so far with seed 4321
 
-LOCATION = "Kenya" 
+LOCATION = "France" 
 
 LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION)
 
@@ -17,7 +17,7 @@ control = create.adaptive.blockwise.metropolis.control(var.names = LOCATION.DETA
                                                        transformations = LOCATION.DETAILS$transformations,
                                                        initial.covariance.mat = diag((LOCATION.DETAILS$sds/20)^2), # step size
                                                        burn = 0,
-                                                       thin = 5) 
+                                                       thin = 5)
 
 
 print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION)))
@@ -25,14 +25,14 @@ print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION)))
 # set starting.values 
 mcmc = run.mcmc.with.cache(control = control,
                            n.iter = 30000,
-                           starting.values = LOCATION.DETAILS$params.start.values, 
+                           starting.values = LOCATION.DETAILS$params.start.values,
                            update.frequency = 100,
                            cache.frequency = 200,
                            cache.dir = file.path("mcmc_cache",convert_string(LOCATION))
 )
 
-# mcmc = run.mcmc.from.cache(dir="mcmc_cache",
-#                            update.frequency = 5)
+# mcmc = run.mcmc.from.cache(dir=paste0("mcmc_cache/",convert_string(LOCATION)),
+#                            update.frequency = 100)
 
 
 # run.mcmc.from.cache(dir = "mcmc_cache/")
