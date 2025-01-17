@@ -1,14 +1,15 @@
-#####################################################
-# Description: Code to run interventions on simset.29 
-#####################################################
+##############################################
+# Description: Code to run future projections
+##############################################
 
 source("model/run_systematic.R")
 source("future_projections/extract_projection_results.R")
-load("~/Dropbox/Documents_local/Hopkins/SOM_Job/3_Aging_multimorbidity/gmha/mcmc_runs/mcmc_files/mcmc_kenya_2025-01-13.Rdata")
+#load("mcmc_runs/mcmc_files/mcmc_kenya_2025-01-13.Rdata")
+#load("mcmc_runs/mcmc_files/mcmc_kenya_2025-01-16.Rdata")
 
-simset = suppressWarnings(extract.simset(mcmc,
-                                         additional.burn=500,
-                                         additional.thin=20))
+# simset = suppressWarnings(extract.simset(mcmc,
+#                                          additional.burn=500,
+#                                          additional.thin=20))
 
 # simset = suppressWarnings(extract.simset(mcmc,
 #                                          additional.burn=5998,
@@ -16,6 +17,9 @@ simset = suppressWarnings(extract.simset(mcmc,
 
 #load("mcmc_runs/simset_kenya_2025-01-13.Rdata")
 #load("mcmc_runs/simset_south_africa_2025-01-13.Rdata")
+#load("mcmc_runs/simset_kenya_2025-01-16.Rdata")
+load("mcmc_runs/simset_south_africa_2025-01-15.Rdata")
+#load("mcmc_runs/simset_france_2025-01-15.Rdata")
 
 RUN.SIMULATIONS.TO.YEAR = 2040
 print("running no.int")
