@@ -24,7 +24,7 @@ print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION)))
 
 # set starting.values 
 mcmc = run.mcmc.with.cache(control = control,
-                           n.iter = 30000,
+                           n.iter = 50000,
                            starting.values = LOCATION.DETAILS$params.start.values,
                            update.frequency = 100,
                            cache.frequency = 200,
