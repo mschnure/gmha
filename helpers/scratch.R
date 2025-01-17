@@ -1,3 +1,22 @@
+### 1/17 
+params.bad = simset.kenya@parameters[simset.kenya@n.sim,]
+params.bad.new = params.bad
+params.bad.new["over.50.aging.factor"] = 1
+
+cbind(params.bad,params.bad.new)
+
+sim.test.kenya = run.model.for.parameters(location="Kenya",variable.parameters = params.bad.new)
+
+simplot(sim.test.kenya,simset.kenya@simulations[[simset.kenya@n.sim]],
+        years=1980:2030, 
+        facet.by='age', 
+        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='prevalence', 
+        show.individual.sims = F)
+
+
+
+
 ### 1/14 scratch 
 
 load("~/Library/CloudStorage/Dropbox/Documents_local/Hopkins/PhD/Dissertation/ABM/kenya_hivncd/cached/all.results_2023-04-12.Rdata")

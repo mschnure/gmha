@@ -1,14 +1,50 @@
+library("RColorBrewer")
 source("model/run_systematic.R")
 source("future_projections/extract_projection_results.R")
 
-load("mcmc_runs/simset_south_africa_2025-01-13.Rdata")
+load("mcmc_runs/simset_south_africa_2025-01-15.Rdata")
 simset.south.africa = simset
+load("cached/all.results_south_africa_2025-01-16.Rdata")
+simset.south.africa.projected = simset.list.full$no.int
+results.array.south.africa = full.results.array
 
-load("mcmc_runs/simset_france_2025-01-13.Rdata")
+load("mcmc_runs/simset_france_2025-01-15.Rdata")
 simset.france = simset
 
-load("mcmc_runs/simset_kenya_2025-01-13.Rdata")
+load("mcmc_runs/simset_kenya_2025-01-16.Rdata")
 simset.kenya = simset
+load("cached/all.results_kenya_2025-01-16.Rdata")
+simset.kenya.projected = simset.list.full$no.int
+results.array.kenya = full.results.array
+
+pal = c(brewer.pal(n=12,"Paired")[2],brewer.pal(n=12,"Paired")[5],brewer.pal(n=12,"Paired")[4]) # use ALPHA = 0.8
+alpha = 0.8
+
+generate.age.distribution(results.array.kenya, 
+                          outcome="prevalence", 
+                          intervention.1 = "no.int",year.1="2025",
+                          intervention.2 = "no.int",year.2="2040",
+                          intervention.3 = "no.int",year.3="2040",
+                          percent=F,sexes = c("female","male"),plot.limits=c(0,200000)) +  # 200000 for kenya; 1000000 for south africa 
+    scale_fill_manual(labels = c("no.int/2025" = "2025","no.int/2040" = "Status quo, 2040","no.int/2040" = "Status quo, 2040"), 
+                      values=alpha(c("no.int/2025" = pal[1],"no.int/2040" = pal[2],"no.int/2040" = pal[3]),alpha), name=NULL) +
+    theme(text = element_text(size = 20),axis.title.y = element_text(colour = "grey37"))+labs(title = NULL,subtitle = NULL) +ylab(label = "Number of people living with HIV")+guides(x =  guide_axis(angle = 45))
+
+simplot(simset.south.kenya@simulations[[1]],
+        #simset.kenya.projected,
+        years=1980:2030, 
+        facet.by='age', 
+        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='prevalence', 
+        show.individual.sims = F) #+ geom_vline(xintercept = 2025, linetype="dashed",alpha=0.5) 
+
+
+simplot(simset.kenya.projected,
+        years=1980:2040, 
+        facet.by='age', 
+        #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='prevalence', 
+        show.individual.sims = F) + geom_vline(xintercept = 2025, linetype="dashed",alpha=0.5) 
 
 
 simplot(simset.kenya,
@@ -41,12 +77,26 @@ simplot(simset.kenya,
         data.types='incidence', 
         show.individual.sims = F)
 
+simplot(simset.kenya, 
+        years=1980:2030, 
+        facet.by='age', 
+        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='incidence', 
+        show.individual.sims = F)
+
 simplot(simset.kenya,
         #simset.south.africa,
         #simset.france,
         years=1980:2030, 
         facet.by='age', 
         #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='prevalence', 
+        show.individual.sims = F)
+
+simplot(sim.test,
+        years=1980:2030, 
+        facet.by='age', 
+        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='prevalence', 
         show.individual.sims = F)
 
@@ -143,10 +193,10 @@ simplot(sim.last,
     facet_wrap(~age, scales = "free_y") + 
     ylim(0,NA)
 
-simplot(simset, 
+simplot(simset.south.africa, 
         years=1980:2030, 
         facet.by=c('age'), 
-        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='hiv.mortality', 
         show.individual.sims = F)
 
@@ -179,34 +229,5 @@ simset.list.new.tail = list(no.int = simset.new.tail.no.int)
 
 full.results.array.new.tail = generate.full.results.array(simset.list = simset.list.new.tail) # thinned to two sims
 
-pal = c(brewer.pal(n=12,"Paired")[2],brewer.pal(n=12,"Paired")[5],brewer.pal(n=12,"Paired")[4]) # use ALPHA = 0.8
-alpha = 0.8
-# full.results.array.new, full.results.array.new.tail, full.results.array.old
-generate.age.distribution(full.results.array.new, 
-                          outcome="prevalence", 
-                          intervention.1 = "no.int",year.1="2025",
-                          intervention.2 = "no.int",year.2="2040",
-                          intervention.3 = "no.int",year.3="2040",
-                          percent=F,
-                          sexes = c("female","male"),
-                          plot.limits=c(0,200000)) +  # 200000 for kenya; 1000000 for south africa 
-    scale_fill_manual(labels = c("no.int/2025" = "2025",
-                                 "no.int/2040" = "Status quo, 2040",
-                                 "no.int/2040" = "Full intervention, 2040"), 
-                      values=alpha(c("no.int/2025" = pal[1],
-                                     "no.int/2040" = pal[2],
-                                     "no.int/2040" = pal[3]),alpha), # change legend and color scheme  
-                      name=NULL) +
-    theme(text = element_text(size = 20),
-          axis.title.y = element_text(colour = "grey37"))+
-    labs(title = NULL,subtitle = NULL) +
-    ylab(label = "Number of people living with HIV")+
-    guides(x =  guide_axis(angle = 45))
 
-simplot(sim.old, sim.new,
-        years=1980:2040, 
-        facet.by='age', 
-        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
-        data.types='prevalence', 
-        show.individual.sims = F) + geom_vline(xintercept = 2025, linetype="dashed",alpha=0.5) 
 
