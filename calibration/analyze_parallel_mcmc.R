@@ -26,7 +26,7 @@ simplot(simset, #@simulations[[simset@n.sim]],
         data.types = "population",
         show.individual.sims = F)
 
-simplot(simset, #@simulations[[simset@n.sim]],
+simplot(simset.france, #@simulations[[simset@n.sim]],
         # simset.old@simulations[[simset.old@n.sim]],
         # simset.new@simulations[[simset.new@n.sim]],
         years = 1980:2030, 
@@ -68,14 +68,14 @@ simplot(simset,
         data.types='hiv.mortality', 
         show.individual.sims = F)
 
-simplot(simset, #@simulations[[simset@n.sim]],  
+simplot(simset.france, #@simulations[[simset@n.sim]],  
         # simset.old,
         # simset.new, 
         years=1980:2030, 
         data.types='total.mortality', 
         show.individual.sims = F)
 
-simplot(simset, #@simulations[[simset@n.sim]],
+simplot(simset.france, #@simulations[[simset@n.sim]],
         #simset.old@simulations[[simset.old@n.sim]],
         #simset.new@simulations[[simset.new@n.sim]],
         years=1980:2030, 

@@ -165,7 +165,7 @@ get.default.parameters = function(location){
         age.15.to.19.aging.factor=2,
         age.20.to.24.aging.factor=2,
         age.25.to.50.aging.factor=2,
-        over.50.aging.factor=2
+        over.50.aging.factor=1 # changed 1/17/25 from 2 (doesn't actually matter here; will be overwritten by prior)
     ) 
 }
 

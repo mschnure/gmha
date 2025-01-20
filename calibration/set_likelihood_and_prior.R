@@ -9,7 +9,7 @@ set.likelihood.and.prior.by.location = function(location){
                                       location="Kenya")
         prior = KENYA.PRIOR
         
-        load("calibration/starting_values/2025_01_14_kenya_start_values.Rdata") 
+        load("calibration/starting_values/2025_01_17_kenya_start_values.Rdata") 
         params.start.values = params.start.values
         
     } else if(location=="South Africa"){
@@ -17,7 +17,7 @@ set.likelihood.and.prior.by.location = function(location){
                                              location="South Africa")
         prior = SOUTH.AFRICA.PRIOR
         
-        load("calibration/starting_values/2025_01_14_south_africa_start_values.Rdata") 
+        load("calibration/starting_values/2025_01_17_south_africa_start_values.Rdata") 
         params.start.values = params.start.values
         
     } else if(location=="France"){
@@ -26,7 +26,7 @@ set.likelihood.and.prior.by.location = function(location){
         
         prior = FRANCE.PRIOR
         
-        load("calibration/starting_values/2025_01_14_france_start_values.Rdata") 
+        load("calibration/starting_values/2025_01_17_france_start_values.Rdata") 
         params.start.values = params.start.values
         
     } else stop("Only set up for Kenya, South Africa, and France for now")

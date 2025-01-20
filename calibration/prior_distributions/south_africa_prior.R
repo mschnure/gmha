@@ -108,6 +108,6 @@ SOUTH.AFRICA.PRIOR = join.distributions(
     age.15.to.19.aging.factor=Lognormal.Distribution(log(2), log(4)/2),
     age.20.to.24.aging.factor=Lognormal.Distribution(log(2), log(4)/2),
     age.25.to.50.aging.factor=Lognormal.Distribution(log(2), log(4)/2),
-    over.50.aging.factor=Lognormal.Distribution(log(2), log(4)/2)
+    over.50.aging.factor=Lognormal.Distribution(log(1), log(2)/2) # changed 1/17/25 from log(2), log(4)/2
     
 )

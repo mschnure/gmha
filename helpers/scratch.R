@@ -1,3 +1,22 @@
+### 1/17 
+params.bad = simset.kenya@parameters[simset.kenya@n.sim,]
+params.bad.new = params.bad
+params.bad.new["over.50.aging.factor"] = 1
+
+cbind(params.bad,params.bad.new)
+
+sim.test.kenya = run.model.for.parameters(location="Kenya",variable.parameters = params.bad.new)
+
+simplot(sim.test.kenya,simset.kenya@simulations[[simset.kenya@n.sim]],
+        years=1980:2030, 
+        facet.by='age', 
+        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='prevalence', 
+        show.individual.sims = F)
+
+
+
+
 ### 1/14 scratch 
 
 load("~/Library/CloudStorage/Dropbox/Documents_local/Hopkins/PhD/Dissertation/ABM/kenya_hivncd/cached/all.results_2023-04-12.Rdata")
@@ -50,7 +69,7 @@ params = simset@parameters[simset@n.sim,]
 
 ### 1/9 scratch 
 
-sim.last = simset.test@simulations[[simset.test@n.sim]]
+sim.last = simset@simulations[[simset@n.sim]]
 
 total.mort.sim = extract.data(sim.last,
                               data.type = "total.mortality",
@@ -60,6 +79,11 @@ non.hiv.mort.sim = extract.data(sim.last,
                               data.type = "non.hiv.mortality",
                               years = c(1980:2023),
                               keep.dimensions = c("year","age"))
+
+hiv.mort.sim = extract.data(sim.last,
+                                data.type = "hiv.mortality",
+                                years = c(1980:2023),
+                                keep.dimensions = c("year","age"))
 
 total.mort.data = get.surveillance.data(DATA.MANAGER,
                                         data.type = "total.mortality",
@@ -82,18 +106,38 @@ diff = total.mort.data - total.mort.sim
 diff.of.mort.data = (diff/total.mort.data)*100
 diff.of.pop.data = (diff/pop.data)*100
 
-
 plot.df.non.hiv.mort = melt(non.hiv.mort.sim)
+plot.df.hiv.mort = melt(hiv.mort.sim)
 
+## TO SHOW PARASTU 
 simplot(sim.last,
     years=1980:2030, 
     facet.by=c('age'), 
     data.types='total.mortality', 
     show.individual.sims = F) + 
     geom_line(data = plot.df.non.hiv.mort, aes(x = year, y = value)) +
+    #geom_line(data = plot.df.hiv.mort, aes(x = year, y = value)) +
     facet_wrap(~age, scales = "free_y") + 
     ylim(0,NA)
 
+simplot(simset, 
+        years=1980:2030, 
+        facet.by=c('age'), 
+        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='hiv.mortality', 
+        show.individual.sims = F)
+
+simplot(simset, 
+        years=1980:2030, 
+        facet.by=c('age'), 
+        data.types='hiv.mortality', 
+        show.individual.sims = F)
+
+simplot(simset, 
+        years = 1980:2030, 
+        data.types = "population",
+        facet.by='age', 
+        show.individual.sims = F)
 
 which(sim.last$parameters$time.varying.parameters$NON.HIV.MORTALITY.RATES$times==2005) # 56
 which(sim.last$parameters$time.varying.parameters$NON.HIV.MORTALITY.RATES$times==2010) # 61
