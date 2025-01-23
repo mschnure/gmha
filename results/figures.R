@@ -16,8 +16,8 @@ library("ggsci")
 
 # load these results if I already ran the interventions 
 source("model/run_systematic.R")
-#load("cached/all.results_kenya_2025-01-13.Rdata")
-#load("cached/all.results_south_africa_2025-01-13.Rdata")
+#load("cached/all.results_kenya_2025-01-21.Rdata")
+load("cached/all.results_south_africa_2025-01-21.Rdata")
 simset.no.int = simset.list.full$no.int    
 
 calibration.plot.years = 2000:2020
@@ -32,7 +32,6 @@ alpha = 0.8
 ##--------------------##
 
 ## FIGURE 3
-jpeg(file=paste0("results/new_for_manuscript/Figure3.jpeg"), width = 2000,height = 1500,res=200)
 generate.age.distribution(full.results.array, 
                           outcome="prevalence", 
                           intervention.1 = "no.int",year.1="2025",
@@ -53,12 +52,10 @@ generate.age.distribution(full.results.array,
     labs(title = NULL,subtitle = NULL) +
     ylab(label = "Number of people living with HIV")+
     guides(x =  guide_axis(angle = 45))
-dev.off()
 
 
 
 # INCIDENCE
-jpeg(file=paste0("results/new_for_manuscript/Figure2.A.jpeg"), width = 2500,height = 1500,res=400)
 simplot(simset.no.int,
         data.types = "incidence",
         ages = c("All ages"),
@@ -80,7 +77,6 @@ simplot(simset.no.int,
                        values=c(calibration.colors,"black")) + 
     #scale_y_continuous(labels = label_number(suffix = "M", scale = 1e-6),name = NULL, limits = c(0,NA)) + # millions
     scale_y_continuous(labels = label_number(suffix = "K", scale = 1e-3),name = NULL, limits = c(0,NA)) #+ # thousands
-dev.off() 
 
 ### HAVEN'T UPDATED BEYOND HERE ### 
 
