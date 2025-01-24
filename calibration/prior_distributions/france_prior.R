@@ -76,15 +76,19 @@ FRANCE.PRIOR = join.distributions(
     male.suppression.multiplier = Lognormal.Distribution(log(1), log(4)/2),
     
     # mortality/fertility parameters 
-    age.45.to.65.mortality.intercept.multiplier.male = Lognormal.Distribution(log(1), log(4)/2),
-    age.45.to.65.mortality.slope.multiplier.male = Lognormal.Distribution(log(1), log(4)/2),
-    over.65.mortality.intercept.multiplier.male = Lognormal.Distribution(log(1), log(4)/2),
-    over.65.mortality.slope.multiplier.male = Lognormal.Distribution(log(1), log(4)/2),
+    age.45.to.64.mortality.intercept.multiplier.male = Lognormal.Distribution(log(1), log(4)/2),
+    age.45.to.64.mortality.slope.multiplier.male = Lognormal.Distribution(log(1), log(4)/2),
+    age.65.to.79.mortality.intercept.multiplier.male = Lognormal.Distribution(log(1), log(4)/2),
+    age.65.to.79.mortality.slope.multiplier.male = Lognormal.Distribution(log(1), log(4)/2),
+    over.80.mortality.intercept.multiplier.male = Lognormal.Distribution(log(1), log(4)/2),
+    over.80.mortality.slope.multiplier.male = Lognormal.Distribution(log(1), log(4)/2),
     
-    age.45.to.65.mortality.intercept.multiplier.female = Lognormal.Distribution(log(1), log(4)/2),
-    age.45.to.65.mortality.slope.multiplier.female = Lognormal.Distribution(log(1), log(4)/2),
-    over.65.mortality.intercept.multiplier.female = Lognormal.Distribution(log(1), log(4)/2),
-    over.65.mortality.slope.multiplier.female = Lognormal.Distribution(log(1), log(4)/2),
+    age.45.to.64.mortality.intercept.multiplier.female = Lognormal.Distribution(log(1), log(4)/2),
+    age.45.to.64.mortality.slope.multiplier.female = Lognormal.Distribution(log(1), log(4)/2),
+    age.65.to.79.mortality.intercept.multiplier.female = Lognormal.Distribution(log(1), log(4)/2),
+    age.65.to.79.mortality.slope.multiplier.female = Lognormal.Distribution(log(1), log(4)/2),
+    over.80.mortality.intercept.multiplier.female = Lognormal.Distribution(log(1), log(4)/2),
+    over.80.mortality.slope.multiplier.female = Lognormal.Distribution(log(1), log(4)/2),
     
     hiv.specific.mortality.rates.0 = Lognormal.Distribution(log(0.04), log(4)/2),
     hiv.specific.mortality.rates.1 = Lognormal.Distribution(log(0.07), log(4)/2),
@@ -94,7 +98,8 @@ FRANCE.PRIOR = join.distributions(
     male.hiv.mortality.multiplier.1 = Lognormal.Distribution(log(1), log(4)/2),
     male.hiv.mortality.multiplier.2 = Lognormal.Distribution(log(1), log(4)/2),
     
-    age.0.to.14.hiv.mortality.multiplier.0 = Lognormal.Distribution(log(1), log(4)/2),
+    age.0.to.4.hiv.mortality.multiplier.0 = Lognormal.Distribution(log(1), log(4)/2),
+    age.5.to.14.hiv.mortality.multiplier.0 = Lognormal.Distribution(log(1), log(4)/2),
     age.0.to.14.hiv.mortality.multiplier.1 = Lognormal.Distribution(log(1), log(4)/2),
     age.0.to.14.hiv.mortality.multiplier.2 = Lognormal.Distribution(log(1), log(4)/2),
     
