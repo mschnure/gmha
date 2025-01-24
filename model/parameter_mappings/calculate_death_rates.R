@@ -159,44 +159,62 @@ project.deaths = function(data.manager,
         rv
     })
     
-    age.45.to.65.age.brackets = get.age.brackets.in.range(lower = 45, 
+    age.45.to.64.age.brackets = get.age.brackets.in.range(lower = 45, 
                                                           upper = 65) 
-    over.65.age.brackets = get.age.brackets.in.range(lower = 65, 
+    age.65.to.79.age.brackets = get.age.brackets.in.range(lower = 65, 
+                                                     upper = 80) 
+    over.80.age.brackets = get.age.brackets.in.range(lower = 80, 
                                                      upper = Inf) 
     
     ## Add log multipliers, male
-    mortality.intercepts.slopes.age.sex["intercept",age.45.to.65.age.brackets,"male"] = 
-        mortality.intercepts.slopes.age.sex["intercept",age.45.to.65.age.brackets,"male"] +
-        log(sampled.parameters['age.45.to.65.mortality.intercept.multiplier.male'])
+    mortality.intercepts.slopes.age.sex["intercept",age.45.to.64.age.brackets,"male"] = 
+        mortality.intercepts.slopes.age.sex["intercept",age.45.to.64.age.brackets,"male"] +
+        log(sampled.parameters['age.45.to.64.mortality.intercept.multiplier.male'])
     
-    mortality.intercepts.slopes.age.sex["slope",age.45.to.65.age.brackets,"male"] = 
-        mortality.intercepts.slopes.age.sex["slope",age.45.to.65.age.brackets,"male"] +
-        log(sampled.parameters['age.45.to.65.mortality.slope.multiplier.male'])
+    mortality.intercepts.slopes.age.sex["slope",age.45.to.64.age.brackets,"male"] = 
+        mortality.intercepts.slopes.age.sex["slope",age.45.to.64.age.brackets,"male"] +
+        log(sampled.parameters['age.45.to.64.mortality.slope.multiplier.male'])
     
-    mortality.intercepts.slopes.age.sex["intercept",over.65.age.brackets,"male"] = 
-        mortality.intercepts.slopes.age.sex["intercept",over.65.age.brackets,"male"] +
-        log(sampled.parameters['over.65.mortality.intercept.multiplier.male'])
+    mortality.intercepts.slopes.age.sex["intercept",age.65.to.79.age.brackets,"male"] = 
+        mortality.intercepts.slopes.age.sex["intercept",age.65.to.79.age.brackets,"male"] +
+        log(sampled.parameters['age.65.to.79.mortality.intercept.multiplier.male'])
     
-    mortality.intercepts.slopes.age.sex["slope",over.65.age.brackets,"male"] = 
-        mortality.intercepts.slopes.age.sex["slope",over.65.age.brackets,"male"] +
-        log(sampled.parameters['over.65.mortality.slope.multiplier.male'])
+    mortality.intercepts.slopes.age.sex["slope",age.65.to.79.age.brackets,"male"] = 
+        mortality.intercepts.slopes.age.sex["slope",age.65.to.79.age.brackets,"male"] +
+        log(sampled.parameters['age.65.to.79.mortality.slope.multiplier.male'])
+    
+    mortality.intercepts.slopes.age.sex["intercept",over.80.age.brackets,"male"] = 
+        mortality.intercepts.slopes.age.sex["intercept",over.80.age.brackets,"male"] +
+        log(sampled.parameters['over.80.mortality.intercept.multiplier.male'])
+    
+    mortality.intercepts.slopes.age.sex["slope",over.80.age.brackets,"male"] = 
+        mortality.intercepts.slopes.age.sex["slope",over.80.age.brackets,"male"] +
+        log(sampled.parameters['over.80.mortality.slope.multiplier.male'])
     
     ## Add log multipliers, female
-    mortality.intercepts.slopes.age.sex["intercept",age.45.to.65.age.brackets,"female"] = 
-        mortality.intercepts.slopes.age.sex["intercept",age.45.to.65.age.brackets,"female"] +
-        log(sampled.parameters['age.45.to.65.mortality.intercept.multiplier.female'])
+    mortality.intercepts.slopes.age.sex["intercept",age.45.to.64.age.brackets,"female"] = 
+        mortality.intercepts.slopes.age.sex["intercept",age.45.to.64.age.brackets,"female"] +
+        log(sampled.parameters['age.45.to.64.mortality.intercept.multiplier.female'])
 
-    mortality.intercepts.slopes.age.sex["slope",age.45.to.65.age.brackets,"female"] = 
-        mortality.intercepts.slopes.age.sex["slope",age.45.to.65.age.brackets,"female"] +
-        log(sampled.parameters['age.45.to.65.mortality.slope.multiplier.female'])
+    mortality.intercepts.slopes.age.sex["slope",age.45.to.64.age.brackets,"female"] = 
+        mortality.intercepts.slopes.age.sex["slope",age.45.to.64.age.brackets,"female"] +
+        log(sampled.parameters['age.45.to.64.mortality.slope.multiplier.female'])
 
-    mortality.intercepts.slopes.age.sex["intercept",over.65.age.brackets,"female"] = 
-        mortality.intercepts.slopes.age.sex["intercept",over.65.age.brackets,"female"] +
-        log(sampled.parameters['over.65.mortality.intercept.multiplier.female'])
+    mortality.intercepts.slopes.age.sex["intercept",age.65.to.79.age.brackets,"female"] = 
+        mortality.intercepts.slopes.age.sex["intercept",age.65.to.79.age.brackets,"female"] +
+        log(sampled.parameters['age.65.to.79.mortality.intercept.multiplier.female'])
     
-    mortality.intercepts.slopes.age.sex["slope",over.65.age.brackets,"female"] = 
-        mortality.intercepts.slopes.age.sex["slope",over.65.age.brackets,"female"] +
-        log(sampled.parameters['over.65.mortality.slope.multiplier.female'])
+    mortality.intercepts.slopes.age.sex["slope",age.65.to.79.age.brackets,"female"] = 
+        mortality.intercepts.slopes.age.sex["slope",age.65.to.79.age.brackets,"female"] +
+        log(sampled.parameters['age.65.to.79.mortality.slope.multiplier.female'])
+    
+    mortality.intercepts.slopes.age.sex["intercept",over.80.age.brackets,"female"] = 
+        mortality.intercepts.slopes.age.sex["intercept",over.80.age.brackets,"female"] +
+        log(sampled.parameters['over.80.mortality.intercept.multiplier.female'])
+    
+    mortality.intercepts.slopes.age.sex["slope",over.80.age.brackets,"female"] = 
+        mortality.intercepts.slopes.age.sex["slope",over.80.age.brackets,"female"] +
+        log(sampled.parameters['over.80.mortality.slope.multiplier.female'])
     
     # Smoothed non-HIV mortality: fit regression on desired years only (using mask above)
     smooth.deaths.age.sex = apply(mortality.intercepts.slopes.age.sex,c('age','sex'),function(intercept.slope){
@@ -214,9 +232,9 @@ project.deaths = function(data.manager,
 
 ## PLOTTING SUMMARIES OF PROJECTIONS 
 if(1==2){
-    LOCATION = "South Africa"
+    LOCATION = "Kenya"
     params = get.default.parameters(location = LOCATION)
-    #params["age.45.to.65.mortality.slope.multiplier"] = 1.02 # this helps hit male 45-65 in Kenya but messes up female 
+    #params["age.45.to.64.mortality.slope.multiplier"] = 1.02 # this helps hit male 45-65 in Kenya but messes up female 
     
     smoothed.deaths = project.deaths(data.manager = DATA.MANAGER,
                        location = LOCATION,
