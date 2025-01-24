@@ -9,9 +9,9 @@ source("model/run_systematic.R")
 # 
 # save(simset.test,file=paste0("mcmc_runs/simset.test_",LOCATION.FOR.SAVING,"_",Sys.Date(),".Rdata"))
 
-#load("mcmc_runs/simset_kenya_2025-01-19.Rdata")
+load("mcmc_runs/simset_kenya_2025-01-19.Rdata")
 #load("mcmc_runs/simset_south_africa_2025-01-21.Rdata")
-load("mcmc_runs/simset_france_2025-01-19.Rdata")
+#load("mcmc_runs/simset_france_2025-01-19.Rdata")
 
 
 simplot(simset,
@@ -46,6 +46,7 @@ simplot(simset,
 simplot(simset, 
         years=1980:2030, 
         facet.by=c('age'), 
+        #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='hiv.mortality', 
         show.individual.sims = F)
 
