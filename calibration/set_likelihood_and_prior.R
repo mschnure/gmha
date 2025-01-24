@@ -10,6 +10,7 @@ set.likelihood.and.prior.by.location = function(location){
         prior = KENYA.PRIOR
         
         params.start.values = get.default.parameters(location = "Kenya") # 1/24/25 - reverting to original prior values 
+        params.start.values = params.start.values[prior@var.names]
         # load("calibration/starting_values/2025_01_17_kenya_start_values.Rdata") 
         # params.start.values = params.start.values
         
@@ -19,6 +20,7 @@ set.likelihood.and.prior.by.location = function(location){
         prior = SOUTH.AFRICA.PRIOR
         
         params.start.values = get.default.parameters(location = "South Africa") # 1/24/25 - reverting to original prior values 
+        params.start.values = params.start.values[prior@var.names]
         # load("calibration/starting_values/2025_01_17_south_africa_start_values.Rdata") 
         # params.start.values = params.start.values
         
@@ -29,6 +31,7 @@ set.likelihood.and.prior.by.location = function(location){
         prior = FRANCE.PRIOR
         
         params.start.values = get.default.parameters(location = "France") # 1/24/25 - reverting to original prior values 
+        params.start.values = params.start.values[prior@var.names]
         # load("calibration/starting_values/2025_01_17_france_start_values.Rdata") 
         # params.start.values = params.start.values
         
