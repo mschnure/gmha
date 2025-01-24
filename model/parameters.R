@@ -133,10 +133,14 @@ get.default.parameters = function(location){
         
         ## Mortality/fertility parameters ##
         # multiplies intercept or slope before projecting
-        age.45.to.65.mortality.intercept.multiplier=1,
-        age.45.to.65.mortality.slope.multiplier=1,
-        over.65.mortality.intercept.multiplier=1, 
-        over.65.mortality.slope.multiplier=1, 
+        age.45.to.65.mortality.intercept.multiplier.male=1,
+        age.45.to.65.mortality.intercept.multiplier.female=1,
+        age.45.to.65.mortality.slope.multiplier.male=1,
+        age.45.to.65.mortality.slope.multiplier.female=1,
+        over.65.mortality.intercept.multiplier.male=1,
+        over.65.mortality.intercept.multiplier.female=1,
+        over.65.mortality.slope.multiplier.male=1, 
+        over.65.mortality.slope.multiplier.female=1, 
         hiv.mortality.time.0=1990,
         hiv.mortality.time.1=2005,
         hiv.mortality.time.2=2020,
