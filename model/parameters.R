@@ -9,9 +9,7 @@
 #     4. add.time.varying.parameter.value
 #     5. compute.time.varying.parameters
 # Other/helper functions 
-#     1. calculate.all.death.rates 
-#     2. get.initial.population 
-#     3. make.transmission.array
+#     1. make.transmission.array
 
 
 library(splines)
@@ -135,10 +133,23 @@ get.default.parameters = function(location){
         
         ## Mortality/fertility parameters ##
         # multiplies intercept or slope before projecting
-        age.45.to.65.mortality.intercept.multiplier=1,
-        age.45.to.65.mortality.slope.multiplier=1,
-        over.65.mortality.intercept.multiplier=1, 
-        over.65.mortality.slope.multiplier=1, 
+        # general mortality 
+        age.45.to.64.mortality.intercept.multiplier.male=1,
+        age.45.to.64.mortality.intercept.multiplier.female=1,
+        age.45.to.64.mortality.slope.multiplier.male=1,
+        age.45.to.64.mortality.slope.multiplier.female=1,
+        
+        age.65.to.79.mortality.intercept.multiplier.male=1,
+        age.65.to.79.mortality.intercept.multiplier.female=1,
+        age.65.to.79.mortality.slope.multiplier.male=1,
+        age.65.to.79.mortality.slope.multiplier.female=1,
+        
+        over.80.mortality.intercept.multiplier.male=1,
+        over.80.mortality.intercept.multiplier.female=1,
+        over.80.mortality.slope.multiplier.male=1, 
+        over.80.mortality.slope.multiplier.female=1, 
+        
+        # hiv mortality 
         hiv.mortality.time.0=1990,
         hiv.mortality.time.1=2005,
         hiv.mortality.time.2=2020,
@@ -148,7 +159,9 @@ get.default.parameters = function(location){
         male.hiv.mortality.multiplier.0=1,
         male.hiv.mortality.multiplier.1=1,
         male.hiv.mortality.multiplier.2=1,
-        age.0.to.14.hiv.mortality.multiplier.0=1,
+        
+        age.0.to.4.hiv.mortality.multiplier.0=1, # split youngest age group into 0-4, 5-14 at time 0 to allow for more child deaths
+        age.5.to.14.hiv.mortality.multiplier.0=1,
         age.0.to.14.hiv.mortality.multiplier.1=1,
         age.0.to.14.hiv.mortality.multiplier.2=1,
         age.15.to.24.hiv.mortality.multiplier.0=1,
@@ -331,6 +344,8 @@ map.model.parameters <- function(parameters,
     ## HIV MORTALITY ## 
     age.0.to.14.age.brackets = get.age.brackets.in.range(lower = 0, 
                                                          upper = 15) 
+    age.5.to.14.age.brackets = get.age.brackets.in.range(lower = 5, 
+                                                         upper = 15) 
     age.15.to.24.age.brackets = get.age.brackets.in.range(lower = 15, 
                                                          upper = 25) 
     over.50.age.brackets = get.age.brackets.in.range(lower = 50, 
@@ -355,6 +370,14 @@ map.model.parameters <- function(parameters,
     HIV.MORTALITY.RATES.2[,"male",,] = HIV.MORTALITY.RATES.2[,"male",,]*sampled.parameters["male.hiv.mortality.multiplier.2"]
     
     # Set up age- and time-specific HIV mortality multipliers 
+    HIV.MORTALITY.RATES.0["0-4",,,] = HIV.MORTALITY.RATES.0["0-4",,,]*sampled.parameters["age.0.to.4.hiv.mortality.multiplier.0"]
+    HIV.MORTALITY.RATES.0[age.5.to.14.age.brackets,,,] = HIV.MORTALITY.RATES.0[age.5.to.14.age.brackets,,,]*
+        sampled.parameters["age.5.to.14.hiv.mortality.multiplier.0"]
+    HIV.MORTALITY.RATES.1[age.0.to.14.age.brackets,,,] = HIV.MORTALITY.RATES.1[age.0.to.14.age.brackets,,,]*
+        sampled.parameters["age.0.to.14.hiv.mortality.multiplier.1"]
+    HIV.MORTALITY.RATES.2[age.0.to.14.age.brackets,,,] = HIV.MORTALITY.RATES.2[age.0.to.14.age.brackets,,,]*
+        sampled.parameters["age.0.to.14.hiv.mortality.multiplier.2"]
+    
     HIV.MORTALITY.RATES.0[age.15.to.24.age.brackets,,,] = HIV.MORTALITY.RATES.0[age.15.to.24.age.brackets,,,]*
         sampled.parameters["age.15.to.24.hiv.mortality.multiplier.0"]
     HIV.MORTALITY.RATES.1[age.15.to.24.age.brackets,,,] = HIV.MORTALITY.RATES.1[age.15.to.24.age.brackets,,,]*
@@ -368,13 +391,6 @@ map.model.parameters <- function(parameters,
         sampled.parameters["over.50.hiv.mortality.multiplier.1"]
     HIV.MORTALITY.RATES.2[over.50.age.brackets,,,] = HIV.MORTALITY.RATES.2[over.50.age.brackets,,,]*
         sampled.parameters["over.50.hiv.mortality.multiplier.2"]
-    
-    HIV.MORTALITY.RATES.0[age.0.to.14.age.brackets,,,] = HIV.MORTALITY.RATES.0[age.0.to.14.age.brackets,,,]*
-        sampled.parameters["age.0.to.14.hiv.mortality.multiplier.0"]
-    HIV.MORTALITY.RATES.1[age.0.to.14.age.brackets,,,] = HIV.MORTALITY.RATES.1[age.0.to.14.age.brackets,,,]*
-        sampled.parameters["age.0.to.14.hiv.mortality.multiplier.1"]
-    HIV.MORTALITY.RATES.2[age.0.to.14.age.brackets,,,] = HIV.MORTALITY.RATES.2[age.0.to.14.age.brackets,,,]*
-        sampled.parameters["age.0.to.14.hiv.mortality.multiplier.2"]
     
     parameters = add.time.varying.parameter.value(parameters,
                                                   parameter.name='HIV.MORTALITY.RATES',
@@ -391,57 +407,13 @@ map.model.parameters <- function(parameters,
     
     
     ## NON-HIV MORTALITY ## 
-    deaths.age.sex.location = calculate.all.death.rates(data.manager = DATA.MANAGER, 
-                                               location = location,
-                                               keep.dimensions = c('year','sex','age','location'), 
-                                               model.age.cutoffs = MODEL.AGE.CUTOFFS)
-    deaths.age.sex = deaths.age.sex.location[,,,location]
-    
-    #setting up code to smooth/project death rate into future 
-    anchor.year = 1980
-    years = as.numeric(dimnames(deaths.age.sex)$year) - anchor.year
-    years.label = as.numeric(dimnames(deaths.age.sex)$year) # for plotting
-    
-    project.years = (max(years)+1):(project.to.year-anchor.year)-max(years)
-    project.years = project.years[project.years%%5==0] # only including multiples of 5
-    desired.years = c(years,max(years)+project.years) # future years to predict
-    smoothed.years.label = desired.years + anchor.year # for plotting
-    mask = rep(T,length(years)) # use this to remove years
-    mask = years.label<1987 
-    
-    mortality.intercepts.slopes.age.sex = apply(deaths.age.sex,c('age','sex'),function(rates){
-        fit = lm(log(rates[mask]) ~ years[mask])
-        rv = fit$coefficients
-        names(rv) = c("intercept","slope")
-        rv
-    })
-
-    age.45.to.65.age.brackets = get.age.brackets.in.range(lower = 45, 
-                                                     upper = 65) 
-    over.65.age.brackets = get.age.brackets.in.range(lower = 65, 
-                                                     upper = Inf) 
-    
-    mortality.intercepts.slopes.age.sex["intercept",age.45.to.65.age.brackets,] = mortality.intercepts.slopes.age.sex["intercept",age.45.to.65.age.brackets,] +
-        log(sampled.parameters['age.45.to.65.mortality.intercept.multiplier'])
-    
-    mortality.intercepts.slopes.age.sex["slope",age.45.to.65.age.brackets,] = mortality.intercepts.slopes.age.sex["slope",age.45.to.65.age.brackets,] +
-        log(sampled.parameters['age.45.to.65.mortality.slope.multiplier'])
-    
-    mortality.intercepts.slopes.age.sex["intercept",over.65.age.brackets,] = mortality.intercepts.slopes.age.sex["intercept",over.65.age.brackets,] +
-        log(sampled.parameters['over.65.mortality.intercept.multiplier'])
-    
-    mortality.intercepts.slopes.age.sex["slope",over.65.age.brackets,] = mortality.intercepts.slopes.age.sex["slope",over.65.age.brackets,] +
-        log(sampled.parameters['over.65.mortality.slope.multiplier'])
-    
-    # Smoothed non-HIV mortality: fit regression on desired years only (using mask above)
-    smooth.deaths.age.sex = apply(mortality.intercepts.slopes.age.sex,c('age','sex'),function(intercept.slope){
-        exp(intercept.slope[1] + intercept.slope[2]*desired.years) #gives projections; exponentiate if log
-    })
-    dim.names = list(year = smoothed.years.label,
-                     age = dimnames(smooth.deaths.age.sex)[2]$age,
-                     sex = dimnames(smooth.deaths.age.sex)[3]$sex)
-    dim(smooth.deaths.age.sex) = sapply(dim.names, length)
-    dimnames(smooth.deaths.age.sex) = dim.names
+    # see calculate_death_rates.R
+    smooth.deaths.age.sex = project.deaths(data.manager = DATA.MANAGER,
+                                           location = location,
+                                           project.to.year = project.to.year,
+                                           keep.dimensions = c('year','sex','age','location'),
+                                           model.age.cutoffs = MODEL.AGE.CUTOFFS,
+                                           sampled.parameters = sampled.parameters)
     
     for (year in dimnames(smooth.deaths.age.sex)$year){
         rv = array(smooth.deaths.age.sex[year,,],
@@ -965,197 +937,6 @@ compute.time.varying.parameters <- function(parameters, time){
 ##---------------------------##
 #-- OTHER/HELPER FUNCTIONS --#
 ##---------------------------##
-
-# Calculates death rates for correct model age stratifications, based on surveillance data
-calculate.all.death.rates = function(data.manager,
-                                     location,
-                                     keep.dimensions = c('year','age','sex','location'),
-                                     model.age.cutoffs){
-    
-    POPULATION.AGE.MAPPING = map.population.ages(data.manager = data.manager,
-                                                 data.type = "population", 
-                                                 model.age.cutoffs = model.age.cutoffs)
-    
-    years = data.manager$total.mortality$YEARS
-    deaths.ages = data.manager$total.mortality$AGES
-    #deaths.ages.rev = c(deaths.ages[-length(deaths.ages)],"95-99","100 and over")
-    deaths.sexes = data.manager$total.mortality$SEXES
-    
-    age.dim.names = list(year = years,
-                         age = deaths.ages) 
-    
-    age.sex.dim.names = list(year = years,
-                             age = deaths.ages, 
-                             sex = deaths.sexes)
-    
-    full.dim.names = list(year = years,
-                          age = deaths.ages, 
-                          sex = deaths.sexes,
-                          location=location)
-    
-    ## Pull deaths
-    deaths = get.surveillance.data(data.manager = data.manager,
-                                   location = location,
-                                   data.type = "total.mortality",
-                                   years = years,
-                                   keep.dimensions = keep.dimensions)
-    ## Pull population
-    pop = get.surveillance.data(data.manager = data.manager,
-                                location = location,
-                                data.type = "population",
-                                years = years,
-                                keep.dimensions = keep.dimensions) 
-    
-    ## Dim names
-    if(length(keep.dimensions)==1){
-        death.rate.dim.names = list(year = years)
-    } else if (setequal(keep.dimensions, c('year','age'))){
-        death.rate.dim.names = age.dim.names
-    } else if (setequal(keep.dimensions, c('year','sex'))){
-        death.rate.dim.names = list(year = years,
-                                    sex = deaths.sexes)
-    } else if (setequal(keep.dimensions, c('year','age','sex'))){
-        death.rate.dim.names = age.sex.dim.names
-    } else if (setequal(keep.dimensions, c('year','age','sex'))){
-        death.rate.dim.names = age.sex.dim.names
-    } else if(setequal(keep.dimensions, c('year','age','sex','location'))){
-        death.rate.dim.names = full.dim.names
-    } else
-        stop("Incorrect keep.dimensions in calculate.all.death.rates")
-    
-    ## Divide deaths by population, mapping to model age brackets 
-    if(length(keep.dimensions)==1){
-        rv = sapply(years, function(year){
-            (deaths[year])/(pop[year])
-        })
-        
-        new.dim.names = list(year = years)
-    } else if (setequal(keep.dimensions, c('year','age'))){
-        rv = sapply(1:length(POPULATION.AGE.MAPPING), function(age){
-            sapply(1:length(years), function(year){
-                age.to = names(POPULATION.AGE.MAPPING)[age] # names of mapping are the model ages - what I want to map TO
-                ages.from = POPULATION.AGE.MAPPING[[age]] # list elements are the population ages - what I want to map FROM
-                sum(deaths[year,ages.from])/sum(pop[year,ages.from])
-            })
-        })
-        
-        new.dim.names = list(year = years,
-                             age = names(POPULATION.AGE.MAPPING))
-    } else if (setequal(keep.dimensions, c('year','sex')) ){
-        rv = sapply(deaths.sexes, function(sex){
-            sapply(1:length(years), function(year){
-                (deaths[year,sex])/(pop[year,sex])
-            })
-        })
-        
-        new.dim.names = list(year = years,
-                             sex = deaths.sexes)
-    } else if (setequal(keep.dimensions, c('year','age','sex'))){
-        rv = sapply(deaths.sexes, function(sex){
-            sapply(1:length(POPULATION.AGE.MAPPING), function(age){
-                sapply(1:length(years), function(year){
-                    age.to = names(POPULATION.AGE.MAPPING)[age] # names of mapping are the model ages - what I want to map TO
-                    ages.from = POPULATION.AGE.MAPPING[[age]] # list elements are the population ages - what I want to map FROM
-                    sum(deaths[year,ages.from,sex])/sum(pop[year,ages.from,sex])
-                })
-            })
-        })
-        
-        new.dim.names = list(year = years,
-                             age = names(POPULATION.AGE.MAPPING),
-                             sex = deaths.sexes)
-    } else if (setequal(keep.dimensions, c('year','age','sex','location'))){
-        rv = sapply(location, function(location){ 
-            sapply(deaths.sexes, function(sex){
-                sapply(1:length(POPULATION.AGE.MAPPING), function(age){
-                    sapply(1:length(years), function(year){
-                        age.to = names(POPULATION.AGE.MAPPING)[age] # names of mapping are the model ages - what I want to map TO
-                        ages.from = POPULATION.AGE.MAPPING[[age]] # list elements are the population ages - what I want to map FROM
-                        sum(deaths[year,ages.from,sex,location])/sum(pop[year,ages.from,sex,location])
-                    })
-                })
-            })
-        })
-        new.dim.names = list(year = years,
-                             age = names(POPULATION.AGE.MAPPING),
-                             sex = deaths.sexes,
-                             location = location)
-    } else
-        stop("Incorrect keep.dimensions in calculate.all.death.rates")
-    
-    dim(rv) = sapply(new.dim.names, length)
-    dimnames(rv) = new.dim.names
-    
-    rv
-    
-}
-
-
-# Sets up initial population by mapping surveillance data age brackets to model age brackets (using 
-# map.population.ages function); adds all initial population to HIV negative status in 1970 except
-# for specified seed cases 
-get.initial.population = function(year,
-                                  location,
-                                  data.manager,
-                                  parameters,
-                                  model.age.cutoffs,
-                                  ages,
-                                  sexes,
-                                  seed.to.ages,
-                                  seed.to.sexes,
-                                  seed.n){
-    
-    pop = get.surveillance.data(data.manager = data.manager,
-                                location = location,
-                                data.type = "population.full",
-                                years = 1970,
-                                keep.dimensions = c('year','age','sex','location')) 
-    
-    pop.ages = dimnames(pop)$age
-    pop.ages = c(pop.ages[-length(pop.ages)],"100 and over")
-    dimnames(pop)$age = pop.ages
-    
-    POPULATION.AGE.MAPPING = map.population.ages(data.manager = data.manager,
-                                                 data.type = "population.full",
-                                                 model.age.cutoffs = model.age.cutoffs)
-    
-    # sum up population from surveillance data in to correct model age brackets
-    initial.pop = sapply(location,function(location){
-        sapply(sexes, function(sex){
-            sapply(1:length(POPULATION.AGE.MAPPING), function(age){
-                age.to = names(POPULATION.AGE.MAPPING)[age] # names of mapping are the model ages - what I want to map TO
-                ages.from = POPULATION.AGE.MAPPING[[age]] # list elements are the population ages - what I want to map FROM
-                sum(pop[,ages.from,sex,location])
-            })
-        })
-    })
-    
-    # correct the dimensions on initial.pop
-    new.dim.names = list(year = "1970",
-                         age = names(POPULATION.AGE.MAPPING),
-                         sex = sexes)
-    
-    dim(initial.pop) = sapply(new.dim.names, length)
-    dimnames(initial.pop) = new.dim.names
-    
-    # set up array for model, indexed [age,sex,subgroup,hiv status]
-    state.dim.names = list(age=parameters$AGES, 
-                           sex=parameters$SEXES,
-                           subgroup=parameters$SUBGROUPS,
-                           hiv.status=parameters$HIV.STATUS)
-    
-    rv = array(0,
-               dim = sapply(state.dim.names, length),
-               dimnames = state.dim.names)
-    
-    # add in initial population to hiv negative 
-    rv[,,,'hiv_negative'] = initial.pop
-    
-    #puts n hiv cases in each of those brackets (probably middle age bracket, one male/female)
-    rv[seed.to.ages,seed.to.sexes,,'undiagnosed'] = seed.n 
-    
-    rv
-}
 
 # Multiplies global transmission rate by age and sex multipliers; called in map.model.parameters function 
 # when setting up transmission rates; age and sex multipliers come from sampled.parameters 

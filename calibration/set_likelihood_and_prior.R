@@ -6,28 +6,34 @@ source('calibration/prior_distributions/france_prior.R')
 set.likelihood.and.prior.by.location = function(location){
     if(location=="Kenya"){
         likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = "Kenya"),
-                                      location="Kenya")
+                                              location="Kenya")
         prior = KENYA.PRIOR
         
-        load("calibration/starting_values/2025_01_17_kenya_start_values.Rdata") 
-        params.start.values = params.start.values
+        params.start.values = get.default.parameters(location = "Kenya") # 1/24/25 - reverting to original prior values 
+        params.start.values = params.start.values[prior@var.names]
+        # load("calibration/starting_values/2025_01_17_kenya_start_values.Rdata") 
+        # params.start.values = params.start.values
         
     } else if(location=="South Africa"){
         likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = "South Africa"),
                                              location="South Africa")
         prior = SOUTH.AFRICA.PRIOR
         
-        load("calibration/starting_values/2025_01_17_south_africa_start_values.Rdata") 
-        params.start.values = params.start.values
+        params.start.values = get.default.parameters(location = "South Africa") # 1/24/25 - reverting to original prior values 
+        params.start.values = params.start.values[prior@var.names]
+        # load("calibration/starting_values/2025_01_17_south_africa_start_values.Rdata") 
+        # params.start.values = params.start.values
         
     } else if(location=="France"){
         likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = "France"),
-                                       location="France")
+                                              location="France")
         
         prior = FRANCE.PRIOR
         
-        load("calibration/starting_values/2025_01_17_france_start_values.Rdata") 
-        params.start.values = params.start.values
+        params.start.values = get.default.parameters(location = "France") # 1/24/25 - reverting to original prior values 
+        params.start.values = params.start.values[prior@var.names]
+        # load("calibration/starting_values/2025_01_17_france_start_values.Rdata") 
+        # params.start.values = params.start.values
         
     } else stop("Only set up for Kenya, South Africa, and France for now")
     

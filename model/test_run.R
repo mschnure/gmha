@@ -18,11 +18,11 @@ sim.netherlands = run.model.for.parameters(location="Netherlands",variable.param
 sim.france = run.model.for.parameters(location="France",variable.parameters = variable.parameters.france)
     
 
-simplot(#sim.kenya,
+simplot(sim.kenya,
         #sim.south.africa,
         #sim.cambodia,
         #sim.thailand,
-        sim.france,
+        #sim.france,
         years=c(1970:2020),
         data.types = c("incidence","prevalence"))
 

@@ -1,4 +1,4 @@
-
+source("calibration/likelihood/likelihood.R")
 library("mvtnorm")
 
 WEIGHT.YEARS = 1970:2030
@@ -6,7 +6,9 @@ WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2010) # before 2010, 1/4x
 WEIGHTS.BY.YEAR[WEIGHT.YEARS>=2018] = 4 # from 2018, 4x
 names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
 
-BASE.PARAMETERS.KENYA=create.model.parameters(location = "Kenya")
+LOCATION = "South Africa"
+
+BASE.PARAMETERS=create.model.parameters(location = LOCATION)
 
 create.individual.likelihood = function(data.type,
                                         location,
@@ -187,43 +189,48 @@ create.individual.likelihood = function(data.type,
 }
 
 
-incidence.lik.kenya = create.individual.likelihood(data.type = "incidence",
-                                             parameters = BASE.PARAMETERS.KENYA,
-                                             location = "Kenya")
-prev.lik.kenya = create.individual.likelihood(data.type = "prevalence",
-                                        parameters = BASE.PARAMETERS.KENYA,
-                                        location = "Kenya")
-pop.lik.kenya = create.individual.likelihood(data.type = "population",
-                                       parameters = BASE.PARAMETERS.KENYA,
-                                       location = "Kenya")
-aware.lik.kenya = create.individual.likelihood(data.type = "awareness",
-                                         parameters = BASE.PARAMETERS.KENYA,
-                                         location = "Kenya")
-eng.lik.kenya = create.individual.likelihood(data.type = "engagement",
-                                       parameters = BASE.PARAMETERS.KENYA,
-                                       location = "Kenya")
-supp.lik.kenya = create.individual.likelihood(data.type = "suppression",
-                                        parameters = BASE.PARAMETERS.KENYA,
-                                        location = "Kenya")
-hiv.mortality.lik.kenya = create.individual.likelihood(data.type = "hiv.mortality",
-                                                 parameters = BASE.PARAMETERS.KENYA,
-                                                 location = "Kenya")
-aware.trend.lik.kenya = create.individual.likelihood(data.type = "awareness.trend",
-                                               parameters = BASE.PARAMETERS.KENYA,
-                                               location = "Kenya")
-total.mortality.lik.kenya = create.individual.likelihood(data.type = "total.mortality",
-                                                  parameters = BASE.PARAMETERS.KENYA,
-                                                  location = "Kenya")
+incidence.lik = create.individual.likelihood(data.type = "incidence",
+                                             parameters = BASE.PARAMETERS,
+                                             location = LOCATION)
+prev.lik = create.individual.likelihood(data.type = "prevalence",
+                                        parameters = BASE.PARAMETERS,
+                                        location = LOCATION)
+pop.lik = create.individual.likelihood(data.type = "population",
+                                       parameters = BASE.PARAMETERS,
+                                       location = LOCATION)
+aware.lik = create.individual.likelihood(data.type = "awareness",
+                                         parameters = BASE.PARAMETERS,
+                                         location = LOCATION)
+eng.lik = create.individual.likelihood(data.type = "engagement",
+                                       parameters = BASE.PARAMETERS,
+                                       location = LOCATION)
+supp.lik = create.individual.likelihood(data.type = "suppression",
+                                        parameters = BASE.PARAMETERS,
+                                        location = LOCATION)
+hiv.mortality.lik = create.individual.likelihood(data.type = "hiv.mortality",
+                                                 parameters = BASE.PARAMETERS,
+                                                 location = LOCATION)
+aware.trend.lik = create.individual.likelihood(data.type = "awareness.trend",
+                                               parameters = BASE.PARAMETERS,
+                                               location = LOCATION)
+total.mortality.lik = create.individual.likelihood(data.type = "total.mortality",
+                                                  parameters = BASE.PARAMETERS,
+                                                  location = LOCATION)
+full.lik = create.likelihood(parameters = BASE.PARAMETERS,location = LOCATION)
 
-exp(total.mortality.lik.kenya(simset.new@simulations[[simset.new@n.sim]]) - 
-        total.mortality.lik.kenya(simset.old@simulations[[simset.old@n.sim]]))
+if(1==2){
+   
+    
+     
+exp(total.mortality.lik(simset.new@simulations[[simset.new@n.sim]]) - 
+        total.mortality.lik(simset.old@simulations[[simset.old@n.sim]]))
 
-exp(incidence.lik.kenya(simset.new@simulations[[simset.new@n.sim]]) - 
-        incidence.lik.kenya(simset.old@simulations[[simset.old@n.sim]]))
+exp(incidence.lik(simset.new@simulations[[simset.new@n.sim]]) - 
+        incidence.lik(simset.old@simulations[[simset.old@n.sim]]))
 
-exp(prev.lik.kenya(simset.new@simulations[[simset.new@n.sim]]) - 
-        prev.lik.kenya(simset.old@simulations[[simset.old@n.sim]]))
+exp(prev.lik(simset.new@simulations[[simset.new@n.sim]]) - 
+        prev.lik(simset.old@simulations[[simset.old@n.sim]]))
 
-exp(pop.lik.kenya(simset.new@simulations[[simset.new@n.sim]]) - 
-        pop.lik.kenya(simset.old@simulations[[simset.old@n.sim]]))
-
+exp(pop.lik(simset.new@simulations[[simset.new@n.sim]]) - 
+        pop.lik(simset.old@simulations[[simset.old@n.sim]]))
+} 

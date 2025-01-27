@@ -1,3 +1,73 @@
+### 1/23
+load("mcmc_runs/simset_south_africa_2025-01-21.Rdata")
+#source("calibration/likelihood/individual_likelihoods.R")
+params.last = simset@parameters[simset@n.sim,]
+cbind(params.last)
+
+sim.mcmc = simset@simulations[[simset@n.sim]]
+sim.manual = run.model.for.parameters(location="South Africa",variable.parameters = params.last)
+
+params.last["age.0.to.14.hiv.mortality.multiplier.0"]  = 2 # 0.557803001
+params.last["age.0.to.14.hiv.mortality.multiplier.1"]  = 2 # 0.591995125
+params.last["age.0.to.14.hiv.mortality.multiplier.2"]  = 2 # 0.332626264
+
+params.last["birth.transmission.risk.0"]  = 0.65 # 0.462920104 (1990)
+#params.last["birth.transmission.risk.1"]  = 0.055116111 # 0.055116111 (2020)
+
+# params.last["age.15.to.24.hiv.mortality.multiplier.0"]  = 0.5 # 0.827507577
+# params.last["age.15.to.24.hiv.mortality.multiplier.1"]  = 0.1 # 0.250008119
+# params.last["age.15.to.24.hiv.mortality.multiplier.2"]  = 0.25 # 0.472140556
+  
+#params.last["over.65.mortality.intercept.multiplier"]  = 2 # 1.646009530
+#params.last["over.65.mortality.slope.multiplier"]  = 1 # 0.982697569
+
+sim.manual = run.model.for.parameters(location="South Africa",variable.parameters = params.last)
+
+simplot(sim.mcmc,sim.manual,
+        years=1980:2030, 
+        facet.by='age', 
+        data.types='incidence', 
+        show.individual.sims = F)
+
+simplot(sim.mcmc,sim.manual,
+        years=1980:2030, 
+        facet.by='age', 
+        data.types='prevalence', 
+        show.individual.sims = F)
+
+simplot(sim.mcmc,sim.manual,
+        years=1980:2030, 
+        facet.by='age', 
+        data.types='hiv.mortality', 
+        show.individual.sims = F)
+
+simplot(sim.mcmc,sim.manual,
+        years=1980:2030, 
+        facet.by='age', 
+        # sexes = "female",
+        data.types='population', 
+        show.individual.sims = F)
+
+simplot(sim.mcmc,sim.manual,
+        years=1980:2030, 
+        facet.by='age', 
+        #sexes = "male",
+        data.types='total.mortality', 
+        show.individual.sims = F)
+
+exp(full.lik(sim.manual) - full.lik(sim.mcmc))
+exp(pop.lik(sim.manual) - pop.lik(sim.mcmc))
+exp(incidence.lik(sim.manual) - incidence.lik(sim.mcmc))
+exp(prev.lik(sim.manual) - prev.lik(sim.mcmc))
+exp(aware.lik(sim.manual) - aware.lik(sim.mcmc))
+exp(eng.lik(sim.manual) - eng.lik(sim.mcmc))
+exp(supp.lik(sim.manual) - supp.lik(sim.mcmc))
+exp(hiv.mortality.lik(sim.manual) - hiv.mortality.lik(sim.mcmc))
+exp(aware.trend.lik(sim.manual) - aware.trend.lik(sim.mcmc))
+exp(total.mortality.lik(sim.manual) - total.mortality.lik(sim.mcmc))
+
+
+
 ### 1/17 
 params.bad = simset.kenya@parameters[simset.kenya@n.sim,]
 params.bad.new = params.bad

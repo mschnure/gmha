@@ -60,10 +60,19 @@ PARAMETER.VAR.BLOCKS = list(
                                 "male.engagement.multiplier",
                                 "male.suppression.multiplier"),
     
-    general.mortality = c("age.45.to.65.mortality.intercept.multiplier",
-                          "age.45.to.65.mortality.slope.multiplier",
-                          "over.65.mortality.intercept.multiplier",
-                          "over.65.mortality.slope.multiplier"),
+    general.mortality.male = c("age.45.to.64.mortality.intercept.multiplier.male",
+                               "age.45.to.64.mortality.slope.multiplier.male",
+                               "age.65.to.79.mortality.intercept.multiplier.male",
+                               "age.65.to.79.mortality.slope.multiplier.male",
+                               'over.80.mortality.intercept.multiplier.male',
+                               'over.80.mortality.slope.multiplier.male'),
+    
+    general.mortality.female = c("age.45.to.64.mortality.intercept.multiplier.female",
+                               "age.45.to.64.mortality.slope.multiplier.female",
+                               "age.65.to.79.mortality.intercept.multiplier.female",
+                               "age.65.to.79.mortality.slope.multiplier.female",
+                               'over.80.mortality.intercept.multiplier.female',
+                               'over.80.mortality.slope.multiplier.female'),
     
     hiv.mortality = c("hiv.specific.mortality.rates.0",
                       "hiv.specific.mortality.rates.1",
@@ -73,9 +82,11 @@ PARAMETER.VAR.BLOCKS = list(
                           "male.hiv.mortality.multiplier.1",
                           "male.hiv.mortality.multiplier.2"),
     
-    hiv.mortality.age.multipliers.infant = c("age.0.to.14.hiv.mortality.multiplier.0",
+    hiv.mortality.age.multipliers.infant = c("age.0.to.4.hiv.mortality.multiplier.0",
+                                             "age.5.to.14.hiv.mortality.multiplier.0",
                                              "age.0.to.14.hiv.mortality.multiplier.1",
                                              "age.0.to.14.hiv.mortality.multiplier.2"),
+    
     hiv.mortality.age.multipliers.young = c("age.15.to.24.hiv.mortality.multiplier.0",
                                             "age.15.to.24.hiv.mortality.multiplier.1",
                                             "age.15.to.24.hiv.mortality.multiplier.2"),
