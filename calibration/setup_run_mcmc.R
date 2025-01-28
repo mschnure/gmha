@@ -3,7 +3,7 @@ library(distributions)
 library(ggplot2) 
 source("model/run_systematic.R")
 
-set.seed(4321) # all runs so far with seed 4321
+set.seed(1234) # all runs so far with seed 4321; Kenya/France 1/24 - 1234
 
 LOCATION = "France" 
 
@@ -24,7 +24,7 @@ print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION)))
 
 # set starting.values 
 mcmc = run.mcmc.with.cache(control = control,
-                           n.iter = 50000,
+                           n.iter = 75000,
                            starting.values = LOCATION.DETAILS$params.start.values,
                            update.frequency = 100,
                            cache.frequency = 200,
