@@ -6,11 +6,19 @@ source('model/age_mappings.R')
 NO.INTERVENTION = c()
 
 load('cached/data.manager_global_2024-12-30.Rdata') # WITHOUT scaling calibration targets
-source('model/parameter_mappings/age_mixing.R')
-source('model/parameter_mappings/testing_projection.R')
-source('model/parameter_mappings/age_sex_mixing_proportions.R')
-source('model/parameter_mappings/age_sex_transmission_multipliers.R')
-source('model/parameter_mappings/engagement_disengagement_data.R')
+
+# country-specific parameters 
+# Kenya 
+source('model/parameter_mappings/kenya/age_mixing.R')
+source('model/parameter_mappings/kenya/testing_projection.R')
+source('model/parameter_mappings/kenya/age_sex_mixing_proportions.R')
+source('model/parameter_mappings/kenya/age_sex_transmission_multipliers.R')
+source('model/parameter_mappings/kenya/engagement_disengagement_data.R')
+
+# South Africa 
+source('model/parameter_mappings/south_africa/continuum_parameters_sa.R')
+source('model/parameter_mappings/south_africa/transmission_multipliers_sa.R')
+
 source('model/parameter_mappings/calculate_death_rates.R')
 source('model/parameters.R')
 source('model/get_initial_population.R')
