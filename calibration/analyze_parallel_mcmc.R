@@ -7,7 +7,7 @@ source("model/run_systematic.R")
 #                              additional.burn=500,
 #                              additional.thin=20)
 # 
-# save(simset.test,file=paste0("mcmc_runs/simset.test_",LOCATION.FOR.SAVING,"_",Sys.Date(),".Rdata"))
+
 
 load("mcmc_runs/simset_kenya_2025-01-28.Rdata")
 #load("mcmc_runs/simset_south_africa_2025-01-28.Rdata")
@@ -98,6 +98,14 @@ simplot(simset,
 simplot(simset, 
         years=1980:2020, 
         facet.by=c('age','sex'),
+        data.types='suppression', 
+        proportion=T,
+        show.individual.sims = F)
+
+simplot(simset, 
+        years=1980:2020, 
+        facet.by=c('age'),
+        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='suppression', 
         proportion=T,
         show.individual.sims = F)
