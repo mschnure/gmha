@@ -37,8 +37,9 @@ testing.last.year.female.2017 = .673
 
 
   # Viral load suppression among patients 12 months after initiating ART, among those who had a viral load test recorded at 12 months after ART initiation
+    # "Treatment Outcomes among Patients Initiating ART in Sub-Saharan Africa"
     #2010
-vls.male.10.19.2010 = .76
+vls.male.10.19.2010 = .76 # 76% initiated ART within 12 months of enrollment in HIV care at an IeDEA site 
 vls.male.20.29.2010 = .81
 vls.male.30.39.2010 = .86
 vls.male.40.49.2010 = .85
@@ -78,8 +79,9 @@ vls.female.50plus.2017 = .96
 
 
   # ART initiation within 12 months of enrollment in HIV care, in ART-naive patients
+    # Treatment Outcomes among Patients Enrolling in Care in Sub-Saharan Africa
     #2010
-art.start.male.10.19.2010 = .53
+art.start.male.10.19.2010 = .53 # IeDEA dashboard, 53% initiated ART within 12 months of enrollment in HIV care at an IeDEA site 
 art.start.male.20.29.2010 = .54
 art.start.male.30.39.2010 = .76
 art.start.male.40.49.2010 = .82
