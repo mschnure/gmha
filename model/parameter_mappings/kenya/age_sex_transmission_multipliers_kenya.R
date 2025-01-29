@@ -1,21 +1,3 @@
-
-get.all.age.sex.transmission.multipliers = function(location){
-    # if(location!="Kenya")
-    #     print("Using Kenya-specific transmission multipliers by age and sex for now")
-    
-    rv = list()
-    rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.multipliers.kenya(sex="female",year=2003)
-    rv$MALE.AGE.MULTIPLIERS.2003 = get.all.multipliers.kenya(sex="male",year=2003)
-    
-    rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.multipliers.kenya(sex="female",year=2008)
-    rv$MALE.AGE.MULTIPLIERS.2008 = get.all.multipliers.kenya(sex="male",year=2008)
-    
-    rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.multipliers.kenya(sex="female",year=2014)
-    rv$MALE.AGE.MULTIPLIERS.2014 = get.all.multipliers.kenya(sex="male",year=2014)
-    
-    rv
-}
-
 # KDHS 2014, Tables 13.9.1 and 13.9.2 - high-risk sex = multiple partners 
 # KDHS 2008, Tables  13.7.1 and 13.7.2 - high-risk sex = non-marital/non-cohabiting partner
 # KDHS 2003, Table 12.12 - high-risk sex = non-marital/non-cohabiting partner
@@ -25,7 +7,7 @@ get.transmission.multipliers.DHS.kenya  = function(sex,
         if(year==2014){
             data = data.frame(
                 ages = c("15-19","20-24","25-29","30-39","40-49"),
-                prop.high.risk.sex=c(.01,.02,.013,.016,.009),
+                prop.high.risk.sex=c(.01,.02,.013,.016,.009), # 2+ partners
                 condom.use.among.high.risk.sex = c(.261,.434,.431,.480,.480)) 
         } else if(year==2008){
             data = data.frame(
@@ -92,8 +74,8 @@ get.transmission.multipliers.older.cohort.kenya = function(sex){
     
 }
 
-get.all.multipliers.kenya = function(sex,
-                                     year){
+get.all.transmission.multipliers.kenya = function(sex,
+                                                  year){
     multipliers = c(rep(0,length(get.age.brackets.in.range(lower = 0, upper = 15))),
                     rep(get.transmission.multipliers.DHS.kenya(sex=sex, year=year)["15-19"],
                         length(get.age.brackets.in.range(lower = 15, upper = 20))),
