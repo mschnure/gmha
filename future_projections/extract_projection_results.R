@@ -59,6 +59,49 @@ generate.full.results.array = function(simset.list,
     rv
 }
 
+plot.age.distribution = function(sim,
+                                 year.1 = "2025",
+                                 year.2 = "2040",
+                                 outcome = "prevalence",
+                                 sexes = c("male","female"),
+                                 plot.limits=c(0,200000)
+){
+    
+    data = extract.data(sim, 
+                        data.type = outcome,
+                        years = as.character(sim$years),
+                        keep.dimensions = c("year","age","sex"))
+    
+    dim.names = dimnames(data)
+    dim.names.new = c(dim.names[1:2],
+                      list(sex = sexes))
+    
+    data = data[,,sexes]
+    dim(data) = sapply(dim.names.new,length)
+    dimnames(data) = dim.names.new
+    
+    if(length(sexes)==1){
+        age.counts.1 = data[year.1,,]
+        age.counts.2 = data[year.2,,]
+    } else {
+        age.counts.1 = apply(data[year.1,,],c("age"),sum)
+        age.counts.2 = apply(data[year.2,,],c("age"),sum)
+    }
+    df = data.frame(value = c(age.counts.1,age.counts.2),
+                    age = rep(dim.names$age,2),
+                    year = rep(c(year.1,year.2),each = length(age.counts.1)))
+    
+    ggplot(data = df,aes(x=factor(age, levels=unique(age)),y=value,fill=year)) + 
+        geom_bar(stat="identity",position = "dodge") + 
+        labs(title = paste0(outcome),
+             subtitle = paste0(sexes ,collapse=", "))+
+        scale_y_continuous(labels = function(x){format(x,big.mark=",")},limits=plot.limits) + 
+        theme(panel.background = element_blank(), legend.position = "bottom"
+        ) + 
+        xlab("Age") 
+    
+}
+
 # can display % or #; can have two different interventions/years (e.g., no.int/2025 vs. all.max/2040)
 generate.age.distribution = function(results.array,
                                      intervention.1,
