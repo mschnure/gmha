@@ -23,7 +23,7 @@ simplot = function(...,
                    data.types = c('incidence','prevalence'),
                    facet.by = NULL,
                    split.by = NULL,
-                   show.individual.sims=T,
+                   show.individual.sims=F,
                    proportion = F, # default denominator for engagement/suppression is awareness
                    ages = data.manager[[data.types[1]]]$AGES, #use what's in the data as the default - there is a problem here if you have multiple data types
                    sexes = data.manager[[data.types[1]]]$SEXES,
@@ -41,8 +41,8 @@ simplot = function(...,
     if(!setequal(sexes,data.manager[[data.types[1]]]$SEXES))
         keep.dimensions = c(keep.dimensions,"sex")
     
-    if(any(data.types=="hiv.mortality") & any(keep.dimensions=="sex"))
-        stop("no hiv mortality data by sex")
+    # if(any(data.types=="hiv.mortality") & any(keep.dimensions=="sex"))
+    #     stop("no hiv mortality data by sex")
     
     ##----------------------##
     ##----- SIM OUTPUT -----##
