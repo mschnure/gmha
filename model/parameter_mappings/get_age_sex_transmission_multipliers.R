@@ -8,7 +8,7 @@ get.all.age.sex.transmission.multipliers = function(location){
     
     rv = list()
     
-    # if(location=="Kenya"){
+    if(location=="Kenya"){
         rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.kenya(sex="female",year=2003)
         rv$MALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.kenya(sex="male",year=2003)
         
