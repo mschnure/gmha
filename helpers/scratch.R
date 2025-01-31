@@ -1,3 +1,127 @@
+### 1/30 
+
+#load("mcmc_runs/simset_kenya_2025-01-28.Rdata")
+# sim.kenya = simset@simulations[[simset@n.sim]]
+# params.kenya = simset@parameters[[simset@n.sim]]
+# sim.kenya.projected = run.model.for.parameters(variable.parameters = params.kenya,
+#                                                end.year = 2040,
+#                                                location = sim.kenya$location)
+
+load("mcmc_runs/simset_south_africa_2025-01-28.Rdata")
+sim.mcmc = simset@simulations[[simset@n.sim]]
+params.mcmc = simset@parameters[simset@n.sim,]
+params.manual = params.mcmc
+
+sim.mcmc.projected = run.model.for.parameters(variable.parameters = params.mcmc,
+                                              end.year = 2040,
+                                              location = sim.mcmc$location)
+
+# apply(sim.mcmc.projected$population, "year", sum)
+# apply(sim.kenya.projected$population, "year", sum)
+
+sim.manual = sim.mcmc.projected
+
+#cbind(params.manual)
+
+if(1==2){ # Kenya changes 
+    params.manual["over.80.mortality.intercept.multiplier.male"] = 1 # 0.84194077
+    params.manual["over.80.mortality.intercept.multiplier.female"] = 1 # 1.00302635
+    params.manual["over.80.mortality.slope.multiplier.male"] = 1 # 0.98877095
+    params.manual["over.80.mortality.slope.multiplier.female"] = 1 # 0.98227020    
+}
+if(1==2){ # South Africa changes
+    params.manual["over.80.mortality.intercept.multiplier.male"] = 3 # 2.158523
+    params.manual["over.80.mortality.intercept.multiplier.female"] = 1 # 0.5530541
+    params.manual["over.80.mortality.slope.multiplier.male"] = 1 # 0.9682139
+    params.manual["over.80.mortality.slope.multiplier.female"] = 1 # 1.006965        
+}
+
+sim.manual = run.model.for.parameters(variable.parameters = params.manual,
+                                      end.year = 2041,
+                                      location=sim.mcmc$location)
+
+simplot(sim.mcmc.projected,
+        sim.manual,
+        years = 1980:2040, 
+        data.types = "population",
+        facet.by='age')
+
+simplot(sim.mcmc.projected,
+        sim.manual,
+        years=1980:2040, 
+        facet.by='age', 
+        #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='incidence')
+
+simplot(sim.mcmc.projected,
+        sim.manual,
+        years=1980:2040, 
+        facet.by='age', 
+        #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='prevalence')
+
+simplot(sim.mcmc.projected,
+        sim.manual,
+        years=1980:2030, 
+        facet.by=c('age'), 
+        #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='hiv.mortality')
+
+simplot(sim.mcmc.projected,
+        sim.manual, 
+        years=1980:2030, 
+        facet.by=c('age',"sex"), 
+        ages = "15+", 
+        data.types='hiv.mortality')
+
+simplot(sim.mcmc.projected,
+        sim.manual,
+        years=1980:2030, 
+        facet.by=c('age'), 
+        sexes = "female",
+        data.types='total.mortality')
+
+simplot(sim.mcmc.projected,
+        sim.manual,
+        years=1980:2020, 
+        data.types='suppression', 
+        proportion=T)
+
+simplot(sim.mcmc.projected,
+        sim.manual,
+        years=1980:2020, 
+        facet.by=c('age','sex'),
+        data.types='suppression', 
+        proportion=T)
+
+simplot(sim.mcmc.projected,
+        sim.manual, 
+        years=1980:2020, 
+        facet.by=c('age'),
+        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='suppression', 
+        proportion=T)
+
+plot.age.distribution(sim.mcmc.projected,plot.limits = c(0,1000000))
+plot.age.distribution(sim.manual,plot.limits = c(0,1000000))
+
+likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = "Kenya"),
+                                      location="South Africa")
+
+exp(likelihood.to.run(sim.manual) - likelihood.to.run(sim.mcmc))
+exp(full.lik(sim.manual) - full.lik(sim.mcmc))
+exp(pop.lik(sim.manual) - pop.lik(sim.mcmc))
+exp(incidence.lik(sim.manual) - incidence.lik(sim.mcmc)) # SA: this is worse; looks basically the same? (50+)
+exp(prev.lik(sim.manual) - prev.lik(sim.mcmc))
+exp(aware.lik(sim.manual) - aware.lik(sim.mcmc))
+exp(eng.lik(sim.manual) - eng.lik(sim.mcmc))
+exp(supp.lik(sim.manual) - supp.lik(sim.mcmc)) # Kenya: this is worse; looks the exact same? (tiniest difference)
+exp(hiv.mortality.lik(sim.manual) - hiv.mortality.lik(sim.mcmc))
+exp(aware.trend.lik(sim.manual) - aware.trend.lik(sim.mcmc))
+exp(total.mortality.lik(sim.manual) - total.mortality.lik(sim.mcmc)) # Kenya: this is worse; makes sense ; SA: worse and makes sense 
+
+
+
 ### 1/27 
 
 simplot(simset.old@simulations[[simset.old@n.sim]],

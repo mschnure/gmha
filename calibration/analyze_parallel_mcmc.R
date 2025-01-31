@@ -15,100 +15,92 @@ load("mcmc_runs/simset_kenya_2025-01-28.Rdata")
 
 
 simplot(simset,
+        years = 1980:2030)
+
+simplot(simset, #@simulations[[simset@n.sim]],
         years = 1980:2030, 
-        show.individual.sims = F)
+        data.types = "population")
 
 simplot(simset, #@simulations[[simset@n.sim]],
         years = 1980:2030, 
         data.types = "population",
-        show.individual.sims = F)
-
-simplot(simset, #@simulations[[simset@n.sim]],
-        years = 1980:2030, 
-        data.types = "population",
-        facet.by='age', 
-        show.individual.sims = F)
+        facet.by='age')
 
 simplot(simset, 
         years=1980:2030, 
         facet.by='age', 
         #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
-        data.types='incidence', 
-        show.individual.sims = F)
+        data.types='incidence')
 
 simplot(simset, 
         years=1980:2030, 
         facet.by='age', 
         #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
-        data.types='prevalence', 
-        show.individual.sims = F)
+        data.types='prevalence')
 
 simplot(simset, 
         years=1980:2030, 
         facet.by=c('age'), 
         #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
-        data.types='hiv.mortality', 
-        show.individual.sims = F)
+        data.types='hiv.mortality')
 
 simplot(simset, 
         years=1980:2030, 
         facet.by=c('age',"sex"), 
         ages = "15+", 
-        data.types='incidence', 
-        show.individual.sims = F)
+        data.types='incidence')
 
 simplot(simset, 
         years=1980:2030, 
         facet.by=c('age',"sex"), 
         ages = "15+", 
-        data.types='prevalence', 
-        show.individual.sims = F)
+        data.types='prevalence')
+
+simplot(simset, 
+        years=1980:2030, 
+        facet.by=c('age',"sex"), 
+        ages = "15+", 
+        data.types='hiv.mortality')
+
 
 simplot(simset, #@simulations[[simset@n.sim]],  
         years=1980:2030, 
-        data.types='total.mortality', 
-        show.individual.sims = F)
+        data.types='total.mortality')
 
 simplot(simset, #@simulations[[simset@n.sim]],
         years=1980:2030, 
         facet.by=c('age'), 
         #sexes = "male",
-        data.types='total.mortality', 
-        show.individual.sims = F)
+        data.types='total.mortality')
 
 simplot(simset, 
         years=1980:2020, 
         data.types='engagement', 
-        proportion=T,
-        show.individual.sims = F)
+        proportion=T)
 
 simplot(simset, 
         years=1980:2020, 
         facet.by=c('age','sex'), 
         data.types='engagement', 
-        proportion=T,
-        show.individual.sims = F)
+        proportion=T)
 
 simplot(simset, 
         years=1980:2020, 
         data.types='suppression', 
-        proportion=T,
-        show.individual.sims = F)
+        proportion=T)
 
 simplot(simset, 
         years=1980:2020, 
         facet.by=c('age','sex'),
         data.types='suppression', 
-        proportion=T,
-        show.individual.sims = F)
+        proportion=T)
 
 simplot(simset, 
         years=1980:2020, 
         facet.by=c('age'),
         ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='suppression', 
-        proportion=T,
-        show.individual.sims = F)
+        proportion=T)
 
 
 # THESE PLOTS DON'T WORK
