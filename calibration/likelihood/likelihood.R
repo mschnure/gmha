@@ -28,7 +28,7 @@ names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
 create.likelihood = function(data.manager=DATA.MANAGER,
                              parameters,
                              location,
-                             years = 1980:2020,
+                             years = 1980:2023,
                              total.weight = WEIGHTS.BY.YEAR, 
                              #incidence
                              incidence.years=years,
@@ -37,22 +37,22 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              incidence.correlation.structure="auto.regressive",
                              #prevalence
                              prevalence.years=years,
-                             prevalence.weight=0.25*1, # downweighted due to magnitude; don't want it to outweigh incidence
+                             prevalence.weight=1, # downweighted due to magnitude; don't want it to outweigh incidence
                              prevalence.obs.correlation=0.5,
                              prevalence.correlation.structure="auto.regressive",
                              #awareness
                              awareness.years=years,
-                             awareness.weight=1*4.184211, # ratio of points, when accounting for weighting by year (see data_point_weighting)
+                             awareness.weight=1*3.734568, # ratio of points, when accounting for weighting by year (see data_point_weighting)
                              awareness.obs.correlation=0.5,
                              awareness.correlation.structure="compound.symmetry",
                              #engagement
                              engagement.years=years,
-                             engagement.weight=1*4.184211, # ratio of points, when accounting for weighting by year (see data_point_weighting)
+                             engagement.weight=1*3.734568, # ratio of points, when accounting for weighting by year (see data_point_weighting)
                              engagement.obs.correlation=0.5,
                              engagement.correlation.structure="compound.symmetry",
                              #suppression
                              suppression.years=years,
-                             suppression.weight=1*9.9375, # ratio of points, when accounting for weighting by year (see data_point_weighting)
+                             suppression.weight=1*3.734568, # ratio of points, when accounting for weighting by year (see data_point_weighting)
                              suppression.obs.correlation=0.5,
                              suppression.correlation.structure="compound.symmetry",
                              #population
@@ -68,6 +68,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              #total.mortality
                              total.mortality.years=years,
                              total.mortality.weight=1/1000, # 1/7 changed from 200000 to 1000 
+                             total.mortality.weight.by.age = c("80 and over" = 0.5),
                              total.mortality.obs.correlation=0.5, 
                              total.mortality.correlation.structure="auto.regressive"
                              ){ 
@@ -153,11 +154,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                         obs.is.proportion=T, 
                                                         weight=total.weight*hiv.mortality.weight,
                                                         obs.correlation=hiv.mortality.obs.correlation,
-                                                        correlation.structure=hiv.mortality.correlation.structure,
-                                                        use.total=T,
-                                                        use.sex=F,
-                                                        use.age=T,
-                                                        use.age.sex=F)
+                                                        correlation.structure=hiv.mortality.correlation.structure)
     
     total.mortality.lik = create.likelihood.for.data.type(data.type = "total.mortality",
                                                           data.manager=data.manager,
@@ -167,6 +164,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                           denominator.data.type=NULL, 
                                                           obs.is.proportion=F,
                                                           weight=total.mortality.weight, # *total.weight # removed 1/8
+                                                          weight.by.age=total.mortality.weight.by.age,
                                                           obs.correlation=total.mortality.obs.correlation,
                                                           correlation.structure=total.mortality.correlation.structure,
                                                           calculate.sds.from.ci=F,
@@ -295,6 +293,7 @@ create.likelihood.for.data.type = function(data.type,
                                            denominator.data.type,
                                            obs.is.proportion,
                                            weight,
+                                           weight.by.age=NULL,
                                            obs.correlation,
                                            correlation.structure,
                                            parameters,
@@ -334,6 +333,7 @@ create.likelihood.for.data.type = function(data.type,
                            obs=likelihood.elements$obs, 
                            obs.cov.mat=likelihood.elements$obs.cov.mat,
                            weight=weight,
+                           weight.by.age=weight.by.age,
                            debug=debug)
         
     }
@@ -473,7 +473,6 @@ get.likelihood.elements.by.data.type.and.dimension = function(data.type,
                                                               keep.dimensions,
                                                               parameters,
                                                               calculate.sds.from.ci=T){
-    
     obs.data = get.surveillance.data(data.manager = data.manager,
                                      data.type = data.type,
                                      years = years,
@@ -599,13 +598,15 @@ compute.likelihood = function(sim,
                               obs, # pre-computed vector of observations 
                               obs.cov.mat, # pre-computed variance-covariance matrix
                               weight,
+                              weight.by.age,
                               debug=F){
     
     ## Model component## 
-    y.star = as.numeric(extract.data(sim = sim,
-                          data.type = numerator.data.type,
-                          years=years,
-                          keep.dimensions = c("year","sex","age")))
+    y.star.with.dim = reshape2::melt(extract.data(sim = sim,
+                                                  data.type = numerator.data.type,
+                                                  years=years,
+                                                  keep.dimensions = c("year","sex","age")))
+    y.star = y.star.with.dim$value
     
     if(!is.null(denominator.data.type)) # denominator will be null for population data type
         n.star = as.numeric(extract.data(sim = sim,
@@ -641,21 +642,28 @@ compute.likelihood = function(sim,
         weight.per.obs = weight[as.character(obs.year)]
         
         weight.matrix = sqrt(weight.per.obs) %*% t(sqrt(weight.per.obs))
-        
         cov.mat = cov.mat/weight.matrix
         
     }
-    
+
+    if(!is.null(weight.by.age)){ # named vector e.g., c("80 and over" = 0.5)
+        weight.per.obs = sapply(as.character(y.star.with.dim$age),function(age){
+            if(is.na(weight.by.age[age]))
+                1
+            else
+                weight.by.age[age]
+        })
+        
+        weight.matrix = sqrt(weight.per.obs) %*% t(sqrt(weight.per.obs))
+        cov.mat = cov.mat/weight.matrix
+    }
     
     if(debug){
         df = data.frame(year=obs.year,dimension=obs.dimensions,obs=obs,mean=mu,sd=sqrt(diag(cov.mat)))
         df$standard.error = (df$obs-df$mean)/df$sd
         browser()
     }
-    if(1==2)
-        if(numerator.data.type=="hiv.mortality")
-            browser()
-    
+
     # compute and return the density of the multivariate normal
     rv = dmvnorm(x = obs,mean = mu,sigma = cov.mat,log = T)
 

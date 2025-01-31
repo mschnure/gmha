@@ -14,7 +14,7 @@ create.individual.likelihood = function(data.type,
                                         location,
                                         data.manager=DATA.MANAGER,
                                         parameters,
-                                        years = 1980:2020,
+                                        years = 1980:2023,
                                         total.weight = WEIGHTS.BY.YEAR, 
                                         #incidence
                                         incidence.years=years,
@@ -23,22 +23,22 @@ create.individual.likelihood = function(data.type,
                                         incidence.correlation.structure="auto.regressive",
                                         #prevalence
                                         prevalence.years=years,
-                                        prevalence.weight=0.25*1, # downweighted due to magnitude; don't want it to outweigh incidence
+                                        prevalence.weight=1, # downweighted due to magnitude; don't want it to outweigh incidence
                                         prevalence.obs.correlation=0.5,
                                         prevalence.correlation.structure="auto.regressive",
                                         #awareness
                                         awareness.years=years,
-                                        awareness.weight=1*4.184211, # ratio of points, when accounting for weighting by year (see data_point_weighting)
+                                        awareness.weight=1*3.734568, # ratio of points, when accounting for weighting by year (see data_point_weighting)
                                         awareness.obs.correlation=0.5,
                                         awareness.correlation.structure="compound.symmetry",
                                         #engagement
                                         engagement.years=years,
-                                        engagement.weight=1*4.184211, # ratio of points, when accounting for weighting by year (see data_point_weighting)
+                                        engagement.weight=1*3.734568, # ratio of points, when accounting for weighting by year (see data_point_weighting)
                                         engagement.obs.correlation=0.5,
                                         engagement.correlation.structure="compound.symmetry",
                                         #suppression
                                         suppression.years=years,
-                                        suppression.weight=1*9.9375, # ratio of points, when accounting for weighting by year (see data_point_weighting)
+                                        suppression.weight=1*3.734568, # ratio of points, when accounting for weighting by year (see data_point_weighting)
                                         suppression.obs.correlation=0.5,
                                         suppression.correlation.structure="compound.symmetry",
                                         #population
@@ -54,6 +54,7 @@ create.individual.likelihood = function(data.type,
                                         #total.mortality
                                         total.mortality.years=years,
                                         total.mortality.weight=1/1000, # 1/7 changed from 200000 to 1000 
+                                        total.mortality.weight.by.age = c("80 and over" = 0.5),
                                         total.mortality.obs.correlation=0.5, 
                                         total.mortality.correlation.structure="auto.regressive"
 ){
@@ -141,11 +142,7 @@ create.individual.likelihood = function(data.type,
                                               obs.is.proportion=T, 
                                               weight=total.weight*hiv.mortality.weight,
                                               obs.correlation=hiv.mortality.obs.correlation,
-                                              correlation.structure=hiv.mortality.correlation.structure,
-                                              use.total=T,
-                                              use.sex=F,
-                                              use.age=T,
-                                              use.age.sex=F)
+                                              correlation.structure=hiv.mortality.correlation.structure)
     } else if (data.type=="awareness.trend"){
         lik = create.likelihood.for.trend(data.type = "awareness",
                                           year.1=2025,
@@ -154,23 +151,24 @@ create.individual.likelihood = function(data.type,
                                           use.strata=F)
     } else if (data.type=="total.mortality"){
         lik = create.likelihood.for.data.type(data.type = "total.mortality",
-                                                              data.manager=data.manager,
-                                                              years=total.mortality.years,
-                                                              location=location,
-                                                              parameters=parameters,
-                                                              denominator.data.type=NULL, 
-                                                              obs.is.proportion=F,
-                                                              weight=total.mortality.weight, # *total.weight # removed 1/8
-                                                              obs.correlation=total.mortality.obs.correlation,
-                                                              correlation.structure=total.mortality.correlation.structure,
-                                                              calculate.sds.from.ci=F,
-                                                              use.total=F,
-                                                              use.sex=F,
-                                                              use.age=F,
-                                                              use.age.sex=T) 
+                                              data.manager=data.manager,
+                                              years=total.mortality.years,
+                                              location=location,
+                                              parameters=parameters,
+                                              denominator.data.type=NULL, 
+                                              obs.is.proportion=F,
+                                              weight=total.mortality.weight, # *total.weight # removed 1/8
+                                              weight.by.age=total.mortality.weight.by.age,
+                                              obs.correlation=total.mortality.obs.correlation,
+                                              correlation.structure=total.mortality.correlation.structure,
+                                              calculate.sds.from.ci=F,
+                                              use.total=F,
+                                              use.sex=F,
+                                              use.age=F,
+                                              use.age.sex=T) 
     } else
         stop("invalid data type")
-    
+    #browser()
     components = list(lik = lik)
     rv = function(sim){ 
         
@@ -179,7 +177,7 @@ create.individual.likelihood = function(data.type,
             any(is.na(x))
         }))){
             rv = -Inf
-            # stop("NA values in sim")
+             stop("NA values in sim")
         } else{
             rv = sum(sapply(components, function(likelihood){likelihood(sim)})) # adding up each likelihood component, run on sim    
         }
