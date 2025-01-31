@@ -8,7 +8,7 @@ get.testing.model = function(location){
     if(location=="Kenya"){
         rv = get.testing.model.kenya()        
     } else if(location=="South Africa"){
-        rv = get.testing.model.kenya() # get.testing.model.south.africa()        
+        rv = get.testing.model.south.africa # get.testing.model.kenya() # get.testing.model.south.africa()        
     } else 
         rv = get.testing.model.kenya() # using kenya model for all other countries for now 
 
