@@ -22,9 +22,6 @@ library(data.table)
 # Population data from 2019 WPP archive: https://population.un.org/wpp/Download/Archive/CSV/ 
     #  NEW DEATHS DATA, 12/23/24: https://population.un.org/wpp/downloads    
         # WPP2024_MORT_F01_2_DEATHS_SINGLE_AGE_MALE.xlsx and female 
-    # 2022 data
-        # WPP2022_DeathsBySingleAgeSex_Medium_1950-2021.csv
-        # Can't find original file: NumberDeaths-20220407095117.csv
     # 2019 data
         # WPP2019_PopulationByAgeSex_Medium.csv
         # WPP2019_Fertility_by_Age.csv
@@ -263,7 +260,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$hiv.mortality.lowers$AGES = rv$hiv.mortality.uppers$AGES = c('0-14','10-19','15-24','15-49','15+','50 and over')
     rv$hiv.mortality.lowers$AGE.LOWERS = rv$hiv.mortality.uppers$AGE.LOWERS = c(0,10,15,15,15,50)
     rv$hiv.mortality.lowers$AGE.UPPERS = rv$hiv.mortality.uppers$AGE.UPPERS = c(15,20,25,50,Inf,Inf)
-    rv$hiv.mortality.lowers$SEXES = rv$hiv.mortality.uppers$SEXES = NULL
+    rv$hiv.mortality.lowers$SEXES = rv$hiv.mortality.uppers$SEXES = c('male','female')
     rv$hiv.mortality.lowers$LOCATIONS = rv$hiv.mortality.uppers$LOCATIONS = dimnames(rv$hiv.mortality.lowers$year.location)$location
     
     rv$awareness.lowers = read.cascade.data.type(sub.data.type = "status", denominator = "allPLHIV", suffix = "_lower")
