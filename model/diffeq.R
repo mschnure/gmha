@@ -26,14 +26,14 @@ library(odeintr)
 compute.dx <- function(time,
                        y, #the vector-form model state at this time
                        parameters){
-    
+
+    #print("removed max run time limit temporarily")
     if (parameters$max.run.time < (as.numeric(Sys.time())-parameters$model.run.start))
         return (rep(NA, length(y)))
     
     ##---------------------------------##
     ##-- GET TIME-VARYING PARAMETERS --##
     ##---------------------------------##
-    
     pp = compute.time.varying.parameters(parameters, time)
     # now pp is a list
     
