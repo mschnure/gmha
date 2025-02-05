@@ -2,11 +2,12 @@ source("calibration/likelihood/likelihood.R")
 library("mvtnorm")
 
 WEIGHT.YEARS = 1970:2030
+#WEIGHTS.BY.YEAR = rep(1, length(WEIGHT.YEARS))
 WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2010) # before 2010, 1/4x
 WEIGHTS.BY.YEAR[WEIGHT.YEARS>=2018] = 4 # from 2018, 4x
 names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
 
-LOCATION = "South Africa"
+LOCATION = "Kenya"
 
 BASE.PARAMETERS=create.model.parameters(location = LOCATION)
 
