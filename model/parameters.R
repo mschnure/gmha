@@ -115,10 +115,11 @@ get.default.parameters = function(location){
         ## Cascade parameters ##
         log.OR.testing.intercept=0, # 0 because on log scale
         log.OR.testing.slope=0,
-        log.OR.engagement.intercept=0,
-        log.OR.engagement.pre.universal.slope=0,
-        log.OR.engagement.intermediate.slope=0,
-        log.OR.engagement.post.universal.slope=0,
+        log.OR.engagement.slope=0,
+        # log.OR.engagement.intercept=0,
+        # log.OR.engagement.pre.universal.slope=0,
+        # log.OR.engagement.intermediate.slope=0,
+        # log.OR.engagement.post.universal.slope=0,
         unsuppressed.disengagement.rates=0.1392621, # Lee et al
         suppressed.disengagement.rates=0.1025866, # Lee et al
         suppression.time.0=1993,
@@ -745,29 +746,68 @@ map.model.parameters <- function(parameters,
     #-- ENGAGEMENT --#
     engagement.model = get.engagement.model(location = location)
     engagement.times = c(1975:min(project.to.year,sampled.parameters["cascade.improvement.end.year"], na.rm = T))
-    engagement.rates = c(lapply(engagement.times, function(year){
+    
+    if(location=="South Africa"){ # NEED TO ADD IN SAMPLED PARAMETERS, max proportion 
         
-        if(year<2016 | year>2017){
-            projected.log.odds = (engagement.model$intercept+sampled.parameters['log.OR.engagement.intercept'])+
-                ((engagement.model$pre.universal.slope+sampled.parameters['log.OR.engagement.pre.universal.slope'])*(year-engagement.model$anchor.year))+
-                ((engagement.model$post.universal.slope+sampled.parameters['log.OR.engagement.post.universal.slope'])*pmax(0,(year-2015)))
-        } else if(year==2016 | year==2017){
-            projected.log.odds = (engagement.model$intercept+sampled.parameters['log.OR.engagement.intercept'])+
-                ((engagement.model$pre.universal.slope+sampled.parameters['log.OR.engagement.pre.universal.slope'])*(year-engagement.model$anchor.year))+
-                ((engagement.model$intermediate.slope.2016.2017+sampled.parameters['log.OR.engagement.intermediate.slope'])*pmax(0,(year-2015)))+
-                ((engagement.model$post.universal.slope+sampled.parameters['log.OR.engagement.post.universal.slope'])*pmax(0,(year-2015)))
-        }
-        projected.p = 1/(1+exp(-projected.log.odds)) 
-        projected.rate = -log(1-projected.p)
+        engagement.rates = c(lapply(engagement.times, function(year){
+            
+            projected.log.odds = as.numeric(sapply(trans.dim.names$sex, function(sex){
+                sapply(trans.dim.names$age, function(age){
+                    eng.cat = names(MODEL.TO.IEDEA.AGE.MAPPING)[sapply(MODEL.TO.IEDEA.AGE.MAPPING, function(x) age %in% x)]
+                    
+                    engagement.model$intercept + 
+                        (engagement.model$slope+sampled.parameters['log.OR.engagement.slope'])*(year-engagement.model$anchor.year) + 
+                        (engagement.model$age.10.19*(eng.cat=="10-19")) + 
+                        (engagement.model$age.20.29*(eng.cat=="20-29")) + 
+                        (engagement.model$age.40.49*(eng.cat=="40-49")) + 
+                        (engagement.model$age.50.plus*(eng.cat=="50 and over")) + 
+                        (engagement.model$sex.female*(sex=="female"))  
+                    
+                })
+            }))
+            dim(projected.log.odds) = sapply(trans.dim.names,length)
+            dimnames(projected.log.odds) = trans.dim.names
+            
+            projected.p = 1/(1+exp(-projected.log.odds)) 
+            
+            projected.p = projected.p*engagement.model$max.proportion 
+            projected.rate = -log(1-projected.p)   
+            projected.rate[,"male",] = projected.rate[,"male",]*sampled.parameters["male.engagement.multiplier"]
+            projected.rate
         
-        projected.rate.age.sex = array(projected.rate,
-                                       dim=sapply(trans.dim.names, length),
-                                       dimnames=trans.dim.names)
-        projected.rate.age.sex[,"male",] = projected.rate.age.sex[,"male",]*sampled.parameters["male.engagement.multiplier"]
-        
-        projected.rate.age.sex
-        
-    }))
+            }))
+    
+    } else if(location=="Kenya"){
+        engagement.rates = c(lapply(engagement.times, function(year){
+                projected.log.odds = engagement.model$intercept+
+                    (engagement.model$slope+sampled.parameters['log.OR.engagement.slope'])*(year-engagement.model$anchor.year)
+            
+                # OLD METHOD: 
+                # if(year<2016 | year>2017){
+                #     projected.log.odds = (engagement.model$intercept+sampled.parameters['log.OR.engagement.intercept'])+
+                #         ((engagement.model$pre.universal.slope+sampled.parameters['log.OR.engagement.pre.universal.slope'])*(year-engagement.model$anchor.year))+
+                #         ((engagement.model$post.universal.slope+sampled.parameters['log.OR.engagement.post.universal.slope'])*pmax(0,(year-2015)))
+                # } else if(year==2016 | year==2017){
+                #     projected.log.odds = (engagement.model$intercept+sampled.parameters['log.OR.engagement.intercept'])+
+                #         ((engagement.model$pre.universal.slope+sampled.parameters['log.OR.engagement.pre.universal.slope'])*(year-engagement.model$anchor.year))+
+                #         ((engagement.model$intermediate.slope.2016.2017+sampled.parameters['log.OR.engagement.intermediate.slope'])*pmax(0,(year-2015)))+
+                #         ((engagement.model$post.universal.slope+sampled.parameters['log.OR.engagement.post.universal.slope'])*pmax(0,(year-2015)))
+                # }
+                
+                projected.p = 1/(1+exp(-projected.log.odds)) 
+                projected.p = projected.p*engagement.model$max.proportion 
+                projected.rate = -log(1-projected.p)
+                
+                projected.rate.age.sex = array(projected.rate,
+                                               dim=sapply(trans.dim.names, length),
+                                               dimnames=trans.dim.names)
+                projected.rate.age.sex[,"male",] = projected.rate.age.sex[,"male",]*sampled.parameters["male.engagement.multiplier"]
+                
+                projected.rate.age.sex
+            
+        }))
+    }
+    
     
     parameters = set.rates.for.interventions(baseline.rates = engagement.rates, # list 
                                              baseline.times = engagement.times, # vector
