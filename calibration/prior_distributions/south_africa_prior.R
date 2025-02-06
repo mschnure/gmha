@@ -59,10 +59,11 @@ SOUTH.AFRICA.PRIOR = join.distributions(
     log.OR.testing.intercept = Normal.Distribution(0, log(4)/2), 
     log.OR.testing.slope = Normal.Distribution(0, log(4)/2),
     
-    log.OR.engagement.intercept = Normal.Distribution(0, log(4)/2),
-    log.OR.engagement.pre.universal.slope = Normal.Distribution(0, log(4)/2),
-    log.OR.engagement.intermediate.slope = Normal.Distribution(0, log(4)/2),
-    log.OR.engagement.post.universal.slope = Normal.Distribution(0, log(4)/2),
+    log.OR.engagement.slope = Normal.Distribution(0, log(4)/2),
+    # log.OR.engagement.intercept = Normal.Distribution(0, log(4)/2),
+    # log.OR.engagement.pre.universal.slope = Normal.Distribution(0, log(4)/2),
+    # log.OR.engagement.intermediate.slope = Normal.Distribution(0, log(4)/2),
+    # log.OR.engagement.post.universal.slope = Normal.Distribution(0, log(4)/2),
     
     unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.1392621), log(4)/2),
     suppressed.disengagement.rates = Lognormal.Distribution(log(0.1025866), log(4)/2),
