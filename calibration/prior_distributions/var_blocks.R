@@ -43,15 +43,10 @@ PARAMETER.VAR.BLOCKS = list(
     testing = c("log.OR.testing.intercept",
                 "log.OR.testing.slope"),
     
-    engagement = c("log.OR.engagement.intercept",
-                   "log.OR.engagement.pre.universal.slope",
-                   "log.OR.engagement.intermediate.slope",
-                   "log.OR.engagement.post.universal.slope"),
-    
-    
-    disengagement = c("unsuppressed.disengagement.rates",
-                      "suppressed.disengagement.rates"),
-    
+    engagement.disengagement = c("log.OR.engagement.slope",
+                                 "unsuppressed.disengagement.rates",
+                                 "suppressed.disengagement.rates"),
+
     suppression = c("suppression.rate.0",
                     "suppression.rate.1",
                     "unsuppression.rates"),
