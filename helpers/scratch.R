@@ -1,3 +1,160 @@
+### 2/5
+load("mcmc_runs/simset_kenya_2025-02-02.Rdata")
+#load("mcmc_runs/simset_south_africa_2025-02-03.Rdata")
+#load("mcmc_runs/simset_france_2025-01-19.Rdata")
+sim.last = simset@simulations[[simset@n.sim]]
+sim.first = simset@simulations[[1]]
+
+params.mcmc = simset@parameters[simset@n.sim,]
+params.manual = params.mcmc
+
+sim.manual = sim.last
+cbind(params.manual)
+params.manual["age.50.and.over.transmission.multiplier.0"] = 1 # 1.213366250
+params.manual["age.50.and.over.transmission.multiplier.1"] = 1 # 0.890353383
+params.manual["age.50.and.over.transmission.multiplier.3"] = 1 # 0.527950781
+
+params.manual["age.20.to.29.transmission.multiplier.0"] = 1.3 # 1.211353825
+params.manual["age.20.to.29.transmission.multiplier.1"] = 1 # 0.858479764
+#params.manual["age.20.to.29.transmission.multiplier.2"] = 1 # 1.809024437
+params.manual["age.20.to.29.transmission.multiplier.3"] = 1 # 0.583984377
+
+params.manual["age.40.to.49.transmission.multiplier.0"] = 1 # 0.875790144
+params.manual["age.40.to.49.transmission.multiplier.1"] = 1 # 0.337859867
+params.manual["age.40.to.49.transmission.multiplier.2"] = 1 # 0.314069025
+params.manual["age.40.to.49.transmission.multiplier.3"] = 1 # 1.846459710
+
+# params.manual["suppression.rate.0"] = 1.118678 # 2.401848844
+# params.manual["suppression.rate.1"] = 1.118678 # 5.109340399
+
+sim.manual = run.model.for.parameters(variable.parameters = params.manual,
+                                      end.year = 2030,
+                                      location = sim.last$location)
+simplot(sim.last,
+        sim.manual,
+        years=1980:2030, 
+        facet.by='age', 
+        data.types='incidence')
+
+simplot(sim.last,
+        sim.manual,
+        years=1980:2030, 
+        facet.by='age', 
+        data.types='prevalence')
+
+simplot(sim.last,
+        sim.manual,
+        years = 1980:2030)
+
+simplot(sim.last,
+        sim.manual,
+        years=1980:2030, 
+        facet.by='age', 
+        data.types='hiv.mortality')
+
+simplot(sim.last,
+        sim.manual, 
+        years=1980:2020, 
+        data.types='suppression', 
+        proportion=T)
+
+simplot(sim.last,
+        sim.manual, 
+        years=1980:2020, 
+        data.types='engagement', 
+        proportion=T)
+
+exp(likelihood.to.run(sim.last) - likelihood.to.run(sim.manual))
+exp(full.lik(sim.last) - full.lik(sim.manual))
+exp(pop.lik(sim.last) - pop.lik(sim.manual))
+exp(incidence.lik(sim.last) - incidence.lik(sim.manual)) 
+exp(prev.lik(sim.last) - prev.lik(sim.manual))
+exp(aware.lik(sim.last) - aware.lik(sim.manual))
+exp(eng.lik(sim.last) - eng.lik(sim.manual))
+exp(supp.lik(sim.last) - supp.lik(sim.manual)) 
+exp(hiv.mortality.lik(sim.last) - hiv.mortality.lik(sim.manual))
+exp(aware.trend.lik(sim.last) - aware.trend.lik(sim.manual))
+exp(total.mortality.lik(sim.last) - total.mortality.lik(sim.manual)) 
+
+simplot(simset,
+        sim.first,
+        sim.last,
+        years = 1980:2030)
+
+simplot(simset,
+        sim.first,
+        sim.last,
+        ages = c("50 and over"),
+        facet.by = "age",
+        data.types = c("incidence","prevalence","hiv.mortality"),
+        years = 1980:2030)
+
+simplot(simset, 
+        sim.first,
+        sim.last,
+        years = 1980:2030, 
+        data.types = "population")
+
+simplot(simset, 
+        sim.first,
+        sim.last,
+        years = 1980:2030, 
+        data.types = "population",
+        #ages = c("60-64","65-69","70-74","75-79","80 and over"),
+        facet.by='age')
+
+simplot(simset, 
+        sim.first,
+        sim.last,
+        years=1980:2030, 
+        facet.by=c('age'), 
+        #sexes = "male",
+        data.types='total.mortality')
+
+
+
+simplot(simset, 
+        sim.first,
+        sim.last,
+        years=1980:2030, 
+        facet.by='age', 
+        #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='prevalence')
+
+simplot(simset, 
+        sim.first,
+        sim.last,
+        years=1980:2030, 
+        facet.by=c('age'), 
+        #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='hiv.mortality')
+
+simplot(simset, 
+        sim.first,
+        sim.last,
+        years=1980:2030, 
+        facet.by=c('age',"sex"), 
+        ages = "15+", 
+        data.types='hiv.mortality')
+
+
+likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = "Kenya"),
+                                      location="Kenya")
+
+exp(likelihood.to.run(sim.last) - likelihood.to.run(sim.first))
+exp(full.lik(sim.last) - full.lik(sim.first))
+exp(pop.lik(sim.last) - pop.lik(sim.first))
+exp(incidence.lik(sim.last) - incidence.lik(sim.first)) 
+exp(prev.lik(sim.last) - prev.lik(sim.first))
+exp(aware.lik(sim.last) - aware.lik(sim.first))
+exp(eng.lik(sim.last) - eng.lik(sim.first))
+exp(supp.lik(sim.last) - supp.lik(sim.first)) 
+exp(hiv.mortality.lik(sim.last) - hiv.mortality.lik(sim.first))
+exp(aware.trend.lik(sim.last) - aware.trend.lik(sim.first))
+exp(total.mortality.lik(sim.last) - total.mortality.lik(sim.first)) 
+
+
+
 ### 1/30 
 
 #load("mcmc_runs/simset_kenya_2025-01-28.Rdata")
@@ -54,11 +211,11 @@ simplot(sim.mcmc.projected,
         data.types='incidence')
 
 simplot(sim.mcmc.projected,
-        sim.manual,
+        #sim.manual,
         years=1980:2040, 
         facet.by='age', 
-        #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
-        data.types='prevalence')
+        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='prevalence') + geom_vline(xintercept = 2025)
 
 simplot(sim.mcmc.projected,
         sim.manual,
@@ -102,7 +259,7 @@ simplot(sim.mcmc.projected,
         data.types='suppression', 
         proportion=T)
 
-plot.age.distribution(sim.mcmc.projected,plot.limits = c(0,1000000))
+plot.age.distribution(sim.mcmc.projected,plot.limits = c(0,200000))
 plot.age.distribution(sim.manual,plot.limits = c(0,1000000))
 
 likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = "Kenya"),
