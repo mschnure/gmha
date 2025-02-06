@@ -1,16 +1,16 @@
 source("model/run_systematic.R")
 
-#load("~/Library/CloudStorage/Dropbox/Documents_local/Hopkins/SOM_Job/3_Aging_multimorbidity/gmha/mcmc_runs/mcmc_test_2024-12-13.Rdata")
-#load("~/Library/CloudStorage/Dropbox/Documents_local/Hopkins/SOM_Job/3_Aging_multimorbidity/gmha/mcmc_runs/mcmc_test_2024-12-17.Rdata")
-
-# simset.test = extract.simset(mcmc.test,
-#                              additional.burn=500,
-#                              additional.thin=20)
+# load("mcmc_runs/mcmc_files/mcmc_kenya_2025-02-02.Rdata")
+# load("mcmc_runs/mcmc_files/mcmc_kenya_2025-01-28.Rdata")
 # 
+# simset = extract.simset(mcmc,
+#                         additional.burn=7500,
+#                         additional.thin=50)
 
 
-load("mcmc_runs/simset_kenya_2025-01-28.Rdata")
-#load("mcmc_runs/simset_south_africa_2025-01-28.Rdata")
+
+#load("mcmc_runs/simset_kenya_2025-02-02.Rdata")
+#load("mcmc_runs/simset_south_africa_2025-02-03.Rdata")
 #load("mcmc_runs/simset_france_2025-01-19.Rdata")
 
 
