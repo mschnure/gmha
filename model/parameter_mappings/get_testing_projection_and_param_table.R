@@ -22,13 +22,14 @@ generate.testing.parameter.table = function(locations){
     for(location in locations){
         master.df = get.testing.model(location=location)$master.df
         max.proportion = get.testing.model(location=location)$max.proportion
+        anchor.year = get.testing.model(location=location)$anchor.year
         
         # Young
         sex="female"
         fit.young = suppressWarnings(glm(prop ~ year, family=binomial, data = master.df[master.df$sex==sex & master.df$age==17,]))
         year = 2015
         young.log.odds  = fit.young$coefficients[1] + 
-            fit.young$coefficients["year"]*(2015-testing.anchor.year)
+            fit.young$coefficients["year"]*(2015-anchor.year)
         young.odds = exp(young.log.odds)
         lower.young.odds = young.odds/4
         upper.young.odds = young.odds*4
@@ -39,9 +40,9 @@ generate.testing.parameter.table = function(locations){
         fit.old = suppressWarnings(glm(prop ~ year*age, family=binomial, data = master.df[master.df$sex==sex & master.df$age!=17,])) 
         old.age=35
         old.log.odds = fit.old$coefficients[1] + # intercept 
-            fit.old$coefficients["year"]*(2015-testing.anchor.year) + # old*year
+            fit.old$coefficients["year"]*(2015-anchor.year) + # old*year
             fit.old$coefficients["age"]*old.age + # old*age
-            fit.old$coefficients["year:age"]*(2015-testing.anchor.year)*old.age # old*year*age
+            fit.old$coefficients["year:age"]*(2015-anchor.year)*old.age # old*year*age
         old.odds = exp(old.log.odds)
         lower.old.odds = old.odds/4
         upper.old.odds = old.odds*4
@@ -76,4 +77,58 @@ generate.testing.parameter.table = function(locations){
     
     rv
    
+}
+
+
+# this isn't working right now 
+plot.testing.fit = function(location,
+                            sex,
+                            age){
+    testing.model = get.testing.model(location=location)
+    master.df = testing.model$master.df
+    master.df$year = master.df$year + 2000
+    master.df$age[master.df$age < 35] = paste0((master.df$age[master.df$age < 35])-2,"-",master.df$age[master.df$age < 35]+2)
+    master.df$age[master.df$age > 34] = paste0((master.df$age[master.df$age > 34]),"-",as.numeric(master.df$age[master.df$age > 34])+4)
+    
+    testing.times = c(1976:2040)
+    testing.rates = c(lapply(testing.times, function(year){
+        
+        projected.log.odds = (testing.model$intercepts + testing.model$slopes)
+        
+        projected.p = 1/(1+exp(-projected.log.odds))
+        projected.p = projected.p*testing.model$max.proportion
+        projected.rate = -log(1-projected.p)
+        
+        projected.rate
+        
+    }))
+    
+    df = master.df[master.df$age==age & master.df$sex==sex,]
+    
+    projected.value = lapply(testing.rates, function(array) {
+        age_index <- which(dimnames(array)[[1]] == age)
+        sex_index <- which(dimnames(array)[[2]] == sex)
+
+        if (length(age_index) > 0 && length(sex_index) > 0) {
+            mean(array[age_index, sex_index, ], na.rm = TRUE)
+        } else {
+            NA  
+        }
+    })
+    
+    projected.df = data.frame(year=testing.times,
+                              value=unlist(projected.value))
+
+    data.df = data.frame(year=c(projected.df$year),
+                    value=c(rep(NA,27),df$prop[1],
+                        rep(NA,4),df$prop[2],
+                        rep(NA,5),df$prop[3],
+                        rep(NA,26)))
+        
+    plot = qplot(c(data.df$year,projected.df$year),
+                 c(data.df$value,projected.df$value),
+                 color=rep(c("true","fitted"),
+                           each=length(projected.df$year)),geom="line")
+    
+    plot
 }
