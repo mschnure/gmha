@@ -747,7 +747,7 @@ map.model.parameters <- function(parameters,
     engagement.model = get.engagement.model(location = location)
     engagement.times = c(1975:min(project.to.year,sampled.parameters["cascade.improvement.end.year"], na.rm = T))
     
-    if(location=="South Africa"){ # NEED TO ADD IN SAMPLED PARAMETERS, max proportion 
+    if(location=="South Africa"){ 
         
         engagement.rates = c(lapply(engagement.times, function(year){
             

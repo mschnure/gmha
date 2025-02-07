@@ -1,10 +1,14 @@
 
+# ART initiation within 12 months of enrollment in HIV care, in ART-naive patients
+# Treatment Outcomes among Patients Enrolling in Care in Sub-Saharan Africa
+# e.g., 53% of 10-19yo males in 2010 initiated ART within 12 months of enrollment in HIV care at an IeDEA site 
+
 get.engagement.model.south.africa = function(){
     
     max.proportion = 0.95
     
     data = c(0, # art.start.male.10.19.1990 - fixed 
-             .53, # art.start.male.10.19.2010
+             .53, # art.start.male.10.19.2010 
              .52, # art.start.male.10.19.2014
              .91, # art.start.male.10.19.2017
              
@@ -68,14 +72,9 @@ get.engagement.model.south.africa = function(){
     engagement.anchor.year = 1990
     engagement.years = as.numeric(dim.names.data$year)-engagement.anchor.year
     
-    # df = data.frame(prop=engagement.rate,
-    #                 year=engagement.years,
-    #                 age=c(rep("10-19",3),rep("20-29",3),rep("10-19",3),rep("20-29",3)),
-    #                 sex=c(rep("male",6),rep("female",6)))
-    
     data.df$year = engagement.years
     
-    fit = suppressWarnings(glm(value ~ year+age+sex, family=binomial, data = data.df)) # will be something like this I think? 
+    fit = suppressWarnings(glm(value ~ year+age+sex, family=binomial, data = data.df)) 
     
     dim.names.projection = list(year = 1980:2040 - engagement.anchor.year,
                                 age = c("10-19","20-29","30-39","40-49","50 and over"),
