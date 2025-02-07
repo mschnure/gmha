@@ -15,7 +15,6 @@ sim.south.africa = run.model.for.parameters(location="South Africa",variable.par
 sim.cambodia = run.model.for.parameters(location="Cambodia",variable.parameters = variable.parameters.cambodia)
 sim.thailand = run.model.for.parameters(location="Thailand",variable.parameters = variable.parameters.thailand)
 
-# these two don't work without deaths data  
 sim.netherlands = run.model.for.parameters(location="Netherlands",variable.parameters = variable.parameters.netherlands)
 sim.france = run.model.for.parameters(location="France",variable.parameters = variable.parameters.france)
     
