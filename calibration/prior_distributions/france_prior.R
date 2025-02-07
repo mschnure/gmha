@@ -5,9 +5,9 @@ FRANCE.PRIOR = join.distributions(
     # general 
     trates = make.joint.distribution(median.r2 = 0.10, # 2008 ## CHANGED 1/10 (from 0.25)
                                      sd.r2=log(4)/2,
-                                     median.r0.to.r1 = 4, # 1990 relative to 1997 ## CHANGED 1/10 (from 8)
+                                     median.r0.to.r1 = 0.5, # 1990 relative to 1997 ## CHANGED 2/7 (from 4) 1/10 (from 8)
                                      sd.r0.to.r1 = log(4)/2, ## CHANGED 1/10 (from log(2)/2)
-                                     median.r1.to.r2 = 1, # 1997 relative to 2008
+                                     median.r1.to.r2 = 2, # 1997 relative to 2008  ## CHANGED 2/7 (from 1)
                                      sd.r1.to.r2 = log(4)/2, ## CHANGED 1/10 (from log(2)/2)
                                      median.r3.to.r2 = 1, # 2018 relative to 2008
                                      sd.r3.to.r2 = log(4)/2, ## CHANGED 1/10 (from log(2)/2)
