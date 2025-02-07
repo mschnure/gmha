@@ -505,7 +505,8 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
                                         age,
                                         suffix){
    sub.dir = file.path(dir, data.type)
-    
+    # if(data.type=="incidence" & include.countries==T & age=="50 and over")
+    #     browser()
     files = list.files(file.path(sub.dir))
     
     ## Total and locations
@@ -528,7 +529,20 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
     rownames(one.df.t) <- colnames(one.df)
     colnames(one.df.t) <- rownames(one.df)
     
-    ## Put in checks so I manually pull things that will give NAs (e.g., "<", so that any actual errors will show up)
+    # convert "<" values to median between values 
+    suppressed.values = sapply(one.df.t,extract_suppressed_values)
+    new.values = sapply(suppressed.values,pick_new_values)
+    suppressed.values = lapply(suppressed.values,function(x){x[-1]})
+    value.conversion = data.frame("suppressed.values"=unlist(suppressed.values),
+                                  "new.values"=unlist(new.values))
+    value.conversion$country = gsub("[0-9]+", "", rownames(value.conversion))
+    
+    row.names = rownames(one.df.t)
+    one.df.t = data.frame(
+        mapply(replace_with_conversion, one.df.t, names(one.df.t), MoreArgs = list(value.conversion = value.conversion), 
+               SIMPLIFY = FALSE)
+    )
+    rownames(one.df.t) = row.names
     
     ## Need to put in check for suffix somehow
     ## Total ##
