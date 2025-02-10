@@ -3,22 +3,17 @@ source('calibration/make_joint_distribution.R')
 FRANCE.PRIOR = join.distributions(
     
     # general 
-    trates = make.joint.distribution(median.r2 = 0.10, # 2008 ## CHANGED 1/10 (from 0.25)
-                                     sd.r2=log(4)/2,
-                                     median.r0.to.r1 = 0.5, # 1990 relative to 1997 ## CHANGED 2/7 (from 4) 1/10 (from 8)
-                                     sd.r0.to.r1 = log(4)/2, ## CHANGED 1/10 (from log(2)/2)
-                                     median.r1.to.r2 = 2, # 1997 relative to 2008  ## CHANGED 2/7 (from 1)
-                                     sd.r1.to.r2 = log(4)/2, ## CHANGED 1/10 (from log(2)/2)
-                                     median.r3.to.r2 = 1, # 2018 relative to 2008
-                                     sd.r3.to.r2 = log(4)/2, ## CHANGED 1/10 (from log(2)/2)
+    trates = make.joint.distribution(median.r0.to.r1 = 10, # 1980 relative to 1993 
+                                     median.r1.to.r2 = 0.75, # 1993 relative to 2005
+                                     median.r2 = 0.10, # 2005 
+                                     median.r3.to.r2 = 1, # 2018 relative to 2005
                                      median.r4.to.r3 = 1, # 2040 relative to 2018
-                                     sd.r4.to.r3 = log(4)/2), ## CHANGED 1/10 (from log(2)/2)
-    
-    # trate.0 = Lognormal.Distribution(log(.5), log(8)/2),  
-    # trate.1 = Lognormal.Distribution(log(.25), log(8)/2), 
-    # trate.2 = Lognormal.Distribution(log(.25), log(8)/2), 
-    # trate.3 = Lognormal.Distribution(log(.25), log(8)/2), 
-    
+                                     sd.r0.to.r1 = log(4)/2,
+                                     sd.r1.to.r2 = log(4)/2, 
+                                     sd.r2 = log(4)/2,
+                                     sd.r3.to.r2 = log(4)/2, 
+                                     sd.r4.to.r3 = log(4)/2), 
+
     proportion.trate.change.by.3.5 = Beta.Distribution(alpha = 21,beta = 7),
     
     # sex transmission multipliers
@@ -91,9 +86,9 @@ FRANCE.PRIOR = join.distributions(
     over.80.mortality.intercept.multiplier.female = Lognormal.Distribution(log(1), log(4)/2),
     over.80.mortality.slope.multiplier.female = Lognormal.Distribution(log(1), log(4)/2),
     
-    hiv.specific.mortality.rates.0 = Lognormal.Distribution(log(0.04), log(4)/2),
-    hiv.specific.mortality.rates.1 = Lognormal.Distribution(log(0.07), log(4)/2),
-    hiv.specific.mortality.rates.2 = Lognormal.Distribution(log(0.018), log(4)/2),
+    hiv.specific.mortality.rates.0 = Lognormal.Distribution(log(0.05357143), log(4)/2), # see hiv.mortality.priors.R
+    hiv.specific.mortality.rates.1 = Lognormal.Distribution(log(0.002272727), log(4)/2),
+    hiv.specific.mortality.rates.2 = Lognormal.Distribution(log(0.003947368), log(4)/2),
     
     male.hiv.mortality.multiplier.0 = Lognormal.Distribution(log(1), log(4)/2),
     male.hiv.mortality.multiplier.1 = Lognormal.Distribution(log(1), log(4)/2),
