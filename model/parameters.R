@@ -75,11 +75,11 @@ get.default.parameters = function(location){
         time.3=2018,
         time.3.5=2030,
         time.4=2040,
-        trate.0=0.7,
-        trate.1=0.2,
-        trate.2=0.2, 
-        trate.3=0.15,
-        trate.4=0.15,
+        trate.0=0.8, # kenya prior; others set below 
+        trate.1=0.1, # kenya prior
+        trate.2=0.1, # kenya prior 
+        trate.3=0.1, # kenya prior
+        trate.4=0.1, # kenya prior
         proportion.trate.change.by.3.5=0.75,
         # sex transmission multipliers
         male.to.male.multiplier=1,
@@ -154,9 +154,9 @@ get.default.parameters = function(location){
         hiv.mortality.time.0=1990,
         hiv.mortality.time.1=2005,
         hiv.mortality.time.2=2020,
-        hiv.specific.mortality.rates.0=0.04,  
-        hiv.specific.mortality.rates.1=0.07,  
-        hiv.specific.mortality.rates.2=0.018,
+        hiv.specific.mortality.rates.0=NA, # country-specific, set below 0.05357143, # 0.04,  
+        hiv.specific.mortality.rates.1=NA, # country-specific, set below 0.002272727, # 0.07,  
+        hiv.specific.mortality.rates.2=NA, # country-specific, set below 0.003947368, # 0.018,
         male.hiv.mortality.multiplier.0=1,
         male.hiv.mortality.multiplier.1=1,
         male.hiv.mortality.multiplier.2=1,
@@ -181,6 +181,37 @@ get.default.parameters = function(location){
         age.25.to.50.aging.factor=2,
         over.50.aging.factor=1 # changed 1/17/25 from 2 (doesn't actually matter here; will be overwritten by prior)
     ) 
+    
+    # see hiv.mortality.priors.R; using Kenya as default for now 
+    if(location=="South Africa"){
+        rv["hiv.specific.mortality.rates.0"]=0.03030303 
+        rv["hiv.specific.mortality.rates.1"]=0.05306122 
+        rv["hiv.specific.mortality.rates.2"]=0.007432432
+        rv["trate.0"] = 0.4
+        rv["trate.1"] = 0.1
+        rv["trate.2"] = 0.1
+        rv["trate.3"] = 0.1
+        rv["trate.4"] = 0.1
+    } else if(location=="France"){
+        rv["hiv.specific.mortality.rates.0"]=0.05357143 
+        rv["hiv.specific.mortality.rates.1"]=0.002272727 
+        rv["hiv.specific.mortality.rates.2"]=0.003947368
+        rv["time.0"] = 1980 # was 1990
+        rv["time.1"] = 1993 # was 1997
+        rv["time.2"] = 2005 # was 2008
+        rv["trate.0"] = 0.8
+        rv["trate.1"] = 0.08
+        rv["trate.2"] = 0.11
+        rv["trate.3"] = 0.11
+        rv["trate.4"] = 0.11
+    } else { # if (location=="Kenya")
+        rv["hiv.specific.mortality.rates.0"]=0.04057971 
+        rv["hiv.specific.mortality.rates.1"]=0.08125 
+        rv["hiv.specific.mortality.rates.2"]=0.02
+    } 
+ 
+    rv
+      
 }
 
 
