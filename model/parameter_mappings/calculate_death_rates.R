@@ -232,7 +232,7 @@ project.deaths = function(data.manager,
 
 ## PLOTTING SUMMARIES OF PROJECTIONS 
 if(1==2){
-    LOCATION = "Kenya"
+    LOCATION = "France"
     params = get.default.parameters(location = LOCATION)
     #params["age.45.to.64.mortality.slope.multiplier"] = 1.02 # this helps hit male 45-65 in Kenya but messes up female 
     
@@ -268,10 +268,10 @@ if(1==2){
     df.crude.deaths = melt(crude.deaths)
     df.crude.deaths.total = melt(crude.deaths.total)
 
-    # ggplot() +
-    #     geom_line(data = df.crude.deaths.total, aes(x = year, y = value*1000)) +  #+ geom_hline(yintercept = 13) + geom_vline(xintercept = 2008)
-    #     geom_line(data = df.smoothed.deaths.total, aes(x = year, y = value*1000))+ 
-    #     ggtitle(LOCATION)
+    ggplot() +
+        geom_line(data = df.crude.deaths.total, aes(x = year, y = value*1000)) +  #+ geom_hline(yintercept = 13) + geom_vline(xintercept = 2008)
+        geom_line(data = df.smoothed.deaths.total, aes(x = year, y = value*1000))+
+        ggtitle(LOCATION)
     
     ggplot() +
         geom_line(data = df.crude.deaths[df.crude.deaths$sex == "male", ], aes(x = year, y = value*1000)) + 
