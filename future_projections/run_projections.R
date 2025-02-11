@@ -16,8 +16,8 @@ source("future_projections/extract_projection_results.R")
 #                                          additional.thin=1))
 
 
-#load("mcmc_runs/simset_kenya_2025-01-28.Rdata")
-load("mcmc_runs/simset_south_africa_2025-01-28.Rdata")
+load("mcmc_runs/simset_kenya_thinned_2025-02-11.Rdata")
+#load("mcmc_runs/simset_south_africa_2025-01-28.Rdata")
 #load("mcmc_runs/simset_france_2025-01-19.Rdata")
 
 RUN.SIMULATIONS.TO.YEAR = 2040

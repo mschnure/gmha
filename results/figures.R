@@ -17,8 +17,8 @@ library("ggsci")
 # load these results if I already ran the interventions 
 source("model/run_systematic.R")
 #load("cached/all.results_kenya_2025-02-09.Rdata")
-load("cached/all.results_south_africa_2025-02-04.Rdata") # 1/21 version looked better for 50+ incidence 
-load("cached/all.results_france_2025-02-10.Rdata")
+#load("cached/all.results_south_africa_2025-02-04.Rdata") # 1/21 version looked better for 50+ incidence 
+load("cached/all.results_france_2025-02-11.Rdata")
 simset.no.int = simset.list.full$no.int    
 
 calibration.plot.years = 1990:2020
