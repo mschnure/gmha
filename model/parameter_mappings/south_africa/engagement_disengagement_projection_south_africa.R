@@ -1,4 +1,19 @@
 
+## Cornell et al, 2010: IeDEA network, 2002-2007 
+get.disengagement.model.south.africa = function(){
+    disengagement.p = 0.144 # % loss-to-follow-up at 12 months 
+    
+    disengagement.rate.unsuppressed = -log(1-disengagement.p)
+    disengagement.rate.suppressed = disengagement.rate.unsuppressed
+    
+    rv = list()
+    rv$disengagement.rate.unsuppressed = disengagement.rate.unsuppressed
+    rv$disengagement.rate.suppressed = disengagement.rate.suppressed
+    
+    rv
+}
+
+
 # ART initiation within 12 months of enrollment in HIV care, in ART-naive patients
 # Treatment Outcomes among Patients Enrolling in Care in Sub-Saharan Africa
 # e.g., 53% of 10-19yo males in 2010 initiated ART within 12 months of enrollment in HIV care at an IeDEA site 

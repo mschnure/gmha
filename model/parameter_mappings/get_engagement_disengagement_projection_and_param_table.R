@@ -1,28 +1,30 @@
 source("model/parameter_mappings/kenya/engagement_disengagement_projection_kenya.R")
 source("model/parameter_mappings/south_africa/engagement_disengagement_projection_south_africa.R")
-source("model/parameter_mappings/south_africa/continuum_parameters_sa.R")
 
-get.disengagement.model = function(location){
-    # if(location!="Kenya")
-    #     print("Using Kenya-specific disengagement for now")
-    
-    rv = get.disengagement.model.kenya()
-    rv
-}
 
 get.engagement.model = function(location){
-    # if(location!="Kenya")
-    #     print("Using Kenya-specific engagement for now")
+    
     if(location=="Kenya"){
         rv = get.engagement.model.kenya() 
     } else {
-        rv = get.engagement.model.south.africa()
+        rv = get.engagement.model.south.africa() # use SOUTH AFRICA'S engagement data for all other countries 
     }
     rv
 }
 
 
+get.disengagement.model = function(location){
+    
+    if(location=="South Africa"){
+        rv = get.disengagement.model.south.africa() 
+    } else {
+        rv = get.disengagement.model.kenya() # use KENYA'S disengagement data for all other countries 
+    }
+    rv
+    
+}
 
+# THIS IS OLD 
 generate.engagement.parameter.table = function(locations){
     
     rv = list()
