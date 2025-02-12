@@ -1,31 +1,27 @@
-##############################################################################
-# Description: Generate results/figures from interventions run on simset.final 
-##############################################################################
+########################################
+# Description: Generate results/figures 
+########################################
+
 # install.packages("RColorBrewer")
 library("RColorBrewer")
 library("scales")
 library("ggsci")
-
-# Types of figures
-#     1. Calibration plots (no intervention, 2000-2020)
-#     2. Intervention plots (2000-2040)
-#     3. Age distribution plots (2040)
-
-# source this file if I actually need to run the interventions again 
-# source("interventions/run_interventions_on_simset.R")
-
-# load these results if I already ran the interventions 
 source("model/run_systematic.R")
-#load("cached/all.results_kenya_2025-02-09.Rdata")
-#load("cached/all.results_south_africa_2025-02-04.Rdata") # 1/21 version looked better for 50+ incidence 
-load("cached/all.results_france_2025-02-11.Rdata")
+
+
+#load("cached/all.results_kenya_2025-02-11.Rdata")
+load("cached/all.results_south_africa_2025-02-11.Rdata") 
+#load("cached/all.results_france_2025-02-11.Rdata")
 simset.no.int = simset.list.full$no.int    
 
-calibration.plot.years = 1990:2020
-intervention.plot.years = 2000:2040
+if(simset.no.int@simulations[[1]]$location=="Kenya")
+    plot.limit = 200000 
+if(simset.no.int@simulations[[1]]$location=="South Africa")
+    plot.limit = 1200000 
+if(simset.no.int@simulations[[1]]$location=="France")
+    plot.limit = 35000 
 
-calibration.colors = (hue_pal()(2))
-pal = c(brewer.pal(n=12,"Paired")[2],brewer.pal(n=12,"Paired")[5],brewer.pal(n=12,"Paired")[4]) # use ALPHA = 0.8
+pal = c(brewer.pal(n=12,"Paired")[2],brewer.pal(n=12,"Paired")[5],brewer.pal(n=12,"Paired")[4]) 
 alpha = 0.8
 
 ##--------------------##
@@ -42,7 +38,7 @@ generate.age.distribution(full.results.array,
                           intervention.3 = "no.int",year.3="2040",
                           percent=F,
                           sexes = c("female","male"),
-                          plot.limits=c(0,1200000)) +   # 200000 kenya; 1000000 south africa; 35000 france
+                          plot.limits=c(0,plot.limit)) +   
     scale_fill_manual(labels = c("no.int/2025" = "2025",
                                  "no.int/2040" = "Status quo, 2040",
                                  "no.int/2040" = "Status quo, 2040"), 
@@ -67,7 +63,7 @@ generate.age.distribution(full.results.array,
                           intervention.3 = "no.int",year.3="2040",
                           percent=F,
                           sexes = c("female","male"),
-                          plot.limits=c(0,35000)) +  # 200000 kenya; 1000000 south africa; 35000 france
+                          plot.limits=c(0,plot.limit)) +
     scale_fill_manual(labels = c("no.int/2025" = "2025",
                                  "no.int/2040" = "Status quo, 2040",
                                  "no.int/2040" = "Status quo, 2040"), 
