@@ -1,11 +1,14 @@
 
+
+## THID IS THE OLD SUPPRESSION METHOD; TRYING IEDEA ONE BELOW NOW 
+
 ##--------------------------------------##
 ##-- Suppression - Njuguna et al 2022 --##
 ##--------------------------------------##
 
 # Suppression - Njuguna et al
 # prop suppressed at 18 months
-get.suppression.rate.kenya = function(){
+get.suppression.rate.kenya.old = function(){
     suppressed.p = 3227/(3227+741)
     suppressed.r = -log(1-suppressed.p)/(18/12)
     
@@ -46,7 +49,7 @@ get.unsuppression.rate.kenya = function(){
 
 
 
-get.suppression.rate.kenya.iedea = function(){
+get.suppression.rate.kenya = function(){
     max.proportion = 0.95
     
     data = c(0, # vls.male.10.19.1990 - fixed 

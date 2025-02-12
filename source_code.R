@@ -18,6 +18,7 @@ source('model/parameter_mappings/get_testing_projection_and_param_table.R')
 source('model/parameter_mappings/kenya/age_sex_mixing_proportions.R') # will standardize to all countries 
 source('model/parameter_mappings/get_age_sex_transmission_multipliers.R')
 source('model/parameter_mappings/get_engagement_disengagement_projection_and_param_table.R') 
+source('model/parameter_mappings/get_suppression_rebound_data.R')
 
 source('model/parameter_mappings/calculate_death_rates.R')
 source('model/parameters.R')

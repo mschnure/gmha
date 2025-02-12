@@ -30,7 +30,7 @@ plot.suppression.fit = function(location="South Africa",
     if(location=="South Africa"){
         model = get.suppression.rate.south.africa()    
     } else if(location=="Kenya"){
-        model = get.suppression.rate.kenya.iedea()
+        model = get.suppression.rate.kenya() # using iedea one as the default now 
     } else 
         stop("can only plot for South Africa and Kenya")
     

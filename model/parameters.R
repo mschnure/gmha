@@ -118,10 +118,11 @@ get.default.parameters = function(location){
         log.OR.engagement.slope=0,
         unsuppressed.disengagement.rates=0.1392621, # Lee et al
         suppressed.disengagement.rates=0.1025866, # Lee et al
-        suppression.time.0=1993,
-        suppression.time.1=2003,
-        suppression.rate.0=1.118678, # Njuguna et al - was always correct here, but fixed in prior_distributions
-        suppression.rate.1=1.118678, # Njuguna et al - was always correct here, but fixed in prior_distributions
+        log.OR.suppression.slope=0,
+        # suppression.time.0=1993,
+        # suppression.time.1=2003,
+        # suppression.rate.0=1.118678, # Njuguna et al - was always correct here, but fixed in prior_distributions
+        # suppression.rate.1=1.118678, # Njuguna et al - was always correct here, but fixed in prior_distributions
         unsuppression.rates=0.2196, # Maina et al - corrected from p (0.1971601) to r (0.2196) 12/23/2024
         male.awareness.multiplier=1,
         male.engagement.multiplier=1,
@@ -870,33 +871,77 @@ map.model.parameters <- function(parameters,
     
     
     #-- SUPPRESSION/UNSUPPRESSION --#
-    suppression.times = c(sampled.parameters['suppression.time.0']-0.001,
-                          sampled.parameters['suppression.time.0'],
-                          sampled.parameters['suppression.time.1'])
+    if(1==1){
+        suppression.model = get.suppression.rates(location = location)
+        suppression.times = c(1975:min(project.to.year,sampled.parameters["cascade.improvement.end.year"], na.rm = T))
+        
+        suppression.rates = c(lapply(suppression.times, function(year){
+            
+            projected.log.odds = as.numeric(sapply(trans.dim.names$sex, function(sex){
+                sapply(trans.dim.names$age, function(age){
+                    eng.cat = names(MODEL.TO.IEDEA.AGE.MAPPING)[sapply(MODEL.TO.IEDEA.AGE.MAPPING, function(x) age %in% x)]
+                    
+                    suppression.model$intercept + 
+                        (suppression.model$slope+sampled.parameters['log.OR.suppression.slope'])*(year-suppression.model$anchor.year) + 
+                        (suppression.model$age.10.19*(eng.cat=="10-19")) + 
+                        (suppression.model$age.20.29*(eng.cat=="20-29")) + 
+                        (suppression.model$age.40.49*(eng.cat=="40-49")) + 
+                        (suppression.model$age.50.plus*(eng.cat=="50 and over")) + 
+                        (suppression.model$sex.female*(sex=="female"))  
+                    
+                })
+            }))
+            dim(projected.log.odds) = sapply(trans.dim.names,length)
+            dimnames(projected.log.odds) = trans.dim.names
+            
+            projected.p = 1/(1+exp(-projected.log.odds)) 
+            
+            projected.p = projected.p*suppression.model$max.proportion 
+            projected.rate = -log(1-projected.p)   
+            projected.rate[,"male",] = projected.rate[,"male",]*sampled.parameters["male.suppression.multiplier"]
+            projected.rate
+            
+        }))
+        
+        parameters = set.rates.for.interventions(baseline.rates = suppression.rates, # list 
+                                                 baseline.times = suppression.times, # vector
+                                                 interventions = interventions,
+                                                 scale = "rate", 
+                                                 parameters = parameters,
+                                                 parameter.name = "SUPPRESSION.RATES") 
+    }
     
-    suppression.rates.0 = array(sampled.parameters['suppression.rate.0'],
-                                dim=sapply(trans.dim.names, length),
-                                dimnames=trans.dim.names)
-    suppression.rates.0[,"male",] = suppression.rates.0[,"male",]*sampled.parameters["male.suppression.multiplier"]
-    
-    suppression.rates.1 = array(sampled.parameters['suppression.rate.1'],
-                                dim=sapply(trans.dim.names, length),
-                                dimnames=trans.dim.names)
-    suppression.rates.1[,"male",] = suppression.rates.1[,"male",]*sampled.parameters["male.suppression.multiplier"]
-    
-    suppression.rates = list(array(0,
-                                   dim=sapply(trans.dim.names, length),
-                                   dimnames=trans.dim.names),
-                             suppression.rates.0,
-                             suppression.rates.1)
-    
-    parameters = set.rates.for.interventions(baseline.rates = suppression.rates, # list 
-                                             baseline.times = suppression.times, # vector
-                                             interventions = interventions,
-                                             scale = "rate", 
-                                             parameters = parameters,
-                                             parameter.name = "SUPPRESSION.RATES")
-    
+    ## OLD SUPPRESSION METHOD ## 
+    if(1==2){
+        suppression.times = c(sampled.parameters['suppression.time.0']-0.001,
+                              sampled.parameters['suppression.time.0'],
+                              sampled.parameters['suppression.time.1'])
+        
+        suppression.rates.0 = array(sampled.parameters['suppression.rate.0'],
+                                    dim=sapply(trans.dim.names, length),
+                                    dimnames=trans.dim.names)
+        suppression.rates.0[,"male",] = suppression.rates.0[,"male",]*sampled.parameters["male.suppression.multiplier"]
+        
+        suppression.rates.1 = array(sampled.parameters['suppression.rate.1'],
+                                    dim=sapply(trans.dim.names, length),
+                                    dimnames=trans.dim.names)
+        suppression.rates.1[,"male",] = suppression.rates.1[,"male",]*sampled.parameters["male.suppression.multiplier"]
+        
+        suppression.rates = list(array(0,
+                                       dim=sapply(trans.dim.names, length),
+                                       dimnames=trans.dim.names),
+                                 suppression.rates.0,
+                                 suppression.rates.1)
+        
+        parameters = set.rates.for.interventions(baseline.rates = suppression.rates, # list 
+                                                 baseline.times = suppression.times, # vector
+                                                 interventions = interventions,
+                                                 scale = "rate", 
+                                                 parameters = parameters,
+                                                 parameter.name = "SUPPRESSION.RATES")
+    }
+   
+    ## END OF OLD SUPPRESSION METHOD ## 
     
     unsuppression.times = c(2000)
     unsuppression.rates = c(list(array(sampled.parameters['unsuppression.rates'],
