@@ -47,8 +47,7 @@ PARAMETER.VAR.BLOCKS = list(
                                  "unsuppressed.disengagement.rates",
                                  "suppressed.disengagement.rates"),
 
-    suppression = c("suppression.rate.0",
-                    "suppression.rate.1",
+    suppression = c("log.OR.suppression.slope",
                     "unsuppression.rates"),
     
     male.cascade.multiplier = c("male.awareness.multiplier",
