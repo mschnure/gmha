@@ -1,24 +1,8 @@
 source("model/run_systematic.R")
 
-# load("mcmc_runs/mcmc_files/mcmc_kenya_2025-02-09.Rdata") 
-# load("mcmc_runs/mcmc_files/mcmc_south_africa_2025-02-11.Rdata")
-load("mcmc_runs/mcmc_files/mcmc_france_2025-02-11.Rdata")
-
-# kenya: original simset has 490; burn 7500 and thin 25 to get to 100
-# south africa: original simset has 266; burn 4000 and thin 15 to get to 102
-# france: original simset has 170; burn 2000 and thin 16 to get to 250
-simset = extract.simset(mcmc,
-                        additional.burn=2000, # 7500, 4000, 2000
-                        additional.thin=16) # 25, 15, 16
-
-#save(simset,file=paste0("mcmc_runs/simset_kenya_thinned_",Sys.Date(),".Rdata"))
-#save(simset,file=paste0("mcmc_runs/simset_south_africa_thinned_",Sys.Date(),".Rdata"))
-save(simset,file=paste0("mcmc_runs/simset_france_thinned_",Sys.Date(),".Rdata"))
-
-#load("mcmc_runs/simset_kenya_2025-02-09.Rdata")
-#load("mcmc_runs/simset_south_africa_2025-02-11.Rdata")
-#load("mcmc_runs/simset_france_2025-02-11.Rdata")
-
+#load("mcmc_runs/simset_kenya_thinned_2025-02-11.Rdata")
+load("mcmc_runs/simset_south_africa_thinned_2025-02-11.Rdata")
+#load("mcmc_runs/simset_france_2025-02-12.Rdata")
 
 simplot(simset,
         years = 1980:2030)
