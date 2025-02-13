@@ -43,19 +43,3 @@ simplot(sim.mcmc,
         years = 1980:2030, 
         data.types = "population",
         facet.by='age')
-
-source("calibration/likelihood/individual_likelihoods.R") # make sure to change country to France before sourcing 
-likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = "France"),
-                                      location="France")
-
-exp(likelihood.to.run(sim.manual) - likelihood.to.run(sim.mcmc))
-exp(full.lik(sim.manual) - full.lik(sim.mcmc))
-exp(pop.lik(sim.manual) - pop.lik(sim.mcmc))
-exp(incidence.lik(sim.manual) - incidence.lik(sim.mcmc)) 
-exp(prev.lik(sim.manual) - prev.lik(sim.mcmc))
-exp(aware.lik(sim.manual) - aware.lik(sim.mcmc))
-exp(eng.lik(sim.manual) - eng.lik(sim.mcmc))
-exp(supp.lik(sim.manual) - supp.lik(sim.mcmc)) 
-exp(hiv.mortality.lik(sim.manual) - hiv.mortality.lik(sim.mcmc))
-exp(aware.trend.lik(sim.manual) - aware.trend.lik(sim.mcmc))
-exp(total.mortality.lik(sim.manual) - total.mortality.lik(sim.mcmc)) 

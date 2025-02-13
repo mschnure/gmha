@@ -5,16 +5,14 @@ variable.parameters.kenya=get.default.parameters(location = "Kenya")
 variable.parameters.south.africa=get.default.parameters(location = "South Africa")
 variable.parameters.france=get.default.parameters(location = "France")
 
-variable.parameters.south.africa["log.OR.engagement.slope"] = -0.1
-
-sim.kenya = run.model.for.parameters(location="Kenya",variable.parameters = variable.parameters.kenya)
-sim.south.africa = run.model.for.parameters(location="South Africa",variable.parameters = variable.parameters.south.africa)
 sim.france = run.model.for.parameters(location="France",variable.parameters = variable.parameters.france)
+sim.kenya = run.model.for.parameters(location="Kenya",variable.parameters = variable.parameters.kenya)
+#sim.south.africa = run.model.for.parameters(location="South Africa",variable.parameters = variable.parameters.south.africa)
 
 simplot(#sim.kenya,
         #sim.south.africa,
-        sim.france,
-        years=c(1970:2020),
+        #sim.france,
+        years=c(1970:2030),
         data.types = c("incidence","prevalence"))
 
 simplot(#sim.kenya,
