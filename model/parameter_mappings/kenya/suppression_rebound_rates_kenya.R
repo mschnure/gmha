@@ -1,31 +1,5 @@
 
 
-## THID IS THE OLD SUPPRESSION METHOD; TRYING IEDEA ONE BELOW NOW 
-
-##--------------------------------------##
-##-- Suppression - Njuguna et al 2022 --##
-##--------------------------------------##
-
-# Suppression - Njuguna et al
-# prop suppressed at 18 months
-get.suppression.rate.kenya.old = function(){
-    suppressed.p = 3227/(3227+741)
-    suppressed.r = -log(1-suppressed.p)/(18/12)
-    
-    suppressed.p.12.months = 1-exp(-suppressed.r) # 0.6732885
-    #-log(1-suppressed.p.12.months)
-    
-    time.to.suppress = 1/suppressed.r
-    time.to.suppress # 0.8939124
-    
-    ## 10/22/2024: realized that I used this probability of suppression (0.6732885) as a rate in the prior distributions; 
-    ## I should have used the direct rate (1.118678) and then the time to suppress would have been 0.8939124, not 1.49
-    ## CORRECTED 12/23/2024
-    
-    suppressed.r # 1.118678
-    
-}
-
 ##--------------------------------------##
 ##-- Viral rebound - Maina et al 2020 --##
 ##--------------------------------------##
@@ -48,7 +22,8 @@ get.unsuppression.rate.kenya = function(){
 }
 
 
-
+# Viral load suppression among patients 12 months after initiating ART, among those who had a viral load test recorded at 12 months after ART initiation
+# "Treatment Outcomes among Patients Initiating ART in Sub-Saharan Africa"
 get.suppression.rate.kenya = function(){
     max.proportion = 0.95
     
@@ -155,5 +130,35 @@ get.suppression.rate.kenya = function(){
     rv
     
 }
+
+
+## THID IS THE OLD SUPPRESSION METHOD; USING IEDEA ONE NOW 
+
+##--------------------------------------##
+##-- Suppression - Njuguna et al 2022 --##
+##--------------------------------------##
+
+# Suppression - Njuguna et al
+# prop suppressed at 18 months
+get.suppression.rate.kenya.old = function(){
+    suppressed.p = 3227/(3227+741)
+    suppressed.r = -log(1-suppressed.p)/(18/12)
+    
+    suppressed.p.12.months = 1-exp(-suppressed.r) # 0.6732885
+    #-log(1-suppressed.p.12.months)
+    
+    time.to.suppress = 1/suppressed.r
+    time.to.suppress # 0.8939124
+    
+    ## 10/22/2024: realized that I used this probability of suppression (0.6732885) as a rate in the prior distributions; 
+    ## I should have used the direct rate (1.118678) and then the time to suppress would have been 0.8939124, not 1.49
+    ## CORRECTED 12/23/2024
+    
+    suppressed.r # 1.118678
+    
+}
+
+
+
 
 
