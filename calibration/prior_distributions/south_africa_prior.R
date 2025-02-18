@@ -64,10 +64,10 @@ SOUTH.AFRICA.PRIOR = join.distributions(
     suppressed.disengagement.rates = Lognormal.Distribution(log(0.1025866), log(4)/2),
     
     log.OR.suppression.slope = Normal.Distribution(0, log(4)/2),
-    # suppression.rate.0 = Lognormal.Distribution(log(1.118678), log(4)/2), # 12/23/2024: corrected this from probability (0.6732885) to rate 
-    # suppression.rate.1 = Lognormal.Distribution(log(1.118678), log(4)/2), # 12/23/2024: corrected this from probability (0.6732885) to rate 
+    # suppression.rate.0 = Lognormal.Distribution(log(1.118678), log(4)/2), 
+    # suppression.rate.1 = Lognormal.Distribution(log(1.118678), log(4)/2), 
     
-    unsuppression.rates = Lognormal.Distribution(log(0.2196), log(4)/2), # 12/23/2024: corrected this from probability (0.1971601) to rate 
+    unsuppression.rates = Lognormal.Distribution(log(0.2196), log(4)/2), 
     
     male.awareness.multiplier = Lognormal.Distribution(log(1), log(4)/2),
     male.engagement.multiplier = Lognormal.Distribution(log(1), log(4)/2),
