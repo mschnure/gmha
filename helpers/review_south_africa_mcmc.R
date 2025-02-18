@@ -9,7 +9,7 @@ params.mcmc = simset@parameters[simset@n.sim,]
 params.manual = params.mcmc
 
 params.manual["birth.transmission.risk.0"] = 0.6 # arrived at 0.4462366, started at 0.42 
-params.mcmc["birth.transmission.risk.1"] = 0.1 # arrived at 0.06844263, started at 0.3
+params.manual["birth.transmission.risk.1"] = 0.1 # arrived at 0.06844263, started at 0.3
 
 params.manual["age.0.to.4.hiv.mortality.multiplier.0"] = 1 # 0.369758
 params.manual["age.5.to.14.hiv.mortality.multiplier.0"] = 1 # 0.2776069

@@ -9,27 +9,27 @@ sim.france = run.model.for.parameters(location="France",variable.parameters = va
 sim.kenya = run.model.for.parameters(location="Kenya",variable.parameters = variable.parameters.kenya)
 #sim.south.africa = run.model.for.parameters(location="South Africa",variable.parameters = variable.parameters.south.africa)
 
-simplot(#sim.kenya,
+simplot(sim.kenya,
         #sim.south.africa,
         #sim.france,
         years=c(1970:2030),
         data.types = c("incidence","prevalence"))
 
-simplot(#sim.kenya,
+simplot(sim.kenya,
         #sim.south.africa,
         #sim.cambodia,
         #sim.thailand,
-        sim.france,
+        #sim.france,
         years=c(1980:2020),
         data.types = c("incidence"),
         facet.by = 'age')
 
-simplot(#sim.kenya,
+simplot(sim.kenya,
         #sim.south.africa,
         #sim.cambodia,
         #sim.thailand,
         #sim.netherlands,
-        sim.france,
+        #sim.france,
         years=c(1980:2020),
         data.types = c("prevalence"),
         facet.by = 'age')
