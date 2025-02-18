@@ -69,9 +69,9 @@ FRANCE.PRIOR = join.distributions(
     
     unsuppression.rates = Lognormal.Distribution(log(0.2196), log(4)/2), # Kenya's value 
     
-    male.awareness.multiplier = Lognormal.Distribution(log(1), log(4)/2),
-    male.engagement.multiplier = Lognormal.Distribution(log(1), log(4)/2),
-    male.suppression.multiplier = Lognormal.Distribution(log(1), log(4)/2),
+    male.awareness.multiplier = Lognormal.Distribution(log(1), log(8)/2),
+    male.engagement.multiplier = Lognormal.Distribution(log(1), log(8)/2),
+    male.suppression.multiplier = Lognormal.Distribution(log(1), log(8)/2),
     
     # mortality/fertility parameters 
     age.45.to.64.mortality.intercept.multiplier.male = Lognormal.Distribution(log(1), log(4)/2),
