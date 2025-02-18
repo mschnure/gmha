@@ -2,7 +2,35 @@
 
 
 get.unsuppression.rate.south.africa = function(){
+ 
+    ## Hermans et al, 2020 (52 centers across South Africa; 2007-2018; ~100k patients)
+    # Among those followed, viremia occurred in 19.8% of patients after median follow up of 152 weeks 
+    prob = c(0.198)
+    time = c(152/52)
+    # --> rate = 0.07548439 --> time to rebound = 13.24777 years 
+    
+    rate = (-log(1-prob))/time
+    prob = 1 - exp(-rate*time)
+    
+    time.to.rebound = 1/rate
+    
+    if(1==2){
+        ## Sanne et al, 2009 (Johannesburg clinical cohort; 2004-2008; ~7k patients)
+        # Among those virally suppressed, p.rebound = 
+        # 1 year: 9.4% --> rate = 0.09871597 --> time to rebound = 10.13 years 
+        # 2 years: 16.8% --> rate = 0.09196142 --> time to rebound = 10.87 years
+        # 3 years: 20.6% --> rate = 0.07689061 --> time to rebound = 13 years
+        prob = c(0.094,0.168,0.206)
+        time = c(1,2,3)
+        
+        rate = (-log(1-prob))/time
+        prob = 1 - exp(-rate*time)
+        
+        time.to.rebound = 1/rate
+    }
 
+    rate
+    
 }
 
 
