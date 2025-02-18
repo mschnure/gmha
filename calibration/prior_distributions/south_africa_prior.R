@@ -67,7 +67,7 @@ SOUTH.AFRICA.PRIOR = join.distributions(
     # suppression.rate.0 = Lognormal.Distribution(log(1.118678), log(4)/2), 
     # suppression.rate.1 = Lognormal.Distribution(log(1.118678), log(4)/2), 
     
-    unsuppression.rates = Lognormal.Distribution(log(0.2196), log(4)/2), 
+    unsuppression.rates = Lognormal.Distribution(log(0.07548439), log(4)/2), 
     
     male.awareness.multiplier = Lognormal.Distribution(log(1), log(4)/2),
     male.engagement.multiplier = Lognormal.Distribution(log(1), log(4)/2),

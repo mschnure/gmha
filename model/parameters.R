@@ -121,9 +121,9 @@ get.default.parameters = function(location){
         log.OR.suppression.slope=0,
         # suppression.time.0=1993,
         # suppression.time.1=2003,
-        # suppression.rate.0=1.118678, # Njuguna et al - was always correct here, but fixed in prior_distributions
-        # suppression.rate.1=1.118678, # Njuguna et al - was always correct here, but fixed in prior_distributions
-        unsuppression.rates=0.2196, # Maina et al - corrected from p (0.1971601) to r (0.2196) 12/23/2024
+        # suppression.rate.0=1.118678, # Njuguna et al 
+        # suppression.rate.1=1.118678, # Njuguna et al 
+        unsuppression.rates=NA, # country-specific, set below 
         male.awareness.multiplier=1,
         male.engagement.multiplier=1,
         male.suppression.multiplier=1,
@@ -179,7 +179,6 @@ get.default.parameters = function(location){
         over.50.aging.factor=1 # changed 1/17/25 from 2 (doesn't actually matter here; will be overwritten by prior)
     ) 
     
-    # see hiv.mortality.priors.R; using Kenya as default for now 
     if(location=="South Africa"){
         rv["hiv.specific.mortality.rates.0"]=0.03030303 
         rv["hiv.specific.mortality.rates.1"]=0.05306122 
@@ -189,6 +188,7 @@ get.default.parameters = function(location){
         rv["trate.2"] = 0.1
         rv["trate.3"] = 0.1
         rv["trate.4"] = 0.1
+        rv["unsuppression.rates"] = 0.07548439 
     } else if(location=="France"){
         rv["hiv.specific.mortality.rates.0"]=0.05357143 
         rv["hiv.specific.mortality.rates.1"]=0.002272727 
@@ -201,10 +201,12 @@ get.default.parameters = function(location){
         rv["trate.2"] = 0.11
         rv["trate.3"] = 0.11
         rv["trate.4"] = 0.11
+        rv["unsuppression.rates"] = 0.2196 # Kenya's value for now
     } else { # if (location=="Kenya")
         rv["hiv.specific.mortality.rates.0"]=0.04057971 
         rv["hiv.specific.mortality.rates.1"]=0.08125 
         rv["hiv.specific.mortality.rates.2"]=0.02
+        rv["unsuppression.rates"] = 0.2196 
     } 
  
     rv
