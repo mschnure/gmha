@@ -30,29 +30,29 @@ simset.list.full = list(no.int = simset.no.int)
 
 print("generating full.results.array")
 full.results.array = generate.full.results.array(simset.list = simset.list.full)
+## BOTH SEXES ## 
+print("generating summary statistics, both sexes")
+prevalence.engagement.median.age.table = generate.median.age.table(simset.list = simset.list.full,
+                                                                   data.types = c("prevalence","engagement"),
+                                                                   years = c(2025,2040))
+incidence.annual.engagement.median.age.table = generate.median.age.table(simset.list = simset.list.full,
+                                                                         data.types = c("incidence","annual.engagement"),
+                                                                         years = c(2025,2040))
+prevalence.engagement.over.50.table = generate.percent.over.age.table(simset.list = simset.list.full,
+                                                                      age.point=50,
+                                                                      data.types = c("prevalence","engagement"),
+                                                                      years=c(2025,2040))
+incidence.over.30.table = generate.percent.over.age.table(simset.list = simset.list.full,
+                                                          age.point=30,
+                                                          data.types = c("incidence"),
+                                                          years=c(2025,2040))
+annual.engagement.over.30.table = generate.percent.over.age.table(simset.list = simset.list.full,
+                                                                  age.point=30,
+                                                                  data.types = c("annual.engagement"),
+                                                                  years=c(2025,2040))
+
 
 if(1==2){
-    ## BOTH SEXES ## 
-    print("generating summary statistics, both sexes")
-    prevalence.engagement.median.age.table = generate.median.age.table(simset.list = simset.list.full,
-                                                                       data.types = c("prevalence","engagement"),
-                                                                       years = c(2025,2040))
-    incidence.annual.engagement.median.age.table = generate.median.age.table(simset.list = simset.list.full,
-                                                                             data.types = c("incidence","annual.engagement"),
-                                                                             years = c(2025,2040))
-    prevalence.engagement.over.50.table = generate.percent.over.age.table(simset.list = simset.list.full,
-                                                                          age.point=50,
-                                                                          data.types = c("prevalence","engagement"),
-                                                                          years=c(2025,2040))
-    incidence.over.30.table = generate.percent.over.age.table(simset.list = simset.list.full,
-                                                              age.point=30,
-                                                              data.types = c("incidence"),
-                                                              years=c(2025,2040))
-    annual.engagement.over.30.table = generate.percent.over.age.table(simset.list = simset.list.full,
-                                                                      age.point=30,
-                                                                      data.types = c("annual.engagement"),
-                                                                      years=c(2025,2040))
-    
     ## FEMALE ONLY ## 
     print("generating summary statistics, female")
     prevalence.engagement.median.age.table.female = generate.median.age.table(simset.list = simset.list.full,
@@ -109,11 +109,11 @@ if(1==2){
 print("saving all results")
 save(simset.list.full,
      full.results.array,
-     # prevalence.engagement.median.age.table,
-     # incidence.annual.engagement.median.age.table,
-     # prevalence.engagement.over.50.table,
-     # incidence.over.30.table,
-     # annual.engagement.over.30.table,
+     prevalence.engagement.median.age.table,
+     incidence.annual.engagement.median.age.table,
+     prevalence.engagement.over.50.table,
+     incidence.over.30.table,
+     annual.engagement.over.30.table,
      # 
      # prevalence.engagement.median.age.table.female,
      # incidence.annual.engagement.median.age.table.female,
