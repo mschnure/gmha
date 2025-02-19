@@ -1,37 +1,32 @@
 source("model/run_systematic.R")
 
-#source("calibration/likelihood/individual_likelihoods.R") # make sure it's set to South Africa
+source("calibration/likelihood/individual_likelihoods.R") # make sure it's set to Kenya
 
-load("mcmc_runs/simset_south_africa_2025-02-19.Rdata")
+load("mcmc_runs/simset_kenya_2025-02-19.Rdata")
 sim.mcmc = simset@simulations[[simset@n.sim]]
-#sim.first = simset@simulations[[1]]
 
 params.mcmc = simset@parameters[simset@n.sim,]
-#params.first = simset@parameters[1,]
 params.manual = params.mcmc
 
-#params.manual["birth.transmission.risk.0"] 
+#params.manual[""] 
+
 
 sim.manual = run.model.for.parameters(variable.parameters = params.manual,
                                       end.year = 2040,
                                       location = sim.mcmc$location)
-simplot(sim.first,
-        sim.mcmc, 
-    #sim.manual, 
-    #simset,
-    years=1980:2030, 
-    facet.by='age', 
-    ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
-    data.types='prevalence')
-
 simplot(sim.mcmc, 
-        #sim.manual,
+        sim.manual,
         years=1980:2030, 
         facet.by='age', 
         #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='incidence')
 
-
+simplot(sim.mcmc, 
+        sim.manual, 
+        years=1980:2030, 
+        facet.by='age', 
+        # ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        data.types='prevalence')
 
 simplot(sim.mcmc, 
         sim.manual, 
@@ -58,7 +53,7 @@ likelihood.to.run = create.likelihood(parameters = create.model.parameters(locat
 exp(likelihood.to.run(sim.manual) - likelihood.to.run(sim.mcmc))
 exp(full.lik(sim.manual) - full.lik(sim.mcmc))
 exp(pop.lik(sim.manual) - pop.lik(sim.mcmc))
-exp(incidence.lik(sim.manual) - incidence.lik(sim.mcmc))
+exp(incidence.lik(sim.manual) - incidence.lik(sim.mcmc)) 
 exp(prev.lik(sim.manual) - prev.lik(sim.mcmc))
 exp(aware.lik(sim.manual) - aware.lik(sim.mcmc))
 exp(eng.lik(sim.manual) - eng.lik(sim.mcmc))
