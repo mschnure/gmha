@@ -9,9 +9,9 @@ library("ggsci")
 source("model/run_systematic.R")
 
 
-#load("cached/all.results_kenya_2025-02-11.Rdata")
-load("cached/all.results_south_africa_2025-02-14.Rdata") 
-#load("cached/all.results_france_2025-02-11.Rdata")
+#load("cached/all.results_kenya_2025-02-19.Rdata")
+#load("cached/all.results_south_africa_2025-02-19.Rdata") 
+load("cached/all.results_france_2025-02-19.Rdata")
 simset.no.int = simset.list.full$no.int    
 
 if(simset.no.int@simulations[[1]]$location=="Kenya")
