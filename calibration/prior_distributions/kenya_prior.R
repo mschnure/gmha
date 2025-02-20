@@ -120,8 +120,8 @@ KENYA.PRIOR = join.distributions(
     age.20.to.24.base.aging.rate=Lognormal.Distribution(log(0.25), log(4)/2),
     age.15.to.19.aging.factor=Lognormal.Distribution(log(2), log(4)/2),
     age.20.to.24.aging.factor=Lognormal.Distribution(log(2), log(4)/2),
-    age.25.to.50.aging.factor=Lognormal.Distribution(log(2), log(4)/2),
-    over.50.aging.factor=Lognormal.Distribution(log(1), log(1.5)/2) 
+    age.25.to.50.aging.factor=Lognormal.Distribution(log(2), log(4)/2)# ,
+    # over.50.aging.factor=Lognormal.Distribution(log(1), log(1.5)/2) # removed 2/20 
             # changed 2/18 to log(1.5) from log(2) - (1/17), log(4)/2 - original
     
 )
