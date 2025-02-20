@@ -310,12 +310,14 @@ calculate.median = function(counts, # counts in each value category
 # uses calculate.median on an extracted datatype 
 calculate.median.age.for.sim = function(sim,
                                         data.type,
-                                        years,
+                                        year,
                                         sexes){
+    if(length(year)!=1)
+        stop("can only pass one year at a time to calculate.median.age.for.sim")
     
     counts.by.age.bracket = extract.data(sim = sim,
                                          data.type = data.type,
-                                         years = years,
+                                         years = year,
                                          sexes = sexes,
                                          keep.dimensions = c("year","age"))
     
@@ -341,12 +343,14 @@ calculate.median.age.for.sim = function(sim,
 calculate.percent.over.age.for.sim = function(sim,
                                               age.point,
                                               data.type,
-                                              years,
+                                              year,
                                               sexes){
+    if(length(year)!=1)
+        stop("can only pass one year at a time to calculate.percent.over.age.for.sim")
     
     counts.by.age.bracket = extract.data(sim = sim,
                                          data.type = data.type,
-                                         years = years,
+                                         years = year,
                                          sexes = sexes,
                                          keep.dimensions = c("year","age"))
     
@@ -372,12 +376,14 @@ calculate.percent.over.age.for.sim = function(sim,
 calculate.number.over.age.for.sim = function(sim,
                                               age.point,
                                               data.type,
-                                              years,
+                                              year,
                                               sexes){
+    if(length(year)!=1)
+        stop("can only pass one year at a time to calculate.number.over.age.for.sim")
     
     counts.by.age.bracket = extract.data(sim = sim,
                                          data.type = data.type,
-                                         years = years,
+                                         years = year,
                                          sexes = sexes,
                                          keep.dimensions = c("year","age"))
     
@@ -402,13 +408,15 @@ calculate.number.over.age.for.sim = function(sim,
 # applies calculate.median.age.for.sim over a simset
 calculate.median.age.for.simset = function(simset,
                                            data.type,
-                                           years,
+                                           year,
                                            sexes){
+    if(length(year)!=1)
+        stop("can only pass one year at a time to calculate.median.age.for.simset")
     
     rv = sapply(simset@simulations, function(sim){
         calculate.median.age.for.sim(sim, 
                                      data.type = data.type,
-                                     years = years,
+                                     year = year,
                                      sexes = sexes)
     })
     
@@ -421,14 +429,16 @@ calculate.median.age.for.simset = function(simset,
 calculate.percent.over.age.for.simset = function(simset,
                                                  age.point,
                                                  data.type,
-                                                 years,
+                                                 year,
                                                  sexes){
+    if(length(year)!=1)
+        stop("can only pass one year at a time to calculate.percent.over.age.for.simset")
     
     rv = sapply(simset@simulations, function(sim){
         calculate.percent.over.age.for.sim(sim, 
                                            age.point = age.point,
                                            data.type = data.type,
-                                           years = years,
+                                           year = year,
                                            sexes = sexes)
     })
     
@@ -442,14 +452,16 @@ calculate.percent.over.age.for.simset = function(simset,
 calculate.number.over.age.for.simset = function(simset,
                                                  age.point,
                                                  data.type,
-                                                 years,
+                                                 year,
                                                  sexes){
+    if(length(year)!=1)
+        stop("can only pass one year at a time to calculate.number.over.age.for.simset")
     
     rv = sapply(simset@simulations, function(sim){
         calculate.number.over.age.for.sim(sim, 
                                            age.point = age.point,
                                            data.type = data.type,
-                                           years = years,
+                                           year = year,
                                            sexes = sexes)
     })
     
@@ -474,15 +486,15 @@ generate.median.age.table = function(simset.list,
                 
                 paste0(round(calculate.median.age.for.simset(simset=simset,
                                                              data.type = d,
-                                                             years = y,
+                                                             year = y,
                                                              sexes = sexes)[2])," [",
                        round(calculate.median.age.for.simset(simset=simset,
                                                              data.type = d,
-                                                             years = y,
+                                                             year = y,
                                                              sexes = sexes)[1]),"-",
                        round(calculate.median.age.for.simset(simset=simset,
                                                              data.type = d,
-                                                             years = y,
+                                                             year = y,
                                                              sexes = sexes)[3]),"]")
             })
         })
@@ -512,17 +524,17 @@ generate.percent.over.age.table = function(simset.list,
                 paste0(round(100*calculate.percent.over.age.for.simset(simset=simset,
                                                                        age.point=age.point,
                                                                        data.type = d,
-                                                                       years = y,
+                                                                       year = y,
                                                                        sexes = sexes)[2]),"% [",
                        round(100*calculate.percent.over.age.for.simset(simset=simset,
                                                                        age.point=age.point,
                                                                        data.type = d,
-                                                                       years = y,
+                                                                       year = y,
                                                                        sexes = sexes)[1]),"-",
                        round(100*calculate.percent.over.age.for.simset(simset=simset,
                                                                        age.point=age.point,
                                                                        data.type = d,
-                                                                       years = y,
+                                                                       year = y,
                                                                        sexes = sexes)[3]),"]")
             })
         })
@@ -551,17 +563,17 @@ generate.number.over.age.table = function(simset.list,
                 paste0(comma(round(calculate.number.over.age.for.simset(simset=simset,
                                                                        age.point=age.point,
                                                                        data.type = d,
-                                                                       years = y,
+                                                                       year = y,
                                                                        sexes = sexes)[2]))," [",
                        comma(round(calculate.number.over.age.for.simset(simset=simset,
                                                                        age.point=age.point,
                                                                        data.type = d,
-                                                                       years = y,
+                                                                       year = y,
                                                                        sexes = sexes)[1])),"-",
                        comma(round(calculate.number.over.age.for.simset(simset=simset,
                                                                        age.point=age.point,
                                                                        data.type = d,
-                                                                       years = y,
+                                                                       year = y,
                                                                        sexes = sexes)[3])),"]")
             })
         })
