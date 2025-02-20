@@ -17,8 +17,8 @@
 library("mvtnorm")
 
 WEIGHT.YEARS = 1970:2030
-#WEIGHTS.BY.YEAR = rep(1, length(WEIGHT.YEARS))
-WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2010) # before 2010, 1/4x
+WEIGHTS.BY.YEAR = rep(1, length(WEIGHT.YEARS))
+#WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2010) # before 2010, 1/4x
 WEIGHTS.BY.YEAR[WEIGHT.YEARS>=2018] = 4 # from 2018, 4x
 names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
 
@@ -69,7 +69,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              #total.mortality
                              total.mortality.years=years,
                              total.mortality.weight=1/1000, # 1/7 changed from 200000 to 1000 
-                             total.mortality.weight.by.age = c("80 and over" = 0.5),
+                             total.mortality.weight.by.age = c("80 and over" = 0.25),
                              total.mortality.obs.correlation=0.5, 
                              total.mortality.correlation.structure="auto.regressive"
                              ){ 
