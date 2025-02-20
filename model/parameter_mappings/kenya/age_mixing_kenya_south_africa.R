@@ -3,34 +3,13 @@
 # Africa paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5479933/ 
 ##################################################################################################
 
-# Must be sourced before parameters
-
-# Functions 
-#     1. get.male.to.female.age.model
-#     2. get.female.to.male.age.model
-
-
-get.male.to.female.age.model = function(location){
-    # if(location!="Kenya")
-    #     print("Using Kenya-specific male-to-female sexual partnerships by age for now")
-    
-    rv = get.male.to.female.age.model.kenya()
-    rv
-}
-get.female.to.male.age.model = function(location){
-    # if(location!="Kenya")
-    #     print("Using Kenya-specific female-to-male sexual partnerships by age for now")
-    
-    rv = get.female.to.male.age.model.kenya()
-    rv
-}
-
+# de Oliveira paper is from south africa, using it for both Kenya/SA
 
 # 1. Using data on female ages and the mean difference in age of their partner, regresses on both the mean 
 #     difference and the standard deviation of the mean differences, returns intercept and slope for each
 # 2. Uses the data exactly from the paper; HIV positive women in male-female clusters with HIV-positive male; 
 #     presumed male to female transmission 
-get.male.to.female.age.model.kenya  = function(){
+get.male.to.female.age.model.kenya.south.africa  = function(){
     
     # Use "HIV-positive women in male–female clusters" column of Table 3 for both mean/SD of male to female
     data = data.frame(
@@ -55,7 +34,7 @@ get.male.to.female.age.model.kenya  = function(){
 # 2. Because the paper does not report the reverse partnerships (female to male transmission), used data on 
 #     HIV-positive women from the community survey for the mean difference regression and used the male to 
 #     female data for the standard deviation regression   
-get.female.to.male.age.model.kenya  = function(){
+get.female.to.male.age.model.kenya.south.africa  = function(){
     
     # Use "HIV-positive women from the community survey" column of Table 3 for mean value of female to male, 
     # but use "HIV-positive women in male–female clusters" for SD as above (paper doesn't give SD for this data)
@@ -72,7 +51,7 @@ get.female.to.male.age.model.kenya  = function(){
         n=c(18,31,18,14,18),
         sd.diff = c(7.8,6.7,9.1,NA,NA)
     )
-
+    
     mean.fit = lm(mean.diff ~ age, data=data.for.mean, weights=data.for.mean$n)
     sd.fit = lm(sd.diff ~ age, data=data.for.sd, weights=data.for.sd$n)
     

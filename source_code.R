@@ -13,9 +13,9 @@ NO.INTERVENTION = c()
 load('cached/data.manager_global_2025-02-07.Rdata') # new median values for suppressed data 
 #load('cached/data.manager_global_2024-12-30.Rdata') 
 
-source('model/parameter_mappings/kenya/age_mixing.R') # will standardize to all countries 
+source('model/parameter_mappings/age_mixing.R') 
 source('model/parameter_mappings/get_testing_projection_and_param_table.R')
-source('model/parameter_mappings/kenya/age_sex_mixing_proportions.R') # will standardize to all countries 
+source('model/parameter_mappings/age_sex_mixing_proportions.R') 
 source('model/parameter_mappings/get_age_sex_transmission_multipliers.R')
 source('model/parameter_mappings/get_engagement_disengagement_projection_and_param_table.R') 
 source('model/parameter_mappings/get_suppression_rebound_data.R')
