@@ -500,10 +500,11 @@ map.model.parameters <- function(parameters,
                                   subgroup.from=parameters$SUBGROUPS)
     
     # Mixing proportions: array where every combo of age.to, sex.to sums to 1 (capturing all of their partners)
-    # This is country-specific, defined in parameters$male.to.female.age.model and parameters$female.to.female.age.model above 
+    # This is country-specific, defined in parameters$male.to.female.age.model and parameters$female.to.male.age.model above 
     mixing.proportions.0 = sapply(parameters$SEXES, function(sex.to){
         sapply(parameters$AGES, function(age.to){
-            
+            # if(age.to=="10-14")
+            #     browser()
             # for this age bracket/sex.to, what proportion of that sexes partners are in the other sexes
             sex.proportions = get.sex.mixing.proportions(sex.to = sex.to,
                                                          age.to=age.to,
@@ -527,6 +528,8 @@ map.model.parameters <- function(parameters,
     dim(mixing.proportions.0) = sapply(transmission.dim.names, length)
     dimnames(mixing.proportions.0) = transmission.dim.names
     
+    # browser()
+    mixing.proportions.0[is.na(mixing.proportions.0)]=0 # THIS IS A TEMPORARY FIX - NEED TO REVIEW THIS WITH TODD 
     # Set transmission to 0 until start.time 
     parameters = add.time.varying.parameter.value(parameters,
                                                   parameter.name='TRANSMISSION.RATES',
