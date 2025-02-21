@@ -1,5 +1,6 @@
 source("model/parameter_mappings/kenya/age_sex_transmission_multipliers_kenya.R")
 source ("model/parameter_mappings/south_africa/age_sex_transmission_multipliers_south_africa.R")
+source ("model/parameter_mappings/france/age_sex_transmission_multipliers_france.R")
 
 
 get.all.age.sex.transmission.multipliers = function(location){
@@ -25,9 +26,19 @@ get.all.age.sex.transmission.multipliers = function(location){
         rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.south.africa(sex="female",year=2003) # USING 2003 ESTIMATES
         rv$MALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.south.africa(sex="male",year=2003)
 
-        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.south.africa(sex="female",year=2016) # USING 2003 ESTIMATES
+        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.south.africa(sex="female",year=2016) # USING 2016 ESTIMATES
         rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.south.africa(sex="male",year=2016)
 
+    } else if(location=="France"){
+        rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.france(sex="female",year=2007) # USING 2007 ESTIMATES
+        rv$MALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.france(sex="male",year=2007)
+        
+        rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.france(sex="female",year=2007)
+        rv$MALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.france(sex="male",year=2007)
+        
+        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.france(sex="female",year=2023)
+        rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.france(sex="male",year=2023)
+        
     } else { # using kenya model for all other countries for now
         rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.kenya(sex="female",year=2003)
         rv$MALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.kenya(sex="male",year=2003)
