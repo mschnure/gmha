@@ -16,7 +16,7 @@ get.male.to.female.age.model.kenya.south.africa  = function(){
         mean.diff=c(11.5,7.0,1.5,1.7,-0.5),
         age = c(18,23,28,33,38),
         n=c(18,31,18,14,18),
-        sd.diff = c(7.8,6.7,9.1,NA,NA)
+        sd.diff = c(7.8,6.7,9.1,NA,NA) # SD's reported in text 
     )
     
     mean.fit = lm(mean.diff ~ age, data=data, weights=data$n)
