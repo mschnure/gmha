@@ -9,30 +9,10 @@
 # Don't need to define location, uses parameters$male.to.female.age.model and parameters$female.to.male.age.model, which are country-specific 
 
 # Functions
-# 1. get.sex.mixing.proportions 
-# 2. get.age.mixing.proportions 
-# 3. calculate.pairing.proportions.by.age
-
-
-# 1. Returns a vector with the proportion of an individual’s partners who are in each sex (for now 
-#     hard-coded to opposite sex only) 
-# 2. Called in map.model.parameters function in parameters code in order to create mixing proportions 
-#     matrix to multiply by transmission rates
-get.sex.mixing.proportions = function(sex.to,
-                                      age.to,
-                                      sexes,
-                                      sampled.parameters){
-    
-    # returns a vector of length(sexes) that sums to 1, which is the proportion of the to stratum's partners who are in each sex
-    
-    rv = rep(1, length(sexes))
-    names(rv) = sexes
-    
-    rv[sex.to] = 0 # hard coding in only pair with other sex
-    
-    rv
-    
-}
+# 1. get.age.mixing.proportions
+# 2. calculate.pairing.proportions.by.age
+# 3. get.sex.mixing.proportions (this is hard-coded to only return heterosexual partnerships)
+ 
 
 # 1. Returns a vector with the proportion of an individual’s partners who are in each age
 # 2. Called in map.model.parameters function in parameters code in order to create mixing proportions 
@@ -45,7 +25,8 @@ get.age.mixing.proportions = function(sex.to,
                                       sampled.parameters){
     
     # returns a vector of length(ages) that sums to 1, which is the proportion of the to stratum's partners who are in each age 
-    
+    # if(sex.from=="male" & age.to=="10-14")
+    #     browser()
     age.uppers = parameters$AGE.UPPERS
     age.lowers = parameters$AGE.LOWERS
     if (is.infinite(age.uppers[length(age.uppers)]))
@@ -55,7 +36,7 @@ get.age.mixing.proportions = function(sex.to,
         rv = calculate.pairing.proportions.by.age(age.lowers=age.lowers,
                                                   age.uppers=age.uppers,
                                                   min.sexually.active.age=parameters$min.sexually.active.age,
-                                                  mean.age.diff.intercept=parameters$male.to.female.age.model$mean.age.diff.intercept,
+                                                  mean.age.diff.intercept=parameters$male.to.female.age.model$mean.age.diff.intercept, # RIGHT MODEL?!?!
                                                   mean.age.diff.slope=parameters$male.to.female.age.model$mean.age.diff.slope,
                                                   sd.age.diff.intercept=parameters$male.to.female.age.model$sd.age.diff.intercept,
                                                   sd.age.diff.slope=parameters$male.to.female.age.model$sd.age.diff.slope,
@@ -113,4 +94,25 @@ calculate.pairing.proportions.by.age <- function(age.lowers,
             })
         }
     }))
+}
+
+
+# 1. Returns a vector with the proportion of an individual’s partners who are in each sex (for now 
+#     hard-coded to opposite sex only) 
+# 2. Called in map.model.parameters function in parameters code in order to create mixing proportions 
+#     matrix to multiply by transmission rates
+get.sex.mixing.proportions = function(sex.to,
+                                      age.to,
+                                      sexes,
+                                      sampled.parameters){
+    
+    # returns a vector of length(sexes) that sums to 1, which is the proportion of the to stratum's partners who are in each sex
+    
+    rv = rep(1, length(sexes))
+    names(rv) = sexes
+    
+    rv[sex.to] = 0 # hard coding in only pair with other sex
+    
+    rv
+    
 }
