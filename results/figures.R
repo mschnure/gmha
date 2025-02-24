@@ -9,15 +9,15 @@ library("ggsci")
 source("model/run_systematic.R")
 
 
-#load("cached/all.results_kenya_2025-02-19.Rdata")
-#load("cached/all.results_south_africa_2025-02-19.Rdata") 
-load("cached/all.results_france_2025-02-19.Rdata")
+load("cached/all.results_kenya_2025-02-23.Rdata")
+#load("cached/all.results_south_africa_2025-02-24.Rdata") 
+#load("cached/all.results_france_2025-02-19.Rdata")
 simset.no.int = simset.list.full$no.int    
 
 if(simset.no.int@simulations[[1]]$location=="Kenya")
     plot.limit = 200000 
 if(simset.no.int@simulations[[1]]$location=="South Africa")
-    plot.limit = 1200000 
+    plot.limit = 1150000 
 if(simset.no.int@simulations[[1]]$location=="France")
     plot.limit = 35000 
 
