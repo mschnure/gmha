@@ -528,8 +528,6 @@ map.model.parameters <- function(parameters,
     dim(mixing.proportions.0) = sapply(transmission.dim.names, length)
     dimnames(mixing.proportions.0) = transmission.dim.names
     
-    # browser()
-    mixing.proportions.0[is.na(mixing.proportions.0)]=0 # THIS IS A TEMPORARY FIX - NEED TO REVIEW THIS WITH TODD 
     # Set transmission to 0 until start.time 
     parameters = add.time.varying.parameter.value(parameters,
                                                   parameter.name='TRANSMISSION.RATES',

@@ -35,22 +35,22 @@ get.age.mixing.proportions = function(sex.to,
     if(sex.from=='female') {
         rv = calculate.pairing.proportions.by.age(age.lowers=age.lowers,
                                                   age.uppers=age.uppers,
-                                                  min.sexually.active.age=parameters$min.sexually.active.age,
-                                                  mean.age.diff.intercept=parameters$male.to.female.age.model$mean.age.diff.intercept, # RIGHT MODEL?!?!
-                                                  mean.age.diff.slope=parameters$male.to.female.age.model$mean.age.diff.slope,
-                                                  sd.age.diff.intercept=parameters$male.to.female.age.model$sd.age.diff.intercept,
-                                                  sd.age.diff.slope=parameters$male.to.female.age.model$sd.age.diff.slope,
+                                                  min.sexually.active.age=(parameters$min.sexually.active.age+1),
+                                                  mean.age.diff.intercept=parameters$female.to.male.age.model$mean.age.diff.intercept, 
+                                                  mean.age.diff.slope=parameters$female.to.male.age.model$mean.age.diff.slope,
+                                                  sd.age.diff.intercept=parameters$female.to.male.age.model$sd.age.diff.intercept,
+                                                  sd.age.diff.slope=parameters$female.to.male.age.model$sd.age.diff.slope,
                                                   sd.mult=1/sampled.parameters['age.assortativity'])
     }
     
     else {
         rv = calculate.pairing.proportions.by.age(age.lowers=age.lowers,
                                                   age.uppers=age.uppers,
-                                                  min.sexually.active.age=parameters$min.sexually.active.age,
-                                                  mean.age.diff.intercept=parameters$female.to.male.age.model$mean.age.diff.intercept,
-                                                  mean.age.diff.slope=parameters$female.to.male.age.model$mean.age.diff.slope,
-                                                  sd.age.diff.intercept=parameters$female.to.male.age.model$sd.age.diff.intercept,
-                                                  sd.age.diff.slope=parameters$female.to.male.age.model$sd.age.diff.slope,
+                                                  min.sexually.active.age=(parameters$min.sexually.active.age+1),
+                                                  mean.age.diff.intercept=parameters$male.to.female.age.model$mean.age.diff.intercept,
+                                                  mean.age.diff.slope=parameters$male.to.female.age.model$mean.age.diff.slope,
+                                                  sd.age.diff.intercept=parameters$male.to.female.age.model$sd.age.diff.intercept,
+                                                  sd.age.diff.slope=parameters$male.to.female.age.model$sd.age.diff.slope,
                                                   sd.mult=1/sampled.parameters['age.assortativity'])
     }
 
@@ -71,6 +71,9 @@ calculate.pairing.proportions.by.age <- function(age.lowers,
                                                  sd.age.diff.intercept,
                                                  sd.age.diff.slope,
                                                  sd.mult){
+    min.sexually.active.age = max(min.sexually.active.age,min(age.lowers))
+    max.sexually.active.age = max(age.uppers)
+    
     t(sapply(1:length(age.lowers), function(i){
         
         ages.in.bracket = (age.lowers[i]:age.uppers[i])[-1] - 0.5
@@ -84,13 +87,19 @@ calculate.pairing.proportions.by.age <- function(age.lowers,
         {
             p.age.of.ages.in.bracket = rep(1/sum(sexually.active), length(ages.in.bracket))
             p.age.of.ages.in.bracket[!sexually.active] = 0
-            
+           # browser()
             p.partner.ages = sapply(1:length(age.lowers), function(j){
-                untruncated.ps.by.ego.age = pnorm(age.uppers[j], partner.dist.means, partner.dist.sds) - 
-                    pnorm(age.lowers[j], partner.dist.means, partner.dist.sds)
-                ps.by.ego.age = untruncated.ps.by.ego.age / (1-pnorm(min.sexually.active.age, partner.dist.means, partner.dist.sds))
-                
-                sum(ps.by.ego.age * p.age.of.ages.in.bracket)
+                if(age.uppers[j]<=min.sexually.active.age){
+                    0
+                } else{ 
+                    untruncated.ps.by.ego.age = pnorm(age.uppers[j], partner.dist.means, partner.dist.sds) - 
+                        pnorm(age.lowers[j], partner.dist.means, partner.dist.sds)
+                    
+                    ps.by.ego.age = untruncated.ps.by.ego.age / (pnorm(max.sexually.active.age, partner.dist.means, partner.dist.sds) - 
+                                                                     pnorm(min.sexually.active.age, partner.dist.means, partner.dist.sds))
+                    
+                    sum(ps.by.ego.age * p.age.of.ages.in.bracket)
+                    }
             })
         }
     }))
