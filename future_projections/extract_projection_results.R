@@ -15,6 +15,64 @@ library("scales")
 #     10. generate.percent.over.age.table
 #     11. calculate.incidence.reduction
 
+
+does.year.contain.threshold.age = function(age.counts,
+                                           sim,
+                                           statistic.threshold,
+                                           age.threshold){
+    
+    cumulative.probs = cumsum(age.counts)/sum(age.counts)
+    age.threshold.bracket = sim$AGES[age.threshold>=sim$parameters$AGE.LOWERS & age.threshold<sim$parameters$AGE.UPPERS]
+    
+    # Find the index of the first element that is >= the percentile
+    index = which((1-cumulative.probs) < statistic.threshold)[1]
+    #index = which(cumulative.probs >= (1-statistic.threshold))[1]
+    
+    (age.threshold.bracket==names(index))
+}
+
+pull.year.for.statistic.for.sim = function(sim,
+                                           data.type,
+                                           statistic.threshold,
+                                           age.threshold,
+                                           sexes){
+    
+    age.counts = extract.data(sim = sim,
+                              data.type = data.type,
+                              year = sim$years[sim$years>1999], # only taking from 2000
+                              sexes = sexes,
+                              keep.dimensions = c("year","age"))
+    year.mask = apply(age.counts,"year",does.year.contain.threshold.age,
+                      sim = sim,
+                      statistic.threshold = statistic.threshold,
+                      age.threshold = age.threshold)
+    rv = names(year.mask)[which(year.mask)[1]]
+    
+    rv
+}
+
+pull.year.for.statistic.for.simset = function(simset,
+                                              data.type,
+                                              statistic.threshold,
+                                              age.threshold,
+                                              sexes=c("male","female")){
+    
+    rv = sapply(simset@simulations, function(sim){
+        pull.year.for.statistic.for.sim(sim=sim,
+                                        data.type=data.type,
+                                        statistic.threshold=statistic.threshold,
+                                        age.threshold=age.threshold,
+                                        sexes=sexes)
+    })
+    
+    if(all(is.na(rv)))
+        stop("There is no year by which this statistic is met, try running simset longer ")
+    rv = quantile(as.numeric(rv),probs=c(.025,.5,.975), na.rm=T)
+    
+    rv
+}
+
+
 # full array of results indexed [year,age,sex,outcome,sim,intervention] - each intervention is a simset
 generate.full.results.array = function(simset.list,
                                        years = as.character(simset.list[[1]]@simulations[[1]]$years),
