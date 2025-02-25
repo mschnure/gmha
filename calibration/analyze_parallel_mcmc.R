@@ -1,7 +1,7 @@
 source("model/run_systematic.R")
 
-#load("mcmc_runs/simset_kenya_thinned_2025-02-11.Rdata")
-load("mcmc_runs/simset_south_africa_thinned_2025-02-11.Rdata")
+load("mcmc_runs/simset_kenya_2025-02-23.Rdata")
+#load("mcmc_runs/simset_south_africa_2025-02-24.Rdata")
 #load("mcmc_runs/simset_france_2025-02-12.Rdata")
 
 simplot(simset,
@@ -63,6 +63,17 @@ simplot(simset, #@simulations[[simset@n.sim]],
         #sexes = "male",
         data.types='total.mortality')
 
+simplot(simset,
+        years=2010:2030, 
+        data.types=c('awareness',"engagement","suppression"), 
+        proportion=T)
+
+simplot(simset,
+        years=2010:2030, 
+        data.types=c('awareness',"engagement","suppression"), 
+        facet.by=c('age','sex'), 
+        proportion=T)
+
 simplot(simset, 
         years=1980:2020, 
         data.types='engagement', 
@@ -85,37 +96,17 @@ simplot(simset,
         data.types='suppression', 
         proportion=T)
 
-
-# THESE PLOTS DON'T WORK
-simplot(simset.test, 
+simplot(simset, 
         years=1980:2030, 
-        facet.by=c('age'), 
-        data.types='hiv.mortality', 
-        proportion = T,
-        show.individual.sims = F)
-
-simplot(simset.test,
-        years=2010:2040, 
-        data.types=c('awareness',"engagement","suppression"), 
-        proportion=T, 
-        show.individual.sims = F)
-
-simplot(simset.test,
-        years=2010:2040, 
-        data.types=c('awareness',"engagement","suppression"), 
-        facet.by=c('age','sex'), 
-        proportion=T, 
-        show.individual.sims = F)
-
-simplot(simset.test, 
-        years=1980:2040, 
         data.types='awareness', 
         proportion=T)
-simplot(simset.test, 
-        years=1980:2040, 
+
+simplot(simset, 
+        years=1980:2030, 
         facet.by=c('age','sex'), 
         data.types='awareness', 
-        proportion=T, 
-        show.individual.sims = F)
+        proportion=T)
+
+
 
 
