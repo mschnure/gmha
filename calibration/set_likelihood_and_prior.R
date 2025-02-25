@@ -32,6 +32,9 @@ set.likelihood.and.prior.by.location = function(location){
         
         params.start.values = get.default.parameters(location = "France") 
         params.start.values = params.start.values[prior@var.names]
+        params.start.values["trate.2"] = .08 # .11, 2005
+        params.start.values["trate.3"] = .25 # .11, 2018 
+        params.start.values["trate.4"] = .6 # .11, 2040 
         # load("calibration/starting_values/2025_01_17_france_start_values.Rdata") 
         # params.start.values = params.start.values
         
