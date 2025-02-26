@@ -24,7 +24,7 @@ names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
 
 # for france only, remove pre-1995 years 
 WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
-WEIGHTS.BY.YEAR.FRANCE[C(1970:1994)] = 0
+WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE[as.character(1995:2030)]
 
 # WEIGHTS.BY.YEAR = list(WEIGHTS.BY.YEAR)
 # WEIGHTS.BY.YEAR$kenya = WEIGHTS.BY.YEAR
@@ -38,7 +38,7 @@ WEIGHTS.BY.YEAR.FRANCE[C(1970:1994)] = 0
 create.likelihood = function(data.manager=DATA.MANAGER,
                              parameters,
                              location,
-                             years = 1980:2023,
+                             years = 1995:2023, # 1980:2023
                              total.weight = WEIGHTS.BY.YEAR.FRANCE, # [[convert_string(location)]], 
                              #incidence
                              incidence.years=years,
@@ -71,7 +71,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              population.obs.correlation=0.5,
                              population.correlation.structure="auto.regressive",
                              #hiv.mortality
-                             hiv.mortality.years=1980:2020,
+                             hiv.mortality.years=years,
                              hiv.mortality.weight=1/1000000, # changed from 1/256
                              hiv.mortality.obs.correlation=0.5, 
                              hiv.mortality.correlation.structure="auto.regressive",

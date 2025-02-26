@@ -2,12 +2,24 @@ source("calibration/likelihood/likelihood.R")
 library("mvtnorm")
 
 WEIGHT.YEARS = 1970:2030
-#WEIGHTS.BY.YEAR = rep(1, length(WEIGHT.YEARS))
-WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2010) # before 2010, 1/4x
+WEIGHTS.BY.YEAR = rep(1, length(WEIGHT.YEARS))
+WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2000) # before 2000, 1/4x
 WEIGHTS.BY.YEAR[WEIGHT.YEARS>=2018] = 4 # from 2018, 4x
 names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
 
+# for france only, remove pre-1995 years 
+WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
+WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE[as.character(1995:2030)]
+
+# WEIGHTS.BY.YEAR = list(WEIGHTS.BY.YEAR)
+# WEIGHTS.BY.YEAR$kenya = WEIGHTS.BY.YEAR
+# WEIGHTS.BY.YEAR$south_africa = WEIGHTS.BY.YEAR
+# WEIGHTS.BY.YEAR$france = WEIGHTS.BY.YEAR.FRANCE
+
 LOCATION = "France"
+
+if(LOCATION=="France")
+    WEIGHTS.BY.YEAR = WEIGHTS.BY.YEAR.FRANCE
 
 BASE.PARAMETERS=create.model.parameters(location = LOCATION)
 
@@ -15,11 +27,11 @@ create.individual.likelihood = function(data.type,
                                         location,
                                         data.manager=DATA.MANAGER,
                                         parameters,
-                                        years = 1980:2023,
-                                        total.weight = WEIGHTS.BY.YEAR, 
+                                        years = 1990:2023, # 1980:2023
+                                        total.weight = WEIGHTS.BY.YEAR.FRANCE, 
                                         #incidence
                                         incidence.years=years,
-                                        incidence.weight=2, 
+                                        incidence.weight=1, 
                                         incidence.obs.correlation=0.5,
                                         incidence.correlation.structure="auto.regressive",
                                         #prevalence
@@ -48,14 +60,14 @@ create.individual.likelihood = function(data.type,
                                         population.obs.correlation=0.5,
                                         population.correlation.structure="auto.regressive",
                                         #hiv.mortality
-                                        hiv.mortality.years=1980:2020,
-                                        hiv.mortality.weight=1/256, 
+                                        hiv.mortality.years=years,
+                                        hiv.mortality.weight=1/1000000, 
                                         hiv.mortality.obs.correlation=0.5, 
                                         hiv.mortality.correlation.structure="auto.regressive",
                                         #total.mortality
                                         total.mortality.years=years,
-                                        total.mortality.weight=1/1000, # 1/7 changed from 200000 to 1000 
-                                        total.mortality.weight.by.age = c("80 and over" = 0.5),
+                                        total.mortality.weight=1/200000, 
+                                        total.mortality.weight.by.age = c("80 and over" = 0.1),
                                         total.mortality.obs.correlation=0.5, 
                                         total.mortality.correlation.structure="auto.regressive"
 ){
@@ -213,9 +225,10 @@ aware.trend.lik = create.individual.likelihood(data.type = "awareness.trend",
                                                parameters = BASE.PARAMETERS,
                                                location = LOCATION)
 total.mortality.lik = create.individual.likelihood(data.type = "total.mortality",
-                                                  parameters = BASE.PARAMETERS,
-                                                  location = LOCATION)
+                                                   parameters = BASE.PARAMETERS,
+                                                   location = LOCATION)
 full.lik = create.likelihood(parameters = BASE.PARAMETERS,location = LOCATION)
+
 
 if(1==2){
    
