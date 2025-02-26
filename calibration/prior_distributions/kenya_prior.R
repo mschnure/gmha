@@ -110,6 +110,10 @@ KENYA.PRIOR = join.distributions(
     age.15.to.24.hiv.mortality.multiplier.1 = Lognormal.Distribution(log(1), log(4)/2),
     age.15.to.24.hiv.mortality.multiplier.2 = Lognormal.Distribution(log(1), log(4)/2),
     
+    age.25.to.49.hiv.mortality.multiplier.0 = Lognormal.Distribution(log(1), log(4)/2),
+    age.25.to.49.hiv.mortality.multiplier.1 = Lognormal.Distribution(log(1), log(4)/2),
+    age.25.to.49.hiv.mortality.multiplier.2 = Lognormal.Distribution(log(1), log(4)/2),
+    
     over.50.hiv.mortality.multiplier.0 = Lognormal.Distribution(log(1), log(4)/2),
     over.50.hiv.mortality.multiplier.1 = Lognormal.Distribution(log(1), log(4)/2),
     over.50.hiv.mortality.multiplier.2 = Lognormal.Distribution(log(1), log(4)/2),
