@@ -18,9 +18,18 @@ library("mvtnorm")
 
 WEIGHT.YEARS = 1970:2030
 WEIGHTS.BY.YEAR = rep(1, length(WEIGHT.YEARS))
-#WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2010) # before 2010, 1/4x
+WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2000) # before 2000, 1/4x
 WEIGHTS.BY.YEAR[WEIGHT.YEARS>=2018] = 4 # from 2018, 4x
 names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
+
+# for france only, remove pre-1995 years 
+WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
+WEIGHTS.BY.YEAR.FRANCE[C(1970:1994)] = 0
+
+WEIGHTS.BY.YEAR = list(WEIGHTS.BY.YEAR)
+WEIGHTS.BY.YEAR$kenya = WEIGHTS.BY.YEAR
+WEIGHTS.BY.YEAR$south_africa = WEIGHTS.BY.YEAR
+WEIGHTS.BY.YEAR$france = WEIGHTS.BY.YEAR.FRANCE
 
 # Calls individual "create.likelihood.for.data.type" functions for each data type
 # Each data type function assembles the likelihood elements once (because it is time consuming - e.g., matrix M), 
@@ -30,15 +39,15 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              parameters,
                              location,
                              years = 1980:2023,
-                             total.weight = WEIGHTS.BY.YEAR, 
+                             total.weight = WEIGHTS.BY.YEAR[[convert_string(location)]], 
                              #incidence
                              incidence.years=years,
-                             incidence.weight=2, 
+                             incidence.weight=1, # CHANGED FROM 2 
                              incidence.obs.correlation=0.5,
                              incidence.correlation.structure="auto.regressive",
                              #prevalence
                              prevalence.years=years,
-                             prevalence.weight=1, # downweighted due to magnitude; don't want it to outweigh incidence
+                             prevalence.weight=1, 
                              prevalence.obs.correlation=0.5,
                              prevalence.correlation.structure="auto.regressive",
                              #awareness
@@ -63,13 +72,13 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              population.correlation.structure="auto.regressive",
                              #hiv.mortality
                              hiv.mortality.years=1980:2020,
-                             hiv.mortality.weight=1/256, 
+                             hiv.mortality.weight=1/1000000, # changed from 1/256
                              hiv.mortality.obs.correlation=0.5, 
                              hiv.mortality.correlation.structure="auto.regressive",
                              #total.mortality
                              total.mortality.years=years,
-                             total.mortality.weight=1/1000, # 1/7 changed from 200000 to 1000 
-                             total.mortality.weight.by.age = c("80 and over" = 0.25),
+                             total.mortality.weight=1/200000, # changed from 1000 
+                             total.mortality.weight.by.age = c("80 and over" = 0.1), # changed from 0.25
                              total.mortality.obs.correlation=0.5, 
                              total.mortality.correlation.structure="auto.regressive"
                              ){ 
