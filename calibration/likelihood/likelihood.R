@@ -26,10 +26,10 @@ names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
 WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
 WEIGHTS.BY.YEAR.FRANCE[C(1970:1994)] = 0
 
-WEIGHTS.BY.YEAR = list(WEIGHTS.BY.YEAR)
-WEIGHTS.BY.YEAR$kenya = WEIGHTS.BY.YEAR
-WEIGHTS.BY.YEAR$south_africa = WEIGHTS.BY.YEAR
-WEIGHTS.BY.YEAR$france = WEIGHTS.BY.YEAR.FRANCE
+# WEIGHTS.BY.YEAR = list(WEIGHTS.BY.YEAR)
+# WEIGHTS.BY.YEAR$kenya = WEIGHTS.BY.YEAR
+# WEIGHTS.BY.YEAR$south_africa = WEIGHTS.BY.YEAR
+# WEIGHTS.BY.YEAR$france = WEIGHTS.BY.YEAR.FRANCE
 
 # Calls individual "create.likelihood.for.data.type" functions for each data type
 # Each data type function assembles the likelihood elements once (because it is time consuming - e.g., matrix M), 
@@ -39,7 +39,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              parameters,
                              location,
                              years = 1980:2023,
-                             total.weight = WEIGHTS.BY.YEAR[[convert_string(location)]], 
+                             total.weight = WEIGHTS.BY.YEAR.FRANCE, # [[convert_string(location)]], 
                              #incidence
                              incidence.years=years,
                              incidence.weight=1, # CHANGED FROM 2 
