@@ -1,7 +1,7 @@
 source("model/run_systematic.R")
 
-load("mcmc_runs/simset_kenya_2025-02-23.Rdata")
-#load("mcmc_runs/simset_south_africa_2025-02-24.Rdata")
+#load("mcmc_runs/simset_kenya_2025-02-26.Rdata")
+load("mcmc_runs/simset_south_africa_2025-02-26.Rdata")
 #load("mcmc_runs/simset_france_2025-02-12.Rdata")
 
 simplot(simset,
