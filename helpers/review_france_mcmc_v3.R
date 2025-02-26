@@ -4,6 +4,7 @@ source("calibration/likelihood/individual_likelihoods.R") # make sure it's set t
 
 load("mcmc_runs/simset_france_2025-02-19.Rdata")
 sim.mcmc = simset@simulations[[simset@n.sim]]
+sim.first = simset@simulations[[1]]
 
 params.mcmc = simset@parameters[simset@n.sim,]
 params.manual = params.mcmc
@@ -14,10 +15,14 @@ params.manual = params.mcmc
 sim.manual = run.model.for.parameters(variable.parameters = params.manual,
                                       end.year = 2040,
                                       location = sim.mcmc$location)
-simplot(sim.mcmc, 
-        sim.manual,
+simplot(sim.first,
+        sim.mcmc,
+        years = 1980:2030)
+
+simplot(sim.first, 
+        sim.mcmc,
         years=1980:2030, 
-        facet.by='age', 
+        #facet.by='age', 
         #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='incidence')
 
@@ -47,17 +52,18 @@ simplot(sim.mcmc,
         data.types = "total.mortality",
         facet.by='age')
 
-likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = sim.manual$location),
-                                      location=sim.manual$location)
+likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = sim.mcmc$location),
+                                      location=sim.mcmc$location)
 
-exp(likelihood.to.run(sim.manual) - likelihood.to.run(sim.mcmc))
-exp(full.lik(sim.manual) - full.lik(sim.mcmc))
-exp(pop.lik(sim.manual) - pop.lik(sim.mcmc))
-exp(incidence.lik(sim.manual) - incidence.lik(sim.mcmc)) 
-exp(prev.lik(sim.manual) - prev.lik(sim.mcmc))
-exp(aware.lik(sim.manual) - aware.lik(sim.mcmc))
-exp(eng.lik(sim.manual) - eng.lik(sim.mcmc))
-exp(supp.lik(sim.manual) - supp.lik(sim.mcmc)) 
-exp(hiv.mortality.lik(sim.manual) - hiv.mortality.lik(sim.mcmc))
-exp(aware.trend.lik(sim.manual) - aware.trend.lik(sim.mcmc))
-exp(total.mortality.lik(sim.manual) - total.mortality.lik(sim.mcmc)) 
+# changed weight in individual likelihoods code to 0.1 - need to change if I want to test these out again 
+exp(likelihood.to.run(sim.mcmc) - likelihood.to.run(sim.first))
+exp(full.lik(sim.mcmc) - full.lik(sim.first))
+exp(pop.lik(sim.mcmc) - pop.lik(sim.first))
+exp(incidence.lik(sim.mcmc) - incidence.lik(sim.first)) 
+exp(prev.lik(sim.mcmc) - prev.lik(sim.first))
+exp(aware.lik(sim.mcmc) - aware.lik(sim.first))
+exp(eng.lik(sim.mcmc) - eng.lik(sim.first))
+exp(supp.lik(sim.mcmc) - supp.lik(sim.first)) 
+exp(hiv.mortality.lik(sim.mcmc) - hiv.mortality.lik(sim.first))
+exp(aware.trend.lik(sim.mcmc) - aware.trend.lik(sim.first))
+exp(total.mortality.lik(sim.mcmc) - total.mortality.lik(sim.first)) 
