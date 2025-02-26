@@ -3,7 +3,10 @@ library(distributions)
 library(ggplot2) 
 source("model/run_systematic.R")
 
-set.seed(1234) # all runs so far with seed 4321; Kenya/France 1/24 - 1234
+set.seed(1212)
+# France 2/21 - 1212
+# SA 2/20 - 1212
+# Kenya 2/21 - 1010 (tried 1212, 1234, 5678, 4321)
 
 LOCATION = "France" 
 
