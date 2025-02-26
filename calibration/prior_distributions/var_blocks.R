@@ -85,6 +85,10 @@ PARAMETER.VAR.BLOCKS = list(
                                             "age.15.to.24.hiv.mortality.multiplier.1",
                                             "age.15.to.24.hiv.mortality.multiplier.2"),
     
+    hiv.mortality.age.multipliers.mid = c("age.25.to.49.hiv.mortality.multiplier.0",
+                                            "age.25.to.49.hiv.mortality.multiplier.1",
+                                            "age.25.to.49.hiv.mortality.multiplier.2"),
+    
     hiv.mortality.age.multipliers.old = c("over.50.hiv.mortality.multiplier.0",
                                           "over.50.hiv.mortality.multiplier.1",
                                           "over.50.hiv.mortality.multiplier.2"),
