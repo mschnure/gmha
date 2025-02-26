@@ -9,8 +9,8 @@ library("ggsci")
 source("model/run_systematic.R")
 
 
-load("cached/all.results_kenya_2025-02-23.Rdata")
-#load("cached/all.results_south_africa_2025-02-24.Rdata") 
+#load("cached/all.results_kenya_2025-02-26.Rdata")
+load("cached/all.results_south_africa_2025-02-26.Rdata") 
 #load("cached/all.results_france_2025-02-19.Rdata")
 simset.no.int = simset.list.full$no.int    
 
@@ -79,14 +79,14 @@ generate.age.distribution(full.results.array,
 dev.off()
 
 
-# INCIDENCE
+# INCIDENCE, to 2025
 jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/inc_age.jpeg"),
      width = 3000,height = 900,res=200)
 simplot(simset.no.int,
         data.types = "incidence",
         ages = c("All ages","0-14","15-49","50 and over"),
         facet.by = "age",
-        years=1990:2020, 
+        years=2005:2025, 
         show.individual.sims = F,
         for.paper = T,
         ncol=4) +
@@ -96,13 +96,50 @@ simplot(simset.no.int,
     scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
 dev.off() 
 
+# PREVALENCE, to 2025
 jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/prev_age.jpeg"),
      width = 3000,height = 900,res=200)
 simplot(simset.no.int,
         data.types = "prevalence",
         ages = c("All ages","0-14","15-49","50 and over"),
         facet.by = "age",
-        years=1990:2020, 
+        years=2005:2025, 
+        show.individual.sims = F,
+        for.paper = T,
+        ncol=4) +
+    theme(strip.text.x = element_blank(),
+          text = element_text(size = 20),
+          legend.position = "none")+
+    scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
+dev.off() 
+
+
+
+# INCIDENCE, to 2040
+jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/inc_age_projection.jpeg"),
+     width = 3000,height = 900,res=200)
+simplot(simset.no.int,
+        data.types = "incidence",
+        ages = c("All ages","0-14","15-49","50 and over"),
+        facet.by = "age",
+        years=2005:2040, 
+        show.individual.sims = F,
+        for.paper = T,
+        ncol=4) +
+    theme(strip.text.x = element_blank(),
+          text = element_text(size = 20),
+          legend.position = "none")+
+    scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
+dev.off() 
+
+# PREVALENCE, to 2040
+jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/prev_age_projection.jpeg"),
+     width = 3000,height = 900,res=200)
+simplot(simset.no.int,
+        data.types = "prevalence",
+        ages = c("All ages","0-14","15-49","50 and over"),
+        facet.by = "age",
+        years=2005:2040, 
         show.individual.sims = F,
         for.paper = T,
         ncol=4) +
