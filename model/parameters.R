@@ -165,6 +165,9 @@ get.default.parameters = function(location){
         age.15.to.24.hiv.mortality.multiplier.0=1,
         age.15.to.24.hiv.mortality.multiplier.1=1,
         age.15.to.24.hiv.mortality.multiplier.2=1,
+        age.25.to.49.hiv.mortality.multiplier.0=1,
+        age.25.to.49.hiv.mortality.multiplier.1=1,
+        age.25.to.49.hiv.mortality.multiplier.2=1,
         over.50.hiv.mortality.multiplier.0=1,
         over.50.hiv.mortality.multiplier.1=1,
         over.50.hiv.mortality.multiplier.2=1,
@@ -193,14 +196,11 @@ get.default.parameters = function(location){
         rv["hiv.specific.mortality.rates.0"]=0.05357143 
         rv["hiv.specific.mortality.rates.1"]=0.002272727 
         rv["hiv.specific.mortality.rates.2"]=0.003947368
-        rv["time.0"] = 1980 # was 1990
-        rv["time.1"] = 1993 # was 1997
-        rv["time.2"] = 2005 # was 2008
-        rv["trate.0"] = 0.8
-        rv["trate.1"] = 0.08
-        rv["trate.2"] = 0.11
-        rv["trate.3"] = 0.11
-        rv["trate.4"] = 0.11
+        rv["trate.0"] = 0.5
+        rv["trate.1"] = 0.1
+        rv["trate.2"] = 0.1
+        rv["trate.3"] = 0.1
+        rv["trate.4"] = 0.1
         rv["unsuppression.rates"] = 0.2196 # Kenya's value for now
     } else { # if (location=="Kenya")
         rv["hiv.specific.mortality.rates.0"]=0.04057971 
@@ -379,6 +379,8 @@ map.model.parameters <- function(parameters,
                                                          upper = 15) 
     age.15.to.24.age.brackets = get.age.brackets.in.range(lower = 15, 
                                                          upper = 25) 
+    age.25.to.49.age.brackets = get.age.brackets.in.range(lower = 25, 
+                                                          upper = 50) 
     over.50.age.brackets = get.age.brackets.in.range(lower = 50, 
                                                     upper = Inf) 
     # Set up initial HIV mortality rates 
@@ -415,6 +417,13 @@ map.model.parameters <- function(parameters,
         sampled.parameters["age.15.to.24.hiv.mortality.multiplier.1"]
     HIV.MORTALITY.RATES.2[age.15.to.24.age.brackets,,,] = HIV.MORTALITY.RATES.2[age.15.to.24.age.brackets,,,]*
         sampled.parameters["age.15.to.24.hiv.mortality.multiplier.2"]
+    
+    HIV.MORTALITY.RATES.0[age.25.to.49.age.brackets,,,] = HIV.MORTALITY.RATES.0[age.25.to.49.age.brackets,,,]*
+        sampled.parameters["age.25.to.49.hiv.mortality.multiplier.0"]
+    HIV.MORTALITY.RATES.1[age.25.to.49.age.brackets,,,] = HIV.MORTALITY.RATES.1[age.25.to.49.age.brackets,,,]*
+        sampled.parameters["age.25.to.49.hiv.mortality.multiplier.1"]
+    HIV.MORTALITY.RATES.2[age.25.to.49.age.brackets,,,] = HIV.MORTALITY.RATES.2[age.25.to.49.age.brackets,,,]*
+        sampled.parameters["age.25.to.49.hiv.mortality.multiplier.2"]
     
     HIV.MORTALITY.RATES.0[over.50.age.brackets,,,] = HIV.MORTALITY.RATES.0[over.50.age.brackets,,,]*
         sampled.parameters["over.50.hiv.mortality.multiplier.0"]
