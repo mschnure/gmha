@@ -23,11 +23,11 @@ params.manual["age.15.to.24.hiv.mortality.multiplier.1"] = 0.5 # 0.246964410
 params.manual["age.15.to.24.hiv.mortality.multiplier.2"] = 1 # 0.736734
 
 params.manual["age.25.to.49.hiv.mortality.multiplier.1"] = 0.6
-params.manual["age.25.to.49.hiv.mortality.multiplier.2"] = 0.25
+params.manual["age.25.to.49.hiv.mortality.multiplier.2"] = 0.01
 
-params.manual["over.50.hiv.mortality.multiplier.0"] = 50 # 0.555852490
-params.manual["over.50.hiv.mortality.multiplier.1"] = 50 # 4.28453
-params.manual["over.50.hiv.mortality.multiplier.2"] = 50 # 1.139815427
+params.manual["over.50.hiv.mortality.multiplier.0"] = 25 # 0.555852490
+params.manual["over.50.hiv.mortality.multiplier.1"] = 25 # 4.28453
+params.manual["over.50.hiv.mortality.multiplier.2"] = 25 # 1.139815427
 
 params.manual["age.25.to.50.aging.factor"] = 1 # 0.793711697
 
