@@ -8,6 +8,7 @@ params.start.values["over.80.mortality.intercept.multiplier.female"] = 1.4 #0.79
 params.start.values["age.15.to.24.hiv.mortality.multiplier.1"] = 0.5 # 0.246964410
 params.start.values["age.15.to.24.hiv.mortality.multiplier.2"] = 1 # 0.736734
 
+params.start.values["age.25.to.49.hiv.mortality.multiplier.0"] = 1
 params.start.values["age.25.to.49.hiv.mortality.multiplier.1"] = 0.6
 params.start.values["age.25.to.49.hiv.mortality.multiplier.2"] = 0.01
 
