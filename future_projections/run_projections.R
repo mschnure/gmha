@@ -30,79 +30,49 @@ simset.list.full = list(no.int = simset.no.int)
 
 print("generating full.results.array")
 full.results.array = generate.full.results.array(simset.list = simset.list.full)
+
 ## BOTH SEXES ## 
 print("generating summary statistics, both sexes")
-prevalence.incidence.median.age.table = generate.median.age.table(simset.list = simset.list.full,
+summary.results = list()
+summary.results$prevalence.incidence.median.age.table = generate.median.age.table(simset.list = simset.list.full,
                                                                    data.types = c("prevalence","incidence"),
                                                                    years = c(2025,2040))
-prevalence.incidence.over.50.table = generate.percent.over.age.table(simset.list = simset.list.full,
+summary.results$prevalence.percent.over.50.table = generate.percent.over.age.table(simset.list = simset.list.full,
                                                                       age.point=50,
-                                                                      data.types = c("prevalence","incidence"),
+                                                                      data.types = c("prevalence"),
                                                                       years=c(2025,2040))
-prevalence.incidence.over.65.table = generate.percent.over.age.table(simset.list = simset.list.full,
+summary.results$prevalence.percent.over.65.table = generate.percent.over.age.table(simset.list = simset.list.full,
                                                                      age.point=65,
-                                                                     data.types = c("prevalence","incidence"),
+                                                                     data.types = c("prevalence"),
                                                                      years=c(2025,2040))
-median.over.50.year = pull.year.for.statistic.for.simset(simset=simset.list.full$no.int,
+summary.results$prevalence.number.over.50.table = generate.number.over.age.table(simset.list = simset.list.full,
+                                                                   age.point=50,
+                                                                   data.types = c("prevalence"),
+                                                                   years=c(2025,2040))
+summary.results$prevalence.number.over.65.table = generate.number.over.age.table(simset.list = simset.list.full,
+                                                                   age.point=65,
+                                                                   data.types = c("prevalence"),
+                                                                   years=c(2025,2040))
+summary.results$median.over.50.year = pull.year.for.statistic.for.simset(simset=simset.list.full$no.int,
                                                          data.type = "prevalence",
                                                          statistic.threshold = 0.5,
                                                          age.threshold = 50)
-quarter.over.65.year = pull.year.for.statistic.for.simset(simset=simset.list.full$no.int,
+summary.results$quarter.over.65.year = pull.year.for.statistic.for.simset(simset=simset.list.full$no.int,
                                                          data.type = "prevalence",
                                                          statistic.threshold = 0.25,
                                                          age.threshold = 65)
 
+summary.results$prevalence.age.distribution = generate.age.distribution.2.column(full.results.array,
+                                                                 outcome="prevalence",
+                                                                 intervention.1="no.int",year.1="2025",
+                                                                 intervention.2="no.int",year.2="2040",
+                                                                 percent=F,display="table")
 
-## FEMALE ONLY ## 
-print("generating summary statistics, female")
-prevalence.incidence.median.age.table.female = generate.median.age.table(simset.list = simset.list.full,
-                                                                         data.types = c("prevalence","incidence"),
-                                                                         years = c(2025,2040),
-                                                                         sexes = "female")
-prevalence.incidence.over.50.table.female = generate.percent.over.age.table(simset.list = simset.list.full,
-                                                                            age.point=50,
-                                                                            data.types = c("prevalence","incidence"),
-                                                                            years=c(2025,2040),
-                                                                            sexes = "female")
-prevalence.incidence.over.65.table.female = generate.percent.over.age.table(simset.list = simset.list.full,
-                                                                            age.point=65,
-                                                                            data.types = c("prevalence","incidence"),
-                                                                            years=c(2025,2040),
-                                                                            sexes = "female")
-
-## MALE ONLY ## 
-print("generating summary statistics, male")
-prevalence.incidence.median.age.table.male = generate.median.age.table(simset.list = simset.list.full,
-                                                                       data.types = c("prevalence","incidence"),
-                                                                       years = c(2025,2040),
-                                                                       sexes = "male")
-prevalence.incidence.over.50.table.male = generate.percent.over.age.table(simset.list = simset.list.full,
-                                                                          age.point=50,
-                                                                          data.types = c("prevalence","incidence"),
-                                                                          years=c(2025,2040),
-                                                                          sexes = "male")
-prevalence.incidence.over.65.table.male = generate.percent.over.age.table(simset.list = simset.list.full,
-                                                                          age.point=65,
-                                                                          data.types = c("prevalence","incidence"),
-                                                                          years=c(2025,2040),
-                                                                          sexes = "male")
-
+export.to.csv = generate.csv(summary.results)
 
 print("saving all results")
 save(simset.list.full,
      full.results.array,
-     prevalence.incidence.median.age.table,
-     prevalence.incidence.over.50.table,
-     prevalence.incidence.over.65.table,
-     median.over.50.year,
-     quarter.over.65.year,
-     
-     prevalence.incidence.median.age.table.female,
-     prevalence.incidence.over.50.table.female,
-     prevalence.incidence.over.65.table.female,
-     
-     prevalence.incidence.median.age.table.male,
-     prevalence.incidence.over.50.table.male,
-     prevalence.incidence.over.65.table.male,
-     
+     summary.results,
+     export.to.csv,
      file = paste0("cached/all.results_",convert_string(simset@simulations[[1]]$location),"_", Sys.Date(),".Rdata"))

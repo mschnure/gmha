@@ -16,6 +16,30 @@ library("scales")
 #     11. calculate.incidence.reduction
 
 
+generate.csv = function(summary.results){
+    
+    outcomes = c("Median age of PWH","% PWH over age 50","# PWH over age 50",
+                 "% PWH over age 65","# PWH over age 65",
+                 "Year by which 50% of PWH will be age 50+","Year by which 25% of PWH will be age 65+")
+    dim.names = list(year = c("2025","2040"),
+                     outcomes = outcomes)
+    
+    export.to.csv = c(summary.results$prevalence.incidence.median.age.table[,,1],
+                      summary.results$prevalence.percent.over.50.table,
+                      summary.results$prevalence.number.over.50.table,
+                      summary.results$prevalence.percent.over.65.table,
+                      summary.results$prevalence.number.over.65.table,
+                      rep(summary.results$median.over.50.year[2],2),
+                      rep(summary.results$quarter.over.65.year[2],2))
+    
+    dim(export.to.csv) = sapply(dim.names,length)
+    dimnames(export.to.csv) = dim.names
+    
+    export.to.csv = t(export.to.csv)
+    
+    export.to.csv
+}
+
 does.year.contain.threshold.age = function(age.counts,
                                            sim,
                                            statistic.threshold,
@@ -309,14 +333,23 @@ generate.age.distribution.2.column = function(results.array,
         age.summary.2 = apply(age.counts.2,c("age"),quantile,probs=c(.025,.5,.975),na.rm=T)
     }
     
-    
     if(display=="table"){
-        tab.1 = c(paste0(round(100*age.summary.1[2,],1),"% [",
-                         round(100*age.summary.1[1,],1),"-",
-                         round(100*age.summary.1[3,],1),"]"),
-                  paste0(round(100*age.summary.2[2,],1),"% [",
-                         round(100*age.summary.2[1,],1),"-",
-                         round(100*age.summary.2[3,],1),"]"))
+        if(percent){
+            tab.1 = c(paste0(round(100*age.summary.1[2,],1),"% [",
+                             round(100*age.summary.1[1,],1),"-",
+                             round(100*age.summary.1[3,],1),"]"),
+                      paste0(round(100*age.summary.2[2,],1),"% [",
+                             round(100*age.summary.2[1,],1),"-",
+                             round(100*age.summary.2[3,],1),"]")) 
+        } else{
+            tab.1 = c(paste0(round(age.summary.1[2,],1)," [",
+                             round(age.summary.1[1,],1),"-",
+                             round(age.summary.1[3,],1),"]"),
+                      paste0(round(age.summary.2[2,],1)," [",
+                             round(age.summary.2[1,],1),"-",
+                             round(age.summary.2[3,],1),"]"))
+        }
+
         tab.dim.names.1 = list(age=dimnames(age.counts.1)[[1]],
                                intervention=c(paste0(intervention.1,"/",year.1),
                                               paste0(intervention.2,"/",year.2)))
@@ -324,7 +357,17 @@ generate.age.distribution.2.column = function(results.array,
         dimnames(tab.1) = tab.dim.names.1
         
         return(tab.1)
-    } else if(display=="figure"){
+    } else if(display=="numeric"){
+        rv = list()
+        rv$year.1 = age.summary.1
+        rv$year.2 = age.summary.2
+        rv$year.1.number.over.50 = apply(rv$year.1[,c(11:17)],1,sum)
+        rv$year.2.number.over.50 = apply(rv$year.2[,c(11:17)],1,sum)
+        rv$year.1.number.over.65 = apply(rv$year.1[,c(14:17)],1,sum)
+        rv$year.2.number.over.65 = apply(rv$year.2[,c(14:17)],1,sum)
+        
+        return(rv)
+    }else if(display=="figure"){
         age.summary = c(age.summary.1,age.summary.2)
         dim.names = list(stat = c("lower","median","upper"),
                          age=dimnames(age.counts.1)[[1]],

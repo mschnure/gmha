@@ -148,3 +148,6 @@ simplot(simset.no.int,
           legend.position = "none")+
     scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
 dev.off() 
+
+write.csv(export.to.csv, file = paste0("results/full.export_",Sys.Date(),".csv"))
+
