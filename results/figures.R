@@ -9,8 +9,8 @@ library("ggsci")
 source("model/run_systematic.R")
 
 
-#load("cached/all.results_kenya_2025-02-26.Rdata")
-load("cached/all.results_south_africa_2025-02-26.Rdata") 
+#load("cached/all.results_kenya_2025-02-27.Rdata")
+#load("cached/all.results_south_africa_2025-02-27.Rdata") 
 #load("cached/all.results_france_2025-02-19.Rdata")
 simset.no.int = simset.list.full$no.int    
 
@@ -29,7 +29,7 @@ alpha = 0.8
 ##--------------------##
 
 ## AGE DISTR - 2025 ONLY
-jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/age_dist_2025.jpeg"),
+jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist_2025.jpeg"),
      width = 2000,height = 1500,res=200)
 generate.age.distribution(full.results.array, 
                           outcome="prevalence", 
@@ -54,7 +54,7 @@ generate.age.distribution(full.results.array,
 dev.off()
 
 ## AGE DISTR - both years
-jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/age_dist.jpeg"),
+jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.jpeg"),
      width = 2000,height = 1500,res=200)
 generate.age.distribution(full.results.array, 
                           outcome="prevalence", 
@@ -79,8 +79,85 @@ generate.age.distribution(full.results.array,
 dev.off()
 
 
-# INCIDENCE, to 2025
-jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/inc_age.jpeg"),
+### ALL YEARS ### 
+
+# INCIDENCE, 1980 to 2025
+jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/inc_age_all.jpeg"),
+     width = 3000,height = 900,res=200)
+simplot(simset.no.int,
+        data.types = "incidence",
+        ages = c("All ages","0-14","15-49","50 and over"),
+        facet.by = "age",
+        years=1980:2025, 
+        show.individual.sims = F,
+        for.paper = T,
+        ncol=4) +
+    theme(strip.text.x = element_blank(),
+          text = element_text(size = 20),
+          legend.position = "none")+
+    scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
+dev.off() 
+
+# PREVALENCE, 1980 to 2025
+jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/prev_age_all.jpeg"),
+     width = 3000,height = 900,res=200)
+simplot(simset.no.int,
+        data.types = "prevalence",
+        ages = c("All ages","0-14","15-49","50 and over"),
+        facet.by = "age",
+        years=1980:2025, 
+        show.individual.sims = F,
+        for.paper = T,
+        ncol=4) +
+    theme(strip.text.x = element_blank(),
+          text = element_text(size = 20),
+          legend.position = "none")+
+    scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
+dev.off() 
+
+
+
+# INCIDENCE, 1980 to 2040
+jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/inc_age_all_projection.jpeg"),
+     width = 3000,height = 900,res=200)
+simplot(simset.no.int,
+        data.types = "incidence",
+        ages = c("All ages","0-14","15-49","50 and over"),
+        facet.by = "age",
+        years=1980:2040, 
+        show.individual.sims = F,
+        for.paper = T,
+        ncol=4) +
+    theme(strip.text.x = element_blank(),
+          text = element_text(size = 20),
+          legend.position = "none")+
+    scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
+dev.off() 
+
+# PREVALENCE, 1980 to 2040
+jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/prev_age_all_projection.jpeg"),
+     width = 3000,height = 900,res=200)
+simplot(simset.no.int,
+        data.types = "prevalence",
+        ages = c("All ages","0-14","15-49","50 and over"),
+        facet.by = "age",
+        years=1980:2040, 
+        show.individual.sims = F,
+        for.paper = T,
+        ncol=4) +
+    theme(strip.text.x = element_blank(),
+          text = element_text(size = 20),
+          legend.position = "none")+
+    scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
+dev.off() 
+
+
+
+### MOST RECENT YEARS ONLY ### 
+
+
+# INCIDENCE, 2005 to 2025
+jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/inc_age_recent.jpeg"),
      width = 3000,height = 900,res=200)
 simplot(simset.no.int,
         data.types = "incidence",
@@ -96,8 +173,8 @@ simplot(simset.no.int,
     scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
 dev.off() 
 
-# PREVALENCE, to 2025
-jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/prev_age.jpeg"),
+# PREVALENCE, 2005 to 2025
+jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/prev_age_recent.jpeg"),
      width = 3000,height = 900,res=200)
 simplot(simset.no.int,
         data.types = "prevalence",
@@ -115,8 +192,8 @@ dev.off()
 
 
 
-# INCIDENCE, to 2040
-jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/inc_age_projection.jpeg"),
+# INCIDENCE, 2005 to 2040
+jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/inc_age_recent_projection.jpeg"),
      width = 3000,height = 900,res=200)
 simplot(simset.no.int,
         data.types = "incidence",
@@ -132,8 +209,8 @@ simplot(simset.no.int,
     scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
 dev.off() 
 
-# PREVALENCE, to 2040
-jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/prev_age_projection.jpeg"),
+# PREVALENCE, 2005 to 2040
+jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/prev_age_recent_projection.jpeg"),
      width = 3000,height = 900,res=200)
 simplot(simset.no.int,
         data.types = "prevalence",
@@ -149,5 +226,5 @@ simplot(simset.no.int,
     scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
 dev.off() 
 
-write.csv(export.to.csv, file = paste0("results/full.export_",Sys.Date(),".csv"))
+write.csv(export.to.csv, file = paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/full.export.csv"))
 
