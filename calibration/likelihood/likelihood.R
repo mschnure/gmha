@@ -39,10 +39,10 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              parameters,
                              location,
                              years = 1995:2023, # 1980:2023
-                             total.weight = WEIGHTS.BY.YEAR.FRANCE, # [[convert_string(location)]], 
+                             total.weight = WEIGHTS.BY.YEAR, # [[convert_string(location)]], 
                              #incidence
                              incidence.years=years,
-                             incidence.weight=1, # CHANGED FROM 2 
+                             incidence.weight=2, 
                              incidence.obs.correlation=0.5,
                              incidence.correlation.structure="auto.regressive",
                              #prevalence
@@ -72,13 +72,13 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              population.correlation.structure="auto.regressive",
                              #hiv.mortality
                              hiv.mortality.years=years,
-                             hiv.mortality.weight=1/1000000, # changed from 1/256
+                             hiv.mortality.weight=1/256, 
                              hiv.mortality.obs.correlation=0.5, 
                              hiv.mortality.correlation.structure="auto.regressive",
                              #total.mortality
                              total.mortality.years=years,
-                             total.mortality.weight=1/200000, # changed from 1000 
-                             total.mortality.weight.by.age = c("80 and over" = 0.1), # changed from 0.25
+                             total.mortality.weight=1/1000, 
+                             total.mortality.weight.by.age = c("80 and over" = 0.25), # changed from 0.25
                              total.mortality.obs.correlation=0.5, 
                              total.mortality.correlation.structure="auto.regressive"
                              ){ 
