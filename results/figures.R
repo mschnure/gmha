@@ -9,8 +9,8 @@ library("ggsci")
 source("model/run_systematic.R")
 
 
-#load("cached/all.results_kenya_2025-02-27.Rdata")
-#load("cached/all.results_south_africa_2025-02-27.Rdata") 
+#load("cached/all.results_kenya_2025-02-26.Rdata")
+#load("cached/all.results_south_africa_2025-02-26.Rdata") 
 #load("cached/all.results_france_2025-02-19.Rdata")
 simset.no.int = simset.list.full$no.int    
 
@@ -192,14 +192,14 @@ dev.off()
 
 
 
-# INCIDENCE, 2005 to 2040
+# INCIDENCE, 2000 to 2040
 jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/inc_age_recent_projection.jpeg"),
      width = 3000,height = 900,res=200)
 simplot(simset.no.int,
         data.types = "incidence",
         ages = c("All ages","0-14","15-49","50 and over"),
         facet.by = "age",
-        years=2005:2040, 
+        years=2000:2040, 
         show.individual.sims = F,
         for.paper = T,
         ncol=4) +
@@ -209,14 +209,14 @@ simplot(simset.no.int,
     scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
 dev.off() 
 
-# PREVALENCE, 2005 to 2040
+# PREVALENCE, 2000 to 2040
 jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/prev_age_recent_projection.jpeg"),
      width = 3000,height = 900,res=200)
 simplot(simset.no.int,
         data.types = "prevalence",
         ages = c("All ages","0-14","15-49","50 and over"),
         facet.by = "age",
-        years=2005:2040, 
+        years=2000:2040, 
         show.individual.sims = F,
         for.paper = T,
         ncol=4) +

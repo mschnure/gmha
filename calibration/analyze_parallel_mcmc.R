@@ -1,8 +1,8 @@
 source("model/run_systematic.R")
 
-#load("mcmc_runs/simset_kenya_2025-02-26.Rdata")
-load("mcmc_runs/simset_south_africa_2025-02-26.Rdata")
-#load("mcmc_runs/simset_france_2025-02-12.Rdata")
+#load("mcmc_runs/simset_kenya_2025-02-27.Rdata")
+#load("mcmc_runs/simset_south_africa_2025-02-27.Rdata")
+#load("mcmc_runs/simset_france_2025-02-27.Rdata")
 
 simplot(simset,
         years = 1980:2030)
