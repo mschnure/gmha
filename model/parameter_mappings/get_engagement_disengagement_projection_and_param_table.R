@@ -12,7 +12,7 @@ get.engagement.model = function(location){
     rv
 }
 
-
+# THIS ISN'T ACTUALLY USED ANYWHERE; PLUGGED IN DIRECTLY INTO PARAMETERS AND PRIOR
 get.disengagement.model = function(location){
     
     if(location=="South Africa"){

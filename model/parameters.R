@@ -116,13 +116,9 @@ get.default.parameters = function(location){
         log.OR.testing.intercept=0, # 0 because on log scale
         log.OR.testing.slope=0,
         log.OR.engagement.slope=0,
-        unsuppressed.disengagement.rates=0.1392621, # Lee et al
-        suppressed.disengagement.rates=0.1025866, # Lee et al
+        unsuppressed.disengagement.rates=NA, # country-specific, set below 0.1392621, # Lee et al
+        suppressed.disengagement.rates = NA, # country-specific, set below 0.1025866, # Lee et al
         log.OR.suppression.slope=0,
-        # suppression.time.0=1993,
-        # suppression.time.1=2003,
-        # suppression.rate.0=1.118678, # Njuguna et al 
-        # suppression.rate.1=1.118678, # Njuguna et al 
         unsuppression.rates=NA, # country-specific, set below 
         male.awareness.multiplier=1,
         male.engagement.multiplier=1,
@@ -158,7 +154,7 @@ get.default.parameters = function(location){
         male.hiv.mortality.multiplier.1=1,
         male.hiv.mortality.multiplier.2=1,
         
-        age.0.to.4.hiv.mortality.multiplier.0=1, # split youngest age group into 0-4, 5-14 at time 0 to allow for more child deaths
+        age.0.to.4.hiv.mortality.multiplier.0=1, 
         age.5.to.14.hiv.mortality.multiplier.0=1,
         age.0.to.14.hiv.mortality.multiplier.1=1,
         age.0.to.14.hiv.mortality.multiplier.2=1,
@@ -179,7 +175,7 @@ get.default.parameters = function(location){
         age.15.to.19.aging.factor=2,
         age.20.to.24.aging.factor=2,
         age.25.to.50.aging.factor=2,
-        over.50.aging.factor=1 # changed 1/17/25 from 2 (doesn't actually matter here; will be overwritten by prior)
+        over.50.aging.factor=1 
     ) 
     
     if(location=="South Africa"){
@@ -191,6 +187,8 @@ get.default.parameters = function(location){
         rv["trate.2"] = 0.1
         rv["trate.3"] = 0.1
         rv["trate.4"] = 0.1
+        rv["unsuppressed.disengagement.rates"]= 0.1554849 # see disengagement models
+        rv["suppressed.disengagement.rates"] = 0.1554849 # see disengagement models
         rv["unsuppression.rates"] = 0.07548439 
     } else if(location=="France"){
         rv["hiv.specific.mortality.rates.0"]=0.05357143 
@@ -201,11 +199,23 @@ get.default.parameters = function(location){
         rv["trate.2"] = 0.1
         rv["trate.3"] = 0.1
         rv["trate.4"] = 0.1
+        rv["unsuppressed.disengagement.rates"]= 0.1392621 # Kenya's value for now
+        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya's value for now
+        rv["unsuppression.rates"] = 0.2196 # Kenya's value for now
+    } else if(location=="Mozambique"){
+        rv["hiv.specific.mortality.rates.0"]=0.04181818 
+        rv["hiv.specific.mortality.rates.1"]=0.06583333 
+        rv["hiv.specific.mortality.rates.2"]=0.02173913
+        # using Kenya's trates 
+        rv["unsuppressed.disengagement.rates"]= 0.1392621 # Kenya's value for now
+        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya's value for now
         rv["unsuppression.rates"] = 0.2196 # Kenya's value for now
     } else { # if (location=="Kenya")
         rv["hiv.specific.mortality.rates.0"]=0.04057971 
         rv["hiv.specific.mortality.rates.1"]=0.08125 
         rv["hiv.specific.mortality.rates.2"]=0.02
+        rv["unsuppressed.disengagement.rates"]= 0.1392621 # see disengagement models
+        rv["suppressed.disengagement.rates"] = 0.1025866 # see disengagement models
         rv["unsuppression.rates"] = 0.2196 
     } 
  
@@ -792,18 +802,6 @@ map.model.parameters <- function(parameters,
             projected.log.odds = engagement.model$intercept+
                 (engagement.model$slope+sampled.parameters['log.OR.engagement.slope'])*(year-engagement.model$anchor.year)
             
-            # OLD METHOD: 
-            # if(year<2016 | year>2017){
-            #     projected.log.odds = (engagement.model$intercept+sampled.parameters['log.OR.engagement.intercept'])+
-            #         ((engagement.model$pre.universal.slope+sampled.parameters['log.OR.engagement.pre.universal.slope'])*(year-engagement.model$anchor.year))+
-            #         ((engagement.model$post.universal.slope+sampled.parameters['log.OR.engagement.post.universal.slope'])*pmax(0,(year-2015)))
-            # } else if(year==2016 | year==2017){
-            #     projected.log.odds = (engagement.model$intercept+sampled.parameters['log.OR.engagement.intercept'])+
-            #         ((engagement.model$pre.universal.slope+sampled.parameters['log.OR.engagement.pre.universal.slope'])*(year-engagement.model$anchor.year))+
-            #         ((engagement.model$intermediate.slope.2016.2017+sampled.parameters['log.OR.engagement.intermediate.slope'])*pmax(0,(year-2015)))+
-            #         ((engagement.model$post.universal.slope+sampled.parameters['log.OR.engagement.post.universal.slope'])*pmax(0,(year-2015)))
-            # }
-            
             projected.p = 1/(1+exp(-projected.log.odds)) 
             projected.p = projected.p*engagement.model$max.proportion 
             projected.rate = -log(1-projected.p)
@@ -922,39 +920,7 @@ map.model.parameters <- function(parameters,
                                                  parameters = parameters,
                                                  parameter.name = "SUPPRESSION.RATES") 
     }
-    
-    ## OLD SUPPRESSION METHOD ## 
-    if(1==2){
-        suppression.times = c(sampled.parameters['suppression.time.0']-0.001,
-                              sampled.parameters['suppression.time.0'],
-                              sampled.parameters['suppression.time.1'])
-        
-        suppression.rates.0 = array(sampled.parameters['suppression.rate.0'],
-                                    dim=sapply(trans.dim.names, length),
-                                    dimnames=trans.dim.names)
-        suppression.rates.0[,"male",] = suppression.rates.0[,"male",]*sampled.parameters["male.suppression.multiplier"]
-        
-        suppression.rates.1 = array(sampled.parameters['suppression.rate.1'],
-                                    dim=sapply(trans.dim.names, length),
-                                    dimnames=trans.dim.names)
-        suppression.rates.1[,"male",] = suppression.rates.1[,"male",]*sampled.parameters["male.suppression.multiplier"]
-        
-        suppression.rates = list(array(0,
-                                       dim=sapply(trans.dim.names, length),
-                                       dimnames=trans.dim.names),
-                                 suppression.rates.0,
-                                 suppression.rates.1)
-        
-        parameters = set.rates.for.interventions(baseline.rates = suppression.rates, # list 
-                                                 baseline.times = suppression.times, # vector
-                                                 interventions = interventions,
-                                                 scale = "rate", 
-                                                 parameters = parameters,
-                                                 parameter.name = "SUPPRESSION.RATES")
-    }
-   
-    ## END OF OLD SUPPRESSION METHOD ## 
-    
+
     unsuppression.times = c(2000)
     unsuppression.rates = c(list(array(sampled.parameters['unsuppression.rates'],
                                        dim=sapply(trans.dim.names, length),

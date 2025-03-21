@@ -2,6 +2,7 @@ source('calibration/likelihood/likelihood.R')
 source('calibration/prior_distributions/kenya_prior.R')
 source('calibration/prior_distributions/south_africa_prior.R')
 source('calibration/prior_distributions/france_prior.R')
+source('calibration/prior_distributions/mozambique_prior.R')
 
 set.likelihood.and.prior.by.location = function(location){
     if(location=="Kenya"){
@@ -35,7 +36,16 @@ set.likelihood.and.prior.by.location = function(location){
         load("calibration/starting_values/2025_02_26_france_start_values.Rdata")
         params.start.values = params.start.values
         
-    } else stop("Only set up for Kenya, South Africa, and France for now")
+    } else if(location=="Mozambique"){
+        likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = "Mozambique"),
+                                              location="Mozambique")
+        
+        prior = MOZAMBIQUE.PRIOR
+        
+        params.start.values = get.default.parameters(location = "Mozambique")
+        params.start.values = params.start.values[prior@var.names]
+        
+    } else stop("Only set up for Kenya, South Africa, France, and Mozambique for now")
     
     transformations = unlist(sapply(prior@subdistributions,function(dist){
         

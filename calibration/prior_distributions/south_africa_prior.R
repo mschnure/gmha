@@ -13,7 +13,19 @@ SOUTH.AFRICA.PRIOR = join.distributions(
                                      sd.r2 = log(4)/2,
                                      sd.r3.to.r2 = log(4)/2, 
                                      sd.r4.to.r3 = log(4)/2),
-
+    
+    # COUNTRY-SPECIFIC; MUST EDIT:
+    unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.1554849), log(4)/2),
+    suppressed.disengagement.rates = Lognormal.Distribution(log(0.1554849), log(4)/2),
+    unsuppression.rates = Lognormal.Distribution(log(0.07548439), log(4)/2), 
+    hiv.specific.mortality.rates.0 = Lognormal.Distribution(log(0.03030303), log(4)/2), # see hiv.mortality.priors.R
+    hiv.specific.mortality.rates.1 = Lognormal.Distribution(log(0.05306122), log(4)/2),
+    hiv.specific.mortality.rates.2 = Lognormal.Distribution(log(0.007432432), log(4)/2),
+    birth.transmission.risk.0 = Logitnormal.Distribution(logit(0.42), log(3)/2), 
+    birth.transmission.risk.1 = Logitnormal.Distribution(logit(0.3), log(3)/2), 
+    # see Kenya prior for notes on a Logitnormal distribution 
+    
+    # THE REST OF THESE DON'T CHANGE 
     proportion.trate.change.by.3.5 = Beta.Distribution(alpha = 21,beta = 7),
     
     # sex transmission multipliers
@@ -43,32 +55,14 @@ SOUTH.AFRICA.PRIOR = join.distributions(
     # other transmission multipliers
     age.assortativity = Lognormal.Distribution(log(1), log(1.5)/2), 
     
-    birth.transmission.risk.0 = Logitnormal.Distribution(logit(0.42), log(3)/2), 
-    birth.transmission.risk.1 = Logitnormal.Distribution(logit(0.3), log(3)/2), 
-    # because logit, this means off by an *OR* of 4 (as opposed to just a multiplier of 4)
-    # can arbitrarily pick SD to include what's included in the paper 
-    # because birth transmission risk is a proportion, either logit normal or beta 
-    # (for any beta, there is a logit normal that approximates)
-    
     # cascade parameters
     log.OR.testing.intercept = Normal.Distribution(0, log(4)/2), 
     log.OR.testing.slope = Normal.Distribution(0, log(4)/2),
     
     log.OR.engagement.slope = Normal.Distribution(0, log(4)/2),
-    # log.OR.engagement.intercept = Normal.Distribution(0, log(4)/2),
-    # log.OR.engagement.pre.universal.slope = Normal.Distribution(0, log(4)/2),
-    # log.OR.engagement.intermediate.slope = Normal.Distribution(0, log(4)/2),
-    # log.OR.engagement.post.universal.slope = Normal.Distribution(0, log(4)/2),
-    
-    unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.1392621), log(4)/2),
-    suppressed.disengagement.rates = Lognormal.Distribution(log(0.1025866), log(4)/2),
-    
+
     log.OR.suppression.slope = Normal.Distribution(0, log(4)/2),
-    # suppression.rate.0 = Lognormal.Distribution(log(1.118678), log(4)/2), 
-    # suppression.rate.1 = Lognormal.Distribution(log(1.118678), log(4)/2), 
-    
-    unsuppression.rates = Lognormal.Distribution(log(0.07548439), log(4)/2), 
-    
+
     male.awareness.multiplier = Lognormal.Distribution(log(1), log(8)/2),
     male.engagement.multiplier = Lognormal.Distribution(log(1), log(8)/2),
     male.suppression.multiplier = Lognormal.Distribution(log(1), log(8)/2),
@@ -88,10 +82,6 @@ SOUTH.AFRICA.PRIOR = join.distributions(
     over.80.mortality.intercept.multiplier.female = Lognormal.Distribution(log(1), log(4)/2),
     over.80.mortality.slope.multiplier.female = Lognormal.Distribution(log(1), log(4)/2),
     
-    hiv.specific.mortality.rates.0 = Lognormal.Distribution(log(0.03030303), log(4)/2), # see hiv.mortality.priors.R
-    hiv.specific.mortality.rates.1 = Lognormal.Distribution(log(0.05306122), log(4)/2),
-    hiv.specific.mortality.rates.2 = Lognormal.Distribution(log(0.007432432), log(4)/2),
-
     male.hiv.mortality.multiplier.0 = Lognormal.Distribution(log(1), log(4)/2),
     male.hiv.mortality.multiplier.1 = Lognormal.Distribution(log(1), log(4)/2),
     male.hiv.mortality.multiplier.2 = Lognormal.Distribution(log(1), log(4)/2),

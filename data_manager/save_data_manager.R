@@ -6,8 +6,8 @@ source('calibration/scaling_prevalence.R')
 
 scale.data = F # CHECK BACK ON THIS LATER
 
-COUNTRIES.TO.PULL.POP = c("Cambodia","Kenya","South Africa","Chile","Thailand","Netherlands","France")
-COUNTRIES.TO.PULL.PDFS = c("Kenya","South Africa","France")
+COUNTRIES.TO.PULL.POP = c("Cambodia","Kenya","South Africa","Chile","Thailand","Netherlands","France","Mozambique")
+COUNTRIES.TO.PULL.PDFS = c("Kenya","South Africa","France","Mozambique")
 
 DATA.MANAGER = read.surveillance.data() 
 
