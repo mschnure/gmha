@@ -359,7 +359,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$fertility$LOCATIONS = dimnames(rv$fertility$year.age.location)$location 
 
     #Deaths
-    # rv$deaths.old = read.death.data.files(data.type = "population",
+    # rv$deaths.old = read.death.data.files.old(data.type = "population",
     #                                   countries.to.pull = COUNTRIES.TO.PULL.POP,
     #                                   age.mapping = DEATHS.AGE.MAPPING.HARD.CODE)
     # rv$deaths.old$YEARS = as.character(1950:2021)
@@ -372,7 +372,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     # rv$deaths.old$LOCATIONS = dimnames(rv$deaths.old$year.location)$location 
     
     # DEATHS FROM NEW DATA SOURCE
-    rv$total.mortality = read.death.data.files.V2(data.type = "population",
+    rv$total.mortality = read.death.data.files(data.type = "population",
                                       countries.to.pull = COUNTRIES.TO.PULL.POP,
                                       age.mapping = DEATHS.AGE.MAPPING.HARD.CODE)
     rv$total.mortality$YEARS = as.character(1950:2023)
@@ -487,7 +487,7 @@ read.surveillance.data.stratified = function(data.type,
     } else if(strata=='year.age.sex') {
         rv = read.pdf.data(data.type=data.type,
                            suffix=suffix)
-        print("need age/sex pdfs for countries other than Kenya, South Africa, Mozambique, and France")
+        print("need age/sex pdfs for countries other than Kenya, South Africa, France, Mozambique, Tanzania")
     }
     else stop("only currently set up for age and year.age.sex strata")
     
@@ -519,6 +519,7 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
     one.df = read.csv(file.path(sub.dir,file), row.names = 1)
     colnames(one.df) = substring(colnames(one.df),2)
     years = unique(substr(colnames(one.df),1,4))
+    rownames(one.df)[rownames(one.df)=="United Republic of Tanzania"] = "Tanzania"
     location.names = rownames(one.df)[-nrow(one.df)]
     
     location.names = location.names[location.names!="India"] 
@@ -697,6 +698,7 @@ read.cascade.data.files = function(dir = 'data_manager/data',
     one.df = read.csv(file.path(sub.dir,file), row.names = 1)
     colnames(one.df) = substring(colnames(one.df),2)
     years = unique(substr(colnames(one.df),1,4))
+    rownames(one.df)[rownames(one.df)=="United Republic of Tanzania"] = "Tanzania"
     location.names = rownames(one.df)[c(-1,-nrow(one.df))]
     one.df = one.df[,!grepl("Footnote",names(one.df))]
     
@@ -865,7 +867,7 @@ read.population.data.files = function(dir = 'data_manager/data',
         
     if(include.countries){
         # Set up arrays before filling them in over for loop for countries 
-        
+
         ## Age array
         age.dim.names = list(year = as.character(years),
                              location = countries.to.pull,
@@ -912,7 +914,12 @@ read.population.data.files = function(dir = 'data_manager/data',
                         dimnames = age.sex.dim.names)
         
         for(country in countries.to.pull){
-            one.df = df[df$Location==country,]
+            if(country=="Tanzania"){
+                one.df = df[df$Location=="United Republic of Tanzania",]
+            } else {
+                one.df = df[df$Location==country,]
+            }
+                
             one.df$AgeGrp = factor(one.df$AgeGrp, levels = data.ages)
             one.df.sorted = one.df[order(one.df$AgeGrp),]
             
@@ -1125,8 +1132,10 @@ read.fertility.data.files = function(dir = 'data_manager/data',
     df = df[df$Variant=="Medium",]
     
     countries.to.pull = c(countries.to.pull,"World")
+    countries.to.pull[grepl("Tanzania",countries.to.pull)] = "United Republic of Tanzania"
     
     df = df[df$Location %in% countries.to.pull,]
+    df$Location[grepl("Tanzania",df$Location)] = "Tanzania"
     #df = df[df$Location=="Kenya",]
     years = unique(df$MidPeriod)
     ages = unique(df$AgeGrp)
@@ -1151,7 +1160,7 @@ read.fertility.data.files = function(dir = 'data_manager/data',
 }
 
 # Reads in age/sex-specific death data 
-read.death.data.files = function(dir = 'data_manager/data',
+read.death.data.files.old = function(dir = 'data_manager/data',
                                  data.type,
                                  countries.to.pull,
                                  age.mapping){
@@ -1168,7 +1177,10 @@ read.death.data.files = function(dir = 'data_manager/data',
     df = read.csv(file.path(sub.dir,file))
     df = df[,c("Location","Time","AgeGrp","DeathMale","DeathFemale","DeathTotal")]
     countries.to.pull = c(countries.to.pull,"World")
+
+    countries.to.pull[grepl("Tanzania",countries.to.pull)] = "United Republic of Tanzania"
     df = df[df$Location %in% countries.to.pull,]
+    df$Location[grepl("Tanzania",df$Location)] = "Tanzania"
     
     years = unique(df$Time)
     ages.full = unique(df$AgeGrp)
@@ -1246,11 +1258,12 @@ read.death.data.files = function(dir = 'data_manager/data',
     rv
 }
 
-read.death.data.files.V2 = function(dir = 'data_manager/data',
+read.death.data.files = function(dir = 'data_manager/data',
                                  data.type,
                                  countries.to.pull,
                                  age.mapping){
     countries.to.pull = c(countries.to.pull,"World")
+    countries.to.pull[grepl("Tanzania",countries.to.pull)] = "United Republic of Tanzania"
     
     sub.dir = file.path(dir, data.type)
     files = list.files(file.path(sub.dir))
@@ -1267,11 +1280,13 @@ read.death.data.files.V2 = function(dir = 'data_manager/data',
     female.df = female.df[,c(3,11:ncol(female.df))]
     colnames(female.df)[1] = "Location"
     female.df = female.df[female.df$Location %in% countries.to.pull,]
+    female.df$Location[grepl("Tanzania",female.df$Location)] = "Tanzania"
     
     male.df = suppressWarnings(readxl::read_xlsx(file.path(sub.dir,male.file),skip = 16,col_names = T))
     male.df = male.df[,c(3,11:ncol(male.df))]
     colnames(male.df)[1] = "Location"
     male.df = male.df[male.df$Location %in% countries.to.pull,]
+    male.df$Location[grepl("Tanzania",male.df$Location)] = "Tanzania"
     
     years = unique(female.df$Year)
     ages.full = colnames(female.df)[-c(1:2)]

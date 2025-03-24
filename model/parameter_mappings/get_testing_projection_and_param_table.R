@@ -1,6 +1,7 @@
 source("model/parameter_mappings/kenya/testing_projection_kenya.R")
 source("model/parameter_mappings/south_africa/testing_projection_sa.R")
 source("model/parameter_mappings/mozambique/testing_projection_mozambique.R")
+source("model/parameter_mappings/tanzania/testing_projection_tanzania.R")
 
 get.testing.model = function(location){
     # if(location!="Kenya")
@@ -12,6 +13,8 @@ get.testing.model = function(location){
         rv = get.testing.model.south.africa() 
     } else if(location=="Mozambique"){
         rv = get.testing.model.mozambique() 
+    } else if(location=="Tanzania"){
+        rv = get.testing.model.tanzania() 
     } else 
         rv = get.testing.model.kenya() # using kenya model for all other countries for now 
 

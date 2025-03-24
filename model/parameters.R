@@ -210,6 +210,14 @@ get.default.parameters = function(location){
         rv["unsuppressed.disengagement.rates"]= 0.1392621 # Kenya's value for now
         rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya's value for now
         rv["unsuppression.rates"] = 0.2196 # Kenya's value for now
+    } else if(location=="Tanzania"){
+        rv["hiv.specific.mortality.rates.0"]=0.0453125 
+        rv["hiv.specific.mortality.rates.1"]=0.09090909
+        rv["hiv.specific.mortality.rates.2"]=0.019375
+        # using Kenya's trates 
+        rv["unsuppressed.disengagement.rates"]= 0.1392621 # Kenya's value for now
+        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya's value for now
+        rv["unsuppression.rates"] = 0.2196 # Kenya's value for now
     } else { # if (location=="Kenya")
         rv["hiv.specific.mortality.rates.0"]=0.04057971 
         rv["hiv.specific.mortality.rates.1"]=0.08125 
@@ -814,7 +822,7 @@ map.model.parameters <- function(parameters,
             projected.rate.age.sex
             
         }))
-    } else { # if(location=="South Africa") # using south africa for all other countries for now 
+    } else { # using IeDEA dashboard method for all countries other than Kenya
         
         engagement.rates = c(lapply(engagement.times, function(year){
             
@@ -881,45 +889,43 @@ map.model.parameters <- function(parameters,
     
     
     #-- SUPPRESSION/UNSUPPRESSION --#
-    if(1==1){
-        suppression.model = get.suppression.rates(location = location)
-        suppression.times = c(1975:min(project.to.year,sampled.parameters["cascade.improvement.end.year"], na.rm = T))
+    suppression.model = get.suppression.rates(location = location)
+    suppression.times = c(1975:min(project.to.year,sampled.parameters["cascade.improvement.end.year"], na.rm = T))
+    
+    suppression.rates = c(lapply(suppression.times, function(year){
         
-        suppression.rates = c(lapply(suppression.times, function(year){
-            
-            projected.log.odds = as.numeric(sapply(trans.dim.names$sex, function(sex){
-                sapply(trans.dim.names$age, function(age){
-                    eng.cat = names(MODEL.TO.IEDEA.AGE.MAPPING)[sapply(MODEL.TO.IEDEA.AGE.MAPPING, function(x) age %in% x)]
-                    
-                    suppression.model$intercept + 
-                        (suppression.model$slope+sampled.parameters['log.OR.suppression.slope'])*(year-suppression.model$anchor.year) + 
-                        (suppression.model$age.10.19*(eng.cat=="10-19")) + 
-                        (suppression.model$age.20.29*(eng.cat=="20-29")) + 
-                        (suppression.model$age.40.49*(eng.cat=="40-49")) + 
-                        (suppression.model$age.50.plus*(eng.cat=="50 and over")) + 
-                        (suppression.model$sex.female*(sex=="female"))  
-                    
-                })
-            }))
-            dim(projected.log.odds) = sapply(trans.dim.names,length)
-            dimnames(projected.log.odds) = trans.dim.names
-            
-            projected.p = 1/(1+exp(-projected.log.odds)) 
-            
-            projected.p = projected.p*suppression.model$max.proportion 
-            projected.rate = -log(1-projected.p)   
-            projected.rate[,"male",] = projected.rate[,"male",]*sampled.parameters["male.suppression.multiplier"]
-            projected.rate
-            
+        projected.log.odds = as.numeric(sapply(trans.dim.names$sex, function(sex){
+            sapply(trans.dim.names$age, function(age){
+                eng.cat = names(MODEL.TO.IEDEA.AGE.MAPPING)[sapply(MODEL.TO.IEDEA.AGE.MAPPING, function(x) age %in% x)]
+                
+                suppression.model$intercept + 
+                    (suppression.model$slope+sampled.parameters['log.OR.suppression.slope'])*(year-suppression.model$anchor.year) + 
+                    (suppression.model$age.10.19*(eng.cat=="10-19")) + 
+                    (suppression.model$age.20.29*(eng.cat=="20-29")) + 
+                    (suppression.model$age.40.49*(eng.cat=="40-49")) + 
+                    (suppression.model$age.50.plus*(eng.cat=="50 and over")) + 
+                    (suppression.model$sex.female*(sex=="female"))  
+                
+            })
         }))
+        dim(projected.log.odds) = sapply(trans.dim.names,length)
+        dimnames(projected.log.odds) = trans.dim.names
         
-        parameters = set.rates.for.interventions(baseline.rates = suppression.rates, # list 
-                                                 baseline.times = suppression.times, # vector
-                                                 interventions = interventions,
-                                                 scale = "rate", 
-                                                 parameters = parameters,
-                                                 parameter.name = "SUPPRESSION.RATES") 
-    }
+        projected.p = 1/(1+exp(-projected.log.odds)) 
+        
+        projected.p = projected.p*suppression.model$max.proportion 
+        projected.rate = -log(1-projected.p)   
+        projected.rate[,"male",] = projected.rate[,"male",]*sampled.parameters["male.suppression.multiplier"]
+        projected.rate
+        
+    }))
+    
+    parameters = set.rates.for.interventions(baseline.rates = suppression.rates, # list 
+                                             baseline.times = suppression.times, # vector
+                                             interventions = interventions,
+                                             scale = "rate", 
+                                             parameters = parameters,
+                                             parameter.name = "SUPPRESSION.RATES") 
 
     unsuppression.times = c(2000)
     unsuppression.rates = c(list(array(sampled.parameters['unsuppression.rates'],

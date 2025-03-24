@@ -1,11 +1,14 @@
 source("model/parameter_mappings/kenya/engagement_disengagement_projection_kenya.R")
 source("model/parameter_mappings/south_africa/engagement_disengagement_projection_south_africa.R")
+source("model/parameter_mappings/tanzania/engagement_disengagement_projection_tanzania.R")
 
 
 get.engagement.model = function(location){
     
     if(location=="Kenya"){
         rv = get.engagement.model.kenya() 
+    } else if(location=="Tanzania"){
+        rv = get.engagement.model.tanzania()
     } else {
         rv = get.engagement.model.south.africa() # use SOUTH AFRICA'S engagement data for all other countries 
     }
@@ -83,10 +86,10 @@ generate.engagement.parameter.table = function(locations){
 }
 
 
-plot.engagement.fit.south.africa = function(location="South Africa",
+plot.engagement.fit = function(location="South Africa",
                                             dimension = "total" # or age or sex
                                             ){
-    model = get.engagement.model.south.africa()
+    model = get.engagement.model(location=location)
     
     if(dimension=="age"){
         plot = ggplot() + 

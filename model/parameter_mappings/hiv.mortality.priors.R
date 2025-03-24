@@ -1,4 +1,4 @@
-LOCATION = "Mozambique"
+LOCATION = "Tanzania"
 
 # 1990 AIDS-related deaths/1990 prevalence
 hiv.mortality.1990 = DATA.MANAGER$hiv.mortality$year.location["1990",LOCATION]/
@@ -31,3 +31,8 @@ hiv.mortality.2020 # 0.003947368
 hiv.mortality.1990 # 0.04181818 
 hiv.mortality.2005 # 0.06583333
 hiv.mortality.2020 # 0.02173913
+
+# Tanzania
+hiv.mortality.1990 # 0.0453125 
+hiv.mortality.2005 # 0.09090909
+hiv.mortality.2020 # 0.019375
