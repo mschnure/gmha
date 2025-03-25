@@ -10,7 +10,7 @@ source('model/diffeq.R')
 source('model/age_mappings.R') 
 NO.INTERVENTION = c()
 
-load('cached/data.manager_global_2025-03-24.Rdata') # includes new median values for suppressed data 
+load('cached/data.manager_global_2025-03-25.Rdata') # includes new median values for suppressed data 
 #load('cached/data.manager_global_2024-12-30.Rdata') 
 
 source('model/parameter_mappings/age_mixing.R') 
@@ -29,13 +29,8 @@ source('model/simplot.R')
 source('calibration/likelihood/likelihood.R')
 #source("calibration/likelihood/individual_likelihoods.R")
 source('calibration/make_joint_distribution.R')
-source('calibration/prior_distributions/kenya_prior.R')
-source('calibration/prior_distributions/south_africa_prior.R')
-source('calibration/prior_distributions/france_prior.R')
-source('calibration/prior_distributions/mozambique_prior.R')
-source('calibration/prior_distributions/tanzania_prior.R')
 source('calibration/prior_distributions/var_blocks.R')
-source('calibration/set_likelihood_and_prior.R')
+source('calibration/set_likelihood_and_prior.R') # sources all individual priors 
 
 # future projections
 source('future_projections/create_and_run_interventions_functions.R')
