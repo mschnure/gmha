@@ -1,6 +1,7 @@
 source("model/parameter_mappings/kenya/engagement_disengagement_projection_kenya.R")
 source("model/parameter_mappings/south_africa/engagement_disengagement_projection_south_africa.R")
 source("model/parameter_mappings/tanzania/engagement_disengagement_projection_tanzania.R")
+source("model/parameter_mappings/uganda/engagement_disengagement_projection_uganda.R")
 
 
 get.engagement.model = function(location){
@@ -120,7 +121,7 @@ plot.engagement.fit = function(location="South Africa",
     
 }
 
-plot.engagement.fit.kenya = function(location="Kenya"){
+plot.engagement.fit.kenya.old = function(location="Kenya"){
     engagement.rate = get.engagement.model.kenya()$engagement.rate
     engagement.years = as.numeric(names(engagement.rate))
     #qplot(names(engagement.rate),engagement.rate) + ylim(0,NA)

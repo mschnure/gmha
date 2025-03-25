@@ -199,26 +199,34 @@ get.default.parameters = function(location){
         rv["trate.2"] = 0.1
         rv["trate.3"] = 0.1
         rv["trate.4"] = 0.1
-        rv["unsuppressed.disengagement.rates"]= 0.1392621 # Kenya's value for now
-        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya's value for now
-        rv["unsuppression.rates"] = 0.2196 # Kenya's value for now
+        rv["unsuppressed.disengagement.rates"]= 0.1392621 # Kenya
+        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya
+        rv["unsuppression.rates"] = 0.2196 # Kenya
     } else if(location=="Mozambique"){
         rv["hiv.specific.mortality.rates.0"]=0.04181818 
         rv["hiv.specific.mortality.rates.1"]=0.06583333 
         rv["hiv.specific.mortality.rates.2"]=0.02173913
         # using Kenya's trates 
-        rv["unsuppressed.disengagement.rates"]= 0.1392621 # Kenya's value for now
-        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya's value for now
-        rv["unsuppression.rates"] = 0.2196 # Kenya's value for now
+        rv["unsuppressed.disengagement.rates"]= 0.1392621 # Kenya
+        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya
+        rv["unsuppression.rates"] = 0.2196 # Kenya
     } else if(location=="Tanzania"){
         rv["hiv.specific.mortality.rates.0"]=0.0453125 
         rv["hiv.specific.mortality.rates.1"]=0.09090909
         rv["hiv.specific.mortality.rates.2"]=0.019375
         # using Kenya's trates 
-        rv["unsuppressed.disengagement.rates"]= 0.1392621 # Kenya's value for now
-        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya's value for now
-        rv["unsuppression.rates"] = 0.2196 # Kenya's value for now
-    } else { # if (location=="Kenya")
+        rv["unsuppressed.disengagement.rates"]= 0.1392621 # Kenya
+        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya
+        rv["unsuppression.rates"] = 0.2196 # Kenya
+    } else if(location=="Uganda"){
+        rv["hiv.specific.mortality.rates.0"]=0.06153846 
+        rv["hiv.specific.mortality.rates.1"]=0.07
+        rv["hiv.specific.mortality.rates.2"]=0.014
+        # using Kenya's trates 
+        rv["unsuppressed.disengagement.rates"]= 0.1392621 # Kenya
+        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya
+        rv["unsuppression.rates"] = 0.2196 # Kenya
+    }  else { # if (location=="Kenya")
         rv["hiv.specific.mortality.rates.0"]=0.04057971 
         rv["hiv.specific.mortality.rates.1"]=0.08125 
         rv["hiv.specific.mortality.rates.2"]=0.02
@@ -805,53 +813,53 @@ map.model.parameters <- function(parameters,
     engagement.model = get.engagement.model(location = location)
     engagement.times = c(1975:min(project.to.year,sampled.parameters["cascade.improvement.end.year"], na.rm = T))
     
-    if(location=="Kenya"){
-        engagement.rates = c(lapply(engagement.times, function(year){
-            projected.log.odds = engagement.model$intercept+
-                (engagement.model$slope+sampled.parameters['log.OR.engagement.slope'])*(year-engagement.model$anchor.year)
-            
-            projected.p = 1/(1+exp(-projected.log.odds)) 
-            projected.p = projected.p*engagement.model$max.proportion 
-            projected.rate = -log(1-projected.p)
-            
-            projected.rate.age.sex = array(projected.rate,
-                                           dim=sapply(trans.dim.names, length),
-                                           dimnames=trans.dim.names)
-            projected.rate.age.sex[,"male",] = projected.rate.age.sex[,"male",]*sampled.parameters["male.engagement.multiplier"]
-            
-            projected.rate.age.sex
-            
-        }))
-    } else { # using IeDEA dashboard method for all countries other than Kenya
+    # if(location=="Kenya"){
+    #     engagement.rates = c(lapply(engagement.times, function(year){
+    #         projected.log.odds = engagement.model$intercept+
+    #             (engagement.model$slope+sampled.parameters['log.OR.engagement.slope'])*(year-engagement.model$anchor.year)
+    #         
+    #         projected.p = 1/(1+exp(-projected.log.odds)) 
+    #         projected.p = projected.p*engagement.model$max.proportion 
+    #         projected.rate = -log(1-projected.p)
+    #         
+    #         projected.rate.age.sex = array(projected.rate,
+    #                                        dim=sapply(trans.dim.names, length),
+    #                                        dimnames=trans.dim.names)
+    #         projected.rate.age.sex[,"male",] = projected.rate.age.sex[,"male",]*sampled.parameters["male.engagement.multiplier"]
+    #         
+    #         projected.rate.age.sex
+    #         
+    #     }))
+    # } else { 
+    
+    # using IeDEA dashboard method for all countries 
+    engagement.rates = c(lapply(engagement.times, function(year){
         
-        engagement.rates = c(lapply(engagement.times, function(year){
-            
-            projected.log.odds = as.numeric(sapply(trans.dim.names$sex, function(sex){
-                sapply(trans.dim.names$age, function(age){
-                    eng.cat = names(MODEL.TO.IEDEA.AGE.MAPPING)[sapply(MODEL.TO.IEDEA.AGE.MAPPING, function(x) age %in% x)]
-                    
-                    engagement.model$intercept + 
-                        (engagement.model$slope+sampled.parameters['log.OR.engagement.slope'])*(year-engagement.model$anchor.year) + 
-                        (engagement.model$age.10.19*(eng.cat=="10-19")) + 
-                        (engagement.model$age.20.29*(eng.cat=="20-29")) + 
-                        (engagement.model$age.40.49*(eng.cat=="40-49")) + 
-                        (engagement.model$age.50.plus*(eng.cat=="50 and over")) + 
-                        (engagement.model$sex.female*(sex=="female"))  
-                    
-                })
-            }))
-            dim(projected.log.odds) = sapply(trans.dim.names,length)
-            dimnames(projected.log.odds) = trans.dim.names
-            
-            projected.p = 1/(1+exp(-projected.log.odds)) 
-            
-            projected.p = projected.p*engagement.model$max.proportion 
-            projected.rate = -log(1-projected.p)   
-            projected.rate[,"male",] = projected.rate[,"male",]*sampled.parameters["male.engagement.multiplier"]
-            projected.rate
-            
+        projected.log.odds = as.numeric(sapply(trans.dim.names$sex, function(sex){
+            sapply(trans.dim.names$age, function(age){
+                eng.cat = names(MODEL.TO.IEDEA.AGE.MAPPING)[sapply(MODEL.TO.IEDEA.AGE.MAPPING, function(x) age %in% x)]
+                
+                engagement.model$intercept + 
+                    (engagement.model$slope+sampled.parameters['log.OR.engagement.slope'])*(year-engagement.model$anchor.year) + 
+                    (engagement.model$age.10.19*(eng.cat=="10-19")) + 
+                    (engagement.model$age.20.29*(eng.cat=="20-29")) + 
+                    (engagement.model$age.40.49*(eng.cat=="40-49")) + 
+                    (engagement.model$age.50.plus*(eng.cat=="50 and over")) + 
+                    (engagement.model$sex.female*(sex=="female"))  
+                
+            })
         }))
-    }
+        dim(projected.log.odds) = sapply(trans.dim.names,length)
+        dimnames(projected.log.odds) = trans.dim.names
+        
+        projected.p = 1/(1+exp(-projected.log.odds)) 
+        
+        projected.p = projected.p*engagement.model$max.proportion 
+        projected.rate = -log(1-projected.p)   
+        projected.rate[,"male",] = projected.rate[,"male",]*sampled.parameters["male.engagement.multiplier"]
+        projected.rate
+        
+    }))
     
     parameters = set.rates.for.interventions(baseline.rates = engagement.rates, # list 
                                              baseline.times = engagement.times, # vector

@@ -3,8 +3,8 @@ source("model/parameter_mappings/south_africa/suppression_rebound_rates_south_af
 
 get.suppression.rates = function(location){
     
-    if(location %in% c("South Africa","Tanzania")){
-        rv = get.suppression.rate.south.africa() # using SA suppression data for SA, Tanzania 
+    if(location %in% c("South Africa","Tanzania","Uganda")){
+        rv = get.suppression.rate.south.africa() # using SA suppression data for SA, Tanzania, Uganda 
     } else {
         rv = get.suppression.rate.kenya() # use KENYA'S suppression data for all other countries 
     }
