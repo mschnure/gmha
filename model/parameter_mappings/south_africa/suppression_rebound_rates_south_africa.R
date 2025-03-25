@@ -40,56 +40,8 @@ get.unsuppression.rate.south.africa = function(){
 get.suppression.rate.south.africa = function(){
     max.proportion = 0.95
 
-    data = c(0, # vls.male.10.19.1990 - fixed 
-             .76, # vls.male.10.19.2010 
-             .65, # vls.male.10.19.2014  #small sample size n=26; replace this value with midpoint between 2010 and 2017? 
-             .83, # vls.male.10.19.2017
-             
-             0, # vls.male.20.29.1990 - fixed 
-             .81, # vls.male.20.29.2010
-             .88, # vls.male.20.29.2014
-             .88, # vls.male.20.29.2017
-             
-             0, # vls.male.30.39.1990 - fixed 
-             .86, # vls.male.30.39.2010
-             .90, # vls.male.30.39.2014
-             .87, # vls.male.30.39.2017
-             
-             0, # vls.male.40.49.1990 - fixed 
-             .85, # vls.male.40.49.2010
-             .90, # vls.male.40.49.2014
-             .87, # vls.male.40.49.2017
-             
-             0, # vls.male.50plus.1990 - fixed 
-             .87, # vls.male.50plus.2010
-             .91, # vls.male.50plus.2014
-             .91, # vls.male.50plus.2017  
-             
-             0, # vls.female.10.19.1990 - fixed 
-             .78, # vls.female.10.19.2010
-             .87, # vls.female.10.19.2014
-             .85, # vls.female.10.19.2017
-             
-             0, # vls.female.20.29.1990 - fixed 
-             .85, # vls.female.20.29.2010
-             .88, # vls.female.20.29.2014
-             .86, # vls.female.20.29.2017
-             
-             0, # vls.female.30.39.1990 - fixed 
-             .88, # vls.female.30.39.2010
-             .88, # vls.female.30.39.2014
-             .92, # vls.female.30.39.2017
-             
-             0, # vls.female.40.49.1990 - fixed 
-             .91, # vls.female.40.49.2010
-             .91, # vls.female.40.49.2014
-             .89, # vls.female.40.49.2017
-             
-             0, # vls.female.50plus.1990 - fixed 
-             .93, # vls.female.50plus.2010
-             .92, # vls.female.50plus.2014
-             .96  # vls.female.50plus.2017  
-    )
+    data = suppressMessages(readxl::read_xlsx("data_manager/IeDEA_data.xlsx",sheet="supp_sa",col_names=T))
+    data = suppressWarnings(as.numeric(unlist(c(data[2:5,2:6],data[9:12,2:6]))))
     
     dim.names.data = list(year = c(1990,2010,2014,2017),
                           age = c("10-19","20-29","30-39","40-49","50 and over"),
