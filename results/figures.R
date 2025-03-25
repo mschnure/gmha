@@ -20,6 +20,8 @@ if(simset.no.int@simulations[[1]]$location=="South Africa")
     plot.limit = 1150000 
 if(simset.no.int@simulations[[1]]$location=="France")
     plot.limit = 35000 
+if(simset.no.int@simulations[[1]]$location=="Mozambique")
+  plot.limit = 400000
 
 pal = c(brewer.pal(n=12,"Paired")[2],brewer.pal(n=12,"Paired")[5],brewer.pal(n=12,"Paired")[4]) 
 alpha = 0.8

@@ -4,21 +4,14 @@
 
 source("model/run_systematic.R")
 source("future_projections/extract_projection_results.R")
-#load("mcmc_runs/mcmc_files/mcmc_kenya_2025-01-13.Rdata")
-#load("mcmc_runs/mcmc_files/mcmc_kenya_2025-01-16.Rdata")
+load("mcmc_runs/mcmc_files/mcmc_mozambique_2025-03-22.Rdata")
 
-# simset = suppressWarnings(extract.simset(mcmc,
-#                                          additional.burn=500,
-#                                          additional.thin=20))
-
-# simset = suppressWarnings(extract.simset(mcmc,
-#                                          additional.burn=5998,
-#                                          additional.thin=1))
+simset = suppressWarnings(extract.simset(mcmc,
+                                         additional.burn=7000, # burn half
+                                         additional.thin=40)) # thin to 200
 
 
-#load("mcmc_runs/simset_kenya_thinned_2025-02-11.Rdata")
-#load("mcmc_runs/simset_south_africa_thinned_2025-02-11.Rdata")
-#load("mcmc_runs/simset_france_thinned_2025-02-12.Rdata")
+#load("mcmc_runs/simset_mozambique_2025-03-22.Rdata")
 
 RUN.SIMULATIONS.TO.YEAR = 2040
 print("running no.int")
@@ -57,11 +50,11 @@ summary.results$median.over.50.year = pull.year.for.statistic.for.simset(simset=
                                                          data.type = "prevalence",
                                                          statistic.threshold = 0.5,
                                                          age.threshold = 50)
-summary.results$quarter.over.65.year = pull.year.for.statistic.for.simset(simset=simset.list.full$no.int,
-                                                         data.type = "prevalence",
-                                                         statistic.threshold = 0.25,
-                                                         age.threshold = 65)
-
+# summary.results$quarter.over.65.year = pull.year.for.statistic.for.simset(simset=simset.list.full$no.int,
+#                                                          data.type = "prevalence",
+#                                                          statistic.threshold = 0.25,
+#                                                          age.threshold = 65)
+summary.results$quarter.over.65.year = rep(NA,3)
 summary.results$prevalence.age.distribution = generate.age.distribution.2.column(full.results.array,
                                                                  outcome="prevalence",
                                                                  intervention.1="no.int",year.1="2025",
