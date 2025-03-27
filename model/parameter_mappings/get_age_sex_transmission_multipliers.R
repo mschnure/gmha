@@ -4,6 +4,8 @@ source("model/parameter_mappings/france/age_sex_transmission_multipliers_france.
 source("model/parameter_mappings/mozambique/age_sex_transmission_multipliers_mozambique.R")
 source("model/parameter_mappings/tanzania/age_sex_transmission_multipliers_tanzania.R")
 source("model/parameter_mappings/uganda/age_sex_transmission_multipliers_uganda.R")
+source("model/parameter_mappings/zambia/age_sex_transmission_multipliers_zambia.R")
+source("model/parameter_mappings/zimbabwe/age_sex_transmission_multipliers_zimbabwe.R")
 
 
 get.all.age.sex.transmission.multipliers = function(location){
@@ -29,7 +31,7 @@ get.all.age.sex.transmission.multipliers = function(location){
         rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.south.africa(sex="female",year=2003) # USING 2003 ESTIMATES
         rv$MALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.south.africa(sex="male",year=2003)
         
-        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.south.africa(sex="female",year=2016) # USING 2016 ESTIMATES
+        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.south.africa(sex="female",year=2016)
         rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.south.africa(sex="male",year=2016)
         
     } else if(location=="France"){
@@ -46,31 +48,51 @@ get.all.age.sex.transmission.multipliers = function(location){
         rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.mozambique(sex="female",year=2003)
         rv$MALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.mozambique(sex="male",year=2003)
         
-        rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.mozambique(sex="female",year=2011) # USING 2011 ESTIMATES
+        rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.mozambique(sex="female",year=2011) 
         rv$MALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.mozambique(sex="male",year=2011)
         
-        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.mozambique(sex="female",year=2022) # USING 2022 ESTIMATES
+        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.mozambique(sex="female",year=2022) 
         rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.mozambique(sex="male",year=2022)
         
     } else if(location=="Tanzania"){
         rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.tanzania(sex="female",year=2004)
         rv$MALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.tanzania(sex="male",year=2004)
         
-        rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.tanzania(sex="female",year=2010) # USING 2010 ESTIMATES
+        rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.tanzania(sex="female",year=2010) 
         rv$MALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.tanzania(sex="male",year=2010)
         
-        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.tanzania(sex="female",year=2022) # USING 2022 ESTIMATES
+        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.tanzania(sex="female",year=2022) 
         rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.tanzania(sex="male",year=2022)
         
     } else if(location=="Uganda"){
-        rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.uganda(sex="female",year=2000) # USING 2000 ESTIMATES
+        rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.uganda(sex="female",year=2000)
         rv$MALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.uganda(sex="male",year=2000)
         
-        rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.uganda(sex="female",year=2006) # USING 2006 ESTIMATES
+        rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.uganda(sex="female",year=2006)
         rv$MALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.uganda(sex="male",year=2006)
         
-        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.uganda(sex="female",year=2016) # USING 2016 ESTIMATES
+        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.uganda(sex="female",year=2016)
         rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.uganda(sex="male",year=2016)
+        
+    } else if(location=="Zambia"){
+        rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.zambia(sex="female",year=2001)
+        rv$MALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.zambia(sex="male",year=2001)
+        
+        rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.zambia(sex="female",year=2007)
+        rv$MALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.zambia(sex="male",year=2007)
+        
+        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.zambia(sex="female",year=2018)
+        rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.zambia(sex="male",year=2018)
+        
+    } else if(location=="Zimbabwe"){
+        rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.zimbabwe(sex="female",year=2005) 
+        rv$MALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.zimbabwe(sex="male",year=2005)
+        
+        rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.zimbabwe(sex="female",year=2010) 
+        rv$MALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.zimbabwe(sex="male",year=2010)
+        
+        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.zimbabwe(sex="female",year=2015) 
+        rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.zimbabwe(sex="male",year=2015)
         
     } else { # using kenya model for all other countries for now
         rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.kenya(sex="female",year=2003)

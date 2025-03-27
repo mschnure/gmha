@@ -487,7 +487,6 @@ read.surveillance.data.stratified = function(data.type,
     } else if(strata=='year.age.sex') {
         rv = read.pdf.data(data.type=data.type,
                            suffix=suffix)
-        print("need age/sex pdfs for countries other than Kenya, South Africa, France, Mozambique, Tanzania")
     }
     else stop("only currently set up for age and year.age.sex strata")
     

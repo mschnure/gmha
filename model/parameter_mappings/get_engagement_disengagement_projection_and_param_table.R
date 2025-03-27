@@ -2,6 +2,7 @@ source("model/parameter_mappings/kenya/engagement_disengagement_projection_kenya
 source("model/parameter_mappings/south_africa/engagement_disengagement_projection_south_africa.R")
 source("model/parameter_mappings/tanzania/engagement_disengagement_projection_tanzania.R")
 source("model/parameter_mappings/uganda/engagement_disengagement_projection_uganda.R")
+source("model/parameter_mappings/zimbabwe/engagement_disengagement_projection_zimbabwe.R")
 
 
 get.engagement.model = function(location){
@@ -10,8 +11,13 @@ get.engagement.model = function(location){
         rv = get.engagement.model.kenya() 
     } else if(location=="Tanzania"){
         rv = get.engagement.model.tanzania()
-    } else {
-        rv = get.engagement.model.south.africa() # use SOUTH AFRICA'S engagement data for all other countries 
+    } else if(location=="Uganda"){
+        rv = get.engagement.model.uganda()
+    } else if(location=="Zimbabwe"){
+        rv = get.engagement.model.zimbabwe()
+    } else  {
+        rv = get.engagement.model.south.africa() # use SOUTH AFRICA'S engagement data for all other countries (Moz, Zambia)
+        #print("Using South Africa's engagement model")
     }
     rv
 }

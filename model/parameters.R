@@ -116,10 +116,10 @@ get.default.parameters = function(location){
         log.OR.testing.intercept=0, # 0 because on log scale
         log.OR.testing.slope=0,
         log.OR.engagement.slope=0,
-        unsuppressed.disengagement.rates=NA, # country-specific, set below 0.1392621, # Lee et al
-        suppressed.disengagement.rates = NA, # country-specific, set below 0.1025866, # Lee et al
+        unsuppressed.disengagement.rates=0.1392621, # KENYA value, using for all except SA for now
+        suppressed.disengagement.rates = 0.1025866, # KENYA value, using for all except SA for now
         log.OR.suppression.slope=0,
-        unsuppression.rates=NA, # country-specific, set below 
+        unsuppression.rates=0.2196, # KENYA value, using for all except SA for now
         male.awareness.multiplier=1,
         male.engagement.multiplier=1,
         male.suppression.multiplier=1,
@@ -199,40 +199,30 @@ get.default.parameters = function(location){
         rv["trate.2"] = 0.1
         rv["trate.3"] = 0.1
         rv["trate.4"] = 0.1
-        rv["unsuppressed.disengagement.rates"]= 0.1392621 # Kenya
-        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya
-        rv["unsuppression.rates"] = 0.2196 # Kenya
     } else if(location=="Mozambique"){
         rv["hiv.specific.mortality.rates.0"]=0.04181818 
         rv["hiv.specific.mortality.rates.1"]=0.06583333 
         rv["hiv.specific.mortality.rates.2"]=0.02173913
-        # using Kenya's trates 
-        rv["unsuppressed.disengagement.rates"]= 0.1392621 # Kenya
-        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya
-        rv["unsuppression.rates"] = 0.2196 # Kenya
     } else if(location=="Tanzania"){
         rv["hiv.specific.mortality.rates.0"]=0.0453125 
         rv["hiv.specific.mortality.rates.1"]=0.09090909
         rv["hiv.specific.mortality.rates.2"]=0.019375
-        # using Kenya's trates 
-        rv["unsuppressed.disengagement.rates"]= 0.1392621 # Kenya
-        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya
-        rv["unsuppression.rates"] = 0.2196 # Kenya
     } else if(location=="Uganda"){
         rv["hiv.specific.mortality.rates.0"]=0.06153846 
         rv["hiv.specific.mortality.rates.1"]=0.07
         rv["hiv.specific.mortality.rates.2"]=0.014
-        # using Kenya's trates 
-        rv["unsuppressed.disengagement.rates"]= 0.1392621 # Kenya
-        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya
-        rv["unsuppression.rates"] = 0.2196 # Kenya
-    }  else { # if (location=="Kenya")
-        rv["hiv.specific.mortality.rates.0"]=0.04057971 
-        rv["hiv.specific.mortality.rates.1"]=0.08125 
-        rv["hiv.specific.mortality.rates.2"]=0.02
-        rv["unsuppressed.disengagement.rates"]= 0.1392621 # see disengagement models
-        rv["suppressed.disengagement.rates"] = 0.1025866 # see disengagement models
-        rv["unsuppression.rates"] = 0.2196 
+    } else if(location=="Zambia"){
+        rv["hiv.specific.mortality.rates.0"]=0.04285714 
+        rv["hiv.specific.mortality.rates.1"]=0.06790123
+        rv["hiv.specific.mortality.rates.2"]=0.01692308
+    } else if(location=="Zimbabwe"){
+        rv["hiv.specific.mortality.rates.0"]=0.0375
+        rv["hiv.specific.mortality.rates.1"]=0.08571429
+        rv["hiv.specific.mortality.rates.2"]=0.01769231
+    } else { # if (location=="Kenya")
+        rv["hiv.specific.mortality.rates.0"]=0.04057971 # Kenya
+        rv["hiv.specific.mortality.rates.1"]=0.08125 # Kenya 
+        rv["hiv.specific.mortality.rates.2"]=0.02 # Kenya 
     } 
  
     rv

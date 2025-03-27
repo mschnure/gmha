@@ -5,6 +5,8 @@ source('calibration/prior_distributions/france_prior.R')
 source('calibration/prior_distributions/mozambique_prior.R')
 source('calibration/prior_distributions/tanzania_prior.R')
 source('calibration/prior_distributions/uganda_prior.R')
+source('calibration/prior_distributions/zambia_prior.R')
+source('calibration/prior_distributions/zimbabwe_prior.R')
 
 set.likelihood.and.prior.by.location = function(location){
     if(location=="Kenya"){
@@ -12,8 +14,6 @@ set.likelihood.and.prior.by.location = function(location){
                                               location="Kenya")
         prior = KENYA.PRIOR
         
-        # params.start.values = get.default.parameters(location = "Kenya")
-        # params.start.values = params.start.values[prior@var.names]
         load("calibration/starting_values/2025_02_26_kenya_start_values.Rdata")
         params.start.values = params.start.values
         
@@ -22,8 +22,6 @@ set.likelihood.and.prior.by.location = function(location){
                                              location="South Africa")
         prior = SOUTH.AFRICA.PRIOR
         
-        # params.start.values = get.default.parameters(location = "South Africa")
-        # params.start.values = params.start.values[prior@var.names]
         load("calibration/starting_values/2025_02_26_south_africa_start_values.Rdata")
         params.start.values = params.start.values
         
@@ -32,8 +30,6 @@ set.likelihood.and.prior.by.location = function(location){
                                               location="France")
         prior = FRANCE.PRIOR
         
-        # params.start.values = get.default.parameters(location = "France") 
-        # params.start.values = params.start.values[prior@var.names]
         load("calibration/starting_values/2025_02_26_france_start_values.Rdata")
         params.start.values = params.start.values
         
@@ -58,7 +54,21 @@ set.likelihood.and.prior.by.location = function(location){
         params.start.values = get.default.parameters(location = "Uganda")
         params.start.values = params.start.values[prior@var.names]
         
-    }else stop("Only set up for Kenya, South Africa, France, Mozambique, Tanzania, and Uganda for now")
+    } else if(location=="Zambia"){
+        likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = "Zambia"),
+                                              location="Zambia")
+        prior = ZAMBIA.PRIOR
+        params.start.values = get.default.parameters(location = "Zambia")
+        params.start.values = params.start.values[prior@var.names]
+        
+    } else if(location=="Zimbabwe"){
+        likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = "Zimbabwe"),
+                                              location="Zimbabwe")
+        prior = ZIMBABWE.PRIOR
+        params.start.values = get.default.parameters(location = "Zimbabwe")
+        params.start.values = params.start.values[prior@var.names]
+        
+    } else stop("Only set up for Kenya, South Africa, France, Mozambique, Tanzania, Uganda, Zambia, Zimbabwe for now")
     
     transformations = unlist(sapply(prior@subdistributions,function(dist){
         
