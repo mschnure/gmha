@@ -14,7 +14,6 @@ set.likelihood.and.prior.by.location = function(location){
                                           location=location)
     
     params.start.values = get.default.parameters(location = location)
-    params.start.values = params.start.values[prior@var.names]
     
     if(location=="Kenya"){
         prior = KENYA.PRIOR
@@ -42,6 +41,8 @@ set.likelihood.and.prior.by.location = function(location){
         prior = MALAWI.PRIOR
     } else 
         stop("Only set up for Kenya, South Africa, France, Mozambique, Tanzania, Uganda, Zambia, Zimbabwe, Malawi for now")
+    
+    params.start.values = params.start.values[prior@var.names]
     
     transformations = unlist(sapply(prior@subdistributions,function(dist){
         
