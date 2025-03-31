@@ -82,15 +82,16 @@ simplot(simset,
 
 
 # AGE DISTRIBUTION PLOT
-if(simset.no.int@simulations[[1]]$location=="Kenya")
-    plot.limit = 200000 
-if(simset.no.int@simulations[[1]]$location=="South Africa")
-    plot.limit = 1150000 
-if(simset.no.int@simulations[[1]]$location=="France")
-    plot.limit = 35000 
-if(simset.no.int@simulations[[1]]$location=="Mozambique")
-    plot.limit = 400000
+plot.limits = c("Kenya" = 200000,
+                "South Africa" = 1150000,
+                "France" = 35000,
+                "Mozambique" = 400000,
+                "Tanzania" = 250000,
+                "Uganda" = 250000,
+                "Zambia" = 200000,
+                "Zimbabwe" = 200000)
 
+plot.limit = plot.limits[simset@simulations[[1]]$location]
 pal = c(brewer.pal(n=12,"Paired")[2],brewer.pal(n=12,"Paired")[5],brewer.pal(n=12,"Paired")[4]) 
 alpha = 0.8
 
@@ -109,9 +110,10 @@ generate.age.distribution(full.results.array,
                                      "no.int/2040" = pal[2], 
                                      "no.int/2040" = pal[3]),alpha), 
                       name=NULL) +
-    theme(text = element_text(size = 20),
-          axis.title.y = element_text(colour = "grey37"))+
-    labs(title = NULL,subtitle = NULL) +
+    theme(text = element_text(size = 18),
+          axis.title.y = element_text(colour = "grey37"),
+          plot.title = element_text(size = 18, colour = "grey37"))+
+    labs(title = simset@simulations[[1]]$location,subtitle = NULL) +
     ylab(label = "Number of people living with HIV")+
     guides(x =  guide_axis(angle = 45))
 
