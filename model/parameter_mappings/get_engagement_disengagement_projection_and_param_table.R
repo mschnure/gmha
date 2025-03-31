@@ -15,8 +15,9 @@ get.engagement.model = function(location){
         rv = get.engagement.model.uganda()
     } else if(location=="Zimbabwe"){
         rv = get.engagement.model.zimbabwe()
-    } else  {
-        rv = get.engagement.model.south.africa() # use SOUTH AFRICA'S engagement data for all other countries (Moz, Zambia)
+    } else {
+        rv = get.engagement.model.south.africa() 
+        # use SOUTH AFRICA'S engagement data for all other countries (Moz, Zambia, Malawi)
         #print("Using South Africa's engagement model")
     }
     rv

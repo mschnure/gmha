@@ -6,6 +6,7 @@ source("model/parameter_mappings/tanzania/age_sex_transmission_multipliers_tanza
 source("model/parameter_mappings/uganda/age_sex_transmission_multipliers_uganda.R")
 source("model/parameter_mappings/zambia/age_sex_transmission_multipliers_zambia.R")
 source("model/parameter_mappings/zimbabwe/age_sex_transmission_multipliers_zimbabwe.R")
+source("model/parameter_mappings/malawi/age_sex_transmission_multipliers_malawi.R")
 
 
 get.all.age.sex.transmission.multipliers = function(location){
@@ -93,6 +94,16 @@ get.all.age.sex.transmission.multipliers = function(location){
         
         rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.zimbabwe(sex="female",year=2015) 
         rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.zimbabwe(sex="male",year=2015)
+        
+    } else if(location=="Malawi"){
+        rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.malawi(sex="female",year=2004) 
+        rv$MALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.malawi(sex="male",year=2004)
+        
+        rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.malawi(sex="female",year=2010) 
+        rv$MALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.malawi(sex="male",year=2010)
+        
+        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.malawi(sex="female",year=2015) 
+        rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.malawi(sex="male",year=2015)
         
     } else { # using kenya model for all other countries for now
         rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.kenya(sex="female",year=2003)

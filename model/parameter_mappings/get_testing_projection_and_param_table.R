@@ -5,11 +5,9 @@ source("model/parameter_mappings/tanzania/testing_projection_tanzania.R")
 source("model/parameter_mappings/uganda/testing_projection_uganda.R")
 source("model/parameter_mappings/zambia/testing_projection_zambia.R")
 source("model/parameter_mappings/zimbabwe/testing_projection_zimbabwe.R")
+source("model/parameter_mappings/malawi/testing_projection_malawi.R")
 
 get.testing.model = function(location){
-    # if(location!="Kenya")
-    #     print("Using Kenya-specific testing model for now")
-    
     if(location=="Kenya"){
         rv = get.testing.model.kenya()        
     } else if(location=="South Africa"){
@@ -24,6 +22,8 @@ get.testing.model = function(location){
         rv = get.testing.model.zambia() 
     } else if(location=="Zimbabwe"){
         rv = get.testing.model.zimbabwe() 
+    } else if(location=="Malawi"){
+        rv = get.testing.model.malawi() 
     } else {
         rv = get.testing.model.kenya() # using kenya model for all other countries for now 
         print("Using Kenya's testing model")

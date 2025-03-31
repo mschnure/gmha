@@ -147,9 +147,9 @@ get.default.parameters = function(location){
         hiv.mortality.time.0=1990,
         hiv.mortality.time.1=2005,
         hiv.mortality.time.2=2020,
-        hiv.specific.mortality.rates.0=NA, # country-specific, set below 
-        hiv.specific.mortality.rates.1=NA, # country-specific, set below 
-        hiv.specific.mortality.rates.2=NA, # country-specific, set below 
+        hiv.specific.mortality.rates.0=HIV.MORTALITY.PRIORS[[LOCATION]][["1990"]], 
+        hiv.specific.mortality.rates.1=HIV.MORTALITY.PRIORS[[LOCATION]][["2005"]], 
+        hiv.specific.mortality.rates.2=HIV.MORTALITY.PRIORS[[LOCATION]][["2020"]], 
         male.hiv.mortality.multiplier.0=1,
         male.hiv.mortality.multiplier.1=1,
         male.hiv.mortality.multiplier.2=1,
@@ -179,9 +179,6 @@ get.default.parameters = function(location){
     ) 
     
     if(location=="South Africa"){
-        rv["hiv.specific.mortality.rates.0"]=0.03030303 
-        rv["hiv.specific.mortality.rates.1"]=0.05306122 
-        rv["hiv.specific.mortality.rates.2"]=0.007432432
         rv["trate.0"] = 0.4
         rv["trate.1"] = 0.1
         rv["trate.2"] = 0.1
@@ -191,34 +188,11 @@ get.default.parameters = function(location){
         rv["suppressed.disengagement.rates"] = 0.1554849 # see disengagement models
         rv["unsuppression.rates"] = 0.07548439 
     } else if(location=="France"){
-        rv["hiv.specific.mortality.rates.0"]=0.05357143 
-        rv["hiv.specific.mortality.rates.1"]=0.002272727 
-        rv["hiv.specific.mortality.rates.2"]=0.003947368
         rv["trate.0"] = 0.5
         rv["trate.1"] = 0.1
         rv["trate.2"] = 0.1
         rv["trate.3"] = 0.1
         rv["trate.4"] = 0.1
-    } else if(location=="Mozambique"){
-        rv["hiv.specific.mortality.rates.0"]=0.04181818 
-        rv["hiv.specific.mortality.rates.1"]=0.06583333 
-        rv["hiv.specific.mortality.rates.2"]=0.02173913
-    } else if(location=="Tanzania"){
-        rv["hiv.specific.mortality.rates.0"]=0.0453125 
-        rv["hiv.specific.mortality.rates.1"]=0.09090909
-        rv["hiv.specific.mortality.rates.2"]=0.019375
-    } else if(location=="Uganda"){
-        rv["hiv.specific.mortality.rates.0"]=0.06153846 
-        rv["hiv.specific.mortality.rates.1"]=0.07
-        rv["hiv.specific.mortality.rates.2"]=0.014
-    } else if(location=="Zambia"){
-        rv["hiv.specific.mortality.rates.0"]=0.04285714 
-        rv["hiv.specific.mortality.rates.1"]=0.06790123
-        rv["hiv.specific.mortality.rates.2"]=0.01692308
-    } else if(location=="Zimbabwe"){
-        rv["hiv.specific.mortality.rates.0"]=0.0375
-        rv["hiv.specific.mortality.rates.1"]=0.08571429
-        rv["hiv.specific.mortality.rates.2"]=0.01769231
     } else { # if (location=="Kenya")
         rv["hiv.specific.mortality.rates.0"]=0.04057971 # Kenya
         rv["hiv.specific.mortality.rates.1"]=0.08125 # Kenya 
