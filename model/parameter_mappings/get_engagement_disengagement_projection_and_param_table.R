@@ -3,6 +3,7 @@ source("model/parameter_mappings/south_africa/engagement_disengagement_projectio
 source("model/parameter_mappings/tanzania/engagement_disengagement_projection_tanzania.R")
 source("model/parameter_mappings/uganda/engagement_disengagement_projection_uganda.R")
 source("model/parameter_mappings/zimbabwe/engagement_disengagement_projection_zimbabwe.R")
+source("model/parameter_mappings/nigeria/engagement_disengagement_projection_nigeria.R")
 
 
 get.engagement.model = function(location){
@@ -15,6 +16,8 @@ get.engagement.model = function(location){
         rv = get.engagement.model.uganda()
     } else if(location=="Zimbabwe"){
         rv = get.engagement.model.zimbabwe()
+    } else if(location=="Nigeria"){
+        rv = get.engagement.model.nigeria()
     } else {
         rv = get.engagement.model.south.africa() 
         # use SOUTH AFRICA'S engagement data for all other countries (Moz, Zambia, Malawi)
@@ -32,6 +35,41 @@ get.disengagement.model = function(location){
         rv = get.disengagement.model.kenya() # use KENYA'S disengagement data for all other countries 
     }
     rv
+    
+}
+
+
+plot.engagement.fit = function(location="South Africa",
+                               dimension = "total" # or age or sex
+){
+    model = get.engagement.model(location=location)
+    
+    if(dimension=="age"){
+        plot = ggplot() + 
+            geom_point(data=reshape2::melt(apply(model$data.array, c("age","year"),mean)), aes(x=year, y=value, color=age)) + 
+            geom_line(data=reshape2::melt(apply(model$predictions, c("age","year"),mean)), aes(x=year, y=value, color=age)) + 
+            ylim(0,1) + facet_wrap(~age) 
+    } else if(dimension=="sex"){
+        plot = ggplot() + 
+            geom_point(data=reshape2::melt(apply(model$data.array, c("sex","year"),mean)), aes(x=year, y=value, color=sex)) + 
+            geom_line(data=reshape2::melt(apply(model$predictions, c("sex","year"),mean)), aes(x=year, y=value, color=sex)) + 
+            ylim(0,1) + facet_wrap(~sex) 
+    } else if(dimension=="total"){
+        data = reshape2::melt(apply(model$data.array, c("year"),mean))
+        data$year = as.numeric(rownames(data))
+        
+        predictions = reshape2::melt(apply(model$predictions, c("year"),mean))
+        predictions$year = as.numeric(rownames(predictions))
+        
+        plot = ggplot() + 
+            geom_point(data=data, aes(x=year, y=value)) + 
+            geom_line(data=predictions, aes(x=year, y=value)) + 
+            ylim(0,1) 
+    } else  
+        stop("can only plot engagement fit by total, age, or sex dimension")
+    
+    plot
+    
     
 }
 
@@ -94,39 +132,6 @@ generate.engagement.parameter.table = function(locations){
 }
 
 
-plot.engagement.fit = function(location="South Africa",
-                                            dimension = "total" # or age or sex
-                                            ){
-    model = get.engagement.model(location=location)
-    
-    if(dimension=="age"){
-        plot = ggplot() + 
-            geom_point(data=reshape2::melt(apply(model$data.array, c("age","year"),mean)), aes(x=year, y=value, color=age)) + 
-            geom_line(data=reshape2::melt(apply(model$predictions, c("age","year"),mean)), aes(x=year, y=value, color=age)) + 
-            ylim(0,1) + facet_wrap(~age) 
-    } else if(dimension=="sex"){
-        plot = ggplot() + 
-            geom_point(data=reshape2::melt(apply(model$data.array, c("sex","year"),mean)), aes(x=year, y=value, color=sex)) + 
-            geom_line(data=reshape2::melt(apply(model$predictions, c("sex","year"),mean)), aes(x=year, y=value, color=sex)) + 
-            ylim(0,1) + facet_wrap(~sex) 
-    } else if(dimension=="total"){
-        data = reshape2::melt(apply(model$data.array, c("year"),mean))
-        data$year = as.numeric(rownames(data))
-        
-        predictions = reshape2::melt(apply(model$predictions, c("year"),mean))
-        predictions$year = as.numeric(rownames(predictions))
-        
-        plot = ggplot() + 
-            geom_point(data=data, aes(x=year, y=value)) + 
-            geom_line(data=predictions, aes(x=year, y=value)) + 
-            ylim(0,1) 
-    } else  
-        stop("can only plot engagement fit by total, age, or sex dimension")
-
-    plot
-
-    
-}
 
 plot.engagement.fit.kenya.old = function(location="Kenya"){
     engagement.rate = get.engagement.model.kenya()$engagement.rate

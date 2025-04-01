@@ -1,5 +1,5 @@
 LOCATIONS = c("Kenya","South Africa","France","Mozambique","Tanzania",
-              "Uganda","Zambia","Zimbabwe","Malawi")
+              "Uganda","Zambia","Zimbabwe","Malawi","Nigeria")
 
 HIV.MORTALITY.PRIORS = list()
 
@@ -23,4 +23,4 @@ for(LOCATION in LOCATIONS){
         
 }
 
-HIV.MORTALITY.PRIORS[["Malawi"]]
+HIV.MORTALITY.PRIORS[["Nigeria"]]

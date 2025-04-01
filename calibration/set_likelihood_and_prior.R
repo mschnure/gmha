@@ -8,6 +8,7 @@ source('calibration/prior_distributions/uganda_prior.R')
 source('calibration/prior_distributions/zambia_prior.R')
 source('calibration/prior_distributions/zimbabwe_prior.R')
 source('calibration/prior_distributions/malawi_prior.R')
+source('calibration/prior_distributions/nigeria_prior.R')
 
 set.likelihood.and.prior.by.location = function(location){
     likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = location),
@@ -39,8 +40,11 @@ set.likelihood.and.prior.by.location = function(location){
         prior = ZIMBABWE.PRIOR
     } else if(location=="Malawi"){
         prior = MALAWI.PRIOR
+    } else if(location=="Nigeria"){
+        prior = NIGERIA.PRIOR
     } else 
-        stop("Only set up for Kenya, South Africa, France, Mozambique, Tanzania, Uganda, Zambia, Zimbabwe, Malawi for now")
+        stop("Only set up for Kenya, South Africa, France, Mozambique, Tanzania, 
+             Uganda, Zambia, Zimbabwe, Malawi, Nigeria for now")
     
     params.start.values = params.start.values[prior@var.names]
     

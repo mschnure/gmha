@@ -193,7 +193,13 @@ get.default.parameters = function(location){
         rv["trate.2"] = 0.1
         rv["trate.3"] = 0.1
         rv["trate.4"] = 0.1
-    } else { # if (location=="Kenya")
+    } else if(location=="Nigeria"){
+        rv["trate.0"] = 0.65
+        rv["trate.1"] = 0.1
+        rv["trate.2"] = 0.1
+        rv["trate.3"] = 0.1
+        rv["trate.4"] = 0.1
+    }  else { # if (location=="Kenya")
         rv["hiv.specific.mortality.rates.0"]=0.04057971 # Kenya
         rv["hiv.specific.mortality.rates.1"]=0.08125 # Kenya 
         rv["hiv.specific.mortality.rates.2"]=0.02 # Kenya 

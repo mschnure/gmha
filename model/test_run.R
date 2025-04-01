@@ -1,6 +1,7 @@
 source('model/run_systematic.R')
 
-variable.parameters.malawi=get.default.parameters(location = "Malawi")
+variable.parameters.nigeria=get.default.parameters(location = "Nigeria")
+# variable.parameters.malawi=get.default.parameters(location = "Malawi")
 # variable.parameters.zambia=get.default.parameters(location = "Zambia")
 # variable.parameters.zimbabwe=get.default.parameters(location = "Zimbabwe")
 # variable.parameters.uganda=get.default.parameters(location = "Uganda")
@@ -12,7 +13,8 @@ variable.parameters.malawi=get.default.parameters(location = "Malawi")
 #variable.parameters.thailand=get.default.parameters(location = "Thailand")
 #variable.parameters.cambodia=get.default.parameters(location = "Cambodia")
 
-sim.malawi = run.model.for.parameters(location="Malawi",variable.parameters = variable.parameters.malawi)
+sim.nigeria = run.model.for.parameters(location="Nigeria",variable.parameters = variable.parameters.nigeria)
+# sim.malawi = run.model.for.parameters(location="Malawi",variable.parameters = variable.parameters.malawi)
 # sim.zambia = run.model.for.parameters(location="Zambia",variable.parameters = variable.parameters.zambia)
 # sim.zimbabwe = run.model.for.parameters(location="Zimbabwe",variable.parameters = variable.parameters.zimbabwe)
 #sim.uganda = run.model.for.parameters(location="Uganda",variable.parameters = variable.parameters.uganda)
@@ -24,7 +26,8 @@ sim.malawi = run.model.for.parameters(location="Malawi",variable.parameters = va
 #sim.thailand = run.model.for.parameters(location="Thailand",variable.parameters = variable.parameters.thailand)
 #sim.cambodia = run.model.for.parameters(location="Cambodia",variable.parameters = variable.parameters.cambodia)
 
-simplot(sim.malawi,
+simplot(sim.nigeria,
+        #sim.malawi,
         #sim.zambia,
         #sim.zimbabwe,
         #sim.uganda,
@@ -38,7 +41,8 @@ simplot(sim.malawi,
         years=c(1970:2030),
         data.types = c("incidence","prevalence"))
 
-simplot(sim.malawi,
+simplot(sim.nigeria,
+        #sim.malawi,
         #sim.zambia,
         #sim.zimbabwe,
         #sim.uganda,
@@ -53,7 +57,8 @@ simplot(sim.malawi,
         data.types = c("incidence"),
         facet.by = 'age')
 
-simplot(sim.malawi,
+simplot(sim.nigeria,
+        #sim.malawi,
         #sim.zambia,
         #sim.zimbabwe,
         #sim.uganda,
@@ -69,7 +74,8 @@ simplot(sim.malawi,
         data.types = c("prevalence"),
         facet.by = 'age')
 
-simplot(sim.malawi,
+simplot(sim.nigeria,
+        #sim.malawi,
         #sim.zambia,
         #sim.zimbabwe,
         #sim.uganda,
@@ -83,7 +89,8 @@ simplot(sim.malawi,
         years=c(1970:2020),
         data.types = "population")
  
-simplot(sim.malawi,
+simplot(sim.nigeria,
+        #sim.malawi,
         #sim.zambia,
         #sim.zimbabwe,
         #sim.uganda,
@@ -97,7 +104,8 @@ simplot(sim.malawi,
         years=c(1970:2020),
         data.types = "population", facet.by = 'age')
 
-simplot(sim.malawi,
+simplot(sim.nigeria,
+        #sim.malawi,
         #sim.zambia,
         #sim.zimbabwe,
         #sim.uganda,
@@ -111,7 +119,8 @@ simplot(sim.malawi,
         years=c(1970:2020),
         data.types = "total.mortality", facet.by = 'age')
 
-simplot(sim.malawi,
+simplot(sim.nigeria,
+        #sim.malawi,
         #sim.zambia,
         #sim.zimbabwe,
         #sim.uganda,
@@ -120,7 +129,8 @@ simplot(sim.malawi,
         data.types=c('awareness',"engagement","suppression"), 
         proportion=T)
 
-simplot(sim.malawi,
+simplot(sim.nigeria,
+        #sim.malawi,
         #sim.zambia,
         #sim.zimbabwe,
         #sim.uganda,
