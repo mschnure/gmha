@@ -8,7 +8,8 @@ head(sorted.countries,20)
 sorted.countries.2 = sort(DATA.MANAGER$prevalence$year.location["2023",],decreasing = T)
 sorted.countries.2 = data.frame("prevalence" = sorted.countries.2,
                               "percent" = round(sorted.countries.2/39900000,3))
+sorted.countries.2$cumulative.prevalence = cumsum(sorted.countries.2$prevalence)
 sorted.countries.2$cumulative.percent = cumsum(sorted.countries.2$percent)
-head(sorted.countries.2,20)
+head(sorted.countries.2,10)
 
 sorted.countries.2[rownames(sorted.countries.2) %in% c("Cambodia","Chile","France","Netherlands"),]

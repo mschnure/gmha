@@ -321,7 +321,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
 
     # Population data aggregated into model age groups 
     rv$population = read.population.data.files.all.locations(data.type = "population",
-                                                             countries.to.pull = COUNTRIES.TO.PULL.POP,
+                                                             countries.to.pull = INDIVIDUAL.COUNTRIES,
                                                              use.model.ages = T,
                                                              age.mapping = POPULATION.AGE.MAPPING.HARD.CODE)
     
@@ -335,7 +335,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     
     # Full population data - population data kept in full age stratification 
     rv$population.full = read.population.data.files.all.locations(data.type = "population",
-                                                                  countries.to.pull = COUNTRIES.TO.PULL.POP,
+                                                                  countries.to.pull = INDIVIDUAL.COUNTRIES,
                                                                   use.model.ages = F,
                                                                   age.mapping = NULL)
     
@@ -349,7 +349,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     
     # Age-specific fertility rate 
     rv$fertility = read.fertility.data.files(data.type = "population",
-                                             countries.to.pull = COUNTRIES.TO.PULL.POP)
+                                             countries.to.pull = INDIVIDUAL.COUNTRIES)
     rv$fertility$YEARS = c("1953","1958","1963","1968","1973","1978","1983","1988","1993","1998","2003",
                            "2008","2013","2018","2023","2028","2033","2038","2043","2048","2053","2058",
                            "2063","2068","2073","2078","2083","2088","2093","2098")
@@ -359,21 +359,8 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$fertility$LOCATIONS = dimnames(rv$fertility$year.age.location)$location 
 
     #Deaths
-    # rv$deaths.old = read.death.data.files.old(data.type = "population",
-    #                                   countries.to.pull = COUNTRIES.TO.PULL.POP,
-    #                                   age.mapping = DEATHS.AGE.MAPPING.HARD.CODE)
-    # rv$deaths.old$YEARS = as.character(1950:2021)
-    # rv$deaths.old$AGES = c('0-4', '5-9','10-14','15-19','20-24','25-29','30-34',
-    #                    '35-39','40-44','45-49','50-54','55-59','60-64','65-69',
-    #                    '70-74','75-79',"80 and over")
-    # rv$deaths.old$AGE.LOWERS = c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80)
-    # rv$deaths.old$AGE.UPPERS = c(5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,Inf)
-    # rv$deaths.old$SEXES = c('male','female')
-    # rv$deaths.old$LOCATIONS = dimnames(rv$deaths.old$year.location)$location 
-    
-    # DEATHS FROM NEW DATA SOURCE
     rv$total.mortality = read.death.data.files(data.type = "population",
-                                      countries.to.pull = COUNTRIES.TO.PULL.POP,
+                                      countries.to.pull = INDIVIDUAL.COUNTRIES,
                                       age.mapping = DEATHS.AGE.MAPPING.HARD.CODE)
     rv$total.mortality$YEARS = as.character(1950:2023)
     rv$total.mortality$AGES = c('0-4', '5-9','10-14','15-19','20-24','25-29','30-34',
@@ -395,7 +382,9 @@ read.surveillance.data = function(dir = 'data_manager/data'){
 
 # Called once for each data type within read.surveillance.data function; creates list with an array for 
 # each data stratification (i.e., global, by age, by sex, by location, by age and location, etc.); calls 
-# lower-level function, either read.surveillance.data.files (no stratification) or read.surveillance.data.stratified
+# lower-level function, either: 
+    # read.surveillance.data.files (no stratification), or 
+    # read.surveillance.data.stratified (calls read.surveillance.data.files for each stratification, or pdf files for age/sex)
 read.surveillance.data.type = function(data.type,
                                        suffix){
     rv=list()
@@ -565,6 +554,18 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
                                         dimnames = dim.names.locations))
     
     
+    # if(data.type=="prevalence") browser()
+    
+    unaids.remainder.countries = rowSums(locations[,REMAINDER.COUNTRIES.UNAIDS],na.rm = T)
+    non.unaids.remainder = global - rowSums(locations, na.rm = T)
+    
+    dim.names.locations.with.remainder = list(year=as.character(years),
+                                              location=c(location.names,"unaids.remainder","non.unaids.remainder")
+    )
+    
+    locations = array(c(locations,unaids.remainder.countries,non.unaids.remainder),
+                      dim = sapply(dim.names.locations.with.remainder,length),
+                      dimnames = dim.names.locations.with.remainder)
     
     if(include.countries==T)
         return(locations)
@@ -788,49 +789,42 @@ read.pdf.data = function(dir = 'data_manager/data/pdfs',
     rv
 }
 
-# Calls read.population.data.files for global then by location 
+# Calls read.population.data.files, then splits into global and by location 
 read.population.data.files.all.locations = function(dir = 'data_manager/data',
                                                     data.type,
                                                     countries.to.pull,
                                                     use.model.ages,
                                                     age.mapping){
     
-    no.countries = read.population.data.files(data.type = data.type, 
-                                              include.countries=F,
-                                              countries.to.pull=NULL,
+    full.array = read.population.data.files(data.type = data.type, 
+                                              countries.to.pull=countries.to.pull,
                                               use.model.ages = use.model.ages,
                                               age.mapping = age.mapping)
     
-    countries = read.population.data.files(data.type = data.type, 
-                                           include.countries=T,
-                                           countries.to.pull=countries.to.pull,
-                                           use.model.ages = use.model.ages,
-                                           age.mapping = age.mapping)
-    
     rv=list()
-    
+
     # Global
-    rv$year = no.countries$year
+    rv$year = full.array$year[,"World"]
     
     ## Age ## 
-    rv$year.age = no.countries$year.age
+    rv$year.age = full.array$year.age[,,"World"]
     
     ## Sex ##
-    rv$year.sex = no.countries$year.sex
+    rv$year.sex = full.array$year.sex[,,"World"]
     ## Year.Age.Sex ##
-    rv$year.age.sex = no.countries$year.age.sex
+    rv$year.age.sex = full.array$year.age.sex[,,,"World"]
     
     # Location 
-    rv$year.location = countries$year
+    rv$year.location = full.array$year[,!dimnames(full.array$year)[["location"]] %in% "World"]
     
     ## Age.Location ## 
-    rv$year.age.location = countries$year.age
+    rv$year.age.location = full.array$year.age[,,!dimnames(full.array$year)[["location"]] %in% "World"]
     
     ## Sex.Location ##
-    rv$year.sex.location = countries$year.sex
+    rv$year.sex.location = full.array$year.sex[,,!dimnames(full.array$year)[["location"]] %in% "World"]
     
     ## Year.Age.Sex.Location ##
-    rv$year.age.sex.location = countries$year.age.sex
+    rv$year.age.sex.location = full.array$year.age.sex[,,,!dimnames(full.array$year)[["location"]] %in% "World"]
     
     rv
 }
@@ -839,7 +833,6 @@ read.population.data.files.all.locations = function(dir = 'data_manager/data',
 # an array for each stratification (total, age, sex, age*sex) 
 read.population.data.files = function(dir = 'data_manager/data',
                                                data.type,
-                                               include.countries = F,
                                                countries.to.pull,
                                                use.model.ages,
                                                age.mapping){
@@ -863,253 +856,205 @@ read.population.data.files = function(dir = 'data_manager/data',
     } else{
         ages = data.ages
     }
-        
-    if(include.countries){
-        # Set up arrays before filling them in over for loop for countries 
-
-        ## Age array
-        age.dim.names = list(year = as.character(years),
+    
+    countries.to.pull = c(countries.to.pull,REMAINDER.COUNTRIES.UNAIDS,"World")
+    
+    countries.to.pull = countries.to.pull[!countries.to.pull %in% "Saint Kitts and Nevis"]
+    # Set up arrays before filling them in over for loop for countries 
+    ## Age array
+    age.dim.names = list(year = as.character(years),
+                         location = countries.to.pull,
+                         age = ages)
+    
+    age = array(0,
+                dim = sapply(age.dim.names, length), 
+                dimnames = age.dim.names)
+    
+    ## Total array 
+    total.dim.names = list(year = as.character(years),
+                           location = countries.to.pull)
+    
+    total = array(apply(age,1:2,sum),
+                  dim = sapply(total.dim.names, length), 
+                  dimnames = total.dim.names)
+    
+    ## Age.Sex array
+    sexes = c("male","female")
+    
+    age.sex.dim.names = list(year = as.character(years),
                              location = countries.to.pull,
-                             age = ages)
-        
-        age = array(0,
-                    dim = sapply(age.dim.names, length), 
-                    dimnames = age.dim.names)
-        
-        total.dim.names = list(year = as.character(years),
-                               location = countries.to.pull)
-        
-        ## Total array 
-        total = array(apply(age,1:2,sum),
-                      dim = sapply(total.dim.names, length), 
-                      dimnames = total.dim.names)
-        
-        ## Age.Sex array
-        sexes = c("male","female")
-
-        age.sex.dim.names = list(year = as.character(years),
-                                 location = countries.to.pull,
-                                 age = ages,
-                                 sex = sexes)
-        
-        male.age = array(0,
-                         dim = sapply(age.dim.names, length), 
-                         dimnames = age.dim.names)
-        
-        female.age = array(0,
-                           dim = sapply(age.dim.names, length), 
-                           dimnames = age.dim.names)
-        
-        sex.dim.names = list(year = as.character(years),
-                             location = countries.to.pull,
+                             age = ages,
                              sex = sexes)
-        
-        sex = array(0,
-                    dim = sapply(sex.dim.names, length), 
-                    dimnames = sex.dim.names)
-        
-        age.sex = array(0,
-                        dim = sapply(age.sex.dim.names, length), 
-                        dimnames = age.sex.dim.names)
-        
-        for(country in countries.to.pull){
-            if(country=="Tanzania"){
-                one.df = df[df$Location=="United Republic of Tanzania",]
-            } else {
-                one.df = df[df$Location==country,]
+    
+    male.age = array(0,
+                     dim = sapply(age.dim.names, length), 
+                     dimnames = age.dim.names)
+    
+    female.age = array(0,
+                       dim = sapply(age.dim.names, length), 
+                       dimnames = age.dim.names)
+    
+    sex.dim.names = list(year = as.character(years),
+                         location = countries.to.pull,
+                         sex = sexes)
+    
+    sex = array(0,
+                dim = sapply(sex.dim.names, length), 
+                dimnames = sex.dim.names)
+    
+    age.sex = array(0,
+                    dim = sapply(age.sex.dim.names, length), 
+                    dimnames = age.sex.dim.names)
+    
+    
+    missing.countries = setdiff(countries.to.pull, unique(df$Location))
+    #print(missing.countries)
+    
+    for(country in countries.to.pull){
+
+        if(country=="Tanzania"){
+            one.df = df[df$Location=="United Republic of Tanzania",]
+        } else if (country=="Democratic People's Republic of Korea"){
+            one.df = df[df$Location=="Dem. People's Republic of Korea",]
+        } else if (country=="Türkiye"){
+            one.df = df[df$Location=="Turkey",]
+        } else if (country=="United States"){
+            one.df = df[df$Location=="United States of America",]
+        } else {
+            if(!country %in% unique(df$Location)){
+                browser()
+                #stop(paste0(country," is not in the population file (maybe named differently?)"))
             }
-                
-            one.df$AgeGrp = factor(one.df$AgeGrp, levels = data.ages)
-            one.df.sorted = one.df[order(one.df$AgeGrp),]
-            
-            age.one.country.dim.names = list(year = as.character(years),
-                                             age = data.ages)
-            
-            age.one.country.full = array(as.numeric(one.df.sorted[,"PopTotal"])*1000,
-                                         dim = sapply(age.one.country.dim.names,length),
-                                         dimnames = age.one.country.dim.names)
-            
-            if(use.model.ages){
-                age.one.country = sapply(1:length(age.mapping), function(a){
-                    sapply(1:length(years), function(y){
-                        age.to = names(age.mapping)[a] 
-                        ages.from = age.mapping[[a]] 
-                        sum(age.one.country.full[y,ages.from])
-                    })
-                })
-                
-                dimnames(age.one.country) = list(year = as.character(years),
-                                                 age = names(age.mapping))
-            } else {
-                age.one.country = age.one.country.full
-            }
-            
-            age[,country,] = age.one.country
-            
-            total[,country] = apply(age[,country,],"year",sum)
-            
-            male.age.one.country.full = array(as.numeric(one.df.sorted[,"PopMale"])*1000,
-                                              dim = sapply(age.one.country.dim.names,length),
-                                              dimnames = age.one.country.dim.names)
-            female.age.one.country.full = array(as.numeric(one.df.sorted[,"PopFemale"])*1000,
-                                                dim = sapply(age.one.country.dim.names,length),
-                                                dimnames = age.one.country.dim.names)
-            
-            if(use.model.ages){
-                male.age.one.country = sapply(1:length(age.mapping), function(a){
-                    sapply(1:length(years), function(y){
-                        age.to = names(age.mapping)[a] 
-                        ages.from = age.mapping[[a]] 
-                        sum(male.age.one.country.full[y,ages.from])
-                    })
-                })
-                
-                female.age.one.country = sapply(1:length(age.mapping), function(a){
-                    sapply(1:length(years), function(y){
-                        age.to = names(age.mapping)[a] 
-                        ages.from = age.mapping[[a]] 
-                        sum(female.age.one.country.full[y,ages.from])
-                    })
-                })
-                
-                dimnames(male.age.one.country) = dimnames(female.age.one.country) = 
-                    list(year = as.character(years),
-                         age = names(age.mapping))
-            } else {
-                male.age.one.country = male.age.one.country.full
-                female.age.one.country = female.age.one.country.full
-            }
-            
-            age.sex[,country,,"male"] = male.age.one.country 
-            age.sex[,country,,"female"] = female.age.one.country
-            
-            ## Sex array
-            male = array(apply(male.age.one.country,c("year"),sum),
-                         dimnames = list(year = as.character(years)))
-            
-            female = array(apply(female.age.one.country,c("year"),sum),
-                           dimnames = list(year = as.character(years)))
-            
-            sex[,country,"male"] = male
-            sex[,country,"female"] = female
+            one.df = df[df$Location==country,]
         }
         
-        rv = list()
-        rv$year = total
-        rv$year.age = aperm(age,c(1,3,2))
-        rv$year.sex = aperm(sex,c(1,3,2))
-        rv$year.age.sex = aperm(age.sex,c(1,3,4,2))
+        one.df$AgeGrp = factor(one.df$AgeGrp, levels = data.ages)
+        one.df.sorted = one.df[order(one.df$AgeGrp),]
         
-    } else{
-        df = df[df$Location=="World",]
-
-        df$AgeGrp = factor(df$AgeGrp, levels = data.ages)
-        df.sorted = df[order(df$AgeGrp),]
+        age.one.country.dim.names = list(year = as.character(years),
+                                         age = data.ages)
         
-        ## Age array
-        age.dim.names = list(year = as.character(years),
-                             age = data.ages)
-        
-        age.full = array(0,
-                    dim = sapply(age.dim.names, length), 
-                    dimnames = age.dim.names)
-        age.full[] = as.numeric(df.sorted[,"PopTotal"])*1000
+        age.one.country.full = array(as.numeric(one.df.sorted[,"PopTotal"])*1000,
+                                     dim = sapply(age.one.country.dim.names,length),
+                                     dimnames = age.one.country.dim.names)
         
         if(use.model.ages){
-            # MAP TO MODEL AGES
-            age = sapply(1:length(age.mapping), function(a){
-                sapply(1:length(years), function(y){
-                    age.to = names(age.mapping)[a] # names of mapping are the model ages - what I want to map TO
-                    ages.from = age.mapping[[a]] # list elements are the population ages - what I want to map FROM
-                    sum(age.full[y,ages.from])
-                })
-            })
-            
-            dimnames(age) = list(year = as.character(years),
-                                 age = names(age.mapping))
-        } else{
-            age = age.full
-        }
-        
-        ## Total array
-        total = array(rowSums(age),
-                       dimnames = list(year = as.character(years)))
-        
-        ## Age.Sex array
-        sexes = c("male","female")
-
-        male.age.full = array(0,
-                         dim = sapply(age.dim.names, length), 
-                         dimnames = age.dim.names)
-        
-        male.age.full[] = as.numeric(df.sorted[,"PopMale"])*1000
-        
-        female.age.full = array(0,
-                           dim = sapply(age.dim.names, length), 
-                           dimnames = age.dim.names)
-        
-        female.age.full[] = as.numeric(df.sorted[,"PopFemale"])*1000
-        
-        if(use.model.ages){
-            # MAP TO MODEL AGES
-            male.age = sapply(1:length(age.mapping), function(a){
+            age.one.country = sapply(1:length(age.mapping), function(a){
                 sapply(1:length(years), function(y){
                     age.to = names(age.mapping)[a] 
                     ages.from = age.mapping[[a]] 
-                    sum(male.age.full[y,ages.from])
+                    sum(age.one.country.full[y,ages.from])
                 })
             })
             
-            female.age = sapply(1:length(age.mapping), function(a){
+            dimnames(age.one.country) = list(year = as.character(years),
+                                             age = names(age.mapping))
+        } else {
+            age.one.country = age.one.country.full
+        }
+        
+        age[,country,] = age.one.country
+        
+        total[,country] = apply(age[,country,],"year",sum)
+        
+        male.age.one.country.full = array(as.numeric(one.df.sorted[,"PopMale"])*1000,
+                                          dim = sapply(age.one.country.dim.names,length),
+                                          dimnames = age.one.country.dim.names)
+        female.age.one.country.full = array(as.numeric(one.df.sorted[,"PopFemale"])*1000,
+                                            dim = sapply(age.one.country.dim.names,length),
+                                            dimnames = age.one.country.dim.names)
+        
+        if(use.model.ages){
+            male.age.one.country = sapply(1:length(age.mapping), function(a){
                 sapply(1:length(years), function(y){
                     age.to = names(age.mapping)[a] 
                     ages.from = age.mapping[[a]] 
-                    sum(female.age.full[y,ages.from])
+                    sum(male.age.one.country.full[y,ages.from])
                 })
             })
             
-            dimnames(male.age) = dimnames(female.age) = list(year = as.character(years),
-                                                             age = names(age.mapping))
-        } else{
-            male.age = male.age.full
-            female.age = female.age.full
+            female.age.one.country = sapply(1:length(age.mapping), function(a){
+                sapply(1:length(years), function(y){
+                    age.to = names(age.mapping)[a] 
+                    ages.from = age.mapping[[a]] 
+                    sum(female.age.one.country.full[y,ages.from])
+                })
+            })
+            
+            dimnames(male.age.one.country) = dimnames(female.age.one.country) = 
+                list(year = as.character(years),
+                     age = names(age.mapping))
+        } else {
+            male.age.one.country = male.age.one.country.full
+            female.age.one.country = female.age.one.country.full
         }
         
-        age.sex.dim.names = list(year = as.character(years),
-                                 age = dimnames(age)[[2]],
-                                 sex = sexes)
-        
-        age.sex = array(0,
-                        dim = sapply(age.sex.dim.names, length), 
-                        dimnames = age.sex.dim.names)
-        age.sex[,,"male"] = male.age
-        age.sex[,,"female"] = female.age
+        age.sex[,country,,"male"] = male.age.one.country 
+        age.sex[,country,,"female"] = female.age.one.country
         
         ## Sex array
-        male = array(rowSums(male.age),
+        male = array(apply(male.age.one.country,c("year"),sum),
                      dimnames = list(year = as.character(years)))
         
-        female = array(rowSums(female.age),
+        female = array(apply(female.age.one.country,c("year"),sum),
                        dimnames = list(year = as.character(years)))
         
-        sex.dim.names = list(year = as.character(years),
-                             sex = sexes)
-        
-        sex = array(0,
-                    dim = sapply(sex.dim.names, length), 
-                    dimnames = sex.dim.names)
-        
-        sex[,"male"] = male
-        sex[,"female"] = female
-        
-        ## Returns a list
-        rv = list()
-        rv$year = total
-        rv$year.age = age
-        rv$year.sex = sex
-        rv$year.age.sex = age.sex
-        
+        sex[,country,"male"] = male
+        sex[,country,"female"] = female
     }
+    
+    rv = list()
+    rv$year = total
+    rv$year.age = aperm(age,c(1,3,2))
+    rv$year.sex = aperm(sex,c(1,3,2))
+    rv$year.age.sex = aperm(age.sex,c(1,3,4,2))
+    
+    age.sex.dim.names.remainder = list(year = as.character(years),
+                                       age = ages,
+                                       sex = sexes,
+                                       location = c(countries.to.pull,"unaids.remainder","non.unaids.remainder"))
+    
+    total.dim.names.remainder = age.sex.dim.names.remainder[c(1,4)] # year, location 
+    
+    age.dim.names.remainder = age.sex.dim.names.remainder[c(1,2,4)] # year, age, location
+    
+    sex.dim.names.remainder = age.sex.dim.names.remainder[c(1,3,4)] # year, age, location
+    
+    #browser()
+    
+    all.pulled.countries = dimnames(rv$year)[[2]][!dimnames(rv$year)[[2]] %in% "World"] # individual countries + remainder countries 
+    remainder.without.st.kitts = REMAINDER.COUNTRIES.UNAIDS[!REMAINDER.COUNTRIES.UNAIDS %in% "Saint Kitts and Nevis"]
+    
+    unaids.remainder.year = rowSums(rv$year[,remainder.without.st.kitts])
+    non.unaids.remainder.year = rv$year[,"World"] - rowSums(rv$year[,all.pulled.countries])
+    
+    unaids.remainder.year.age = apply(rv$year.age[,,remainder.without.st.kitts],c(1:2),sum)
+    non.unaids.remainder.year.age = rv$year.age[,,"World"] - apply(rv$year.age[,,all.pulled.countries],c(1:2),sum)
+    
+    unaids.remainder.year.sex = apply(rv$year.sex[,,remainder.without.st.kitts],c(1:2),sum)
+    non.unaids.remainder.year.sex = rv$year.sex[,,"World"] - apply(rv$year.sex[,,all.pulled.countries],c(1:2),sum)
+    
+    unaids.remainder.year.age.sex = apply(rv$year.age.sex[,,,remainder.without.st.kitts],c(1:3),sum)
+    non.unaids.remainder.year.age.sex = rv$year.age.sex[,,,"World"] - apply(rv$year.age.sex[,,,all.pulled.countries],c(1:3),sum)
+    
+    # x = unaids.remainder.year.age.sex + non.unaids.remainder.year.age.sex
+    # z = apply(rv$year.age.sex[,,,COUNTRIES.TO.PULL.POP],c(1:3),sum)
+    # y = rv$year.age.sex[,,,"World"]
+    # table(y - (x+z)) # world - (remainder + individual)
+    
+    rv$year = array(c(rv$year,unaids.remainder.year,non.unaids.remainder.year),
+                    dim = sapply(total.dim.names.remainder,length),
+                    dimnames = total.dim.names.remainder)
+    rv$year.age = array(c(rv$year.age,unaids.remainder.year.age,non.unaids.remainder.year.age),
+                        dim = sapply(age.dim.names.remainder,length),
+                        dimnames = age.dim.names.remainder)
+    rv$year.sex = array(c(rv$year.sex,unaids.remainder.year.sex,non.unaids.remainder.year.sex),
+                        dim = sapply(sex.dim.names.remainder,length),
+                        dimnames = sex.dim.names.remainder)
+    rv$year.age.sex = array(c(rv$year.age.sex,unaids.remainder.year.age.sex,non.unaids.remainder.year.age.sex),
+                            dim = sapply(age.sex.dim.names.remainder,length),
+                            dimnames = age.sex.dim.names.remainder)
+    
     rv
 }
 
@@ -1136,6 +1081,13 @@ read.fertility.data.files = function(dir = 'data_manager/data',
     df = df[df$Location %in% countries.to.pull,]
     df$Location[grepl("Tanzania",df$Location)] = "Tanzania"
     #df = df[df$Location=="Kenya",]
+    unaids.remainder=df[df$Location=="World",]
+    unaids.remainder$Location="unaids.remainder"
+    
+    non.unaids.remainder=df[df$Location=="World",]
+    non.unaids.remainder$Location="non.unaids.remainder"
+    df = rbind(df,unaids.remainder,non.unaids.remainder)
+    
     years = unique(df$MidPeriod)
     ages = unique(df$AgeGrp)
     locations = unique(df$Location)
@@ -1159,110 +1111,14 @@ read.fertility.data.files = function(dir = 'data_manager/data',
 }
 
 # Reads in age/sex-specific death data 
-read.death.data.files.old = function(dir = 'data_manager/data',
-                                 data.type,
-                                 countries.to.pull,
-                                 age.mapping){
-    sub.dir = file.path(dir, data.type)
-    
-    files = list.files(file.path(sub.dir))
-    
-    pop.file = "DeathsBySingleAgeSex"
-    file = files[grepl(pop.file,files)]
-    
-    if (length(file)!=1)
-        stop("can only pull one file at a time")
-    
-    df = read.csv(file.path(sub.dir,file))
-    df = df[,c("Location","Time","AgeGrp","DeathMale","DeathFemale","DeathTotal")]
-    countries.to.pull = c(countries.to.pull,"World")
-
-    countries.to.pull[grepl("Tanzania",countries.to.pull)] = "United Republic of Tanzania"
-    df = df[df$Location %in% countries.to.pull,]
-    df$Location[grepl("Tanzania",df$Location)] = "Tanzania"
-    
-    years = unique(df$Time)
-    ages.full = unique(df$AgeGrp)
-    locations = unique(df$Location)
-    sexes = c("male","female")
-    
-    dim.names = list(year = as.character(years),
-                     age = names(age.mapping),
-                     sex = sexes,
-                     location = locations)
-    
-    year.age.full.dim.names = list(age = ages.full,
-                                   year = as.character(years))
-    
-    year.age.sex.location = array(0,
-                                  dim = sapply(dim.names, length),
-                                  dimnames = dim.names)
-    
-    for(location in locations){
-        female.age.full = male.age.full = array(0,
-                                                dim = sapply(year.age.full.dim.names, length), 
-                                                dimnames = year.age.full.dim.names)
-        
-        male.age.full[] = (df[df$Location==location,"DeathMale"])*1000
-        female.age.full[] = (df[df$Location==location,"DeathFemale"])*1000
-        
-        male.age.full = aperm(male.age.full)
-        female.age.full = aperm(female.age.full)
-        
-        male.age = sapply(1:length(age.mapping), function(a){
-            sapply(1:length(years), function(y){
-                age.to = names(age.mapping)[a] 
-                ages.from = age.mapping[[a]] 
-                sum(male.age.full[y,ages.from])
-            })
-        })
-        
-        female.age = sapply(1:length(age.mapping), function(a){
-            sapply(1:length(years), function(y){
-                age.to = names(age.mapping)[a] 
-                ages.from = age.mapping[[a]] 
-                sum(female.age.full[y,ages.from])
-            })
-        })
-        
-        dimnames(male.age) = dimnames(female.age) = list(year = as.character(years),
-                                                         age = names(age.mapping))
-        
-        year.age.sex.location[,,"female",location] = female.age
-        year.age.sex.location[,,"male",location] = male.age
-    }
-
-    
-    year.sex.location = apply(year.age.sex.location,c("year","sex","location"),sum)
-    year.age.location = apply(year.age.sex.location,c("year","age","location"),sum)
-    year.location = apply(year.age.sex.location,c("year","location"),sum)
-    
-    year.age = apply(year.age.sex.location[,,,"World"],c("year","age"),sum)
-    year.sex = apply(year.age.sex.location[,,,"World"],c("year","sex"),sum)
-    year.age.sex = apply(year.age.sex.location[,,,"World"],c("year","age","sex"),sum)
-    
-    global = apply(year.age.sex.location[,,,"World"],c("year"),sum)
-    
-    ## Returns a list
-    rv = list()
-    rv$year = global
-    rv$year.age = year.age
-    rv$year.sex = year.sex
-    rv$year.age.sex = year.age.sex
-    rv$year.location = year.location
-    rv$year.age.location = year.age.location
-    rv$year.sex.location = year.sex.location
-    rv$year.age.sex.location = year.age.sex.location
-    
-    rv
-}
-
 read.death.data.files = function(dir = 'data_manager/data',
                                  data.type,
                                  countries.to.pull,
                                  age.mapping){
-    countries.to.pull = c(countries.to.pull,"World")
+    countries.to.pull = c(countries.to.pull,REMAINDER.COUNTRIES.UNAIDS,"World")
     countries.to.pull[grepl("Tanzania",countries.to.pull)] = "United Republic of Tanzania"
+    countries.to.pull[grepl("Democratic People's Republic of Korea",countries.to.pull)] = "Dem. People's Republic of Korea"
+    countries.to.pull[grepl("United States",countries.to.pull)] = "United States of America"
     
     sub.dir = file.path(dir, data.type)
     files = list.files(file.path(sub.dir))
@@ -1278,14 +1134,20 @@ read.death.data.files = function(dir = 'data_manager/data',
     female.df = suppressWarnings(readxl::read_xlsx(file.path(sub.dir,female.file),skip = 16,col_names = T))
     female.df = female.df[,c(3,11:ncol(female.df))]
     colnames(female.df)[1] = "Location"
+    
+    # missing.countries = setdiff(countries.to.pull, unique(female.df$Location))
     female.df = female.df[female.df$Location %in% countries.to.pull,]
     female.df$Location[grepl("Tanzania",female.df$Location)] = "Tanzania"
+    female.df$Location[grepl("Dem. People's Republic of Korea",female.df$Location)] = "Democratic People's Republic of Korea"
+    female.df$Location[grepl("United States of America",female.df$Location)] = "United States"
     
     male.df = suppressWarnings(readxl::read_xlsx(file.path(sub.dir,male.file),skip = 16,col_names = T))
     male.df = male.df[,c(3,11:ncol(male.df))]
     colnames(male.df)[1] = "Location"
     male.df = male.df[male.df$Location %in% countries.to.pull,]
     male.df$Location[grepl("Tanzania",male.df$Location)] = "Tanzania"
+    male.df$Location[grepl("Dem. People's Republic of Korea",male.df$Location)] = "Democratic People's Republic of Korea"
+    male.df$Location[grepl("United States of America",male.df$Location)] = "United States"
     
     years = unique(female.df$Year)
     ages.full = colnames(female.df)[-c(1:2)]
@@ -1336,9 +1198,14 @@ read.death.data.files = function(dir = 'data_manager/data',
     }
     
     
-    year.sex.location = apply(year.age.sex.location,c("year","sex","location"),sum)
     year.age.location = apply(year.age.sex.location,c("year","age","location"),sum)
+    year.sex.location = apply(year.age.sex.location,c("year","sex","location"),sum)
     year.location = apply(year.age.sex.location,c("year","location"),sum)
+    
+    year.unaids.remainder = apply(year.location[,REMAINDER.COUNTRIES.UNAIDS],c("year"),sum)
+    year.age.unaids.remainder = apply(year.age.location[,,REMAINDER.COUNTRIES.UNAIDS],c("year","age"),sum)
+    year.sex.unaids.remainder = apply(year.sex.location[,,REMAINDER.COUNTRIES.UNAIDS],c("year","sex"),sum)
+    year.age.sex.unaids.remainder = apply(year.age.sex.location[,,,REMAINDER.COUNTRIES.UNAIDS],c("year","age","sex"),sum)
     
     year.age = apply(year.age.sex.location[,,,"World"],c("year","age"),sum)
     year.sex = apply(year.age.sex.location[,,,"World"],c("year","sex"),sum)
@@ -1346,16 +1213,144 @@ read.death.data.files = function(dir = 'data_manager/data',
     
     global = apply(year.age.sex.location[,,,"World"],c("year"),sum)
     
+    all.pulled.countries = !(grepl("World",dimnames(year.location)[[2]])) # individual and unaids remainder
+    
+    year.non.unaids.remainder = global - apply(year.location[,all.pulled.countries],c("year"),sum)
+    year.age.non.unaids.remainder = year.age - apply(year.age.location[,,all.pulled.countries],c("year","age"),sum)
+    year.sex.non.unaids.remainder = year.sex - apply(year.sex.location[,,all.pulled.countries],c("year","sex"),sum)
+    year.age.sex.non.unaids.remainder = year.age.sex - apply(year.age.sex.location[,,,all.pulled.countries],c("year","age","sex"),sum)
+    
+    age.sex.dim.names.remainder = list(year = as.character(years),
+                                       age = names(age.mapping),
+                                       sex = sexes,
+                                       location = c(locations,"unaids.remainder","non.unaids.remainder"))
+
+    total.dim.names.remainder = age.sex.dim.names.remainder[c(1,4)] # year, location 
+    
+    age.dim.names.remainder = age.sex.dim.names.remainder[c(1,2,4)] # year, age, location
+    
+    sex.dim.names.remainder = age.sex.dim.names.remainder[c(1,3,4)] # year, age, location
+    
+    
     ## Returns a list
     rv = list()
     rv$year = global
     rv$year.age = year.age
     rv$year.sex = year.sex
     rv$year.age.sex = year.age.sex
-    rv$year.location = year.location
-    rv$year.age.location = year.age.location
-    rv$year.sex.location = year.sex.location
-    rv$year.age.sex.location = year.age.sex.location
+    
+    rv$year.location = array(c(year.location,year.unaids.remainder,year.non.unaids.remainder),
+                             dim = sapply(total.dim.names.remainder,length),
+                             dimnames = total.dim.names.remainder)
+    rv$year.age.location =  array(c(year.age.location,year.age.unaids.remainder,year.age.non.unaids.remainder),
+                                  dim = sapply(age.dim.names.remainder,length),
+                                  dimnames = age.dim.names.remainder)
+    
+    rv$year.sex.location =  array(c(year.sex.location,year.sex.unaids.remainder,year.sex.non.unaids.remainder),
+                                  dim = sapply(sex.dim.names.remainder,length),
+                                  dimnames = sex.dim.names.remainder)
+    rv$year.age.sex.location =  array(c(year.age.sex.location,year.age.sex.unaids.remainder,year.age.sex.non.unaids.remainder),
+                                      dim = sapply(age.sex.dim.names.remainder,length),
+                                      dimnames = age.sex.dim.names.remainder)
     
     rv
 }
+
+
+# read.death.data.files.old = function(dir = 'data_manager/data',
+#                                      data.type,
+#                                      countries.to.pull,
+#                                      age.mapping){
+#     sub.dir = file.path(dir, data.type)
+#     
+#     files = list.files(file.path(sub.dir))
+#     
+#     pop.file = "DeathsBySingleAgeSex"
+#     file = files[grepl(pop.file,files)]
+#     
+#     if (length(file)!=1)
+#         stop("can only pull one file at a time")
+#     
+#     df = read.csv(file.path(sub.dir,file))
+#     df = df[,c("Location","Time","AgeGrp","DeathMale","DeathFemale","DeathTotal")]
+#     countries.to.pull = c(countries.to.pull,"World")
+#     
+#     countries.to.pull[grepl("Tanzania",countries.to.pull)] = "United Republic of Tanzania"
+#     df = df[df$Location %in% countries.to.pull,]
+#     df$Location[grepl("Tanzania",df$Location)] = "Tanzania"
+#     
+#     years = unique(df$Time)
+#     ages.full = unique(df$AgeGrp)
+#     locations = unique(df$Location)
+#     sexes = c("male","female")
+#     
+#     dim.names = list(year = as.character(years),
+#                      age = names(age.mapping),
+#                      sex = sexes,
+#                      location = locations)
+#     
+#     year.age.full.dim.names = list(age = ages.full,
+#                                    year = as.character(years))
+#     
+#     year.age.sex.location = array(0,
+#                                   dim = sapply(dim.names, length),
+#                                   dimnames = dim.names)
+#     
+#     for(location in locations){
+#         female.age.full = male.age.full = array(0,
+#                                                 dim = sapply(year.age.full.dim.names, length), 
+#                                                 dimnames = year.age.full.dim.names)
+#         
+#         male.age.full[] = (df[df$Location==location,"DeathMale"])*1000
+#         female.age.full[] = (df[df$Location==location,"DeathFemale"])*1000
+#         
+#         male.age.full = aperm(male.age.full)
+#         female.age.full = aperm(female.age.full)
+#         
+#         male.age = sapply(1:length(age.mapping), function(a){
+#             sapply(1:length(years), function(y){
+#                 age.to = names(age.mapping)[a] 
+#                 ages.from = age.mapping[[a]] 
+#                 sum(male.age.full[y,ages.from])
+#             })
+#         })
+#         
+#         female.age = sapply(1:length(age.mapping), function(a){
+#             sapply(1:length(years), function(y){
+#                 age.to = names(age.mapping)[a] 
+#                 ages.from = age.mapping[[a]] 
+#                 sum(female.age.full[y,ages.from])
+#             })
+#         })
+#         
+#         dimnames(male.age) = dimnames(female.age) = list(year = as.character(years),
+#                                                          age = names(age.mapping))
+#         
+#         year.age.sex.location[,,"female",location] = female.age
+#         year.age.sex.location[,,"male",location] = male.age
+#     }
+#     
+#     
+#     year.sex.location = apply(year.age.sex.location,c("year","sex","location"),sum)
+#     year.age.location = apply(year.age.sex.location,c("year","age","location"),sum)
+#     year.location = apply(year.age.sex.location,c("year","location"),sum)
+#     
+#     year.age = apply(year.age.sex.location[,,,"World"],c("year","age"),sum)
+#     year.sex = apply(year.age.sex.location[,,,"World"],c("year","sex"),sum)
+#     year.age.sex = apply(year.age.sex.location[,,,"World"],c("year","age","sex"),sum)
+#     
+#     global = apply(year.age.sex.location[,,,"World"],c("year"),sum)
+#     
+#     ## Returns a list
+#     rv = list()
+#     rv$year = global
+#     rv$year.age = year.age
+#     rv$year.sex = year.sex
+#     rv$year.age.sex = year.age.sex
+#     rv$year.location = year.location
+#     rv$year.age.location = year.age.location
+#     rv$year.sex.location = year.sex.location
+#     rv$year.age.sex.location = year.age.sex.location
+#     
+#     rv
+# }

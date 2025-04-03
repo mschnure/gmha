@@ -1,6 +1,8 @@
 source('model/run_systematic.R')
 
-variable.parameters.nigeria=get.default.parameters(location = "Nigeria")
+variable.parameters.unaids.remainder=get.default.parameters(location = "unaids.remainder")
+variable.parameters.non.unaids.remainder=get.default.parameters(location = "non.unaids.remainder")
+#variable.parameters.nigeria=get.default.parameters(location = "Nigeria")
 # variable.parameters.malawi=get.default.parameters(location = "Malawi")
 # variable.parameters.zambia=get.default.parameters(location = "Zambia")
 # variable.parameters.zimbabwe=get.default.parameters(location = "Zimbabwe")
@@ -13,7 +15,11 @@ variable.parameters.nigeria=get.default.parameters(location = "Nigeria")
 #variable.parameters.thailand=get.default.parameters(location = "Thailand")
 #variable.parameters.cambodia=get.default.parameters(location = "Cambodia")
 
-sim.nigeria = run.model.for.parameters(location="Nigeria",variable.parameters = variable.parameters.nigeria)
+sim.unaids.remainder = run.model.for.parameters(location="unaids.remainder",
+                                                variable.parameters = variable.parameters.unaids.remainder)
+sim.non.unaids.remainder = run.model.for.parameters(location="non.unaids.remainder",
+                                                variable.parameters = variable.parameters.non.unaids.remainder)
+# sim.nigeria = run.model.for.parameters(location="Nigeria",variable.parameters = variable.parameters.nigeria)
 # sim.malawi = run.model.for.parameters(location="Malawi",variable.parameters = variable.parameters.malawi)
 # sim.zambia = run.model.for.parameters(location="Zambia",variable.parameters = variable.parameters.zambia)
 # sim.zimbabwe = run.model.for.parameters(location="Zimbabwe",variable.parameters = variable.parameters.zimbabwe)
@@ -26,7 +32,9 @@ sim.nigeria = run.model.for.parameters(location="Nigeria",variable.parameters = 
 #sim.thailand = run.model.for.parameters(location="Thailand",variable.parameters = variable.parameters.thailand)
 #sim.cambodia = run.model.for.parameters(location="Cambodia",variable.parameters = variable.parameters.cambodia)
 
-simplot(sim.nigeria,
+simplot(#sim.unaids.remainder,
+        sim.non.unaids.remainder,
+        #sim.nigeria,
         #sim.malawi,
         #sim.zambia,
         #sim.zimbabwe,
@@ -41,7 +49,9 @@ simplot(sim.nigeria,
         years=c(1970:2030),
         data.types = c("incidence","prevalence"))
 
-simplot(sim.nigeria,
+simplot(#sim.unaids.remainder,
+        sim.non.unaids.remainder,
+        #sim.nigeria,
         #sim.malawi,
         #sim.zambia,
         #sim.zimbabwe,
@@ -57,7 +67,9 @@ simplot(sim.nigeria,
         data.types = c("incidence"),
         facet.by = 'age')
 
-simplot(sim.nigeria,
+simplot(sim.unaids.remainder,
+        #sim.non.unaids.remainder,
+        #sim.nigeria,
         #sim.malawi,
         #sim.zambia,
         #sim.zimbabwe,
@@ -89,7 +101,9 @@ simplot(sim.nigeria,
         years=c(1970:2020),
         data.types = "population")
  
-simplot(sim.nigeria,
+simplot(#sim.unaids.remainder,
+        sim.non.unaids.remainder,
+        #sim.nigeria,
         #sim.malawi,
         #sim.zambia,
         #sim.zimbabwe,
