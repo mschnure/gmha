@@ -728,6 +728,42 @@ read.cascade.data.files = function(dir = 'data_manager/data',
     locations =  suppressWarnings(array((as.integer(sapply(one.df.t[paste0(years, suffix),1:(length(location.names))],gsub, pattern = ">",replacement = ""))/100),
                                         dim = sapply(dim.names.locations, length), 
                                         dimnames = dim.names.locations))
+    
+    ## Adding in UNAIDS/NON-UNAIDS remainder countries using a weighted mean based on total prevalence (pre-calculated)
+    individual.countries = apply(locations[,INDIVIDUAL.COUNTRIES],1,mean,na.rm = T)
+    
+    if(length(setdiff(REMAINDER.COUNTRIES.UNAIDS,dimnames(locations)[[2]]))!=0){
+        countries.to.remove = setdiff(REMAINDER.COUNTRIES.UNAIDS,dimnames(locations)[[2]])
+        print(paste0("Removing the following countries from cascade datatype ",sub.data.type," (denominator = ",denominator,
+                     "): ",paste0(countries.to.remove,collapse = ", "),"; age group: ",age))
+        REMAINDER.COUNTRIES.UNAIDS = REMAINDER.COUNTRIES.UNAIDS[!REMAINDER.COUNTRIES.UNAIDS %in% countries.to.remove]
+    }
+
+        
+    unaids.remainder.countries = apply(locations[,REMAINDER.COUNTRIES.UNAIDS],1,mean,na.rm = T)
+    
+    # use weights based on total prevalence 
+    #(prev for: individual countries we include, unaids remainder countries, and non-unaids remainder countries)
+    # I worked out the math separately and there's a check below to make sure it's right 
+    non.unaids.remainder.countries = (global - 
+        ((individual.countries*CASCADE.WEIGHTS[names(individual.countries),"indiv"])+
+             (unaids.remainder.countries*CASCADE.WEIGHTS[names(unaids.remainder.countries),"unaids"])))/
+        CASCADE.WEIGHTS[names(individual.countries),"non.unaids"]
+    
+    # CHECK: compare weighted mean to global value - should be the same 
+    # (individual.countries*CASCADE.WEIGHTS[names(individual.countries),"indiv"]) +
+    #     (unaids.remainder.countries*CASCADE.WEIGHTS[names(unaids.remainder.countries),"unaids"]) + 
+    #     (non.unaids.remainder.countries*CASCADE.WEIGHTS[names(individual.countries),"non.unaids"])
+    # global
+    
+    dim.names.locations.with.remainder = list(year=as.character(years),
+                                              location=c(location.names,"unaids.remainder","non.unaids.remainder")
+    )
+    
+    locations = array(c(locations,unaids.remainder.countries,non.unaids.remainder.countries),
+                      dim = sapply(dim.names.locations.with.remainder,length),
+                      dimnames = dim.names.locations.with.remainder)
+    
      if(include.countries==T)
         return(locations)
     

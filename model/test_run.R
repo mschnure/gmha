@@ -67,8 +67,8 @@ simplot(#sim.unaids.remainder,
         data.types = c("incidence"),
         facet.by = 'age')
 
-simplot(sim.unaids.remainder,
-        #sim.non.unaids.remainder,
+simplot(#sim.unaids.remainder,
+        sim.non.unaids.remainder,
         #sim.nigeria,
         #sim.malawi,
         #sim.zambia,
@@ -118,7 +118,9 @@ simplot(#sim.unaids.remainder,
         years=c(1970:2020),
         data.types = "population", facet.by = 'age')
 
-simplot(sim.nigeria,
+simplot(#sim.unaids.remainder,
+        sim.non.unaids.remainder,
+        #sim.nigeria,
         #sim.malawi,
         #sim.zambia,
         #sim.zimbabwe,
@@ -133,7 +135,9 @@ simplot(sim.nigeria,
         years=c(1970:2020),
         data.types = "total.mortality", facet.by = 'age')
 
-simplot(sim.nigeria,
+simplot(#sim.unaids.remainder,
+        sim.non.unaids.remainder,
+        #sim.nigeria,
         #sim.malawi,
         #sim.zambia,
         #sim.zimbabwe,
@@ -143,7 +147,9 @@ simplot(sim.nigeria,
         data.types=c('awareness',"engagement","suppression"), 
         proportion=T)
 
-simplot(sim.nigeria,
+simplot(#sim.unaids.remainder,
+        sim.non.unaids.remainder,
+        #sim.nigeria,
         #sim.malawi,
         #sim.zambia,
         #sim.zimbabwe,
