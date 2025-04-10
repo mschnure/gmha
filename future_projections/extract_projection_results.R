@@ -109,7 +109,7 @@ generate.full.results.array = function(simset.list,
                                            "incidence","diagnoses","annual.engagement","annual.suppression",
                                            "disengagement.unsuppressed","disengagement.suppressed",
                                            # MORTALITY: 
-                                           "hiv.mortality","non.hiv.mortality"
+                                           "hiv.mortality","non.hiv.mortality","total.mortality"
                                        )){
     sims = paste0("sim",c(1:simset.list[[1]]@n.sim))
     simset.list = simset.list
@@ -296,6 +296,89 @@ generate.age.distribution = function(results.array,
         
 
     }
+    
+}
+
+generate.age.distribution.prev = function(results.array,
+                                     intervention.1,
+                                     year.1,
+                                     intervention.2,
+                                     year.2,
+                                     intervention.3,
+                                     year.3,
+                                     percent=T,
+                                     sexes=c("female","male"),
+                                     plot.limits=c(0,200000)){
+    results.array.1 = results.array[,,sexes,]
+    results.array.2 = results.array[,,sexes,]
+    results.array.3 = results.array[,,sexes,]
+    
+    # add back in sex dimension (if only one sex, will collapse over it)
+    dim.names = dimnames(results.array)
+    dim.names$sex = sexes
+    dim(results.array.1) = dim(results.array.2) = dim(results.array.3) = sapply(dim.names,length)
+    dimnames(results.array.1) = dimnames(results.array.2) = dimnames(results.array.3) = dim.names
+    
+    # get age counts
+    age.counts.1 = apply(results.array.1[year.1,,,],c("age","sim"),sum)
+    age.counts.2 = apply(results.array.2[year.2,,,],c("age","sim"),sum)
+    age.counts.3 = apply(results.array.3[year.3,,,],c("age","sim"),sum)
+    
+    if(percent){
+        # get totals 
+        total.counts.1 = apply(age.counts.1,c("sim"),sum)
+        total.counts.2 = apply(age.counts.2,c("sim"),sum)
+        total.counts.3 = apply(age.counts.3,c("sim"),sum)
+        
+        age.proportions.1 = age.counts.1/rep(as.numeric(total.counts.1), each=length(dimnames(age.counts.1)[[1]]))
+        age.proportions.2 = age.counts.2/rep(as.numeric(total.counts.2), each=length(dimnames(age.counts.1)[[1]]))
+        age.proportions.3 = age.counts.3/rep(as.numeric(total.counts.3), each=length(dimnames(age.counts.1)[[1]]))
+        
+        # marginalizing over sim now
+        age.summary.1 = apply(age.proportions.1,c("age"),quantile,probs=c(.025,.5,.975),na.rm=T)
+        age.summary.2 = apply(age.proportions.2,c("age"),quantile,probs=c(.025,.5,.975),na.rm=T)
+        age.summary.3 = apply(age.proportions.3,c("age"),quantile,probs=c(.025,.5,.975),na.rm=T)
+    } else {
+        # marginalizing over sim now
+        age.summary.1 = apply(age.counts.1,c("age"),quantile,probs=c(.025,.5,.975),na.rm=T)
+        age.summary.2 = apply(age.counts.2,c("age"),quantile,probs=c(.025,.5,.975),na.rm=T)
+        age.summary.3 = apply(age.counts.3,c("age"),quantile,probs=c(.025,.5,.975),na.rm=T)
+    }
+    
+    age.summary = c(age.summary.1,age.summary.2,age.summary.3)
+    dim.names = list(stat = c("lower","median","upper"),
+                     age=dimnames(age.counts.1)[[1]],
+                     intervention=c(paste0(intervention.1,"/",year.1),
+                                    paste0(intervention.2,"/",year.2),
+                                    paste0(intervention.3,"/",year.3)))
+    dim(age.summary) = sapply(dim.names,length)
+    dimnames(age.summary) = dim.names
+    
+    age.summary = age.summary["median",,]
+    df = melt(age.summary)
+    
+    if(percent){
+        ggplot(data = df,aes(x=age,y=value,fill=intervention)) + 
+            geom_bar(stat="identity",position = "dodge") + 
+            labs(title = paste0("Prevalence"),
+                 subtitle = paste0(sexes ,collapse=", "))+
+            scale_y_continuous(labels = scales::percent,name = NULL,limits=plot.limits) + 
+            theme(panel.background = element_blank(), legend.position = "bottom"
+                  # panel.border = element_blank(), axis.line = element_line(color="gray")
+            ) + 
+            xlab("Age") 
+    } else {
+        ggplot(data = df,aes(x=age,y=value,fill=intervention)) + 
+            geom_bar(stat="identity",position = "dodge") + 
+            labs(title = paste0("Prevalence"),
+                 subtitle = paste0(sexes ,collapse=", "))+
+            scale_y_continuous(labels = function(x){format(x,big.mark=",")},limits=plot.limits) + 
+            theme(panel.background = element_blank(), legend.position = "bottom"
+                  # panel.border = element_blank(), axis.line = element_line(color="gray")
+            ) + 
+            xlab("Age") 
+    }
+
     
 }
 
