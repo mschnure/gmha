@@ -1,6 +1,10 @@
-sorted.countries = sort(DATA.MANAGER$prevalence$year.location["2022",],decreasing = T)
+sorted.countries = sort(DATA.MANAGER$prevalence$year.location["2023",],decreasing = T)
+sorted.countries = sorted.countries[names(sorted.countries)!="Global"]
+# sorted.countries = sorted.countries[c(1:12)]
+# sorted.countries = c(sorted.countries[c(3:12)],sorted.countries[c(1:2)])
 sorted.countries = data.frame("prevalence" = sorted.countries,
                               "percent" = round(sorted.countries/sum(sorted.countries),3))
+sorted.countries$cumulative.prevalence = cumsum(sorted.countries$prevalence)
 sorted.countries$cumulative.percent = cumsum(sorted.countries$percent)
 head(sorted.countries,20)
 

@@ -12,9 +12,11 @@ source("model/run_systematic.R")
 #load('cached/all.results_tanzania_2025-03-31.Rdata')
 #load('cached/all.results_uganda_2025-03-31.Rdata')
 #load('cached/all.results_zambia_2025-03-31.Rdata')
-load('cached/all.results_zimbabwe_2025-03-31.Rdata')
-
+# load('cached/all.results_zimbabwe_2025-03-31.Rdata')
+load('cached/all.results_global_2025-04-15.Rdata')
 simset = simset.list.full$no.int
+
+#load("cached/simset_global_2025-04-15.Rdata")
 
 simplot(simset,
         years = 1980:2030)
@@ -86,14 +88,20 @@ simplot(simset,
 
 
 # AGE DISTRIBUTION PLOT
-plot.limits = c("Kenya" = 200000,
+plot.limits = c("Global" = 5500000,
+                "non.unaids.remainder" = 2250000,
+                "unaids.remainder" = 1500000,
                 "South Africa" = 1150000,
-                "France" = 35000,
                 "Mozambique" = 400000,
+                "Nigeria" = 300000,
                 "Tanzania" = 250000,
                 "Uganda" = 250000,
+                "Kenya" = 200000,
                 "Zambia" = 200000,
-                "Zimbabwe" = 200000)
+                "Zimbabwe" = 200000,
+                "Malawi" = 160000,
+                "France" = 35000
+)
 
 plot.limit = plot.limits[simset@simulations[[1]]$location]
 pal = c(brewer.pal(n=12,"Paired")[2],brewer.pal(n=12,"Paired")[5],brewer.pal(n=12,"Paired")[4]) 
@@ -120,4 +128,3 @@ generate.age.distribution(full.results.array,
     labs(title = simset@simulations[[1]]$location,subtitle = NULL) +
     ylab(label = "Number of people living with HIV")+
     guides(x =  guide_axis(angle = 45))
-
