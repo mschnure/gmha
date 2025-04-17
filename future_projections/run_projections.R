@@ -4,20 +4,31 @@
 
 source("model/run_systematic.R")
 source("future_projections/extract_projection_results.R")
-load("mcmc_runs/mcmc_files/mcmc_mozambique_2025-03-22.Rdata")
 
-simset = suppressWarnings(extract.simset(mcmc,
-                                         additional.burn=7000, # burn half
-                                         additional.thin=40)) # thin to 200
+RUN.INDIV.COUNTRY = F
+LOAD.GLOBAL.SIMSET = T
 
+# running individual countries through 2040 
+if(RUN.INDIV.COUNTRY){
+    load("mcmc_runs/mcmc_files/mcmc_mozambique_2025-03-22.Rdata")
+    
+    simset = suppressWarnings(extract.simset(mcmc,
+                                             additional.burn=7000, # burn half
+                                             additional.thin=40)) # thin to 200
+    
+    RUN.SIMULATIONS.TO.YEAR = 2040
+    print("running no.int")
+    simset.no.int = run.intervention.on.simset(simset,
+                                               end.year = RUN.SIMULATIONS.TO.YEAR,
+                                               intervention = NO.INTERVENTION)
+}
 
-#load("mcmc_runs/simset_mozambique_2025-03-22.Rdata")
-
-RUN.SIMULATIONS.TO.YEAR = 2040
-print("running no.int")
-simset.no.int = run.intervention.on.simset(simset,
-                                           end.year = RUN.SIMULATIONS.TO.YEAR,
-                                           intervention = NO.INTERVENTION)
+# global simset is already through 2040 
+if(LOAD.GLOBAL.SIMSET){
+    print("loading global simset")
+    load("cached/simset_global_2025-04-15.Rdata")
+    simset.no.int = simset
+}
 
 simset.list.full = list(no.int = simset.no.int)
 

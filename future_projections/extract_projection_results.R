@@ -286,7 +286,7 @@ generate.age.distribution = function(results.array,
                 geom_bar(stat="identity",position = "dodge") + 
                 labs(title = paste0(outcome),
                      subtitle = paste0(sexes ,collapse=", "))+
-                scale_y_continuous(labels = function(x){format(x,big.mark=",")},limits=plot.limits) + 
+                scale_y_continuous(labels = function(x){format(x,big.mark=",", scientific = FALSE)},limits=plot.limits) + 
                 theme(panel.background = element_blank(), legend.position = "bottom"
                       # panel.border = element_blank(), axis.line = element_line(color="gray")
                 ) + 
