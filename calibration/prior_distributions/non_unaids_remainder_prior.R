@@ -14,9 +14,9 @@ NON.UNAIDS.REMAINDER.PRIOR = join.distributions(
                                      sd.r3.to.r2 = log(4)/2,
                                      sd.r4.to.r3 = log(4)/2), 
     # COUNTRY-SPECIFIC; MUST EDIT:
-    unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.1392621), log(4)/2), # Kenya's value 
-    suppressed.disengagement.rates = Lognormal.Distribution(log(0.1025866), log(4)/2), # Kenya's value 
-    unsuppression.rates = Lognormal.Distribution(log(0.2196), log(4)/2), # Kenya's value 
+    unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.334341), log(4)/2),
+    suppressed.disengagement.rates = Lognormal.Distribution(log(0.334341), log(4)/2), 
+    unsuppression.rates = Lognormal.Distribution(log(0.06238609), log(4)/2),
     hiv.specific.mortality.rates.0 = Lognormal.Distribution(log(0.03491500), log(4)/2), # see hiv.mortality.priors.R
     hiv.specific.mortality.rates.1 = Lognormal.Distribution(log(0.06964286), log(4)/2),
     hiv.specific.mortality.rates.2 = Lognormal.Distribution(log(0.01947934), log(4)/2),
