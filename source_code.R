@@ -10,7 +10,8 @@ source('model/diffeq.R')
 source('model/age_mappings.R') 
 NO.INTERVENTION = c()
 
-load('cached/data.manager_global_2025-04-04.Rdata') # with new remainder countries 
+load('cached/data.manager_global_2025-04-14.Rdata') # with global as a country 
+#load('cached/data.manager_global_2025-04-04.Rdata') # with new remainder countries 
 #load('cached/data.manager_global_2025-04-01.Rdata') # includes new median values for suppressed data 
 #load('cached/data.manager_global_2024-12-30.Rdata') 
 

@@ -508,7 +508,9 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
     colnames(one.df) = substring(colnames(one.df),2)
     years = unique(substr(colnames(one.df),1,4))
     rownames(one.df)[rownames(one.df)=="United Republic of Tanzania"] = "Tanzania"
-    location.names = rownames(one.df)[-nrow(one.df)]
+    
+    location.names = rownames(one.df) # adding back in "Global" as a location 
+    #location.names = rownames(one.df)[-nrow(one.df)] 
     
     location.names = location.names[location.names!="India"] 
     if("India" %in% rownames(one.df))
@@ -556,8 +558,8 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
     
     # if(data.type=="prevalence") browser()
     
-    unaids.remainder.countries = rowSums(locations[,REMAINDER.COUNTRIES.UNAIDS],na.rm = T)
-    non.unaids.remainder = global - rowSums(locations, na.rm = T)
+    unaids.remainder.countries = rowSums(locations[,REMAINDER.COUNTRIES.UNAIDS],na.rm = T) # add up all the remainder countries 
+    non.unaids.remainder = global - rowSums(locations[,colnames(locations)!="Global"], na.rm = T) # global - everything that's in unaids (except global)
     
     dim.names.locations.with.remainder = list(year=as.character(years),
                                               location=c(location.names,"unaids.remainder","non.unaids.remainder")
@@ -757,10 +759,10 @@ read.cascade.data.files = function(dir = 'data_manager/data',
     # global
     
     dim.names.locations.with.remainder = list(year=as.character(years),
-                                              location=c(location.names,"unaids.remainder","non.unaids.remainder")
+                                              location=c(location.names,"unaids.remainder","non.unaids.remainder","Global")
     )
     
-    locations = array(c(locations,unaids.remainder.countries,non.unaids.remainder.countries),
+    locations = array(c(locations,unaids.remainder.countries,non.unaids.remainder.countries,global),
                       dim = sapply(dim.names.locations.with.remainder,length),
                       dimnames = dim.names.locations.with.remainder)
     
@@ -850,17 +852,26 @@ read.population.data.files.all.locations = function(dir = 'data_manager/data',
     ## Year.Age.Sex ##
     rv$year.age.sex = full.array$year.age.sex[,,,"World"]
     
-    # Location 
-    rv$year.location = full.array$year[,!dimnames(full.array$year)[["location"]] %in% "World"]
+    # Location - PUTTING "GLOBAL" BACK IN AS A LOCATION
+    rv$year.location = full.array$year
+    dimnames(rv$year.location)[["location"]][dimnames(rv$year.location)[["location"]]=="World"]="Global"
+    #rv$year.location = full.array$year[,!dimnames(full.array$year)[["location"]] %in% "World"]
+    
     
     ## Age.Location ## 
-    rv$year.age.location = full.array$year.age[,,!dimnames(full.array$year)[["location"]] %in% "World"]
+    rv$year.age.location = full.array$year.age
+    dimnames(rv$year.age.location)[["location"]][dimnames(rv$year.age.location)[["location"]]=="World"]="Global"
+    #rv$year.age.location = full.array$year.age[,,!dimnames(full.array$year)[["location"]] %in% "World"]
     
     ## Sex.Location ##
-    rv$year.sex.location = full.array$year.sex[,,!dimnames(full.array$year)[["location"]] %in% "World"]
+    rv$year.sex.location = full.array$year.sex
+    dimnames(rv$year.sex.location)[["location"]][dimnames(rv$year.sex.location)[["location"]]=="World"]="Global"
+    #rv$year.sex.location = full.array$year.sex[,,!dimnames(full.array$year)[["location"]] %in% "World"]
     
     ## Year.Age.Sex.Location ##
-    rv$year.age.sex.location = full.array$year.age.sex[,,,!dimnames(full.array$year)[["location"]] %in% "World"]
+    rv$year.age.sex.location = full.array$year.age.sex
+    dimnames(rv$year.age.sex.location)[["location"]][dimnames(rv$year.age.sex.location)[["location"]]=="World"]="Global"
+    #rv$year.age.sex.location = full.array$year.age.sex[,,,!dimnames(full.array$year)[["location"]] %in% "World"]
     
     rv
 }
@@ -1176,6 +1187,7 @@ read.death.data.files = function(dir = 'data_manager/data',
     female.df$Location[grepl("Tanzania",female.df$Location)] = "Tanzania"
     female.df$Location[grepl("Dem. People's Republic of Korea",female.df$Location)] = "Democratic People's Republic of Korea"
     female.df$Location[grepl("United States of America",female.df$Location)] = "United States"
+    female.df$Location[grepl("World",female.df$Location)] = "Global"
     
     male.df = suppressWarnings(readxl::read_xlsx(file.path(sub.dir,male.file),skip = 16,col_names = T))
     male.df = male.df[,c(3,11:ncol(male.df))]
@@ -1184,6 +1196,7 @@ read.death.data.files = function(dir = 'data_manager/data',
     male.df$Location[grepl("Tanzania",male.df$Location)] = "Tanzania"
     male.df$Location[grepl("Dem. People's Republic of Korea",male.df$Location)] = "Democratic People's Republic of Korea"
     male.df$Location[grepl("United States of America",male.df$Location)] = "United States"
+    male.df$Location[grepl("World",male.df$Location)] = "Global"
     
     years = unique(female.df$Year)
     ages.full = colnames(female.df)[-c(1:2)]
@@ -1243,13 +1256,13 @@ read.death.data.files = function(dir = 'data_manager/data',
     year.sex.unaids.remainder = apply(year.sex.location[,,REMAINDER.COUNTRIES.UNAIDS],c("year","sex"),sum)
     year.age.sex.unaids.remainder = apply(year.age.sex.location[,,,REMAINDER.COUNTRIES.UNAIDS],c("year","age","sex"),sum)
     
-    year.age = apply(year.age.sex.location[,,,"World"],c("year","age"),sum)
-    year.sex = apply(year.age.sex.location[,,,"World"],c("year","sex"),sum)
-    year.age.sex = apply(year.age.sex.location[,,,"World"],c("year","age","sex"),sum)
+    year.age = apply(year.age.sex.location[,,,"Global"],c("year","age"),sum)
+    year.sex = apply(year.age.sex.location[,,,"Global"],c("year","sex"),sum)
+    year.age.sex = apply(year.age.sex.location[,,,"Global"],c("year","age","sex"),sum)
     
-    global = apply(year.age.sex.location[,,,"World"],c("year"),sum)
+    global = apply(year.age.sex.location[,,,"Global"],c("year"),sum)
     
-    all.pulled.countries = !(grepl("World",dimnames(year.location)[[2]])) # individual and unaids remainder
+    all.pulled.countries = !(grepl("Global",dimnames(year.location)[[2]])) # individual and unaids remainder
     
     year.non.unaids.remainder = global - apply(year.location[,all.pulled.countries],c("year"),sum)
     year.age.non.unaids.remainder = year.age - apply(year.age.location[,,all.pulled.countries],c("year","age"),sum)
