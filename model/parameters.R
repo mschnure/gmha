@@ -116,8 +116,8 @@ get.default.parameters = function(location){
         log.OR.testing.intercept=0, # 0 because on log scale
         log.OR.testing.slope=0,
         log.OR.engagement.slope=0,
-        unsuppressed.disengagement.rates=0.1392621, # KENYA value, using for all except SA for now
-        suppressed.disengagement.rates = 0.1025866, # KENYA value, using for all except SA for now
+        unsuppressed.disengagement.rates=0.1392621, # KENYA value, using for all except SA/remainder models for now
+        suppressed.disengagement.rates = 0.1025866, # KENYA value, using for all except SA/remainder models for now
         log.OR.suppression.slope=0,
         unsuppression.rates=0.2196, # KENYA value, using for all except SA for now
         male.awareness.multiplier=1,
@@ -187,6 +187,10 @@ get.default.parameters = function(location){
         rv["unsuppressed.disengagement.rates"]= 0.1554849 # see disengagement models
         rv["suppressed.disengagement.rates"] = 0.1554849 # see disengagement models
         rv["unsuppression.rates"] = 0.07548439 
+    }  else if(location=="non.unaids.remainder"){
+        rv["unsuppressed.disengagement.rates"]= 0.334341 # see disengagement models
+        rv["suppressed.disengagement.rates"] = 0.334341 # see disengagement models
+        rv["unsuppression.rates"] = 0.06238609   
     } else if(location=="France"){
         rv["trate.0"] = 0.5
         rv["trate.1"] = 0.1
@@ -204,7 +208,7 @@ get.default.parameters = function(location){
         rv["hiv.specific.mortality.rates.1"]=0.08125 # Kenya 
         rv["hiv.specific.mortality.rates.2"]=0.02 # Kenya 
     } 
- 
+    
     rv
       
 }

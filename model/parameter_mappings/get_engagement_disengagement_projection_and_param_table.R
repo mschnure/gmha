@@ -5,7 +5,8 @@ source("model/parameter_mappings/uganda/engagement_disengagement_projection_ugan
 source("model/parameter_mappings/zimbabwe/engagement_disengagement_projection_zimbabwe.R")
 source("model/parameter_mappings/nigeria/engagement_disengagement_projection_nigeria.R")
 
-
+# estimates here are proportions (data are reported as probabilities of engaging within a year)
+# converted to a rate in the map.model.parameters code 
 get.engagement.model = function(location){
     
     if(location=="Kenya"){
@@ -27,10 +28,14 @@ get.engagement.model = function(location){
 }
 
 # THIS ISN'T ACTUALLY USED ANYWHERE; PLUGGED IN DIRECTLY INTO PARAMETERS AND PRIOR
+# estimates here are RATES (data are reported as probabilities) 
+# converted to rate within the get.disengagement.model. functions)
 get.disengagement.model = function(location){
     
     if(location=="South Africa"){
         rv = get.disengagement.model.south.africa() 
+    } else if(location=="non.unaids.remainder"){
+        get.mean.non.unaids.disengagement.rate() # using mean of India and US disengagement data for non-UNAIDS remainder
     } else {
         rv = get.disengagement.model.kenya() # use KENYA'S disengagement data for all other countries 
     }
