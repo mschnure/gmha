@@ -18,7 +18,7 @@ NON.UNAIDS.REMAINDER.PRIOR = join.distributions(
     trate.1 = Lognormal.Distribution(log(.1), log(8)/2),
     trate.2 = Lognormal.Distribution(log(.1), log(8)/2),
     trate.3 = Lognormal.Distribution(log(.1), log(8)/2),
-    trate.3 = Lognormal.Distribution(log(.1), log(8)/2),
+    trate.4 = Lognormal.Distribution(log(.1), log(8)/2),
     
     # COUNTRY-SPECIFIC; MUST EDIT:
     unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.334341), log(4)/2),
