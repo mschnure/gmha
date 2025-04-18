@@ -1,5 +1,6 @@
 source("model/parameter_mappings/kenya/suppression_rebound_rates_kenya.R")
 source("model/parameter_mappings/south_africa/suppression_rebound_rates_south_africa.R")
+source("model/parameter_mappings/non_unaids_remainder/suppression_rebound_rates_non_unaids_remainder.R")
 
 # estimates here are proportions (data are reported as probabilities of suppressing within a year)
 # converted to a rate in the map.model.parameters code 
@@ -7,7 +8,9 @@ get.suppression.rates = function(location){
     
     if(location %in% c("South Africa","Tanzania","Uganda","Zambia","Zimbabwe","Malawi","Nigeria")){
         rv = get.suppression.rate.south.africa() # using SA suppression data for these
-    } else {
+    } else if(location=="non.unaids.remainder"){
+        rv = get.suppression.rate.india() # using India for non.unaids.remainder
+    } else{
         rv = get.suppression.rate.kenya() # use KENYA'S suppression data for all other countries (Moz, France)
     }
     rv
@@ -37,8 +40,10 @@ plot.suppression.fit = function(location="South Africa",
         model = get.suppression.rate.south.africa()    
     } else if(location=="Kenya"){
         model = get.suppression.rate.kenya() # using iedea one as the default now 
+    } else if(location=="non.unaids.remainder"){
+        model = get.suppression.rate.india() 
     } else 
-        stop("can only plot for South Africa and Kenya")
+        stop("can only plot for South Africa, Kenya, and non.unaids.remainder")
     
     
     if(dimension=="age"){

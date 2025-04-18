@@ -8,6 +8,7 @@ source("model/parameter_mappings/zambia/age_sex_transmission_multipliers_zambia.
 source("model/parameter_mappings/zimbabwe/age_sex_transmission_multipliers_zimbabwe.R")
 source("model/parameter_mappings/malawi/age_sex_transmission_multipliers_malawi.R")
 source("model/parameter_mappings/nigeria/age_sex_transmission_multipliers_nigeria.R")
+source("model/parameter_mappings/non_unaids_remainder/age_sex_transmission_multipliers_india.R")
 
 
 get.all.age.sex.transmission.multipliers = function(location){
@@ -115,6 +116,16 @@ get.all.age.sex.transmission.multipliers = function(location){
         
         rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.nigeria(sex="female",year=2013) 
         rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.nigeria(sex="male",year=2013)
+        
+    } else if(location=="non.unaids.remainder"){
+        rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.india(sex="female",year=2005) 
+        rv$MALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.india(sex="male",year=2005)
+        
+        rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.india(sex="female",year=2015) 
+        rv$MALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.india(sex="male",year=2015)
+        
+        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.india(sex="female",year=2019) 
+        rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.india(sex="male",year=2019)
         
     } else { # using kenya model for all other countries for now
         rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.kenya(sex="female",year=2003)
