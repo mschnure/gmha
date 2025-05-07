@@ -89,9 +89,10 @@ if(simset.no.int@simulations[[1]]$location=="Global"){
                                          "no.int/2040" = pal[3]),alpha), 
                           name=NULL) +
         theme(text = element_text(size = 20),
-              axis.title.y = element_text(colour = "black"),
+              axis.title.y = element_text(colour = "black",vjust = 3,
+                                          margin = margin(l = 15)),
               axis.text = element_text(colour = "black"),
-              legend.position = c(0.20, 0.85)
+              legend.position = c(0.22, 0.87)
         )+
         labs(title = NULL,subtitle = NULL) +
         ylab(label = "Number of people living with HIV") +
@@ -99,7 +100,7 @@ if(simset.no.int@simulations[[1]]$location=="Global"){
             breaks = seq(0, 7000000, by = 1000000),
             limits = c(0,6100000),
             labels = label_number(scale = 1e-6, suffix = "M")) +
-        scale_x_continuous( 
+        scale_x_discrete( 
             labels = age.labels) +
         guides(x =  guide_axis(angle = 45))
     dev.off()
