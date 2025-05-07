@@ -17,3 +17,6 @@ sorted.countries.2$cumulative.percent = cumsum(sorted.countries.2$percent)
 head(sorted.countries.2,10)
 
 sorted.countries.2[rownames(sorted.countries.2) %in% c("Cambodia","Chile","France","Netherlands"),]
+
+x = sorted.countries[rownames(sorted.countries) %in% c("Ethiopia","Democratic Republic of the Congo","Côte d'Ivoire","Ghana"),]
+sum(x$prevalence)/10000000

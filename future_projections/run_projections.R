@@ -72,6 +72,12 @@ summary.results$prevalence.age.distribution = generate.age.distribution.2.column
                                                                  intervention.2="no.int",year.2="2040",
                                                                  percent=F,display="table")
 
+prev.2025 = apply(full.results.array["2025",,,"prevalence",,], "sim",sum)
+summary.results$prev.2025 = quantile(prev.2025,probs=c(.025,.5,.975),na.rm=T)
+
+prev.2040 = apply(full.results.array["2040",,,"prevalence",,], "sim",sum)
+summary.results$prev.2040 = quantile(prev.2040,probs=c(.025,.5,.975),na.rm=T)
+
 export.to.csv = generate.csv(summary.results)
 
 print("saving all results")

@@ -67,6 +67,46 @@ generate.age.distribution(full.results.array,
 dev.off()
 
 
+if(simset.no.int@simulations[[1]]$location=="Global"){
+    age.labels = simset.no.int@simulations[[1]]$AGES
+    age.labels[length(age.labels)] = "80+"
+    
+    jpeg(file=paste0("results/for_lancet_pres/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.jpeg"),
+         width = 2000,height = 1500,res=200)
+    generate.age.distribution(full.results.array, 
+                              outcome="prevalence", 
+                              intervention.1 = "no.int",year.1="2025",
+                              intervention.2 = "no.int",year.2="2040",
+                              intervention.3 = "no.int",year.3="2040",
+                              percent=F,
+                              sexes = c("female","male"),
+                              plot.limits=c(0,plot.limit)) +
+        scale_fill_manual(labels = c("no.int/2025" = "Calibrated population, 2025",
+                                     "no.int/2040" = "Calibrated population, 2040",
+                                     "no.int/2040" = "Calibrated population, 2040"), 
+                          values=alpha(c("no.int/2025" = pal[1],
+                                         "no.int/2040" = pal[2], 
+                                         "no.int/2040" = pal[3]),alpha), 
+                          name=NULL) +
+        theme(text = element_text(size = 20),
+              axis.title.y = element_text(colour = "black"),
+              axis.text = element_text(colour = "black"),
+              legend.position = c(0.20, 0.85)
+        )+
+        labs(title = NULL,subtitle = NULL) +
+        ylab(label = "Number of people living with HIV") +
+        scale_y_continuous( 
+            breaks = seq(0, 7000000, by = 1000000),
+            limits = c(0,6100000),
+            labels = label_number(scale = 1e-6, suffix = "M")) +
+        scale_x_continuous( 
+            labels = age.labels) +
+        guides(x =  guide_axis(angle = 45))
+    dev.off()
+}
+
+
+
 ### ALL YEARS ### 
 
 # INCIDENCE, 1980 to 2025

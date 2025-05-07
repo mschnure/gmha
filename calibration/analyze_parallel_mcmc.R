@@ -19,16 +19,16 @@ simset = simset.list.full$no.int
 #load("cached/simset_global_2025-04-15.Rdata")
 
 simplot(simset,
-        years = 1980:2030)
+        years = 1980:2040)
 
 simplot(simset, 
-        years=1980:2030, 
+        years=1980:2040, 
         facet.by='age', 
         #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='incidence')
 
 simplot(simset, 
-        years=1980:2030, 
+        years=1980:2040, 
         facet.by='age', 
         #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='prevalence')
@@ -89,7 +89,7 @@ simplot(simset,
 
 # AGE DISTRIBUTION PLOT
 plot.limits = c("Global" = 5500000,
-                "non.unaids.remainder" = 2250000,
+                "non.unaids.remainder" = 2000000,
                 "unaids.remainder" = 1500000,
                 "South Africa" = 1150000,
                 "Mozambique" = 400000,
