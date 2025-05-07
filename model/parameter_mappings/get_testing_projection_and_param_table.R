@@ -8,6 +8,7 @@ source("model/parameter_mappings/zimbabwe/testing_projection_zimbabwe.R")
 source("model/parameter_mappings/malawi/testing_projection_malawi.R")
 source("model/parameter_mappings/nigeria/testing_projection_nigeria.R")
 source("model/parameter_mappings/non_unaids_remainder/testing_projection_india.R")
+source("model/parameter_mappings/unaids_remainder/testing_projection_unaids.R")
 
 get.testing.model = function(location){
     if(location=="Kenya"){
@@ -30,6 +31,8 @@ get.testing.model = function(location){
         rv = get.testing.model.nigeria() 
     } else if(location=="non.unaids.remainder"){
         rv = get.testing.model.india() # using India for non-UNAIDS remainder 
+    } else if(location=="unaids.remainder"){
+        rv = get.testing.model.unaids() 
     } else {
         rv = get.testing.model.kenya() # using kenya model for all other countries for now 
         print("Using Kenya's testing model")
