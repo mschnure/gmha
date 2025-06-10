@@ -35,7 +35,7 @@ get.testing.model = function(location){
         rv = get.testing.model.unaids() 
     } else {
         rv = get.testing.model.kenya() # using kenya model for all other countries for now 
-        print("Using Kenya's testing model")
+        #print("Using Kenya's testing model")
     }
         
 
