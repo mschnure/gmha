@@ -26,6 +26,10 @@ library(data.table)
         # WPP2019_PopulationByAgeSex_Medium.csv
         # WPP2019_Fertility_by_Age.csv
 
+# Income status from World Bank: 
+    # https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups 
+    # CLASS.xlsx
+
 
 # Each data.manager[[data.type]] is a list with the following elements:  
 # $AGES
@@ -561,11 +565,19 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
     unaids.remainder.countries = rowSums(locations[,REMAINDER.COUNTRIES.UNAIDS],na.rm = T) # add up all the remainder countries 
     non.unaids.remainder = global - rowSums(locations[,colnames(locations)!="Global"], na.rm = T) # global - everything that's in unaids (except global)
     
+    # pull out the low, lower, upper, and high income countries that are in the remainder 
+    low.income = rowSums(locations[,LOCATIONS.INCOME$low.remainder],na.rm = T)
+    lower.middle.income = rowSums(locations[,LOCATIONS.INCOME$lower.middle.remainder],na.rm = T)
+    upper.middle.income = rowSums(locations[,LOCATIONS.INCOME$upper.middle.remainder],na.rm = T)
+    high.income = rowSums(locations[,LOCATIONS.INCOME$high.remainder],na.rm = T)
+    
     dim.names.locations.with.remainder = list(year=as.character(years),
-                                              location=c(location.names,"unaids.remainder","non.unaids.remainder")
+                                              location=c(location.names,"unaids.remainder","non.unaids.remainder",
+                                                         "r1.low","r1.lower.middle","r1.upper.middle","r1.high")
     )
     
-    locations = array(c(locations,unaids.remainder.countries,non.unaids.remainder),
+    locations = array(c(locations,unaids.remainder.countries,non.unaids.remainder,
+                        low.income,lower.middle.income,upper.middle.income,high.income),
                       dim = sapply(dim.names.locations.with.remainder,length),
                       dimnames = dim.names.locations.with.remainder)
     
@@ -734,15 +746,30 @@ read.cascade.data.files = function(dir = 'data_manager/data',
     ## Adding in UNAIDS/NON-UNAIDS remainder countries using a weighted mean based on total prevalence (pre-calculated)
     individual.countries = apply(locations[,INDIVIDUAL.COUNTRIES],1,mean,na.rm = T)
     
+    LOW.REMAINDER = LOCATIONS.INCOME$low.remainder
+    LOWER.MIDDLE.REMAINDER = LOCATIONS.INCOME$lower.middle.remainder
+    UPPER.MIDDLE.REMAINDER = LOCATIONS.INCOME$upper.middle.remainder
+    HIGH.REMAINDER = LOCATIONS.INCOME$high.remainder
+    
     if(length(setdiff(REMAINDER.COUNTRIES.UNAIDS,dimnames(locations)[[2]]))!=0){
         countries.to.remove = setdiff(REMAINDER.COUNTRIES.UNAIDS,dimnames(locations)[[2]])
         print(paste0("Removing the following countries from cascade datatype ",sub.data.type," (denominator = ",denominator,
                      "): ",paste0(countries.to.remove,collapse = ", "),"; age group: ",age))
         REMAINDER.COUNTRIES.UNAIDS = REMAINDER.COUNTRIES.UNAIDS[!REMAINDER.COUNTRIES.UNAIDS %in% countries.to.remove]
+        
+        LOW.REMAINDER = LOW.REMAINDER[!LOCATIONS.INCOME$low.remainder %in% countries.to.remove]
+        LOWER.MIDDLE.REMAINDER = LOWER.MIDDLE.REMAINDER[!LOCATIONS.INCOME$lower.middle.remainder %in% countries.to.remove]
+        UPPER.MIDDLE.REMAINDER = UPPER.MIDDLE.REMAINDER[!LOCATIONS.INCOME$upper.middle.remainder %in% countries.to.remove]
+        HIGH.REMAINDER = HIGH.REMAINDER[!LOCATIONS.INCOME$high.remainder %in% countries.to.remove]
+        
     }
 
-        
+    #print(c(data.type,sub.data.type,age,sex))
     unaids.remainder.countries = apply(locations[,REMAINDER.COUNTRIES.UNAIDS],1,mean,na.rm = T)
+    low.income = apply(locations[,LOW.REMAINDER],1,mean,na.rm = T)
+    lower.middle.income = apply(locations[,LOWER.MIDDLE.REMAINDER],1,mean,na.rm = T)
+    upper.middle.income = apply(locations[,UPPER.MIDDLE.REMAINDER],1,mean,na.rm = T)
+    high.income = apply(locations[,HIGH.REMAINDER],1,mean,na.rm = T)
     
     # use weights based on total prevalence 
     #(prev for: individual countries we include, unaids remainder countries, and non-unaids remainder countries)
@@ -759,10 +786,12 @@ read.cascade.data.files = function(dir = 'data_manager/data',
     # global
     
     dim.names.locations.with.remainder = list(year=as.character(years),
-                                              location=c(location.names,"unaids.remainder","non.unaids.remainder","Global")
+                                              location=c(location.names,"unaids.remainder","non.unaids.remainder","Global",
+                                                         "r1.low","r1.lower.middle","r1.upper.middle","r1.high")
     )
     
-    locations = array(c(locations,unaids.remainder.countries,non.unaids.remainder.countries,global),
+    locations = array(c(locations,unaids.remainder.countries,non.unaids.remainder.countries,global,
+                        low.income,lower.middle.income,upper.middle.income,high.income),
                       dim = sapply(dim.names.locations.with.remainder,length),
                       dimnames = dim.names.locations.with.remainder)
     
@@ -1059,7 +1088,8 @@ read.population.data.files = function(dir = 'data_manager/data',
     age.sex.dim.names.remainder = list(year = as.character(years),
                                        age = ages,
                                        sex = sexes,
-                                       location = c(countries.to.pull,"unaids.remainder","non.unaids.remainder"))
+                                       location = c(countries.to.pull,"unaids.remainder","non.unaids.remainder",
+                                                    "r1.low","r1.lower.middle","r1.upper.middle","r1.high"))
     
     total.dim.names.remainder = age.sex.dim.names.remainder[c(1,4)] # year, location 
     
@@ -1067,21 +1097,42 @@ read.population.data.files = function(dir = 'data_manager/data',
     
     sex.dim.names.remainder = age.sex.dim.names.remainder[c(1,3,4)] # year, age, location
     
-    #browser()
-    
     all.pulled.countries = dimnames(rv$year)[[2]][!dimnames(rv$year)[[2]] %in% "World"] # individual countries + remainder countries 
     remainder.without.st.kitts = REMAINDER.COUNTRIES.UNAIDS[!REMAINDER.COUNTRIES.UNAIDS %in% "Saint Kitts and Nevis"]
     
+    r1.low = LOCATIONS.INCOME$low.remainder[LOCATIONS.INCOME$low.remainder %in% remainder.without.st.kitts]
+    r1.lower.middle = LOCATIONS.INCOME$lower.middle.remainder[LOCATIONS.INCOME$lower.middle.remainder %in% remainder.without.st.kitts]
+    r1.upper.middle = LOCATIONS.INCOME$upper.middle.remainder[LOCATIONS.INCOME$upper.middle.remainder %in% remainder.without.st.kitts]
+    r1.high = LOCATIONS.INCOME$high.remainder[LOCATIONS.INCOME$high.remainder %in% remainder.without.st.kitts]
+    
     unaids.remainder.year = rowSums(rv$year[,remainder.without.st.kitts])
+    r1.low.year = rowSums(rv$year[,r1.low])
+    r1.lower.middle.year = rowSums(rv$year[,r1.lower.middle])
+    r1.upper.middle.year = rowSums(rv$year[,r1.upper.middle])
+    r1.high.year = rowSums(rv$year[,r1.high])
     non.unaids.remainder.year = rv$year[,"World"] - rowSums(rv$year[,all.pulled.countries])
     
     unaids.remainder.year.age = apply(rv$year.age[,,remainder.without.st.kitts],c(1:2),sum)
+    r1.low.year.age = apply(rv$year.age[,,r1.low],c(1:2),sum)
+    r1.lower.middle.year.age = apply(rv$year.age[,,r1.lower.middle],c(1:2),sum)
+    r1.upper.middle.year.age = apply(rv$year.age[,,r1.upper.middle],c(1:2),sum)
+    r1.high.year.age = apply(rv$year.age[,,r1.high],c(1:2),sum)
     non.unaids.remainder.year.age = rv$year.age[,,"World"] - apply(rv$year.age[,,all.pulled.countries],c(1:2),sum)
+    # check 
+    # table(unaids.remainder.year.age - (r1.low.year.age + r1.lower.middle.year.age + r1.upper.middle.year.age + r1.high.year.age))
     
     unaids.remainder.year.sex = apply(rv$year.sex[,,remainder.without.st.kitts],c(1:2),sum)
+    r1.low.year.sex = apply(rv$year.sex[,,r1.low],c(1:2),sum)
+    r1.lower.middle.year.sex = apply(rv$year.sex[,,r1.lower.middle],c(1:2),sum)
+    r1.upper.middle.year.sex = apply(rv$year.sex[,,r1.upper.middle],c(1:2),sum)
+    r1.high.year.sex = apply(rv$year.sex[,,r1.high],c(1:2),sum)
     non.unaids.remainder.year.sex = rv$year.sex[,,"World"] - apply(rv$year.sex[,,all.pulled.countries],c(1:2),sum)
     
     unaids.remainder.year.age.sex = apply(rv$year.age.sex[,,,remainder.without.st.kitts],c(1:3),sum)
+    r1.low.year.age.sex = apply(rv$year.age.sex[,,,r1.low],c(1:3),sum)
+    r1.lower.middle.year.age.sex = apply(rv$year.age.sex[,,,r1.lower.middle],c(1:3),sum)
+    r1.upper.middle.year.age.sex = apply(rv$year.age.sex[,,,r1.upper.middle],c(1:3),sum)
+    r1.high.year.age.sex = apply(rv$year.age.sex[,,,r1.high],c(1:3),sum)
     non.unaids.remainder.year.age.sex = rv$year.age.sex[,,,"World"] - apply(rv$year.age.sex[,,,all.pulled.countries],c(1:3),sum)
     
     # x = unaids.remainder.year.age.sex + non.unaids.remainder.year.age.sex
@@ -1089,16 +1140,20 @@ read.population.data.files = function(dir = 'data_manager/data',
     # y = rv$year.age.sex[,,,"World"]
     # table(y - (x+z)) # world - (remainder + individual)
     
-    rv$year = array(c(rv$year,unaids.remainder.year,non.unaids.remainder.year),
+    rv$year = array(c(rv$year,unaids.remainder.year,non.unaids.remainder.year,
+                      r1.low.year,r1.lower.middle.year,r1.upper.middle.year,r1.high.year),
                     dim = sapply(total.dim.names.remainder,length),
                     dimnames = total.dim.names.remainder)
-    rv$year.age = array(c(rv$year.age,unaids.remainder.year.age,non.unaids.remainder.year.age),
+    rv$year.age = array(c(rv$year.age,unaids.remainder.year.age,non.unaids.remainder.year.age,
+                          r1.low.year.age,r1.lower.middle.year.age,r1.upper.middle.year.age,r1.high.year.age),
                         dim = sapply(age.dim.names.remainder,length),
                         dimnames = age.dim.names.remainder)
-    rv$year.sex = array(c(rv$year.sex,unaids.remainder.year.sex,non.unaids.remainder.year.sex),
+    rv$year.sex = array(c(rv$year.sex,unaids.remainder.year.sex,non.unaids.remainder.year.sex,
+                          r1.low.year.sex,r1.lower.middle.year.sex,r1.upper.middle.year.sex,r1.high.year.sex),
                         dim = sapply(sex.dim.names.remainder,length),
                         dimnames = sex.dim.names.remainder)
-    rv$year.age.sex = array(c(rv$year.age.sex,unaids.remainder.year.age.sex,non.unaids.remainder.year.age.sex),
+    rv$year.age.sex = array(c(rv$year.age.sex,unaids.remainder.year.age.sex,non.unaids.remainder.year.age.sex,
+                              r1.low.year.age.sex,r1.lower.middle.year.age.sex,r1.upper.middle.year.age.sex,r1.high.year.age.sex),
                             dim = sapply(age.sex.dim.names.remainder,length),
                             dimnames = age.sex.dim.names.remainder)
     
@@ -1133,7 +1188,16 @@ read.fertility.data.files = function(dir = 'data_manager/data',
     
     non.unaids.remainder=df[df$Location=="World",]
     non.unaids.remainder$Location="non.unaids.remainder"
-    df = rbind(df,unaids.remainder,non.unaids.remainder)
+    
+    r1.low=df[df$Location=="World",]
+    r1.lower.middle = r1.upper.middle = r1.high = r1.low
+    r1.low$Location = "r1.low"
+    r1.lower.middle$Location = "r1.lower.middle"
+    r1.upper.middle$Location = "r1.upper.middle"
+    r1.high$Location = "r1.high"
+    
+    df = rbind(df,unaids.remainder,non.unaids.remainder,
+               r1.low,r1.lower.middle,r1.upper.middle,r1.high)
     
     years = unique(df$MidPeriod)
     ages = unique(df$AgeGrp)
@@ -1246,7 +1310,6 @@ read.death.data.files = function(dir = 'data_manager/data',
         year.age.sex.location[,,"male",location] = male.age
     }
     
-    
     year.age.location = apply(year.age.sex.location,c("year","age","location"),sum)
     year.sex.location = apply(year.age.sex.location,c("year","sex","location"),sum)
     year.location = apply(year.age.sex.location,c("year","location"),sum)
@@ -1255,6 +1318,30 @@ read.death.data.files = function(dir = 'data_manager/data',
     year.age.unaids.remainder = apply(year.age.location[,,REMAINDER.COUNTRIES.UNAIDS],c("year","age"),sum)
     year.sex.unaids.remainder = apply(year.sex.location[,,REMAINDER.COUNTRIES.UNAIDS],c("year","sex"),sum)
     year.age.sex.unaids.remainder = apply(year.age.sex.location[,,,REMAINDER.COUNTRIES.UNAIDS],c("year","age","sex"),sum)
+    
+    # BY INCOME - low
+    year.r1.low = apply(year.location[,LOCATIONS.INCOME$low.remainder],c("year"),sum)
+    year.age.r1.low = apply(year.age.location[,,LOCATIONS.INCOME$low.remainder],c("year","age"),sum)
+    year.sex.r1.low = apply(year.sex.location[,,LOCATIONS.INCOME$low.remainder],c("year","sex"),sum)
+    year.age.sex.r1.low = apply(year.age.sex.location[,,,LOCATIONS.INCOME$low.remainder],c("year","age","sex"),sum)
+    
+    # lower middle
+    year.r1.lower.middle = apply(year.location[,LOCATIONS.INCOME$lower.middle.remainder],c("year"),sum)
+    year.age.r1.lower.middle = apply(year.age.location[,,LOCATIONS.INCOME$lower.middle.remainder],c("year","age"),sum)
+    year.sex.r1.lower.middle = apply(year.sex.location[,,LOCATIONS.INCOME$lower.middle.remainder],c("year","sex"),sum)
+    year.age.sex.r1.lower.middle = apply(year.age.sex.location[,,,LOCATIONS.INCOME$lower.middle.remainder],c("year","age","sex"),sum)
+    
+    # upper middle 
+    year.r1.upper.middle = apply(year.location[,LOCATIONS.INCOME$upper.middle.remainder],c("year"),sum)
+    year.age.r1.upper.middle = apply(year.age.location[,,LOCATIONS.INCOME$upper.middle.remainder],c("year","age"),sum)
+    year.sex.r1.upper.middle = apply(year.sex.location[,,LOCATIONS.INCOME$upper.middle.remainder],c("year","sex"),sum)
+    year.age.sex.r1.upper.middle = apply(year.age.sex.location[,,,LOCATIONS.INCOME$upper.middle.remainder],c("year","age","sex"),sum)
+    
+    # high 
+    year.r1.high = apply(year.location[,LOCATIONS.INCOME$high.remainder],c("year"),sum)
+    year.age.r1.high = apply(year.age.location[,,LOCATIONS.INCOME$high.remainder],c("year","age"),sum)
+    year.sex.r1.high = apply(year.sex.location[,,LOCATIONS.INCOME$high.remainder],c("year","sex"),sum)
+    year.age.sex.r1.high = apply(year.age.sex.location[,,,LOCATIONS.INCOME$high.remainder],c("year","age","sex"),sum)
     
     year.age = apply(year.age.sex.location[,,,"Global"],c("year","age"),sum)
     year.sex = apply(year.age.sex.location[,,,"Global"],c("year","sex"),sum)
@@ -1272,14 +1359,14 @@ read.death.data.files = function(dir = 'data_manager/data',
     age.sex.dim.names.remainder = list(year = as.character(years),
                                        age = names(age.mapping),
                                        sex = sexes,
-                                       location = c(locations,"unaids.remainder","non.unaids.remainder"))
-
+                                       location = c(countries.to.pull,"unaids.remainder","non.unaids.remainder",
+                                                    "r1.low","r1.lower.middle","r1.upper.middle","r1.high"))
+    
     total.dim.names.remainder = age.sex.dim.names.remainder[c(1,4)] # year, location 
     
     age.dim.names.remainder = age.sex.dim.names.remainder[c(1,2,4)] # year, age, location
     
     sex.dim.names.remainder = age.sex.dim.names.remainder[c(1,3,4)] # year, age, location
-    
     
     ## Returns a list
     rv = list()
@@ -1288,17 +1375,21 @@ read.death.data.files = function(dir = 'data_manager/data',
     rv$year.sex = year.sex
     rv$year.age.sex = year.age.sex
     
-    rv$year.location = array(c(year.location,year.unaids.remainder,year.non.unaids.remainder),
+    rv$year.location = array(c(year.location,year.unaids.remainder,year.non.unaids.remainder,
+                               year.r1.low,year.r1.lower.middle,year.r1.upper.middle,year.r1.high),
                              dim = sapply(total.dim.names.remainder,length),
                              dimnames = total.dim.names.remainder)
-    rv$year.age.location =  array(c(year.age.location,year.age.unaids.remainder,year.age.non.unaids.remainder),
+    rv$year.age.location =  array(c(year.age.location,year.age.unaids.remainder,year.age.non.unaids.remainder,
+                                    year.age.r1.low,year.age.r1.lower.middle,year.age.r1.upper.middle,year.age.r1.high),
                                   dim = sapply(age.dim.names.remainder,length),
                                   dimnames = age.dim.names.remainder)
     
-    rv$year.sex.location =  array(c(year.sex.location,year.sex.unaids.remainder,year.sex.non.unaids.remainder),
+    rv$year.sex.location =  array(c(year.sex.location,year.sex.unaids.remainder,year.sex.non.unaids.remainder,
+                                    year.sex.r1.low,year.sex.r1.lower.middle,year.sex.r1.upper.middle,year.sex.r1.high),
                                   dim = sapply(sex.dim.names.remainder,length),
                                   dimnames = sex.dim.names.remainder)
-    rv$year.age.sex.location =  array(c(year.age.sex.location,year.age.sex.unaids.remainder,year.age.sex.non.unaids.remainder),
+    rv$year.age.sex.location =  array(c(year.age.sex.location,year.age.sex.unaids.remainder,year.age.sex.non.unaids.remainder,
+                                        year.age.sex.r1.low,year.age.sex.r1.lower.middle,year.age.sex.r1.upper.middle,year.age.sex.r1.high),
                                       dim = sapply(age.sex.dim.names.remainder,length),
                                       dimnames = age.sex.dim.names.remainder)
     

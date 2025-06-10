@@ -15,6 +15,8 @@ simulation.list = convert.to.simset(collapsed.list)
 #table(collapsed.list$population[,,,,,35]==simulation.list[[35]]$population[,,,,]) # both of these will collapse over the subgroup dimension but it's there 
 #table(collapsed.list$disengagement.unsuppressed[,,,,65]==simulation.list[[65]]$disengagement.unsuppressed[,,,])
 
+# load up a simset (e.g., Malawi), replace its list of simulations with the global simulation.list we made above
+# now, we have a global simset
 load("cached/all.results_malawi_2025-04-10.Rdata")
 simset = simset.list.full$no.int
 simset@simulations = simulation.list

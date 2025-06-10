@@ -48,8 +48,11 @@ set.likelihood.and.prior.by.location = function(location){
         prior = UNAIDS.REMAINDER.PRIOR
     } else if(location=="non.unaids.remainder"){
         prior = NON.UNAIDS.REMAINDER.PRIOR
-    } else 
-        stop("Only set up for Kenya, South Africa, France, Mozambique, Tanzania, 
+    } else if(location %in% c("r1.low","r1.lower.middle",
+                                  "r1.upper.middle","r1.high")){
+        prior = UNAIDS.REMAINDER.PRIOR
+        print("using UNAIDS remainder prior for all r1 models")
+    } else stop("Only set up for Kenya, South Africa, France, Mozambique, Tanzania, 
              Uganda, Zambia, Zimbabwe, Malawi, Nigeria, remainder models for now")
     
     params.start.values = params.start.values[prior@var.names]
