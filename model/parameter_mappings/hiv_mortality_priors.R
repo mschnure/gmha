@@ -23,4 +23,4 @@ for(LOCATION in LOCATIONS){
         
 }
 
-HIV.MORTALITY.PRIORS[["Nigeria"]]
+rm(LOCATION)
