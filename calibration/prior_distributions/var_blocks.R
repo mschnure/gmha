@@ -8,6 +8,11 @@ PARAMETER.VAR.BLOCKS = list(
     trate4 = c("trate.4", 
                "proportion.trate.change.by.3.5"),
     
+    time.0 = "time.0",
+    time.1 = "time.1",
+    time.2 = "time.2",
+    time.3 = "time.3",
+    
     sex.transmission.multiplier = c("female.to.male.multiplier"),
     
     age.transmission.multipliers.00 = c("age.15.to.19.transmission.multiplier.0"),
