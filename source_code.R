@@ -10,13 +10,15 @@ source('model/diffeq.R')
 source('model/age_mappings.R') 
 NO.INTERVENTION = c()
 
+## TOOK OUT SUPPRESSED DATA CONVERSION FOR THE SAKE OF FRANCE STARTING VALUES ## 
 load('cached/data.manager_global_2025-06-12.Rdata') # added France back (but did NOT REMOVE it from remainder yet)
+
+## THESE DATA MANAGERS ALL HAVE MEDIAN VALUES FOR SUPPRESSED DATA ^ ##
 #load('cached/data.manager_global_2025-06-10.Rdata') # split remainder 1 by income (r1.low, lower middle, upper middle, and high)
 #load('cached/data.manager_global_2025-04-14.Rdata') # with global as a country 
 #load('cached/data.manager_global_2025-04-04.Rdata') # with new remainder countries 
-
-## ABOVE DATA MANAGERS NOW ALL HAVE MEDIAN VALUES FOR SUPPRESSED DATA ^ ##
 #load('cached/data.manager_global_2025-04-01.Rdata') # includes new median values for suppressed data 
+
 #load('cached/data.manager_global_2024-12-30.Rdata') 
 
 source('model/parameter_mappings/hiv_mortality_priors.R') 

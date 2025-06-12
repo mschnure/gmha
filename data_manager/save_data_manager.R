@@ -6,6 +6,8 @@ load('data_manager/remainder_countries.Rdata')
 load('data_manager/cascade_weights.Rdata')
 load('data_manager/locations_income.Rdata')
 
+EXTRACT.SUPPRESSED.VALUES = F 
+
 ## all countries other than these individual countries will be modeled as the remainder
 ## if you want to change this, need to edit data_manager/remainder_countries.R" file 
 INDIVIDUAL.COUNTRIES = c("South Africa","Mozambique","Nigeria","Tanzania","Uganda","Kenya",

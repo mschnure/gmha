@@ -16,10 +16,12 @@ WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE[as.character(1995:2030)]
 # WEIGHTS.BY.YEAR$south_africa = WEIGHTS.BY.YEAR
 # WEIGHTS.BY.YEAR$france = WEIGHTS.BY.YEAR.FRANCE
 
-LOCATION = "non.unaids.remainder"
+LOCATION = "France"
 
-if(LOCATION=="France")
+if(LOCATION=="France"){
     WEIGHTS.BY.YEAR = WEIGHTS.BY.YEAR.FRANCE
+}
+    
 
 BASE.PARAMETERS=create.model.parameters(location = LOCATION)
 
@@ -28,7 +30,7 @@ create.individual.likelihood = function(data.type,
                                         data.manager=DATA.MANAGER,
                                         parameters,
                                         years = 1990:2023, # 1980:2023
-                                        total.weight = WEIGHTS.BY.YEAR.FRANCE, 
+                                        total.weight = WEIGHTS.BY.YEAR, 
                                         #incidence
                                         incidence.years=years,
                                         incidence.weight=1, 
@@ -232,7 +234,16 @@ full.lik = create.likelihood(parameters = BASE.PARAMETERS,location = LOCATION)
 
 if(1==2){
    
-    
+    incidence.lik(sim.france)
+    prev.lik(sim.france)
+    pop.lik(sim.france)
+    aware.lik(sim.france)
+    eng.lik(sim.france)
+    supp.lik(sim.france)
+    hiv.mortality.lik(sim.france)
+    aware.trend.lik(sim.france)
+    total.mortality.lik(sim.france)
+    full.lik(sim.france)
      
 exp(total.mortality.lik(simset.new@simulations[[simset.new@n.sim]]) - 
         total.mortality.lik(simset.old@simulations[[simset.old@n.sim]]))
