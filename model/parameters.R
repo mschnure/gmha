@@ -69,10 +69,10 @@ get.default.parameters = function(location){
         ## Transmission parameters ##
         # general
         start.time=1975,
-        time.0=1990,
-        time.1=1997,
-        time.2=2008, 
-        time.3=2018,
+        time.0=1990, # 6/12 added this to sampled parameters
+        time.1=1997, # 6/12 added this to sampled parameters
+        time.2=2008, # 6/12 added this to sampled parameters
+        time.3=2018, # 6/12 added this to sampled parameters
         time.3.5=2030,
         time.4=2040,
         trate.0=0.8, # kenya prior; others set below 
@@ -188,8 +188,8 @@ get.default.parameters = function(location){
         rv["suppressed.disengagement.rates"] = 0.1554849 # see disengagement models
         rv["unsuppression.rates"] = 0.07548439 
     }  else if(location=="non.unaids.remainder"){
-        rv["unsuppressed.disengagement.rates"]= 0.334341 # see disengagement models
-        rv["suppressed.disengagement.rates"] = 0.334341 # see disengagement models
+        rv["unsuppressed.disengagement.rates"]= 0.334341 
+        rv["suppressed.disengagement.rates"] = 0.334341 
         rv["unsuppression.rates"] = 0.06238609   
     } else if(location=="France"){
         rv["trate.0"] = 0.5
@@ -197,7 +197,11 @@ get.default.parameters = function(location){
         rv["trate.2"] = 0.1
         rv["trate.3"] = 0.1
         rv["trate.4"] = 0.1
-    } else if(location=="Nigeria"){
+        rv["birth.transmission.risk.0"]=0.141
+        rv["unsuppressed.disengagement.rates"]= 0.0965109
+        rv["suppressed.disengagement.rates"] = 0.0965109
+        rv["unsuppression.rates"] = 0.09431068   
+        } else if(location=="Nigeria"){
         rv["trate.0"] = 0.65
         rv["trate.1"] = 0.1
         rv["trate.2"] = 0.1

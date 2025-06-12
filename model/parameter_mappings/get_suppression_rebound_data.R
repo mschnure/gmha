@@ -1,6 +1,7 @@
 source("model/parameter_mappings/kenya/suppression_rebound_rates_kenya.R")
 source("model/parameter_mappings/south_africa/suppression_rebound_rates_south_africa.R")
 source("model/parameter_mappings/non_unaids_remainder/suppression_rebound_rates_non_unaids_remainder.R")
+source("model/parameter_mappings/france/suppression_rebound_rates_france.R")
 
 # estimates here are proportions (data are reported as probabilities of suppressing within a year)
 # converted to a rate in the map.model.parameters code 
@@ -10,6 +11,8 @@ get.suppression.rates = function(location){
         rv = get.suppression.rate.south.africa() # using SA suppression data for these
     } else if(location=="non.unaids.remainder"){
         rv = get.suppression.rate.india() # using India for non.unaids.remainder
+    } else if(location=="France"){
+        rv = get.suppression.rate.france() 
     } else{
         rv = get.suppression.rate.kenya() # use KENYA'S suppression data for all other countries (Moz, France)
     }
@@ -24,6 +27,8 @@ get.unsuppression.rates = function(location){
         rv = get.unsuppression.rate.south.africa() 
     } else if(location=="non.unaids.remainder"){
         get.mean.non.unaids.unsuppression.rate() # using mean of India and US unsuppression data for non-UNAIDS remainder
+    } else if(location=="France"){
+        get.unsuppression.rate.france() 
     } else {
         rv = get.unsuppression.rate.kenya() # use KENYA'S unsuppression data for all other countries 
     }

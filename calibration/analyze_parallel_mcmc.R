@@ -12,8 +12,9 @@ source("model/run_systematic.R")
 #load('cached/all.results_tanzania_2025-03-31.Rdata')
 #load('cached/all.results_uganda_2025-03-31.Rdata')
 #load('cached/all.results_zambia_2025-03-31.Rdata')
-# load('cached/all.results_zimbabwe_2025-03-31.Rdata')
-load('cached/all.results_global_2025-04-15.Rdata')
+#load('cached/all.results_zimbabwe_2025-03-31.Rdata')
+#load('cached/all.results_global_2025-04-15.Rdata')
+load('cached/all.results_france_2025-02-27.Rdata')
 simset = simset.list.full$no.int
 
 #load("cached/simset_global_2025-04-15.Rdata")

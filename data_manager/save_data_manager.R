@@ -9,7 +9,8 @@ load('data_manager/locations_income.Rdata')
 ## all countries other than these individual countries will be modeled as the remainder
 ## if you want to change this, need to edit data_manager/remainder_countries.R" file 
 INDIVIDUAL.COUNTRIES = c("South Africa","Mozambique","Nigeria","Tanzania","Uganda","Kenya",
-                         "Zambia","Zimbabwe","Malawi") # removed Brazil, France, Cambodia, Chile, Thailand, Netherlands
+                         "Zambia","Zimbabwe","Malawi","France") # removed Brazil, France, Cambodia, Chile, Thailand, Netherlands
+                                                                # 6/12 added France back
 
 COUNTRIES.TO.PULL.PDFS = c("South Africa","Mozambique","Nigeria","Tanzania","Uganda","Kenya",
                            "Zambia","Zimbabwe","Malawi","France","UNAIDS remainder","Non UNAIDS remainder")
