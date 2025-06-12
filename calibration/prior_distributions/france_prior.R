@@ -30,8 +30,8 @@ FRANCE.PRIOR = join.distributions(
     suppressed.disengagement.rates = Lognormal.Distribution(log(0.0965109), log(4)/2), 
     unsuppression.rates = Lognormal.Distribution(log(0.09431068), log(4)/2), 
     hiv.specific.mortality.rates.0 = Lognormal.Distribution(log(0.05357143), log(4)/2), # see hiv.mortality.priors.R
-    hiv.specific.mortality.rates.1 = Lognormal.Distribution(log(0.08590171), log(4)/2), # before, with suppressed values, this was 0.002272727
-    hiv.specific.mortality.rates.2 = Lognormal.Distribution(log(0.02381941), log(4)/2), # before, with suppressed values, this was 0.003947368
+    hiv.specific.mortality.rates.1 = Lognormal.Distribution(log(0.002272727), log(4)/2), # before, with suppressed values, this was 0.002272727
+    hiv.specific.mortality.rates.2 = Lognormal.Distribution(log(0.003947368), log(4)/2), # before, with suppressed values, this was 0.003947368
     birth.transmission.risk.0 = Logitnormal.Distribution(logit(0.141), log(3)/2), # Dabis et al estimate for Europe 
     birth.transmission.risk.1 = Logitnormal.Distribution(logit(0.3), log(3)/2), 
     # see Kenya prior for notes on a Logitnormal distribution 

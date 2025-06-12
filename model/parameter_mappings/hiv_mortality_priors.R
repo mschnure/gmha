@@ -28,8 +28,8 @@ ratio.time.2.to.1 = HIV.MORTALITY.PRIORS[["Global"]][2]/HIV.MORTALITY.PRIORS[["G
 ratio.time.3.to.1 = HIV.MORTALITY.PRIORS[["Global"]][3]/HIV.MORTALITY.PRIORS[["Global"]][1] # 3 is roughly 0.44x 1
 
 # was going to use these ratios, but instead taking from when I calculated this from the suppressed data 
-HIV.MORTALITY.PRIORS$France[2] = ratio.time.2.to.1*HIV.MORTALITY.PRIORS$France[1] # 0.002272727
-HIV.MORTALITY.PRIORS$France[3] = ratio.time.3.to.1*HIV.MORTALITY.PRIORS$France[1] # 0.003947368
+HIV.MORTALITY.PRIORS$France[2] = 0.002272727 # ratio.time.2.to.1*HIV.MORTALITY.PRIORS$France[1] # 0.002272727
+HIV.MORTALITY.PRIORS$France[3] = 0.003947368 # ratio.time.3.to.1*HIV.MORTALITY.PRIORS$France[1] # 0.003947368
 
 
 
