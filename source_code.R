@@ -11,7 +11,7 @@ source('model/age_mappings.R')
 NO.INTERVENTION = c()
 
 ## TOOK OUT SUPPRESSED DATA CONVERSION FOR THE SAKE OF FRANCE STARTING VALUES ## 
-load('cached/data.manager_global_2025-06-12.Rdata') # added France back (but did NOT REMOVE it from remainder yet)
+load('cached/data.manager_global_2025-06-13.Rdata') # added France back (but did NOT REMOVE it from remainder yet)
 
 ## THESE DATA MANAGERS ALL HAVE MEDIAN VALUES FOR SUPPRESSED DATA ^ ##
 #load('cached/data.manager_global_2025-06-10.Rdata') # split remainder 1 by income (r1.low, lower middle, upper middle, and high)

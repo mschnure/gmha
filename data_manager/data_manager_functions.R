@@ -1228,7 +1228,7 @@ read.death.data.files = function(dir = 'data_manager/data',
                                  data.type,
                                  countries.to.pull,
                                  age.mapping){
-    countries.to.pull = c(countries.to.pull,REMAINDER.COUNTRIES.UNAIDS,"World")
+    countries.to.pull = c("World",countries.to.pull,REMAINDER.COUNTRIES.UNAIDS)
     countries.to.pull[grepl("Tanzania",countries.to.pull)] = "United Republic of Tanzania"
     countries.to.pull[grepl("Democratic People's Republic of Korea",countries.to.pull)] = "Dem. People's Republic of Korea"
     countries.to.pull[grepl("United States",countries.to.pull)] = "United States of America"
@@ -1361,7 +1361,7 @@ read.death.data.files = function(dir = 'data_manager/data',
     age.sex.dim.names.remainder = list(year = as.character(years),
                                        age = names(age.mapping),
                                        sex = sexes,
-                                       location = c(countries.to.pull,"unaids.remainder","non.unaids.remainder",
+                                       location = c(locations,"unaids.remainder","non.unaids.remainder",
                                                     "r1.low","r1.lower.middle","r1.upper.middle","r1.high"))
     
     total.dim.names.remainder = age.sex.dim.names.remainder[c(1,4)] # year, location 
