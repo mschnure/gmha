@@ -25,6 +25,8 @@ names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
 # for france only, remove pre-1995 years 
 WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
 WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE[as.character(1995:2030)]
+WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE/2
+
 
 # WEIGHTS.BY.YEAR = list(WEIGHTS.BY.YEAR)
 # WEIGHTS.BY.YEAR$kenya = WEIGHTS.BY.YEAR
@@ -39,7 +41,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              parameters,
                              location,
                              years = 1995:2023, # 1980:2023
-                             total.weight = WEIGHTS.BY.YEAR, # [[convert_string(location)]], 
+                             total.weight = WEIGHTS.BY.YEAR.FRANCE, # [[convert_string(location)]], 
                              #incidence
                              incidence.years=years,
                              incidence.weight=2, 
