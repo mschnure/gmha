@@ -193,10 +193,13 @@ get.default.parameters = function(location){
         rv["unsuppression.rates"] = 0.06238609   
     } else if(location=="France"){
         rv["trate.0"] = 0.5
-        rv["trate.1"] = 0.1
-        rv["trate.2"] = 0.1
-        rv["trate.3"] = 0.1
-        rv["trate.4"] = 0.1
+        rv["trate.1"] = 0.12# 0.1, 1997
+        rv["trate.2"] = 0.12 # 0.1, 2008
+        rv["trate.3"] = 0.15 # 0.1, 2018
+        rv["trate.4"] = 0.15 # 0.1, 2030? 
+        rv["age.20.to.29.transmission.multiplier.2"] = 0.85
+        rv["age.20.to.29.transmission.multiplier.3"] = 0.5
+        rv["age.40.to.49.transmission.multiplier.0"] = 1.25
         rv["birth.transmission.risk.0"]=0.141
         rv["unsuppressed.disengagement.rates"]= 0.0965109
         rv["suppressed.disengagement.rates"] = 0.0965109

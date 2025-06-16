@@ -15,10 +15,10 @@ FRANCE.PRIOR = join.distributions(
     #                                  sd.r4.to.r3 = log(4)/2), 
     
     trate.0 = Lognormal.Distribution(log(.5), log(8)/2),
-    trate.1 = Lognormal.Distribution(log(.1), log(8)/2),
-    trate.2 = Lognormal.Distribution(log(.1), log(8)/2),
-    trate.3 = Lognormal.Distribution(log(.1), log(8)/2),
-    trate.4 = Lognormal.Distribution(log(.1), log(8)/2),
+    trate.1 = Lognormal.Distribution(log(.12), log(8)/2), # changed from 0.1 6/16
+    trate.2 = Lognormal.Distribution(log(.12), log(8)/2), # changed from 0.1 6/16
+    trate.3 = Lognormal.Distribution(log(.15), log(8)/2), # changed from 0.1 6/16
+    trate.4 = Lognormal.Distribution(log(.15), log(8)/2), # changed from 0.1 6/16
     
     time.0=Normal.Distribution(1990, 1.5,lower = 1987, upper = 1993), # 1987-1993; so that it doesn't overlap 
     time.1=Normal.Distribution(1997, 2,lower = 1993, upper = 2001), # 1993-2001
@@ -50,10 +50,10 @@ FRANCE.PRIOR = join.distributions(
     
     age.20.to.29.transmission.multiplier.0 = Lognormal.Distribution(log(1), log(4)/2),
     age.20.to.29.transmission.multiplier.1 = Lognormal.Distribution(log(1), log(4)/2),
-    age.20.to.29.transmission.multiplier.2 = Lognormal.Distribution(log(1), log(4)/2),
-    age.20.to.29.transmission.multiplier.3 = Lognormal.Distribution(log(1), log(4)/2),
+    age.20.to.29.transmission.multiplier.2 = Lognormal.Distribution(log(0.85), log(4)/2), # changed from 1 6/16
+    age.20.to.29.transmission.multiplier.3 = Lognormal.Distribution(log(0.5), log(4)/2), # changed from 1 6/16
     
-    age.40.to.49.transmission.multiplier.0 = Lognormal.Distribution(log(1), log(4)/2),
+    age.40.to.49.transmission.multiplier.0 = Lognormal.Distribution(log(1.25), log(4)/2), # changed from 1 6/16
     age.40.to.49.transmission.multiplier.1 = Lognormal.Distribution(log(1), log(4)/2),
     age.40.to.49.transmission.multiplier.2 = Lognormal.Distribution(log(1), log(4)/2),
     age.40.to.49.transmission.multiplier.3 = Lognormal.Distribution(log(1), log(4)/2),
