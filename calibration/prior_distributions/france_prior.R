@@ -20,10 +20,10 @@ FRANCE.PRIOR = join.distributions(
     trate.3 = Lognormal.Distribution(log(.15), log(8)/2), # changed from 0.1 6/16
     trate.4 = Lognormal.Distribution(log(.15), log(8)/2), # changed from 0.1 6/16
     
-    time.0=Normal.Distribution(1990, 1.5,lower = 1987, upper = 1993), # 1987-1993; so that it doesn't overlap 
-    time.1=Normal.Distribution(1997, 2,lower = 1993, upper = 2001), # 1993-2001
-    time.2=Normal.Distribution(2008, 2,lower = 2004, upper = 2012), # 2004-2012
-    time.3=Normal.Distribution(2018, 2,lower = 2014, upper = 2022), # 2014-2022
+    # time.0=Normal.Distribution(1990, 1.5,lower = 1987, upper = 1993), # 1987-1993; so that it doesn't overlap 
+    # time.1=Normal.Distribution(1997, 2,lower = 1993, upper = 2001), # 1993-2001
+    # time.2=Normal.Distribution(2008, 2,lower = 2004, upper = 2012), # 2004-2012
+    # time.3=Normal.Distribution(2018, 2,lower = 2014, upper = 2022), # 2014-2022
     
     # COUNTRY-SPECIFIC; MUST EDIT:
     unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.0965109), log(8)/2), # widened from log(4) 6/16
