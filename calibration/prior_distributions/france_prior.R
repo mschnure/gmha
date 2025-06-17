@@ -26,12 +26,12 @@ FRANCE.PRIOR = join.distributions(
     # time.3=Normal.Distribution(2018, 2,lower = 2014, upper = 2022), # 2014-2022
     
     # COUNTRY-SPECIFIC; MUST EDIT:
-    unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.0965109), log(8)/2), # widened from log(4) 6/16
-    suppressed.disengagement.rates = Lognormal.Distribution(log(0.0965109), log(8)/2), # widened from log(4) 6/16
-    unsuppression.rates = Lognormal.Distribution(log(0.09431068), log(8)/2), # widened from log(4) 6/16
-    hiv.specific.mortality.rates.0 = Lognormal.Distribution(log(0.05357143), log(8)/2), # see hiv.mortality.priors.R; # widened from log(4) 6/16
-    hiv.specific.mortality.rates.1 = Lognormal.Distribution(log(0.002272727), log(8)/2), # widened from log(4) 6/16; before, with suppressed values, this was 0.002272727
-    hiv.specific.mortality.rates.2 = Lognormal.Distribution(log(0.003947368), log(8)/2), # widened from log(4) 6/16; before, with suppressed values, this was 0.003947368
+    unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.0965109), log(4)/2),
+    suppressed.disengagement.rates = Lognormal.Distribution(log(0.0965109), log(4)/2),
+    unsuppression.rates = Lognormal.Distribution(log(0.09431068), log(4)/2),
+    hiv.specific.mortality.rates.0 = Lognormal.Distribution(log(0.05357143), log(4)/2), # see hiv.mortality.priors.R 
+    hiv.specific.mortality.rates.1 = Lognormal.Distribution(log(0.002272727), log(4)/2), #  before, with suppressed values, this was 0.002272727
+    hiv.specific.mortality.rates.2 = Lognormal.Distribution(log(0.003947368), log(4)/2), # before, with suppressed values, this was 0.003947368
     
     birth.transmission.risk.0 = Logitnormal.Distribution(logit(0.141), log(3)/2), # Dabis et al estimate for Europe 
     birth.transmission.risk.1 = Logitnormal.Distribution(logit(0.3), log(3)/2), 
@@ -51,10 +51,10 @@ FRANCE.PRIOR = join.distributions(
     
     age.20.to.29.transmission.multiplier.0 = Lognormal.Distribution(log(1), log(4)/2),
     age.20.to.29.transmission.multiplier.1 = Lognormal.Distribution(log(1), log(4)/2),
-    age.20.to.29.transmission.multiplier.2 = Lognormal.Distribution(log(0.85), log(4)/2), # changed from 1 6/16
-    age.20.to.29.transmission.multiplier.3 = Lognormal.Distribution(log(0.5), log(4)/2), # changed from 1 6/16
+    age.20.to.29.transmission.multiplier.2 = Lognormal.Distribution(log(1), log(4)/2), 
+    age.20.to.29.transmission.multiplier.3 = Lognormal.Distribution(log(1), log(4)/2), 
     
-    age.40.to.49.transmission.multiplier.0 = Lognormal.Distribution(log(1.25), log(4)/2), # changed from 1 6/16
+    age.40.to.49.transmission.multiplier.0 = Lognormal.Distribution(log(1), log(4)/2),
     age.40.to.49.transmission.multiplier.1 = Lognormal.Distribution(log(1), log(4)/2),
     age.40.to.49.transmission.multiplier.2 = Lognormal.Distribution(log(1), log(4)/2),
     age.40.to.49.transmission.multiplier.3 = Lognormal.Distribution(log(1), log(4)/2),
@@ -68,12 +68,12 @@ FRANCE.PRIOR = join.distributions(
     age.assortativity = Lognormal.Distribution(log(1), log(1.5)/2), 
 
     # cascade parameters
-    log.OR.testing.intercept = Normal.Distribution(0, log(8)/2), # widened from log(4) 6/16
-    log.OR.testing.slope = Normal.Distribution(0, log(8)/2), # widened from log(4) 6/16
+    log.OR.testing.intercept = Normal.Distribution(0, log(4)/2),
+    log.OR.testing.slope = Normal.Distribution(0, log(4)/2),
     
-    log.OR.engagement.slope = Normal.Distribution(0, log(8)/2), # widened from log(4) 6/16
+    log.OR.engagement.slope = Normal.Distribution(0, log(4)/2), 
     
-    log.OR.suppression.slope = Normal.Distribution(0, log(8)/2), # widened from log(4) 6/16
+    log.OR.suppression.slope = Normal.Distribution(0, log(4)/2),
     
     male.awareness.multiplier = Lognormal.Distribution(log(1), log(8)/2),
     male.engagement.multiplier = Lognormal.Distribution(log(1), log(8)/2),
