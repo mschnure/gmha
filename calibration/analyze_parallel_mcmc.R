@@ -20,16 +20,16 @@ simset = simset.list.full$no.int
 #load("cached/simset_global_2025-04-15.Rdata")
 
 simplot(simset,
-        years = 1980:2040)
+        years = 1980:2030)
 
 simplot(simset, 
-        years=1980:2040, 
+        years=1980:2030, 
         facet.by='age', 
         #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='incidence')
 
 simplot(simset, 
-        years=1980:2040, 
+        years=1980:2030, 
         facet.by='age', 
         #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='prevalence')
