@@ -25,7 +25,7 @@ names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
 # for france only, remove pre-1995 years 
 WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
 WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE[as.character(1995:2030)]
-WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE/32
+WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE/8
 
 
 # WEIGHTS.BY.YEAR = list(WEIGHTS.BY.YEAR)
@@ -41,7 +41,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              parameters,
                              location,
                              years = 1995:2023, # 1980:2023
-                             total.weight = WEIGHTS.BY.YEAR.FRANCE, # [[convert_string(location)]], 
+                             total.weight = WEIGHTS.BY.YEAR, # [[convert_string(location)]], 
                              #incidence
                              incidence.years=years,
                              incidence.weight=2, 
@@ -94,7 +94,12 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                     obs.is.proportion=F,
                                                     weight=total.weight*incidence.weight,
                                                     obs.correlation=incidence.obs.correlation,
-                                                    correlation.structure=incidence.correlation.structure)
+                                                    correlation.structure=incidence.correlation.structure #,
+                                                    # use.total=T,
+                                                    # use.sex=F,
+                                                    # use.age=F,
+                                                    # use.age.sex=F
+                                                    )
     
     prevalence.lik = create.likelihood.for.data.type(data.type = "prevalence",
                                                      data.manager=data.manager,
@@ -105,7 +110,12 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                      obs.is.proportion=F,
                                                      weight=total.weight*prevalence.weight,
                                                      obs.correlation=prevalence.obs.correlation,
-                                                     correlation.structure=prevalence.correlation.structure)
+                                                     correlation.structure=prevalence.correlation.structure #,
+                                                     # use.total=T,
+                                                     # use.sex=F,
+                                                     # use.age=F,
+                                                     # use.age.sex=F
+                                                     )
     
     awareness.lik = create.likelihood.for.data.type(data.type = "awareness",
                                                     data.manager=data.manager,
@@ -198,14 +208,14 @@ create.likelihood = function(data.manager=DATA.MANAGER,
     #                                                   use.strata=T)
     
     components = list(incidence=incidence.lik,
-                      prevalence=prevalence.lik #,
-                      # awareness=awareness.lik,
-                      # engagement=engagement.lik,
-                      # suppression=suppression.lik,
-                      # population=population.lik,
-                      # hiv.mortality=hiv.mortality.lik,
-                      # total.mortality.lik=total.mortality.lik,
-                      # awareness.trend=awareness.trend.lik
+                      prevalence=prevalence.lik,
+                      awareness=awareness.lik,
+                      engagement=engagement.lik,
+                      suppression=suppression.lik,
+                      population=population.lik,
+                      hiv.mortality=hiv.mortality.lik,
+                      total.mortality.lik=total.mortality.lik,
+                      awareness.trend=awareness.trend.lik
                       ) # CHANGE THIS IF SWITCHING ABOVE 
     
     rv = function(sim){ 
