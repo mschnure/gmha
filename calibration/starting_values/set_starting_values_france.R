@@ -8,6 +8,7 @@ prior = FRANCE.PRIOR
 # Incidence and prevalence targets only included totals 
 # Therefore, didn't include transmission multipliers by age 
 # Also, unsure about testing model so used Kenya instead, didn't include awareness target, and didn't include testing multipliers
+load("mcmc_runs/simset_france_2025-06-18.Rdata")
 
 default.params =  get.default.parameters(location = "France") 
 params.start.values = simset@parameters[simset@n.sim,] 
@@ -17,6 +18,6 @@ transmission.multipliers = additional.params[grepl("transmission.multiplier",add
 testing.multipliers = additional.params[grepl("testing",additional.params)]
 
 params.start.values[transmission.multipliers] = 1
-params.start.values[testing.multipliers] = 0
+#params.start.values[testing.multipliers] = 0
 
 save(params.start.values,file=("calibration/starting_values/2025_06_19_france_start_values.Rdata"))
