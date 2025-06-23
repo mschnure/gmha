@@ -109,6 +109,38 @@ generate.testing.parameter.table = function(locations){
    
 }
 
+plot.testing.fit.france = function(dimension = "total" # or age or sex
+){
+    model = get.testing.model.france()
+    
+    if(dimension=="age"){
+        plot = ggplot() + 
+            #geom_point(data=reshape2::melt(apply(model$data.array, c("age","year"),mean)), aes(x=year, y=value, color=age)) + 
+            geom_line(data=reshape2::melt(apply(model$predictions, c("age","year"),mean)), aes(x=year, y=value, color=age)) + 
+            ylim(0,1) + facet_wrap(~age) 
+    } else if(dimension=="sex"){
+        plot = ggplot() + 
+            #geom_point(data=reshape2::melt(apply(model$data.array, c("sex","year"),mean)), aes(x=year, y=value, color=sex)) + 
+            geom_line(data=reshape2::melt(apply(model$predictions, c("sex","year"),mean)), aes(x=year, y=value, color=sex)) + 
+            ylim(0,1) + facet_wrap(~sex) 
+    } else if(dimension=="total"){
+        #data = reshape2::melt(apply(model$data.array, c("year"),mean))
+        #data$year = as.numeric(rownames(data))
+        
+        predictions = reshape2::melt(apply(model$predictions, c("year"),mean))
+        predictions$year = as.numeric(rownames(predictions))
+        
+        plot = ggplot() + 
+            #geom_point(data=data, aes(x=year, y=value)) + 
+            geom_line(data=predictions, aes(x=year, y=value)) + 
+            ylim(0,1) 
+    } else  
+        stop("can only plot testing fit by total, age, or sex dimension")
+    
+    plot
+    
+    
+}
 
 # this isn't working right now 
 plot.testing.fit = function(location,

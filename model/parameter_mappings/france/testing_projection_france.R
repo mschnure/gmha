@@ -75,12 +75,35 @@ get.testing.model.france = function(){
     dimnames(slopes)=list(age=model.ages$labels,
                           sex=testing.sexes,
                           subgroups="all")
+
+    projection.times = 1980:2040
+    dim.names.projection = list(year = projection.times - testing.anchor.year,
+                                age = model.ages$labels,
+                                sex = c("male","female"))
+    
+    x = sapply(1:length(projection.times), function(year){
+        
+        projected.log.odds = (intercepts)+
+            ((slopes)*(projection.times[year]-testing.anchor.year))
+        
+        projected.p = 1/(1+exp(-projected.log.odds))
+        projected.p = projected.p*max.proportion
+        
+        projected.p
+    })
+    
+    predictions = array(x,
+                        dim = sapply(dim.names.projection,length),
+                        dimnames = dim.names.projection)
+    
+    dimnames(predictions)$year = as.numeric(dimnames(predictions)$year) + testing.anchor.year
     
     rv = list(intercepts=intercepts,
               slopes=slopes,
               anchor.year=testing.anchor.year,
               max.proportion=max.proportion,
-              master.df = master.df)
+              master.df = master.df,
+              predictions=predictions)
     rv
     
 }
