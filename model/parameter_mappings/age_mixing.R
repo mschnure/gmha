@@ -38,7 +38,7 @@ get.female.to.male.age.model = function(location){
     if(location=="France"){
         rv = get.female.to.male.age.model.france()
     }else if(location=="Thailand"){
-        rv = get.female.to.female.age.model.thailand()
+        rv = get.female.to.male.age.model.thailand()
     } else{
         rv = get.female.to.male.age.model.kenya.south.africa() # paper is from south africa, using it for both Kenya/SA    
     }
