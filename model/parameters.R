@@ -201,16 +201,24 @@ get.default.parameters = function(location){
         rv["unsuppressed.disengagement.rates"]= 0.0965109
         rv["suppressed.disengagement.rates"] = 0.0965109
         rv["unsuppression.rates"] = 0.09431068   
-        } else if(location=="Nigeria"){
+    } else if(location=="Nigeria"){
         rv["trate.0"] = 0.65
         rv["trate.1"] = 0.1
         rv["trate.2"] = 0.1
         rv["trate.3"] = 0.1
         rv["trate.4"] = 0.1
+    } else if(location=="Thailand"){
+        rv["unsuppressed.disengagement.rates"] = 0.1392621 # Kenya's value 
+        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya's value 
+        rv["unsuppression.rates"] = 0.2196 # Kenya's value 
+        rv["birth.transmission.risk.0"]=0.242
     }  else { # if (location=="Kenya")
         rv["hiv.specific.mortality.rates.0"]=0.04057971 # Kenya
         rv["hiv.specific.mortality.rates.1"]=0.08125 # Kenya 
         rv["hiv.specific.mortality.rates.2"]=0.02 # Kenya 
+        rv["unsuppressed.disengagement.rates"] = 0.1392621 # Kenya's value 
+        rv["suppressed.disengagement.rates"] = 0.1025866 # Kenya's value 
+        rv["unsuppression.rates"] = 0.2196 # Kenya's value 
     } 
     
     rv

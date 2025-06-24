@@ -1,5 +1,6 @@
 LOCATIONS = c("Kenya","South Africa","France","Mozambique","Tanzania",
-              "Uganda","Zambia","Zimbabwe","Malawi","Nigeria","unaids.remainder","non.unaids.remainder","Global")
+              "Uganda","Zambia","Zimbabwe","Malawi","Nigeria","Thailand",
+              "unaids.remainder","non.unaids.remainder","Global")
 
 HIV.MORTALITY.PRIORS = list()
 
