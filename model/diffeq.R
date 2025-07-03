@@ -28,8 +28,8 @@ compute.dx <- function(time,
                        parameters){
 
     #print("removed max run time limit temporarily")
-    # if (parameters$max.run.time < (as.numeric(Sys.time())-parameters$model.run.start))
-    #     return (rep(NA, length(y)))
+    if (parameters$max.run.time < (as.numeric(Sys.time())-parameters$model.run.start))
+        return (rep(NA, length(y)))
     
     ##---------------------------------##
     ##-- GET TIME-VARYING PARAMETERS --##
