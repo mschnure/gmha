@@ -1,10 +1,8 @@
 
-
-get.disengagement.model.france = function(){
+# Eamsakulrat et al, 2022 (data are from 2016)
+get.disengagement.model.thailand = function(){
+    disengagement.p = (1-0.841) # 84.1% individuals retained in care at 12 months 
     
-    # Belgium (Beckhoven, et al, 2015): https://link.springer.com/article/10.1186/s12879-015-1230-3
-    disengagement.p = (1-.908) # 0.144 # 90.8% retained over 12 months 
-
     disengagement.rate.unsuppressed = -log(1-disengagement.p)
     disengagement.rate.suppressed = disengagement.rate.unsuppressed
     
@@ -13,25 +11,41 @@ get.disengagement.model.france = function(){
     rv$disengagement.rate.suppressed = disengagement.rate.suppressed
     
     rv
+
 }
 
 
-# Cuzin, 2023: Dat'AIDS cohort, 2009-2019
-# Median time from HIV diagnosis to ART prescription 
-get.engagement.model.france = function(){
+# Eamsakulrat et al, 2022 (data are from 2016)
+# Compared early vs late ART initiation groups (<= or > 2 weeks)
+# Median time from HIV diagnosis to ART initiation  
+get.engagement.model.thailand = function(){
     
-    max.proportion = 0.95
+    # I want total diagnosed/not on ART --> on ART 
+    # 488 newly diagnosed - 98 transferred out - 20 LTFU - 24 didn't receive diagnosis - 47 transferred later = 299 enrolled in HIV clinic
+    # removing those who didn't receive their diagnosis (shouldn't be in the denominator):
+        # 488 - 24 = 464 received diagnosis 
+    # removing those who we don't know whether they started ART (transferred out)" 
+        # 464 - (98+47) = 319 
+    # KEEP in those who were LTFU - we know they received their diagnosis but didn't start ART 
+        # --> 319 total diagnosed in the denominator 
     
-    # rate = 1/time
-    # proportion = 1 - exp(-rate*time)
+    # Of those, 270 started ART 
+        # Early group (116): median time to initiation was 7 days 
+        # Late group (154): median time to initiation was 28 days 
     
-    # 2010
-    time = c(128)/365
-    rate = 1/time
+    ## original calculations led to 100% enrollment in a year, so instead, just using 270/299 enrolled within 1 year 
+    time.in.days = 365 # 7*(116/270) + 28*(154/270) # 18.97778 days (weighted average time)
+    prob = 270/299 # 270/319
+    
+    # rate = (-log(1-prob))/time
+    # prob = 1 - exp(-rate*time)
+    
+    time = c(time.in.days)/365
+    rate = (-log(1-prob))/time
     annual.proportion = 1 - exp(-rate)
     data = c(0,annual.proportion)
     
-    dim.names.data = list(year = c(1990,2010),
+    dim.names.data = list(year = c(1990,2016),
                           age = c("10-19","20-29","30-39","40-49","50 and over"),
                           sex = c("male","female"))
     
@@ -48,6 +62,8 @@ get.engagement.model.france = function(){
     data.df$year = engagement.years
     
     fit = suppressWarnings(glm(value ~ year+age+sex, family=binomial, data = data.df)) 
+    
+    max.proportion = 0.95
     
     dim.names.projection = list(year = 1980:2040 - engagement.anchor.year,
                                 age = c("10-19","20-29","30-39","40-49","50 and over"),

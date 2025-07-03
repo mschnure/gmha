@@ -10,6 +10,7 @@ source("model/parameter_mappings/nigeria/testing_projection_nigeria.R")
 source("model/parameter_mappings/non_unaids_remainder/testing_projection_india.R")
 source("model/parameter_mappings/unaids_remainder/testing_projection_unaids.R")
 source("model/parameter_mappings/france/testing_projection_france.R")
+source("model/parameter_mappings/thailand/testing_projection_thailand.R")
 
 get.testing.model = function(location){
     if(location=="Kenya"){
@@ -36,6 +37,8 @@ get.testing.model = function(location){
         rv = get.testing.model.unaids() 
     } else if(location=="France"){
         rv = get.testing.model.france()
+    } else if(location=="Thailand"){
+        rv = get.testing.model.thailand()
     } else {
         rv = get.testing.model.kenya() # using kenya model for all other countries for now 
         #print("Using Kenya's testing model")
@@ -109,9 +112,10 @@ generate.testing.parameter.table = function(locations){
    
 }
 
-plot.testing.fit.france = function(dimension = "total" # or age or sex
+plot.testing.fit.france.thailand = function(location,
+                                            dimension = "total" # or age or sex
 ){
-    model = get.testing.model.france()
+    model = get.testing.model(location)
     
     if(dimension=="age"){
         plot = ggplot() + 

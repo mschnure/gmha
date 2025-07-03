@@ -3,11 +3,11 @@ source('calibration/make_joint_distribution.R')
 THAILAND.PRIOR = join.distributions(
     
     # general 
-    trate.0 = Lognormal.Distribution(log(.8), log(4)/2),
-    trate.1 = Lognormal.Distribution(log(.1), log(4)/2), 
-    trate.2 = Lognormal.Distribution(log(.1), log(4)/2), 
-    trate.3 = Lognormal.Distribution(log(.1), log(4)/2), 
-    trate.4 = Lognormal.Distribution(log(.1), log(4)/2), 
+    trate.0 = Lognormal.Distribution(log(.65), log(4)/2),
+    trate.1 = Lognormal.Distribution(log(.06), log(4)/2), 
+    trate.2 = Lognormal.Distribution(log(.06), log(4)/2), 
+    trate.3 = Lognormal.Distribution(log(.06), log(4)/2), 
+    trate.4 = Lognormal.Distribution(log(.06), log(4)/2), 
     
     time.0=Normal.Distribution(1990, 1.5,lower = 1987, upper = 1993), # 1987-1993; so that it doesn't overlap
     time.1=Normal.Distribution(1997, 2,lower = 1993, upper = 2001), # 1993-2001
@@ -15,9 +15,9 @@ THAILAND.PRIOR = join.distributions(
     time.3=Normal.Distribution(2018, 2,lower = 2014, upper = 2022), # 2014-2022
     
     # COUNTRY-SPECIFIC; MUST EDIT:
-    unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.1392621), log(4)/2), # Kenya's value 
-    suppressed.disengagement.rates = Lognormal.Distribution(log(0.1025866), log(4)/2), # Kenya's value 
-    unsuppression.rates = Lognormal.Distribution(log(0.2196), log(4)/2), # Kenya's value 
+    unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.1731636), log(4)/2), 
+    suppressed.disengagement.rates = Lognormal.Distribution(log(0.1731636), log(4)/2), 
+    unsuppression.rates = Lognormal.Distribution(log(0.0311), log(4)/2), # VERY LONG TIME TO LOSS OF SUPPRESSION 
     hiv.specific.mortality.rates.0 = Lognormal.Distribution(log(0.009333333), log(4)/2), # see hiv.mortality.priors.R
     hiv.specific.mortality.rates.1 = Lognormal.Distribution(log(0.069135802), log(4)/2),
     hiv.specific.mortality.rates.2 = Lognormal.Distribution(log(0.027118644), log(4)/2),

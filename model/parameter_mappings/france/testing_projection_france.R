@@ -77,9 +77,9 @@ get.testing.model.france = function(){
                           subgroups="all")
 
     projection.times = 1980:2040
-    dim.names.projection = list(year = projection.times - testing.anchor.year,
-                                age = model.ages$labels,
-                                sex = c("male","female"))
+    dim.names.projection = list(age = model.ages$labels,
+                                sex = c("male","female"),
+                                year = projection.times - testing.anchor.year)
     
     x = sapply(1:length(projection.times), function(year){
         
@@ -97,6 +97,8 @@ get.testing.model.france = function(){
                         dimnames = dim.names.projection)
     
     dimnames(predictions)$year = as.numeric(dimnames(predictions)$year) + testing.anchor.year
+    
+    predictions = aperm(predictions,c(3,1,2))
     
     rv = list(intercepts=intercepts,
               slopes=slopes,

@@ -6,6 +6,7 @@ source("model/parameter_mappings/zimbabwe/engagement_disengagement_projection_zi
 source("model/parameter_mappings/nigeria/engagement_disengagement_projection_nigeria.R")
 source("model/parameter_mappings/non_unaids_remainder/engagement_disengagement_projection_non_unaids_remainder.R")
 source("model/parameter_mappings/france/engagement_disengagement_projection_france.R")
+source("model/parameter_mappings/thailand/engagement_disengagement_projection_thailand.R")
 
 # estimates here are proportions (data are reported as probabilities of engaging within a year)
 # converted to a rate in the map.model.parameters code 
@@ -25,6 +26,8 @@ get.engagement.model = function(location){
         rv = get.engagement.model.india()
     } else if(location=="France"){
         rv = get.engagement.model.france()
+    } else if(location=="Thailand"){
+        rv = get.engagement.model.thailand()
     } else {
         rv = get.engagement.model.south.africa() 
         # use SOUTH AFRICA'S engagement data for all other countries (Moz, Zambia, Malawi)
@@ -44,6 +47,8 @@ get.disengagement.model = function(location){
         get.mean.non.unaids.disengagement.rate() # using mean of India and US disengagement data for non-UNAIDS remainder
     } else if(location=="France"){
         get.disengagement.model.france() 
+    } else if(location=="Thailand"){
+        get.disengagement.model.thailand() 
     } else {
         rv = get.disengagement.model.kenya() # use KENYA'S disengagement data for all other countries 
     }
