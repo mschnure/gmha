@@ -23,8 +23,9 @@ get.male.to.female.age.model = function(location){
     
     if(location=="France"){
         rv = get.male.to.female.age.model.france() 
-    }else if(location=="Thailand"){
-        rv = get.male.to.female.age.model.thailand()
+    # }else if(location=="Thailand"){
+    #     rv = get.male.to.female.age.model.thailand()
+    # } else{
     } else{
         rv = get.male.to.female.age.model.kenya.south.africa() # paper is from south africa, using it for both Kenya/SA    
     }
@@ -37,8 +38,9 @@ get.female.to.male.age.model = function(location){
     
     if(location=="France"){
         rv = get.female.to.male.age.model.france()
-    }else if(location=="Thailand"){
-        rv = get.female.to.male.age.model.thailand()
+    # }else if(location=="Thailand"){
+    #     rv = get.female.to.male.age.model.thailand()
+    # } else{
     } else{
         rv = get.female.to.male.age.model.kenya.south.africa() # paper is from south africa, using it for both Kenya/SA    
     }
