@@ -119,17 +119,17 @@ get.all.age.sex.transmission.multipliers = function(location){
         rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.nigeria(sex="female",year=2013) 
         rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.nigeria(sex="male",year=2013)
         
-    # } else if(location=="Thailand"){
-    #     rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.thailand(sex="female",year=2006) 
-    #     rv$MALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.thailand(sex="male",year=2006)
-    #     
-    #     rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.thailand(sex="female",year=2012) 
-    #     rv$MALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.thailand(sex="male",year=2012)
-    #     
-    #     rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.thailand(sex="female",year=2014) 
-    #     rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.thailand(sex="male",year=2014)
-    #     
-    # } 
+    } else if(location=="Thailand"){
+        rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.thailand(sex="female",year=2006) 
+        rv$MALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.thailand(sex="male",year=2006)
+        
+        rv$FEMALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.thailand(sex="female",year=2012) 
+        rv$MALE.AGE.MULTIPLIERS.2008 = get.all.transmission.multipliers.thailand(sex="male",year=2012)
+        
+        rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.thailand(sex="female",year=2014) 
+        rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.thailand(sex="male",year=2014)
+        
+    } 
     }else if(location=="non.unaids.remainder"){
         rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.india(sex="female",year=2005) 
         rv$MALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.india(sex="male",year=2005)
