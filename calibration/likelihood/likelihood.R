@@ -208,8 +208,8 @@ create.likelihood = function(data.manager=DATA.MANAGER,
     #                                                   probability.of.decrease=.3,
     #                                                   use.strata=T)
     
-    components = list(#incidence=incidence.lik,
-                      #prevalence=prevalence.lik,
+    components = list(incidence=incidence.lik,
+                      prevalence=prevalence.lik,
                       awareness=awareness.lik,
                       engagement=engagement.lik,
                       suppression=suppression.lik,
