@@ -29,8 +29,8 @@ set.likelihood.and.prior.by.location = function(location){
         params.start.values = params.start.values
     } else if(location=="France"){
         prior = FRANCE.PRIOR
-        load("calibration/starting_values/2025_06_19_france_start_values.Rdata")
-        params.start.values = params.start.values
+        # load("calibration/starting_values/2025_06_19_france_start_values.Rdata")
+        # params.start.values = params.start.values
     } else if(location=="Mozambique"){
         prior = MOZAMBIQUE.PRIOR
     } else if(location=="Tanzania"){

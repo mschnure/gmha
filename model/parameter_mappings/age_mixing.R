@@ -21,14 +21,13 @@ get.male.to.female.age.model = function(location){
     # if(location!="Kenya")
     #     print("Using Kenya-specific male-to-female sexual partnerships by age for now")
     
-    if(location=="France"){
-        rv = get.male.to.female.age.model.france() 
+    # if(location=="France"){
+    #     rv = get.male.to.female.age.model.france() 
     # }else if(location=="Thailand"){
     #     rv = get.male.to.female.age.model.thailand()
     # } else{
-    } else{
         rv = get.male.to.female.age.model.kenya.south.africa() # paper is from south africa, using it for both Kenya/SA    
-    }
+    #}
     
     rv
 }
@@ -36,14 +35,13 @@ get.female.to.male.age.model = function(location){
     # if(location!="Kenya")
     #     print("Using Kenya-specific female-to-male sexual partnerships by age for now")
     
-    if(location=="France"){
-        rv = get.female.to.male.age.model.france()
+    # if(location=="France"){
+    #     rv = get.female.to.male.age.model.france()
     # }else if(location=="Thailand"){
     #     rv = get.female.to.male.age.model.thailand()
     # } else{
-    } else{
         rv = get.female.to.male.age.model.kenya.south.africa() # paper is from south africa, using it for both Kenya/SA    
-    }
+   # }
     
     rv
 }
