@@ -68,8 +68,8 @@ FRANCE.PRIOR = join.distributions(
     age.assortativity = Lognormal.Distribution(log(1), log(1.5)/2), 
 
     # cascade parameters
-    # log.OR.testing.intercept = Normal.Distribution(0, log(4)/2),
-    # log.OR.testing.slope = Normal.Distribution(0, log(4)/2),
+    log.OR.testing.intercept = Normal.Distribution(0, log(4)/2),
+    log.OR.testing.slope = Normal.Distribution(0, log(4)/2),
     
     log.OR.engagement.slope = Normal.Distribution(0, log(4)/2), 
     
