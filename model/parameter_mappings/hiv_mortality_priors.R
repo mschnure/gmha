@@ -1,5 +1,6 @@
 LOCATIONS = c("Kenya","South Africa","France","Mozambique","Tanzania",
               "Uganda","Zambia","Zimbabwe","Malawi","Nigeria","Thailand",
+              "Cambodia",
               "unaids.remainder","non.unaids.remainder","Global")
 
 HIV.MORTALITY.PRIORS = list()
@@ -28,9 +29,13 @@ sapply(HIV.MORTALITY.PRIORS,is.na)
 ratio.time.2.to.1 = HIV.MORTALITY.PRIORS[["Global"]][2]/HIV.MORTALITY.PRIORS[["Global"]][1] # 2 is roughly 1.6 1
 ratio.time.3.to.1 = HIV.MORTALITY.PRIORS[["Global"]][3]/HIV.MORTALITY.PRIORS[["Global"]][1] # 3 is roughly 0.44x 1
 
+ratio.time.1.to.2 = HIV.MORTALITY.PRIORS[["Global"]][1]/HIV.MORTALITY.PRIORS[["Global"]][2] # 1 is roughly 1/2 2
+
 # was going to use these ratios, but instead taking from when I calculated this from the suppressed data 
 HIV.MORTALITY.PRIORS$France[2] = 0.002272727 # ratio.time.2.to.1*HIV.MORTALITY.PRIORS$France[1] # 0.002272727
 HIV.MORTALITY.PRIORS$France[3] = 0.003947368 # ratio.time.3.to.1*HIV.MORTALITY.PRIORS$France[1] # 0.003947368
+
+HIV.MORTALITY.PRIORS$Cambodia[1] = ratio.time.1.to.2*HIV.MORTALITY.PRIORS$Cambodia[2] # 0.03415152
 
 
 

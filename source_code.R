@@ -10,7 +10,8 @@ source('model/diffeq.R')
 source('model/age_mappings.R') 
 NO.INTERVENTION = c()
 
-load('cached/data.manager_global_2025-06-23.Rdata') # added Thailand to be individually modeled, removed it from remainder (also removed France)
+load('cached/data.manager_global_2025-07-08.Rdata') # added Cambodia to be individually modeled, removed it from remainder
+#load('cached/data.manager_global_2025-06-23.Rdata') # added Thailand to be individually modeled, removed it from remainder (also removed France)
 
 ## TOOK OUT SUPPRESSED DATA CONVERSION FOR THE SAKE OF FRANCE STARTING VALUES ## 
 #load('cached/data.manager_global_2025-06-13.Rdata') # added France back (but did NOT REMOVE it from remainder yet; did that 6/23)

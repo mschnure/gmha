@@ -11,10 +11,10 @@ EXTRACT.SUPPRESSED.VALUES = F
 ## all countries other than these individual countries will be modeled as the remainder
 ## if you want to change this, need to edit data_manager/remainder_countries.R" file 
 INDIVIDUAL.COUNTRIES = c("South Africa","Mozambique","Nigeria","Tanzania","Uganda","Kenya",
-                         "Zambia","Zimbabwe","Malawi","France","Thailand") # removed Brazil, Cambodia, Chile, Netherlands
+                         "Zambia","Zimbabwe","Malawi","France","Thailand","Cambodia") # removed Brazil, Chile, Netherlands
                                                                 
 COUNTRIES.TO.PULL.PDFS = c("South Africa","Mozambique","Nigeria","Tanzania","Uganda","Kenya",
-                           "Zambia","Zimbabwe","Malawi","France","Thailand",
+                           "Zambia","Zimbabwe","Malawi","France","Thailand", "Cambodia",
                            "UNAIDS remainder","Non UNAIDS remainder")
 # remainder countries both have NAs for PDFs for now 
 

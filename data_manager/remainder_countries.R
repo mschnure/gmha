@@ -2,7 +2,7 @@ load("data_manager/locations_income.Rdata")
 load("data_manager/remainder_countries.Rdata") # if doing for the first time, run lines 1==2 below 
 
 INDIVIDUAL.COUNTRIES = c("South Africa","Mozambique","Nigeria","Tanzania","Uganda","Kenya",
-                            "Zambia","Zimbabwe","Malawi","France","Thailand",
+                            "Zambia","Zimbabwe","Malawi","France","Thailand", "Cambodia",
                          "r1.low","r1.lower.middle","r1.upper.middle","r1.high","Global")
 
 # need an old version of the DATA.MANAGER loaded to do this 
@@ -14,7 +14,7 @@ if(1==2){
 }
 
 INDIVIDUAL.COUNTRIES.no.rem = INDIVIDUAL.COUNTRIES[-c((length(INDIVIDUAL.COUNTRIES)-4):length(INDIVIDUAL.COUNTRIES))] # except last 5 (r1's and global)
-indiv.prev = apply(DATA.MANAGER$prevalence$year.location[,INDIVIDUAL.COUNTRIES.no.rem],1,sum)
+indiv.prev = apply(DATA.MANAGER$prevalence$year.location[,INDIVIDUAL.COUNTRIES.no.rem],1,sum,na.rm=T)
 unaids.prev = apply(DATA.MANAGER$prevalence$year.location[,REMAINDER.COUNTRIES.UNAIDS],1,sum,na.rm=T)
 global.prev = DATA.MANAGER$prevalence$year
 non.unaids.prev = global.prev - (indiv.prev + unaids.prev)
