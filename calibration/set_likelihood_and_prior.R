@@ -12,6 +12,7 @@ source('calibration/prior_distributions/nigeria_prior.R')
 source('calibration/prior_distributions/unaids_remainder_prior.R')
 source('calibration/prior_distributions/non_unaids_remainder_prior.R')
 source('calibration/prior_distributions/thailand_prior.R')
+source('calibration/prior_distributions/cambodia_prior.R')
 
 set.likelihood.and.prior.by.location = function(location){
     likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = location),
@@ -47,6 +48,8 @@ set.likelihood.and.prior.by.location = function(location){
         prior = NIGERIA.PRIOR
     } else if(location=="Thailand"){
         prior = THAILAND.PRIOR
+    } else if(location=="Cambodia"){
+        prior = CAMBODIA.PRIOR
     } else if(location=="unaids.remainder"){
         prior = UNAIDS.REMAINDER.PRIOR
     } else if(location=="non.unaids.remainder"){
