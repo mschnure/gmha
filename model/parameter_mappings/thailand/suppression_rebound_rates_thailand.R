@@ -35,6 +35,9 @@ get.unsuppression.rate.thailand = function(){
     
 }
 
+# Oyomopito 2010 (TAHOD, from 2000-2010) 
+# Viral suppression at 12 months 
+
 # 2012: 
 # Crowell et al, 2016: Cohort in the Thai Red Cross AIDS Research Centre in Bangkok
 # Time to suppression from ART initiation 
@@ -49,6 +52,11 @@ get.unsuppression.rate.thailand = function(){
 # % virally suppressed at 12 months 
 get.suppression.rate.thailand = function(){
     max.proportion = 0.95
+    
+    # Oyomopito 2010 (TAHOD, from 2000-2010) 
+    {
+        annual.proportion.2006 = 0.83 # Viral suppression at 12 months 
+    }
     
     # Crowell et al (2012 estimate)
     {
@@ -87,9 +95,9 @@ get.suppression.rate.thailand = function(){
     }
     
     # this will create a NEGATIVE slope unless I anchor at 0 in 1990 (98% -> 99% -> 75%)
-    data = c(0,annual.proportion.2012,annual.proportion.2013,annual.proportion.2016)
+    data = c(0,annual.proportion.2006,annual.proportion.2012,annual.proportion.2013,annual.proportion.2016)
     
-    dim.names.data = list(year = c(1990,2012,2013,2016),
+    dim.names.data = list(year = c(1990,2006,2012,2013,2016),
                           age = c("10-19","20-29","30-39","40-49","50 and over"),
                           sex = c("male","female"))
     

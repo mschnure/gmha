@@ -14,7 +14,7 @@ get.disengagement.model.thailand = function(){
 
 }
 
-
+# NOT USING THIS ONE - SWITCHED TO ASIA-SPECIFIC ONE FROM TAHOD (in Cambodia file)
 # Eamsakulrat et al, 2022 (data are from 2016)
 # Compared early vs late ART initiation groups (<= or > 2 weeks)
 # Median time from HIV diagnosis to ART initiation  
