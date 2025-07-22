@@ -11,6 +11,7 @@ source("model/parameter_mappings/non_unaids_remainder/testing_projection_india.R
 source("model/parameter_mappings/unaids_remainder/testing_projection_unaids.R")
 source("model/parameter_mappings/france/testing_projection_france.R")
 source("model/parameter_mappings/thailand/testing_projection_thailand.R")
+source("model/parameter_mappings/cambodia/testing_projection_cambodia.R")
 
 get.testing.model = function(location){
     if(location=="Kenya"){
@@ -39,6 +40,8 @@ get.testing.model = function(location){
         rv = get.testing.model.france()
     } else if(location=="Thailand"){
         rv = get.testing.model.thailand()
+    } else if(location=="Cambodia"){
+        rv = get.testing.model.cambodia()
     } else {
         rv = get.testing.model.kenya() # using kenya model for all other countries for now 
         #print("Using Kenya's testing model")

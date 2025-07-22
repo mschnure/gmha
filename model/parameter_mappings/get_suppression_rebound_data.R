@@ -3,6 +3,7 @@ source("model/parameter_mappings/south_africa/suppression_rebound_rates_south_af
 source("model/parameter_mappings/non_unaids_remainder/suppression_rebound_rates_non_unaids_remainder.R")
 source("model/parameter_mappings/france/suppression_rebound_rates_france.R")
 source("model/parameter_mappings/thailand/suppression_rebound_rates_thailand.R")
+source("model/parameter_mappings/cambodia/suppression_rebound_rates_cambodia.R")
 
 # estimates here are proportions (data are reported as probabilities of suppressing within a year)
 # converted to a rate in the map.model.parameters code 
@@ -16,6 +17,8 @@ get.suppression.rates = function(location){
         rv = get.suppression.rate.france() 
     } else if(location=="Thailand"){
         rv = get.suppression.rate.thailand() 
+    } else if(location=="Cambodia"){
+        rv = get.suppression.rate.thailand() # using Thailand model for Cambodia as well 
     } else{
         rv = get.suppression.rate.kenya() # use KENYA'S suppression data for all other countries (Moz, France)
     }
@@ -34,6 +37,8 @@ get.unsuppression.rates = function(location){
         get.unsuppression.rate.france() 
     } else if(location=="Thailand"){
         get.unsuppression.rate.thailand() 
+    } else if(location=="Cambodia"){
+        get.unsuppression.rate.cambodia() 
     } else {
         rv = get.unsuppression.rate.kenya() # use KENYA'S unsuppression data for all other countries 
     }

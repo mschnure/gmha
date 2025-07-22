@@ -217,6 +217,16 @@ get.default.parameters = function(location){
         rv["suppressed.disengagement.rates"] = 0.1731636 
         rv["unsuppression.rates"] = 0.0311 
         rv["birth.transmission.risk.0"]=0.242
+    } else if(location=="Cambodia"){
+        rv["trate.0"] = 0.47
+        rv["trate.1"] = 0.06
+        rv["trate.2"] = 0.06
+        rv["trate.3"] = 0.06
+        rv["trate.4"] = 0.06
+        rv["unsuppressed.disengagement.rates"] = 0.0618754 
+        rv["suppressed.disengagement.rates"] = 0.0618754 
+        rv["unsuppression.rates"] = 0.0618754 
+        rv["birth.transmission.risk.0"]=0.305
     }  else { # if (location=="Kenya")
         rv["hiv.specific.mortality.rates.0"]=0.04057971 # Kenya
         rv["hiv.specific.mortality.rates.1"]=0.08125 # Kenya 
