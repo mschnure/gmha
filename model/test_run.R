@@ -1,71 +1,69 @@
 source('model/run_systematic.R')
 
-variable.parameters.thailand = get.default.parameters(location = "Thailand")
+variable.parameters.cambodia = get.default.parameters(location = "Cambodia")
+sim.cambodia = run.model.for.parameters(location="Cambodia",variable.parameters = variable.parameters.cambodia)
 
-sim.thailand = run.model.for.parameters(location="Thailand",variable.parameters = variable.parameters.thailand)
-
-
-simplot(sim.thailand,
+simplot(sim.cambodia,
         years=c(1970:2030),
         data.types = c("incidence","prevalence"))
 
-simplot(sim.thailand,
+simplot(sim.cambodia,
         years=c(1980:2020),
         data.types = c("incidence"),
         facet.by = 'age')
 
-simplot(sim.thailand,
+simplot(sim.cambodia,
         years=c(1980:2020),
         data.types = c("prevalence"),
         facet.by = 'age')
 
-simplot(sim.thailand,
+simplot(sim.cambodia,
         years=c(1970:2020),
         data.types = "population")
  
-simplot(sim.thailand,
+simplot(sim.cambodia,
         years=c(1970:2020),
         #sexes = "male",
         data.types = "population", facet.by = 'age')
 
-simplot(sim.thailand,
+simplot(sim.cambodia,
         years=c(1970:2020),
         data.types = "total.mortality", facet.by = 'age')
 
-simplot(sim.thailand, 
+simplot(sim.cambodia, 
         years=1980:2030, 
         data.types='hiv.mortality')
 
-simplot(sim.thailand, 
+simplot(sim.cambodia, 
         years=1980:2030, 
         facet.by=c('age'), 
         #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='hiv.mortality')
 
-simplot(sim.thailand,
+simplot(sim.cambodia,
         years=1980:2030, 
         data.types=c('awareness',"engagement","suppression"), 
         proportion=T)
 
-simplot(sim.thailand,
+simplot(sim.cambodia,
         years=1980:2030, 
         data.types=c('awareness',"engagement","suppression"), 
         facet.by=c('age','sex'), 
         proportion=T)
 
-simplot(sim.france, 
+simplot(sim.cambodia, 
         years=1980:2030, 
         facet.by=c('age',"sex"), 
         ages = "15+", 
         data.types='incidence')
 
-simplot(sim.france, 
+simplot(sim.cambodia, 
         years=1980:2030, 
         facet.by=c('age',"sex"), 
         ages = "15+", 
         data.types='prevalence')
 
-simplot(sim.france, 
+simplot(sim.cambodia, 
         years=1980:2030, 
         facet.by=c('age',"sex"), 
         ages = "15+", 
