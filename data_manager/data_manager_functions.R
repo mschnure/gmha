@@ -810,7 +810,7 @@ read.cascade.data.files = function(dir = 'data_manager/data',
 ##-- SPECIALTY FUNCTIONS --##
 ##-------------------------##
 # Called for sex-specific incidence/prevalence/hiv mortality data in read.surveillance.data.stratified
-read.pdf.data = function(dir = 'data_manager/data/pdfs',
+read.pdf.data = function(dir = 'data_manager',
                          data.type,
                          suffix){
     
