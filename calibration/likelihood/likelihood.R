@@ -96,7 +96,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                     weight=total.weight*incidence.weight,
                                                     obs.correlation=incidence.obs.correlation,
                                                     correlation.structure=incidence.correlation.structure #,
-                                                    # use.total=T,
+                                                    # use.total=T, # defaults for all of these are TRUE
                                                     # use.sex=F,
                                                     # use.age=F,
                                                     # use.age.sex=F
@@ -112,7 +112,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                      weight=total.weight*prevalence.weight,
                                                      obs.correlation=prevalence.obs.correlation,
                                                      correlation.structure=prevalence.correlation.structure #,
-                                                     # use.total=T,
+                                                     # use.total=T, # defaults for all of these are TRUE
                                                      # use.sex=F,
                                                      # use.age=F,
                                                      # use.age.sex=F
