@@ -48,8 +48,12 @@ set.likelihood.and.prior.by.location = function(location){
         prior = NIGERIA.PRIOR
     } else if(location=="Thailand"){
         prior = THAILAND.PRIOR
+        load("calibration/starting_values/2025_07_25_thailand_start_values.Rdata")
+        params.start.values = params.start.values
     } else if(location=="Cambodia"){
         prior = CAMBODIA.PRIOR
+        load("calibration/starting_values/2025_07_25_cambodia_start_values.Rdata")
+        params.start.values = params.start.values
     } else if(location=="unaids.remainder"){
         prior = UNAIDS.REMAINDER.PRIOR
     } else if(location=="non.unaids.remainder"){
