@@ -208,7 +208,7 @@ get.default.parameters = function(location){
         rv["trate.3"] = 0.1
         rv["trate.4"] = 0.1
     } else if(location=="Thailand"){
-        rv["trate.0"] = 0.47
+        rv["trate.0"] = 0.65
         rv["trate.1"] = 0.045
         rv["trate.2"] = 0.035
         rv["trate.3"] = 0.03
@@ -218,7 +218,7 @@ get.default.parameters = function(location){
         rv["unsuppression.rates"] = 0.0311 
         rv["birth.transmission.risk.0"]=0.242
     } else if(location=="Cambodia"){
-        rv["trate.0"] = 0.65
+        rv["trate.0"] = 0.47
         rv["trate.1"] = 0.06
         rv["trate.2"] = 0.06
         rv["trate.3"] = 0.06
