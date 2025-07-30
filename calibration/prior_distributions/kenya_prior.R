@@ -3,10 +3,10 @@ source('calibration/make_joint_distribution.R')
 KENYA.PRIOR = join.distributions(
     
     # general 
-    trate.0 = Lognormal.Distribution(log(.8), log(4)/2),
-    trate.1 = Lognormal.Distribution(log(.1), log(4)/2), 
-    trate.2 = Lognormal.Distribution(log(.1), log(4)/2), 
-    trate.3 = Lognormal.Distribution(log(.1), log(4)/2), 
+    trate.0 = Lognormal.Distribution(log(.7), log(4)/2),
+    trate.1 = Lognormal.Distribution(log(.06), log(4)/2), 
+    trate.2 = Lognormal.Distribution(log(.08), log(4)/2), 
+    trate.3 = Lognormal.Distribution(log(.08), log(4)/2), 
     trate.4 = Lognormal.Distribution(log(.1), log(4)/2), 
     
     # COUNTRY-SPECIFIC; MUST EDIT:

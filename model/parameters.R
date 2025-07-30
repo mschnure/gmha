@@ -75,10 +75,10 @@ get.default.parameters = function(location){
         time.3=2018, # 6/12 added this to sampled parameters
         time.3.5=2030,
         time.4=2040,
-        trate.0=0.8, # kenya prior; others set below 
-        trate.1=0.1, # kenya prior
-        trate.2=0.1, # kenya prior 
-        trate.3=0.1, # kenya prior
+        trate.0=0.7, # kenya prior; others set below 
+        trate.1=0.06, # kenya prior
+        trate.2=0.08, # kenya prior 
+        trate.3=0.08, # kenya prior
         trate.4=0.1, # kenya prior
         proportion.trate.change.by.3.5=0.75,
         # sex transmission multipliers
@@ -208,17 +208,17 @@ get.default.parameters = function(location){
         rv["trate.3"] = 0.1
         rv["trate.4"] = 0.1
     } else if(location=="Thailand"){
-        rv["trate.0"] = 0.65
-        rv["trate.1"] = 0.06
-        rv["trate.2"] = 0.06
-        rv["trate.3"] = 0.06
+        rv["trate.0"] = 0.47
+        rv["trate.1"] = 0.045
+        rv["trate.2"] = 0.035
+        rv["trate.3"] = 0.03
         rv["trate.4"] = 0.06
         rv["unsuppressed.disengagement.rates"] = 0.1731636
         rv["suppressed.disengagement.rates"] = 0.1731636 
         rv["unsuppression.rates"] = 0.0311 
         rv["birth.transmission.risk.0"]=0.242
     } else if(location=="Cambodia"){
-        rv["trate.0"] = 0.47
+        rv["trate.0"] = 0.65
         rv["trate.1"] = 0.06
         rv["trate.2"] = 0.06
         rv["trate.3"] = 0.06

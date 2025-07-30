@@ -4,9 +4,9 @@ THAILAND.PRIOR = join.distributions(
     
     # general 
     trate.0 = Lognormal.Distribution(log(.65), log(4)/2),
-    trate.1 = Lognormal.Distribution(log(.06), log(4)/2), 
-    trate.2 = Lognormal.Distribution(log(.06), log(4)/2), 
-    trate.3 = Lognormal.Distribution(log(.06), log(4)/2), 
+    trate.1 = Lognormal.Distribution(log(.045), log(4)/2), 
+    trate.2 = Lognormal.Distribution(log(.035), log(4)/2), 
+    trate.3 = Lognormal.Distribution(log(.03), log(4)/2), 
     trate.4 = Lognormal.Distribution(log(.06), log(4)/2), 
     
     # time.0=Normal.Distribution(1990, 1.5,lower = 1987, upper = 1993), # 1987-1993; so that it doesn't overlap
