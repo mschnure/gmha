@@ -54,7 +54,7 @@ set.likelihood.and.prior.by.location = function(location){
         params.start.values = params.start.values
     } else if(location=="Malawi"){
         prior = MALAWI.PRIOR
-        load("calibration/starting_values/2025_08_04_malawi_start_values.Rdata")
+        load("calibration/starting_values/2025_08_05_malawi_start_values.Rdata")
         params.start.values = params.start.values
     } else if(location=="Nigeria"){
         prior = NIGERIA.PRIOR
