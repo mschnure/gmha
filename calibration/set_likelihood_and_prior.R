@@ -10,7 +10,6 @@ source('calibration/prior_distributions/zimbabwe_prior.R')
 source('calibration/prior_distributions/malawi_prior.R')
 source('calibration/prior_distributions/nigeria_prior.R')
 source('calibration/prior_distributions/unaids_remainder_prior.R')
-source('calibration/prior_distributions/r1_high_prior.R')
 source('calibration/prior_distributions/non_unaids_remainder_prior.R')
 source('calibration/prior_distributions/thailand_prior.R')
 source('calibration/prior_distributions/cambodia_prior.R')
@@ -74,13 +73,10 @@ set.likelihood.and.prior.by.location = function(location){
     } else if(location=="non.unaids.remainder"){
         prior = NON.UNAIDS.REMAINDER.PRIOR
     } else if(location %in% c("r1.low","r1.lower.middle",
-                                  "r1.upper.middle")){
+                                  "r1.upper.middle","r1.high")){
         prior = UNAIDS.REMAINDER.PRIOR
-        print("using UNAIDS remainder prior for all r1 models (except r1 high")
-    }  else if(location=="r1.high"){
-        prior = R1.HIGH.PRIOR
-        print("using most of UNAIDS remainder prior for r1 high, except diff trates")
-    }else stop("Only set up for Kenya, South Africa, France, Mozambique, Tanzania, 
+        print("using UNAIDS remainder prior for all r1 models")
+    } else stop("Only set up for Kenya, South Africa, France, Mozambique, Tanzania, 
              Uganda, Zambia, Zimbabwe, Malawi, Nigeria, Thailand, Cambodia, and remainder models for now")
     
     params.start.values = params.start.values[prior@var.names]

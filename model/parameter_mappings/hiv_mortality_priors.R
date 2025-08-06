@@ -1,7 +1,9 @@
 LOCATIONS = c("Kenya","South Africa","France","Mozambique","Tanzania",
               "Uganda","Zambia","Zimbabwe","Malawi","Nigeria","Thailand",
               "Cambodia",
-              "unaids.remainder","non.unaids.remainder","Global")
+              "unaids.remainder","non.unaids.remainder",
+              "r1.low","r1.lower.middle","r1.upper.middle","r1.high",
+              "Global")
 
 HIV.MORTALITY.PRIORS = list()
 
@@ -37,8 +39,7 @@ HIV.MORTALITY.PRIORS$France[3] = 0.003947368 # ratio.time.3.to.1*HIV.MORTALITY.P
 
 HIV.MORTALITY.PRIORS$Cambodia[1] = ratio.time.1.to.2*HIV.MORTALITY.PRIORS$Cambodia[2] # 0.03415152
 
-HIV.MORTALITY.PRIORS$r1.low = HIV.MORTALITY.PRIORS$r1.lower.middle = HIV.MORTALITY.PRIORS$r1.upper.middle = HIV.MORTALITY.PRIORS$r1.high = 
-    HIV.MORTALITY.PRIORS$unaids.remainder
+HIV.MORTALITY.PRIORS$r1.high[3] = HIV.MORTALITY.PRIORS$r1.high[2]
 
 rm(LOCATION)
 
