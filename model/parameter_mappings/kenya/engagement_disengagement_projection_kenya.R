@@ -156,7 +156,7 @@ get.engagement.model.kenya.old.2 = function(){
     
 }
 
-
+# this one has different slopes for 2016 and 2017 
 get.engagement.model.kenya.old = function(){
     # To get engagement proportion, take (# start art)/(# off art)
     # But first, start with annual difference (will help solve for # start art below)

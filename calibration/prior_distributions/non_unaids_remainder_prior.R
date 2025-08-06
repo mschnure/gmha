@@ -3,16 +3,16 @@ source('calibration/make_joint_distribution.R')
 NON.UNAIDS.REMAINDER.PRIOR = join.distributions(
     
     # general 
-    trate.0 = Lognormal.Distribution(log(.41), log(8)/2),
-    trate.1 = Lognormal.Distribution(log(.45), log(8)/2),
-    trate.2 = Lognormal.Distribution(log(.15), log(8)/2),
-    trate.3 = Lognormal.Distribution(log(.12), log(8)/2),
-    trate.4 = Lognormal.Distribution(log(.12), log(8)/2),
+    trate.0 = Lognormal.Distribution(log(.77), log(8)/2), # .41
+    trate.1 = Lognormal.Distribution(log(.1), log(8)/2), # .45
+    trate.2 = Lognormal.Distribution(log(.1), log(8)/2), # .15
+    trate.3 = Lognormal.Distribution(log(.1), log(8)/2), # .12
+    trate.4 = Lognormal.Distribution(log(.1), log(8)/2), # .12
     
-    time.0=Normal.Distribution(1990, 1.5,lower = 1987, upper = 1993), # 1987-1993; so that it doesn't overlap 
-    time.1=Normal.Distribution(1997, 2,lower = 1993, upper = 2001), # 1993-2001
-    time.2=Normal.Distribution(2008, 2,lower = 2004, upper = 2012), # 2004-2012
-    time.3=Normal.Distribution(2018, 2,lower = 2014, upper = 2022), # 2014-2022
+    # time.0=Normal.Distribution(1990, 1.5,lower = 1987, upper = 1993), # 1987-1993; so that it doesn't overlap 
+    # time.1=Normal.Distribution(1997, 2,lower = 1993, upper = 2001), # 1993-2001
+    # time.2=Normal.Distribution(2008, 2,lower = 2004, upper = 2012), # 2004-2012
+    # time.3=Normal.Distribution(2018, 2,lower = 2014, upper = 2022), # 2014-2022
     
     # COUNTRY-SPECIFIC; MUST EDIT:
     unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.334341), log(4)/2),
@@ -21,7 +21,7 @@ NON.UNAIDS.REMAINDER.PRIOR = join.distributions(
     hiv.specific.mortality.rates.0 = Lognormal.Distribution(log(0.03491500), log(4)/2), # see hiv.mortality.priors.R
     hiv.specific.mortality.rates.1 = Lognormal.Distribution(log(0.06964286), log(4)/2),
     hiv.specific.mortality.rates.2 = Lognormal.Distribution(log(0.01947934), log(4)/2),
-    birth.transmission.risk.0 = Logitnormal.Distribution(logit(0.42), log(3)/2), 
+    birth.transmission.risk.0 = Logitnormal.Distribution(logit(0.249), log(3)/2),  # NYC estimate from Dabis
     birth.transmission.risk.1 = Logitnormal.Distribution(logit(0.3), log(3)/2), 
     # see Kenya prior for notes on a Logitnormal distribution 
     

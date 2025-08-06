@@ -3,20 +3,20 @@ source('calibration/make_joint_distribution.R')
 UNAIDS.REMAINDER.PRIOR = join.distributions(
     
     # general 
-    trate.0 = Lognormal.Distribution(log(.8), log(4)/2),
+    trate.0 = Lognormal.Distribution(log(.77), log(4)/2),
     trate.1 = Lognormal.Distribution(log(.1), log(4)/2), 
     trate.2 = Lognormal.Distribution(log(.1), log(4)/2), 
     trate.3 = Lognormal.Distribution(log(.1), log(4)/2), 
     trate.4 = Lognormal.Distribution(log(.1), log(4)/2), 
     
     # COUNTRY-SPECIFIC; MUST EDIT:
-    unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.1392621), log(4)/2), # Kenya's value 
-    suppressed.disengagement.rates = Lognormal.Distribution(log(0.1025866), log(4)/2), # Kenya's value 
-    unsuppression.rates = Lognormal.Distribution(log(0.2196), log(4)/2), # Kenya's value 
+    unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.1392621), log(4)/2), # Kenya's value, I'm going to keep this
+    suppressed.disengagement.rates = Lognormal.Distribution(log(0.1025866), log(4)/2), # Kenya's value, I'm going to keep this 
+    unsuppression.rates = Lognormal.Distribution(log(0.2196), log(4)/2), # Kenya's value, I'm going to keep this 
     hiv.specific.mortality.rates.0 = Lognormal.Distribution(log(0.04356692), log(4)/2), # see hiv.mortality.priors.R
     hiv.specific.mortality.rates.1 = Lognormal.Distribution(log(0.06430906), log(4)/2),
     hiv.specific.mortality.rates.2 = Lognormal.Distribution(log(0.02476726), log(4)/2),
-    birth.transmission.risk.0 = Logitnormal.Distribution(logit(0.42), log(3)/2), 
+    birth.transmission.risk.0 = Logitnormal.Distribution(logit(0.247), log(3)/2), # Cote d'Ivoire estimate from Dabis
     birth.transmission.risk.1 = Logitnormal.Distribution(logit(0.3), log(3)/2), 
     # see Kenya prior for notes on a Logitnormal distribution 
     

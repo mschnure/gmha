@@ -5,6 +5,7 @@ source("model/parameter_mappings/uganda/engagement_disengagement_projection_ugan
 source("model/parameter_mappings/zimbabwe/engagement_disengagement_projection_zimbabwe.R")
 source("model/parameter_mappings/nigeria/engagement_disengagement_projection_nigeria.R")
 source("model/parameter_mappings/non_unaids_remainder/engagement_disengagement_projection_non_unaids_remainder.R")
+source("model/parameter_mappings/unaids_remainder/engagement_disengagement_projection_unaids_remainder.R")
 source("model/parameter_mappings/france/engagement_disengagement_projection_france.R")
 source("model/parameter_mappings/thailand/engagement_disengagement_projection_thailand.R")
 source("model/parameter_mappings/cambodia/engagement_disengagement_projection_cambodia.R")
@@ -25,6 +26,8 @@ get.engagement.model = function(location){
         rv = get.engagement.model.nigeria()
     } else if(location=="non.unaids.remainder"){
         rv = get.engagement.model.india()
+    } else if(location=="unaids.remainder"){
+        rv = get.engagement.model.unaids() #get.engagement.model.unaids() or get.engagement.model.unaids.multi.slope()
     } else if(location=="France"){
         rv = get.engagement.model.france()
     } else if(location=="Thailand"){

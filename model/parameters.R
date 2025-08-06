@@ -188,9 +188,22 @@ get.default.parameters = function(location){
         rv["suppressed.disengagement.rates"] = 0.1554849 # see disengagement models
         rv["unsuppression.rates"] = 0.07548439 
     }  else if(location=="non.unaids.remainder"){
+        rv["trate.0"] = 0.77
+        rv["trate.1"] = 0.1
+        rv["trate.2"] = 0.1
+        rv["trate.3"] = 0.1
+        rv["trate.4"] = 0.1
         rv["unsuppressed.disengagement.rates"]= 0.334341 
         rv["suppressed.disengagement.rates"] = 0.334341 
         rv["unsuppression.rates"] = 0.06238609   
+        rv["birth.transmission.risk.0"]=0.249
+    }  else if(location=="unaids.remainder"){
+        rv["trate.0"] = 0.77
+        rv["trate.1"] = 0.1
+        rv["trate.2"] = 0.1
+        rv["trate.3"] = 0.1
+        rv["trate.4"] = 0.1
+        rv["birth.transmission.risk.0"]=0.247
     } else if(location=="France"){
         rv["trate.0"] = 0.5
         rv["trate.1"] = 0.12# 0.1, 1997
@@ -814,24 +827,24 @@ map.model.parameters <- function(parameters,
     engagement.model = get.engagement.model(location = location)
     engagement.times = c(1975:min(project.to.year,sampled.parameters["cascade.improvement.end.year"], na.rm = T))
     
-    # if(location=="Kenya"){
-    #     engagement.rates = c(lapply(engagement.times, function(year){
-    #         projected.log.odds = engagement.model$intercept+
-    #             (engagement.model$slope+sampled.parameters['log.OR.engagement.slope'])*(year-engagement.model$anchor.year)
-    #         
-    #         projected.p = 1/(1+exp(-projected.log.odds)) 
-    #         projected.p = projected.p*engagement.model$max.proportion 
-    #         projected.rate = -log(1-projected.p)
-    #         
-    #         projected.rate.age.sex = array(projected.rate,
-    #                                        dim=sapply(trans.dim.names, length),
-    #                                        dimnames=trans.dim.names)
-    #         projected.rate.age.sex[,"male",] = projected.rate.age.sex[,"male",]*sampled.parameters["male.engagement.multiplier"]
-    #         
-    #         projected.rate.age.sex
-    #         
-    #     }))
-    # } else { 
+    if(location=="unaids.remainder"){
+        engagement.rates = c(lapply(engagement.times, function(year){
+            projected.log.odds = engagement.model$intercept+
+                (engagement.model$slope+sampled.parameters['log.OR.engagement.slope'])*(year-engagement.model$anchor.year)
+
+            projected.p = 1/(1+exp(-projected.log.odds))
+            projected.p = projected.p*engagement.model$max.proportion
+            projected.rate = -log(1-projected.p)
+
+            projected.rate.age.sex = array(projected.rate,
+                                           dim=sapply(trans.dim.names, length),
+                                           dimnames=trans.dim.names)
+            projected.rate.age.sex[,"male",] = projected.rate.age.sex[,"male",]*sampled.parameters["male.engagement.multiplier"]
+
+            projected.rate.age.sex
+
+        }))
+    } else {
     
     # using IeDEA dashboard method for all countries 
     engagement.rates = c(lapply(engagement.times, function(year){
@@ -861,7 +874,7 @@ map.model.parameters <- function(parameters,
         projected.rate
         
     }))
-    
+    }
     parameters = set.rates.for.interventions(baseline.rates = engagement.rates, # list 
                                              baseline.times = engagement.times, # vector
                                              interventions = interventions,
