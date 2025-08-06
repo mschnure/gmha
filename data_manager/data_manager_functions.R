@@ -577,11 +577,13 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
                                               location=c(location.names,"unaids.remainder","non.unaids.remainder",
                                                          "r1.low","r1.lower.middle","r1.upper.middle","r1.high")
     )
-    
+
     locations = array(c(locations,unaids.remainder.countries,non.unaids.remainder,
                         low.income,lower.middle.income,upper.middle.income,high.income),
                       dim = sapply(dim.names.locations.with.remainder,length),
                       dimnames = dim.names.locations.with.remainder)
+    
+    locations[locations==0]=NA # r1.high will return 0 values for hiv.mortality in modern era; need this to be NA instead 
     
     if(include.countries==T)
         return(locations)

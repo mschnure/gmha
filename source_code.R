@@ -10,7 +10,8 @@ source('model/diffeq.R')
 source('model/age_mappings.R') 
 NO.INTERVENTION = c()
 
-load('cached/data.manager_global_2025-07-25.Rdata') # fixed pdfs data issue
+load('cached/data.manager_global_2025-08-06.Rdata') # removed 0's from HIV mortality for r1.high
+#load('cached/data.manager_global_2025-07-25.Rdata') # fixed pdfs data issue
 #load('cached/data.manager_global_2025-07-08.Rdata') # added Cambodia to be individually modeled, removed it from remainder
 #load('cached/data.manager_global_2025-06-23.Rdata') # added Thailand to be individually modeled, removed it from remainder (also removed France)
 
