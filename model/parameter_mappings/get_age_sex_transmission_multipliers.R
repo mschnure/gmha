@@ -150,7 +150,7 @@ get.all.age.sex.transmission.multipliers = function(location){
         rv$FEMALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.india(sex="female",year=2019) 
         rv$MALE.AGE.MULTIPLIERS.2014 = get.all.transmission.multipliers.india(sex="male",year=2019)
         
-    } else if(location=="unaids.remainder"){
+    } else if(location %in% c("unaids.remainder","r1.low","r1.lower.middle","r1.upper.middle","r1.high")){
         rv$FEMALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.unaids(sex="female",year=2003) 
         rv$MALE.AGE.MULTIPLIERS.2003 = get.all.transmission.multipliers.unaids(sex="male",year=2003)
         

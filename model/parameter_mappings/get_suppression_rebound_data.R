@@ -13,7 +13,7 @@ get.suppression.rates = function(location){
         rv = get.suppression.rate.south.africa() # using SA suppression data for these
     } else if(location=="non.unaids.remainder"){
         rv = get.suppression.rate.india() # using India for non.unaids.remainder
-    } else if(location=="unaids.remainder"){
+    } else if(location %in% c("unaids.remainder","r1.low","r1.lower.middle","r1.upper.middle","r1.high")){
         rv = get.suppression.rate.south.africa() # using South Africa for unaids.remainder
     } else if(location=="France"){
         rv = get.suppression.rate.france() 

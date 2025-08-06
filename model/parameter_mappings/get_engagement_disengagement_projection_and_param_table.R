@@ -26,7 +26,7 @@ get.engagement.model = function(location){
         rv = get.engagement.model.nigeria()
     } else if(location=="non.unaids.remainder"){
         rv = get.engagement.model.india()
-    } else if(location=="unaids.remainder"){
+    } else if(location %in% c("unaids.remainder","r1.low","r1.lower.middle","r1.upper.middle","r1.high")){
         rv = get.engagement.model.unaids() #get.engagement.model.unaids() or get.engagement.model.unaids.multi.slope()
     } else if(location=="France"){
         rv = get.engagement.model.france()

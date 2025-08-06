@@ -34,7 +34,7 @@ get.testing.model = function(location){
         rv = get.testing.model.nigeria() 
     } else if(location=="non.unaids.remainder"){
         rv = get.testing.model.india() # using India for non-UNAIDS remainder 
-    } else if(location=="unaids.remainder"){
+    } else if(location %in% c("unaids.remainder","r1.low","r1.lower.middle","r1.upper.middle","r1.high")){
         rv = get.testing.model.unaids() 
     } else if(location=="France"){
         rv = get.testing.model.france()

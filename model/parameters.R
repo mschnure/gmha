@@ -197,7 +197,7 @@ get.default.parameters = function(location){
         rv["suppressed.disengagement.rates"] = 0.334341 
         rv["unsuppression.rates"] = 0.06238609   
         rv["birth.transmission.risk.0"]=0.249
-    }  else if(location=="unaids.remainder"){
+    }  else if(location %in% c("unaids.remainder","r1.low","r1.lower.middle","r1.upper.middle","r1.high")){
         rv["trate.0"] = 0.77
         rv["trate.1"] = 0.1
         rv["trate.2"] = 0.1
@@ -827,7 +827,7 @@ map.model.parameters <- function(parameters,
     engagement.model = get.engagement.model(location = location)
     engagement.times = c(1975:min(project.to.year,sampled.parameters["cascade.improvement.end.year"], na.rm = T))
     
-    if(location=="unaids.remainder"){
+    if(location %in% c("unaids.remainder","r1.low","r1.lower.middle","r1.upper.middle","r1.high")){
         engagement.rates = c(lapply(engagement.times, function(year){
             projected.log.odds = engagement.model$intercept+
                 (engagement.model$slope+sampled.parameters['log.OR.engagement.slope'])*(year-engagement.model$anchor.year)
