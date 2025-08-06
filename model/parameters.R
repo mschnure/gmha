@@ -197,14 +197,21 @@ get.default.parameters = function(location){
         rv["suppressed.disengagement.rates"] = 0.334341 
         rv["unsuppression.rates"] = 0.06238609   
         rv["birth.transmission.risk.0"]=0.249
-    }  else if(location %in% c("unaids.remainder","r1.low","r1.lower.middle","r1.upper.middle","r1.high")){
+    }  else if(location %in% c("unaids.remainder","r1.low","r1.lower.middle","r1.upper.middle")){
         rv["trate.0"] = 0.77
         rv["trate.1"] = 0.1
         rv["trate.2"] = 0.1
         rv["trate.3"] = 0.1
         rv["trate.4"] = 0.1
         rv["birth.transmission.risk.0"]=0.247
-    } else if(location=="France"){
+    }  else if(location=="r1.high"){
+        rv["trate.0"] = 0.6
+        rv["trate.1"] = 0.1
+        rv["trate.2"] = 0.11
+        rv["trate.3"] = 0.1
+        rv["trate.4"] = 0.1
+        rv["birth.transmission.risk.0"]=0.247
+    }else if(location=="France"){
         rv["trate.0"] = 0.5
         rv["trate.1"] = 0.12# 0.1, 1997
         rv["trate.2"] = 0.12 # 0.1, 2008
