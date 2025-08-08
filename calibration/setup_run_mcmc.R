@@ -8,9 +8,12 @@ set.seed(4321)
 
 LOCATION = "Malawi" 
 RESUME.RUNNING = T
+WEIGHTED.PREVALENCE = T # if set to T, will run with 4x prevalence weight 
+N.ITER = 50000
 
 if(!RESUME.RUNNING){
-  LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION)
+    LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION,
+                                                            weighted.prevalence = WEIGHTED.PREVALENCE)
   
   control = create.adaptive.blockwise.metropolis.control(var.names = LOCATION.DETAILS$prior@var.names,
                                                          simulation.function = SIMULATION.FUNCTION,
@@ -27,7 +30,7 @@ if(!RESUME.RUNNING){
   
   # set starting.values 
   mcmc = run.mcmc.with.cache(control = control,
-                             n.iter = 50000,
+                             n.iter = N.ITER,
                              starting.values = LOCATION.DETAILS$params.start.values,
                              update.frequency = 100,
                              cache.frequency = 200,

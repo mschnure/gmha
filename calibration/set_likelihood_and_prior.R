@@ -14,9 +14,17 @@ source('calibration/prior_distributions/non_unaids_remainder_prior.R')
 source('calibration/prior_distributions/thailand_prior.R')
 source('calibration/prior_distributions/cambodia_prior.R')
 
-set.likelihood.and.prior.by.location = function(location){
-    likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = location),
-                                          location=location)
+set.likelihood.and.prior.by.location = function(location,
+                                                weighted.prevalence = F){
+    if(weighted.prevalence){
+        likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = location),
+                                              location=location,
+                                              prevalence.weight = 4)
+    } else {
+        likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = location),
+                                              location=location)
+    }
+
     
     params.start.values = get.default.parameters(location = location)
     
