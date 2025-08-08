@@ -3,42 +3,43 @@ library(distributions)
 library(ggplot2) 
 source("model/run_systematic.R")
 
-set.seed(1212)
-# France 2/21 - 1212
-# SA 2/20 - 1212
-# Kenya 2/21 - 1010 (tried 1212, 1234, 5678, 4321)
+set.seed(4321)
+# All countries, 8/04 - 4321
 
-LOCATION = "France" 
+LOCATION = "Malawi" 
+RESUME.RUNNING = T
 
-LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION)
+if(!RESUME.RUNNING){
+  LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION)
+  
+  control = create.adaptive.blockwise.metropolis.control(var.names = LOCATION.DETAILS$prior@var.names,
+                                                         simulation.function = SIMULATION.FUNCTION,
+                                                         log.prior.distribution = get.density.function(LOCATION.DETAILS$prior,default.log = T),
+                                                         log.likelihood = LOCATION.DETAILS$likelihood.to.run,
+                                                         var.blocks = PARAMETER.VAR.BLOCKS, # set in calibration/prior_distributions/var_blocks.R
+                                                         transformations = LOCATION.DETAILS$transformations,
+                                                         initial.covariance.mat = diag((LOCATION.DETAILS$sds/20)^2), # step size
+                                                         burn = 0,
+                                                         thin = 5)
+  
+  
+  print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION)))
+  
+  # set starting.values 
+  mcmc = run.mcmc.with.cache(control = control,
+                             n.iter = 50000,
+                             starting.values = LOCATION.DETAILS$params.start.values,
+                             update.frequency = 100,
+                             cache.frequency = 200,
+                             cache.dir = file.path("mcmc_cache",convert_string(LOCATION))
+  )  
+}
 
-control = create.adaptive.blockwise.metropolis.control(var.names = LOCATION.DETAILS$prior@var.names,
-                                                       simulation.function = SIMULATION.FUNCTION,
-                                                       log.prior.distribution = get.density.function(LOCATION.DETAILS$prior,default.log = T),
-                                                       log.likelihood = LOCATION.DETAILS$likelihood.to.run,
-                                                       var.blocks = PARAMETER.VAR.BLOCKS, # set in calibration/prior_distributions/var_blocks.R
-                                                       transformations = LOCATION.DETAILS$transformations,
-                                                       initial.covariance.mat = diag((LOCATION.DETAILS$sds/20)^2), # step size
-                                                       burn = 0,
-                                                       thin = 5)
-
-
-print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION)))
-
-# set starting.values 
-mcmc = run.mcmc.with.cache(control = control,
-                           n.iter = 75000,
-                           starting.values = LOCATION.DETAILS$params.start.values,
-                           update.frequency = 100,
-                           cache.frequency = 200,
-                           cache.dir = file.path("mcmc_cache",convert_string(LOCATION))
-)
-
-# mcmc = run.mcmc.from.cache(dir=paste0("mcmc_cache/",convert_string(LOCATION)),
-#                            update.frequency = 100)
-
-
-# run.mcmc.from.cache(dir = "mcmc_cache/")
+if(RESUME.RUNNING){
+  print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION)))
+  mcmc = run.mcmc.from.cache(dir=paste0("mcmc_cache/",convert_string(LOCATION)),
+                             update.frequency = 100)
+}
 
 save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_",Sys.Date(),".Rdata"))
 
