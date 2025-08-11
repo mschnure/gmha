@@ -5,7 +5,7 @@ prior = ZIMBABWE.PRIOR
 
 
 # initial run of 100,000 with 1/8 weight
-load("mcmc_runs/simset_tanzania_2025-07-31.Rdata")
+load("mcmc_runs/simset_zimbabwe_2025-08-02.Rdata")
 
 default.params =  get.default.parameters(location = "Zimbabwe") 
 params.start.values = simset@parameters[simset@n.sim,] 

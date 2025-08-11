@@ -30,11 +30,11 @@ set.likelihood.and.prior.by.location = function(location,
     
     if(location=="Kenya"){
         prior = KENYA.PRIOR
-        load("calibration/starting_values/2025_08_04_kenya_start_values.Rdata")
+        load("calibration/starting_values/2025_08_11_kenya_start_values.Rdata")
         params.start.values = params.start.values
     } else if(location=="South Africa"){
         prior = SOUTH.AFRICA.PRIOR
-        load("calibration/starting_values/2025_08_04_south_africa_start_values.Rdata")
+        load("calibration/starting_values/2025_08_11_south_africa_start_values.Rdata")
         params.start.values = params.start.values
     } else if(location=="France"){
         prior = FRANCE.PRIOR
