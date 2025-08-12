@@ -14,74 +14,76 @@ source("model/run_systematic.R")
 #load('cached/all.results_zambia_2025-03-31.Rdata')
 #load('cached/all.results_zimbabwe_2025-03-31.Rdata')
 #load('cached/all.results_global_2025-04-15.Rdata')
-load('cached/all.results_france_2025-02-27.Rdata')
+load('cached/all.results_kenya_2025-08-12.Rdata')
 simset = simset.list.full$no.int
+
+end.year = simset@simulations[[1]]$years[length(simset@simulations[[1]]$years)]
 
 #load("cached/simset_global_2025-04-15.Rdata")
 
 simplot(simset,
-        years = 1980:2030)
+        years = 1980:end.year)
 
 simplot(simset, 
-        years=1980:2030, 
+        years=1980:end.year, 
         facet.by='age', 
         #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='incidence')
 
 simplot(simset, 
-        years=1980:2030, 
+        years=1980:end.year, 
         facet.by='age', 
         #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='prevalence')
 
 simplot(simset, 
-        years=1980:2030, 
+        years=1980:end.year, 
         facet.by=c('age'), 
         data.types='hiv.mortality')
 
 simplot(simset, 
-        years=1980:2030, 
+        years=1980:end.year, 
         facet.by=c('age',"sex"), 
         ages = "15+", 
         data.types='incidence')
 
 simplot(simset, 
-        years=1980:2030, 
+        years=1980:end.year, 
         facet.by=c('age',"sex"), 
         ages = "15+", 
         data.types='prevalence')
 
 simplot(simset, 
-        years=1980:2030, 
+        years=1980:end.year, 
         facet.by=c('age',"sex"), 
         ages = "15+", 
         data.types='hiv.mortality')
 
 simplot(simset, 
-        years = 1980:2030, 
+        years = 1980:end.year, 
         data.types = "population")
 
 simplot(simset,
-        years = 1980:2030, 
+        years = 1980:end.year, 
         data.types = "population",
         facet.by='age')
 
 simplot(simset,
-        years=1980:2030, 
+        years=1980:end.year, 
         data.types='total.mortality')
 
 simplot(simset,
-        years=1980:2030, 
+        years=1980:end.year, 
         facet.by=c('age'), 
         data.types='total.mortality')
 
 simplot(simset,
-        years=1980:2030, 
+        years=1980:end.year, 
         data.types=c('awareness',"engagement","suppression"), 
         proportion=T)
 
 simplot(simset,
-        years=1980:2030, 
+        years=1980:end.year, 
         data.types=c('awareness',"engagement","suppression"), 
         facet.by=c('age','sex'), 
         proportion=T)
