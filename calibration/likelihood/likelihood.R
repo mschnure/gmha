@@ -28,12 +28,6 @@ WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
 WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE[as.character(1995:2030)]
 WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE/8
 
-
-# WEIGHTS.BY.YEAR = list(WEIGHTS.BY.YEAR)
-# WEIGHTS.BY.YEAR$kenya = WEIGHTS.BY.YEAR
-# WEIGHTS.BY.YEAR$south_africa = WEIGHTS.BY.YEAR
-# WEIGHTS.BY.YEAR$france = WEIGHTS.BY.YEAR.FRANCE
-
 # Calls individual "create.likelihood.for.data.type" functions for each data type
 # Each data type function assembles the likelihood elements once (because it is time consuming - e.g., matrix M), 
 # and then returns a function that computes the likelihood 

@@ -11,12 +11,15 @@ names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
 WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
 WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE[as.character(1995:2030)]
 
-# WEIGHTS.BY.YEAR = list(WEIGHTS.BY.YEAR)
-# WEIGHTS.BY.YEAR$kenya = WEIGHTS.BY.YEAR
-# WEIGHTS.BY.YEAR$south_africa = WEIGHTS.BY.YEAR
-# WEIGHTS.BY.YEAR$france = WEIGHTS.BY.YEAR.FRANCE
+LOCATION = "r1.upper.middle"
+WEIGHTED.PREVALENCE = T # if set to T, will run with 4x prevalence weight 
 
-LOCATION = "r1.high"
+
+if(WEIGHTED.PREVALENCE){
+    PREVALENCE.WEIGHT = 4    
+} else{
+    PREVALENCE.WEIGHT = 1
+}
 
 if(LOCATION=="France"){
     WEIGHTS.BY.YEAR = WEIGHTS.BY.YEAR.FRANCE
@@ -38,7 +41,7 @@ create.individual.likelihood = function(data.type,
                                         incidence.correlation.structure="auto.regressive",
                                         #prevalence
                                         prevalence.years=years,
-                                        prevalence.weight=1, # downweighted due to magnitude; don't want it to outweigh incidence
+                                        prevalence.weight=PREVALENCE.WEIGHT, # downweighted due to magnitude; don't want it to outweigh incidence
                                         prevalence.obs.correlation=0.5,
                                         prevalence.correlation.structure="auto.regressive",
                                         #awareness
