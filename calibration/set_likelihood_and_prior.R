@@ -62,7 +62,7 @@ set.likelihood.and.prior.by.location = function(location,
         params.start.values = params.start.values
     } else if(location=="Malawi"){
         prior = MALAWI.PRIOR
-        load("calibration/starting_values/2025_08_05_malawi_start_values.Rdata")
+        load("calibration/starting_values/2025_08_12_malawi_start_values.Rdata")
         params.start.values = params.start.values
     } else if(location=="Nigeria"){
         prior = NIGERIA.PRIOR
@@ -80,10 +80,17 @@ set.likelihood.and.prior.by.location = function(location,
         prior = UNAIDS.REMAINDER.PRIOR
     } else if(location=="non.unaids.remainder"){
         prior = NON.UNAIDS.REMAINDER.PRIOR
-    } else if(location %in% c("r1.low","r1.lower.middle",
-                                  "r1.upper.middle","r1.high")){
+    } else if(location %in% c("r1.low","r1.high")){
         prior = UNAIDS.REMAINDER.PRIOR
         print("using UNAIDS remainder prior for all r1 models")
+    } else if(location=="r1.lower.middle"){
+        prior = UNAIDS.REMAINDER.PRIOR
+        load("calibration/starting_values/2025_08_12_r1_lower_middle_start_values.Rdata")
+        params.start.values = params.start.values
+    } else if(location=="r1.upper.middle"){
+      prior = UNAIDS.REMAINDER.PRIOR
+      load("calibration/starting_values/2025_08_12_r1_upper_middle_start_values.Rdata")
+      params.start.values = params.start.values
     } else stop("Only set up for Kenya, South Africa, France, Mozambique, Tanzania, 
              Uganda, Zambia, Zimbabwe, Malawi, Nigeria, Thailand, Cambodia, and remainder models for now")
     
