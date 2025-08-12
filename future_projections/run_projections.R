@@ -5,17 +5,17 @@
 source("model/run_systematic.R")
 source("future_projections/extract_projection_results.R")
 
-RUN.INDIV.COUNTRY = F
-LOAD.GLOBAL.SIMSET = T
+RUN.INDIV.COUNTRY = T
+LOAD.GLOBAL.SIMSET = F
 
 # running individual countries through 2040 
 if(RUN.INDIV.COUNTRY){
-  load("mcmc_runs/mcmc_files/mcmc_non.unaids.remainder_2025-04-25.Rdata")
+  load("mcmc_runs/mcmc_files/mcmc_malawi_2025-08-12.Rdata")
   
-  
+  # because running from two previous runs (100k at 1/8 weight; 50k at 4x prevalence weight, don't burn anything 
   simset = suppressWarnings(extract.simset(mcmc,
-                                           additional.burn=7000, # burn half; 7000; 2000 (unaids); 3750 (SA); 5770 (Kenya); 7300 (Tanz)
-                                           additional.thin=40)) # thin to 200; 40; 15 (unaids), 33 (SA); 32 (Kenya); 38 (Tanz)
+                                           additional.burn=1, # 
+                                           additional.thin=50)) # thin by 50 to to 200
   
   RUN.SIMULATIONS.TO.YEAR = 2040
   print("running no.int")

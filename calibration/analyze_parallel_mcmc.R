@@ -76,12 +76,12 @@ simplot(simset,
         data.types='total.mortality')
 
 simplot(simset,
-        years=2010:2030, 
+        years=1980:2030, 
         data.types=c('awareness',"engagement","suppression"), 
         proportion=T)
 
 simplot(simset,
-        years=2010:2030, 
+        years=1980:2030, 
         data.types=c('awareness',"engagement","suppression"), 
         facet.by=c('age','sex'), 
         proportion=T)
