@@ -16,14 +16,24 @@ scale.calibration.data = function(data.type,
     dim.names.1 = dimnames(DATA.MANAGER[[data.type]]$age)
 
     # First, scale 0-14 and 15+ to match total 
-    scaling.factor.1 = DATA.MANAGER[[data.type]]$year.age.location[,c("All ages"),location]/
+    if(location=="r1.high"){
+        scaling.factor.1 = DATA.MANAGER[[data.type]]$year.age.location[,c("All ages"),location]/
+            rowSums(DATA.MANAGER[[data.type]]$year.age.location[,c("0-14","15+"),location],na.rm = T)
+    } else {
+        scaling.factor.1 = DATA.MANAGER[[data.type]]$year.age.location[,c("All ages"),location]/
             rowSums(DATA.MANAGER[[data.type]]$year.age.location[,c("0-14","15+"),location])
+    }
     
     NEW.0.TO.14 = DATA.MANAGER[[data.type]]$year.age.location[,"0-14",location]*scaling.factor.1
     NEW.15.AND.OVER = DATA.MANAGER[[data.type]]$year.age.location[,"15+",location]*scaling.factor.1
     
     # Next, scale 15-49 and 50+ to new, scaled 15+ 
-    scaling.factor.3 = NEW.15.AND.OVER/rowSums(DATA.MANAGER[[data.type]]$year.age.location[,c("15-49","50 and over"),location])
+
+    if(location=="r1.high"){
+        scaling.factor.3 = NEW.15.AND.OVER/rowSums(DATA.MANAGER[[data.type]]$year.age.location[,c("15-49","50 and over"),location],na.rm = T)
+    } else {
+        scaling.factor.3 = NEW.15.AND.OVER/rowSums(DATA.MANAGER[[data.type]]$year.age.location[,c("15-49","50 and over"),location])
+    }
     
     NEW.15.TO.49 = DATA.MANAGER[[data.type]]$year.age.location[,"15-49",location]*scaling.factor.3
     NEW.50.AND.OVER = DATA.MANAGER[[data.type]]$year.age.location[,"50 and over",location]*scaling.factor.3

@@ -560,7 +560,7 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
     locations =  suppressWarnings(array(as.integer(sapply(one.df.t[paste0(years, suffix),1:(length(location.names))], gsub, pattern = " ",replacement = "")),
                                         dim = sapply(dim.names.locations, length), 
                                         dimnames = dim.names.locations))
-    
+    locations[,"United States"] = NA
     
     # if(data.type=="prevalence") browser()
     
