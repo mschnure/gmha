@@ -46,19 +46,19 @@ set.likelihood.and.prior.by.location = function(location,
         params.start.values = params.start.values
     } else if(location=="Tanzania"){
         prior = TANZANIA.PRIOR
-        load("calibration/starting_values/2025_08_04_tanzania_start_values.Rdata")
+        load("calibration/starting_values/2025_08_13_tanzania_start_values.Rdata")
         params.start.values = params.start.values
     } else if(location=="Uganda"){
         prior = UGANDA.PRIOR
-        load("calibration/starting_values/2025_08_04_uganda_start_values.Rdata")
+        load("calibration/starting_values/2025_08_13_uganda_start_values.Rdata")
         params.start.values = params.start.values
     } else if(location=="Zambia"){
         prior = ZAMBIA.PRIOR
-        load("calibration/starting_values/2025_08_04_zambia_start_values.Rdata")
+        load("calibration/starting_values/2025_08_13_zambia_start_values.Rdata")
         params.start.values = params.start.values
     } else if(location=="Zimbabwe"){
         prior = ZIMBABWE.PRIOR
-        load("calibration/starting_values/2025_08_04_zimbabwe_start_values.Rdata")
+        load("calibration/starting_values/2025_08_13_zimbabwe_start_values.Rdata")
         params.start.values = params.start.values
     } else if(location=="Malawi"){
         prior = MALAWI.PRIOR
