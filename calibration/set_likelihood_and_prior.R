@@ -38,11 +38,11 @@ set.likelihood.and.prior.by.location = function(location,
         params.start.values = params.start.values
     } else if(location=="France"){
         prior = FRANCE.PRIOR
-        load("calibration/starting_values/2025_08_04_france_start_values.Rdata")
+        load("calibration/starting_values/2025_08_13_france_start_values.Rdata")
         params.start.values = params.start.values
     } else if(location=="Mozambique"){
         prior = MOZAMBIQUE.PRIOR
-        load("calibration/starting_values/2025_08_04_mozambique_start_values.Rdata")
+        load("calibration/starting_values/2025_08_13_mozambique_start_values.Rdata")
         params.start.values = params.start.values
     } else if(location=="Tanzania"){
         prior = TANZANIA.PRIOR
@@ -66,7 +66,7 @@ set.likelihood.and.prior.by.location = function(location,
         params.start.values = params.start.values
     } else if(location=="Nigeria"){
         prior = NIGERIA.PRIOR
-        load("calibration/starting_values/2025_08_04_nigeria_start_values.Rdata")
+        load("calibration/starting_values/2025_08_13_nigeria_start_values.Rdata")
         params.start.values = params.start.values
     } else if(location=="Thailand"){
         prior = THAILAND.PRIOR

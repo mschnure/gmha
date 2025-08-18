@@ -2,7 +2,7 @@ library(bayesian.simulations)
 
 source('model/run_systematic.R')
 source('calibration/file_settings.R')
-LOCATION = "South Africa"
+LOCATION = "Nigeria"
 
 
 mcmc = assemble.mcmc.from.cache(file.path(CACHE.NAME,convert_string(LOCATION)),

@@ -24,9 +24,9 @@ names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
 #WEIGHTS.BY.YEAR = WEIGHTS.BY.YEAR/8
 
 # for france only, remove pre-1995 years 
-WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
-WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE[as.character(1995:2030)]
-WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE/8
+# WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
+# WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE[as.character(1995:2030)]
+# WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE/8
 
 # Calls individual "create.likelihood.for.data.type" functions for each data type
 # Each data type function assembles the likelihood elements once (because it is time consuming - e.g., matrix M), 

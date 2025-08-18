@@ -6,10 +6,10 @@ source("model/run_systematic.R")
 set.seed(4321)
 # All countries, 8/04 - 4321
 
-LOCATION = "Malawi" 
+LOCATION = "Nigeria" 
 RESUME.RUNNING = T
-WEIGHTED.PREVALENCE = T # if set to T, will run with 4x prevalence weight 
-N.ITER = 50000
+WEIGHTED.PREVALENCE = F # if set to T, will run with 4x prevalence weight 
+N.ITER = 100000
 
 if(!RESUME.RUNNING){
     LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION,

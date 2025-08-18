@@ -10,7 +10,7 @@ LOAD.GLOBAL.SIMSET = F
 
 # running individual countries through 2040 
 if(RUN.INDIV.COUNTRY){
-  load("mcmc_runs/mcmc_files/mcmc_malawi_2025-08-12.Rdata")
+  load("mcmc_runs/mcmc_files/mcmc_r1.low_2025-08-09.Rdata")
   
   # because running from two previous runs (100k at 1/8 weight; 50k at 4x prevalence weight, don't burn anything 
   simset = suppressWarnings(extract.simset(mcmc,
