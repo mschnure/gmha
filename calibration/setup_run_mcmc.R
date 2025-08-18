@@ -3,7 +3,9 @@ library(distributions)
 library(ggplot2) 
 source("model/run_systematic.R")
 
-set.seed(4321)
+CHAIN = 2
+
+set.seed(4321*CHAIN)
 # All countries, 8/04 - 4321
 
 LOCATION = "Nigeria" 
@@ -26,7 +28,7 @@ if(!RESUME.RUNNING){
                                                          thin = 5)
   
   
-  print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION)))
+  print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION,": chain ",CHAIN)))
   
   # set starting.values 
   mcmc = run.mcmc.with.cache(control = control,
@@ -34,20 +36,36 @@ if(!RESUME.RUNNING){
                              starting.values = LOCATION.DETAILS$params.start.values,
                              update.frequency = 100,
                              cache.frequency = 200,
-                             cache.dir = file.path("mcmc_cache",convert_string(LOCATION))
-  )  
+                             cache.dir = file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",CHAIN))
+  )
+  
+  save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_chain",CHAIN,"_",Sys.Date(),".Rdata"))
+  
+  simset = extract.simset(mcmc,
+                          additional.burn=200,
+                          additional.thin=20)
+  
+  save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_chain",CHAIN,"_",Sys.Date(),".Rdata")) 
+  
 }
 
 if(RESUME.RUNNING){
-  print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION)))
-  mcmc = run.mcmc.from.cache(dir=paste0("mcmc_cache/",convert_string(LOCATION)),
-                             update.frequency = 100)
+    print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION)))
+    mcmc = run.mcmc.from.cache(dir=paste0("mcmc_cache/",convert_string(LOCATION)),
+                               update.frequency = 100)
+    
+    # once all of chain 1 is done, convert to this:   
+    # print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION,": chain ",CHAIN)))
+    # mcmc = run.mcmc.from.cache(dir=file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",CHAIN)),
+    #                            update.frequency = 100)
+    
+    # and put this outside of the if(RESUME.RUNNING) statement
+    save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_",Sys.Date(),".Rdata"))
+    
+    simset = extract.simset(mcmc,
+                            additional.burn=200,
+                            additional.thin=20)
+    
+    save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_",Sys.Date(),".Rdata"))
 }
 
-save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_",Sys.Date(),".Rdata"))
-
-simset = extract.simset(mcmc,
-                        additional.burn=200,
-                        additional.thin=20)
-
-save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_",Sys.Date(),".Rdata"))
