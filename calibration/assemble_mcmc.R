@@ -15,3 +15,6 @@ simset = extract.simset(mcmc,
                         additional.thin=20)
 
 save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_",Sys.Date(),".Rdata"))
+
+
+#mcmc.merge.parallel()
