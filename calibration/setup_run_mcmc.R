@@ -7,13 +7,15 @@ CHAIN = 2
 
 set.seed(4321*CHAIN)
 # All countries, 8/04 - 4321
+# 8/18: updated with *CHAIN 
 
-LOCATION = "Nigeria" 
-RESUME.RUNNING = T
+LOCATION = "Tanzania" 
+RESUME.RUNNING = F
+RESUME.RUNNING.WITH.CHAIN = T
 WEIGHTED.PREVALENCE = F # if set to T, will run with 4x prevalence weight 
 N.ITER = 100000
 
-if(!RESUME.RUNNING){
+if(!RESUME.RUNNING & !RESUME.RUNNING.WITH.CHAIN){
     LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION,
                                                             weighted.prevalence = WEIGHTED.PREVALENCE)
   
@@ -67,5 +69,21 @@ if(RESUME.RUNNING){
                             additional.thin=20)
     
     save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_",Sys.Date(),".Rdata"))
+}
+
+if(RESUME.RUNNING.WITH.CHAIN){
+  # once all of chain 1 is done, convert to this:   
+  print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION,": chain ",CHAIN)))
+  mcmc = run.mcmc.from.cache(dir=file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",CHAIN)),
+                             update.frequency = 100)
+  
+  # and put this outside of the if(RESUME.RUNNING) statement
+  save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_chain",CHAIN,"_",Sys.Date(),".Rdata"))
+  
+  simset = extract.simset(mcmc,
+                          additional.burn=200,
+                          additional.thin=20)
+  
+  save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_chain",CHAIN,"_",Sys.Date(),".Rdata")) 
 }
 

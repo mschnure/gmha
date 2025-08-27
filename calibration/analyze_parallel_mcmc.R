@@ -7,7 +7,7 @@ source("model/run_systematic.R")
     # simset.list.full$no.int --> main simset, thinned to 200 sims and run to 2040
     # full.results.array --> full array that has all outcomes for all years and all sims, by age/sex
     # summary.results --> list with different summary results like median age, percent over X age, etc. 
-    # export.to.csv --> summary results formatted into an array that can be easily esported to a csv 
+    # export.to.csv --> summary results formatted into an array that can be easily exported to a csv 
 load('cached/all.results_malawi_2025-08-12.Rdata')
 simset = simset.list.full$no.int
 
@@ -99,11 +99,10 @@ plot.limits = c("Global" = 5500000,
                 "Malawi" = 160000,
                 "France" = 35000
 )
-
-plot.limit = plot.limits[simset@simulations[[1]]$location]
 pal = c(brewer.pal(n=12,"Paired")[2],brewer.pal(n=12,"Paired")[5],brewer.pal(n=12,"Paired")[4]) 
 alpha = 0.8
 
+plot.limit = plot.limits[simset@simulations[[1]]$location]
 generate.age.distribution(full.results.array, 
                           outcome="prevalence", 
                           intervention.1 = "no.int",year.1="2025",

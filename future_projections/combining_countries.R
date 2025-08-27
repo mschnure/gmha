@@ -27,7 +27,12 @@ combine.simsets = function(...,
     }
     
     for(simset.index in 1:length(simset.list)){
+      print(paste0("getting outcomes from SIMSET ",simset.list[[simset.index]]@simulations[[1]]$location))
+      
         for(sim.index in 1:length(simset.list[[simset.index]]@simulations)){
+          
+          print(paste0("getting outcomes from ",simset.list[[simset.index]]@simulations[[1]]$location,", SIM ", sim.index))
+          
             for(outcome in outcome.names){
                 dim.names = names(dimnames(rv[[outcome]]))
                 sim.dim = which(dim.names == "sim")
@@ -121,7 +126,7 @@ collapse.country.dim = function(result.list){
 # takes the list that comes out of collapse.country.dim, where each element is an outcome 
 # for each outcome in the list, takes the first sim, combines all of those arrays into a list
 # returns a list of sims; each sim is list of outcomes; each outcome is an array 
-convert.to.simset = function(collapsed.result.list) {
+convert.to.simset = function(collapsed.result.list,location="Global") {
     
     dim_vars = c("years", "location", "AGES", "SEXES", "SUBGROUPS",
                   "HIV.STATUS", "HIV.STATES", "DIAGNOSED.STATES", "ENGAGED.STATES","parameters")
@@ -159,7 +164,7 @@ convert.to.simset = function(collapsed.result.list) {
     
     metadata = lapply(dim_vars, function(dvar) {
         if(dvar=="years") vec = as.numeric(dim.names[["year"]])
-        if(dvar=="location") vec = "Global"
+        if(dvar=="location") vec = location
         if(dvar=="AGES") vec = (dim.names[["age"]])
         if(dvar=="SEXES") vec = (dim.names[["sex"]])
         if(dvar=="SUBGROUPS") vec = (dim.names[["subgroup"]])

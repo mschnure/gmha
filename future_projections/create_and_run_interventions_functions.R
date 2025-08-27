@@ -15,7 +15,7 @@ run.intervention.on.simset = function(simset,
                                       interventions){
     
     simset@simulations = lapply(1:simset@n.sim,function(i){
-        
+        print(paste0("sim ",i))
         run.model.for.parameters(variable.parameters = simset@parameters[i,], # rows are values of sampled parameters for each simulation in simset
                                  end.year = end.year,
                                  interventions = interventions,
