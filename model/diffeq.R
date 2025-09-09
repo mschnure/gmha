@@ -334,11 +334,27 @@ run.model <- function(parameters,
     
     parameters$model.run.start = as.numeric(Sys.time())
     parameters$max.run.time = max.run.seconds
-    ode.results = odeintr::integrate_sys(sys=function(x,t){compute.dx(time=t,y=x,parameters=parameters)},
-                                         init=set.up.initial.diffeq.vector(initial.state, parameters),
-                                         start=start.year,
-                                         duration=end.year+1-start.year,
-                                         step_size=1)
+    
+    # if using deSolve instead - haven't set this up yet
+    if(1==2){
+    # if((nchar(system.file(package='odeintr'))==0)){
+        ode.results = deSolve::ode(
+            y = set.up.initial.diffeq.vector(initial.state, parameters),
+            times = start.year:(end.year+1),
+            func = func, # would need a function here...
+            parms = list(),
+            atol = private$i.atol, # need something here 
+            rtol = private$i.rtol, # need something here 
+            method = private$i.method # ode45
+        )
+    } else {
+        ode.results = odeintr::integrate_sys(sys=function(x,t){compute.dx(time=t,y=x,parameters=parameters)},
+                                             init=set.up.initial.diffeq.vector(initial.state, parameters),
+                                             start=start.year,
+                                             duration=end.year+1-start.year,
+                                             step_size=1) 
+    }
+
     
     # We need to process the results
     process.ode.results(ode.results,
