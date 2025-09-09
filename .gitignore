@@ -12,6 +12,7 @@ mcmc_runs
 cached
 mcmc_cache
 results/for_lancet_pres
+final_simsets_and_results
 
 # Project-specific
 /temp/
