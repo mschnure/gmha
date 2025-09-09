@@ -45,10 +45,11 @@ create.model.parameters <- function(location,
     
     
     # hiv status
-    parameters$HIV.STATUS = c('hiv_negative','undiagnosed','diagnosed_unengaged','engaged_unsuppressed','engaged_suppressed')
-    parameters$HIV.STATES = c('undiagnosed','diagnosed_unengaged','engaged_unsuppressed','engaged_suppressed') 
-    parameters$DIAGNOSED.STATES = c('diagnosed_unengaged','engaged_unsuppressed','engaged_suppressed')
-    parameters$ENGAGED.STATES = c('engaged_unsuppressed','engaged_suppressed')
+    parameters$HIV.STATUS = c('hiv_negative','undiagnosed','diagnosed_unengaged','engaged_unsuppressed','engaged_suppressed','lai_art')
+    parameters$HIV.STATES = c('undiagnosed','diagnosed_unengaged','engaged_unsuppressed','engaged_suppressed','lai_art') 
+    parameters$DIAGNOSED.STATES = c('diagnosed_unengaged','engaged_unsuppressed','engaged_suppressed','lai_art')
+    parameters$ENGAGED.STATES = c('engaged_unsuppressed','engaged_suppressed','lai_art')
+    parameters$SUPPRESSED.STATES = c('engaged_suppressed','lai_art')
     
     parameters$min.sexually.active.age = min.sexually.active.age
     parameters$male.to.female.age.model = get.male.to.female.age.model(location = location)
@@ -961,8 +962,22 @@ map.model.parameters <- function(parameters,
                                              parameters = parameters,
                                              parameter.name = "UNSUPPRESSION.RATES")
     
-
-       
+    
+    
+    #-- LAI ART --#
+    lai.art.model = get.lai.art.rates(location = location)
+    
+    lai.times = 2019
+    lai.rates = c(list(array(lai.art.model$annual.lai.rate,
+                                       dim=sapply(trans.dim.names, length),
+                                       dimnames=trans.dim.names)))
+    
+    parameters = set.rates.for.interventions(baseline.rates = lai.rates, # list 
+                                             baseline.times = lai.times, # vector
+                                             interventions = interventions,
+                                             scale = "rate", 
+                                             parameters = parameters,
+                                             parameter.name = "LAI.RATES")
 
     
     
