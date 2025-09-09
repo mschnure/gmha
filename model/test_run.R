@@ -1,9 +1,10 @@
 source('model/run_systematic.R')
 
-variable.parameters = get.default.parameters(location = "non.unaids.remainder")
-variable.parameters["trate.0"] = .0001 # to check just data without sim 
+#variable.parameters = get.default.parameters(location = "South Africa")
+load("calibration/starting_values/2025_08_11_south_africa_start_values.Rdata")
+variable.parameters = params.start.values
 
-sim = run.model.for.parameters(location="non.unaids.remainder",variable.parameters = variable.parameters)
+sim = run.model.for.parameters(location="South Africa",variable.parameters = variable.parameters)
 
 
 simplot(sim,
