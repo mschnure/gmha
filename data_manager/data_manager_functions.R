@@ -573,13 +573,21 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
     upper.middle.income = rowSums(locations[,LOCATIONS.INCOME$upper.middle.remainder],na.rm = T)
     high.income = rowSums(locations[,LOCATIONS.INCOME$high.remainder],na.rm = T)
     
+    # same thing with all 
+    all.low = rowSums(locations[,LOCATIONS.INCOME$low.all],na.rm = T)
+    all.lower.middle = rowSums(locations[,LOCATIONS.INCOME$lower.middle.all],na.rm = T)
+    all.upper.middle = rowSums(locations[,LOCATIONS.INCOME$upper.middle.all],na.rm = T)
+    all.high = rowSums(locations[,LOCATIONS.INCOME$high.all],na.rm = T)
+    
     dim.names.locations.with.remainder = list(year=as.character(years),
                                               location=c(location.names,"unaids.remainder","non.unaids.remainder",
-                                                         "r1.low","r1.lower.middle","r1.upper.middle","r1.high")
+                                                         "r1.low","r1.lower.middle","r1.upper.middle","r1.high",
+                                                         "all.low","all.lower.middle","all.upper.middle","all.high")
     )
 
     locations = array(c(locations,unaids.remainder.countries,non.unaids.remainder,
-                        low.income,lower.middle.income,upper.middle.income,high.income),
+                        low.income,lower.middle.income,upper.middle.income,high.income,
+                        all.low,all.lower.middle,all.upper.middle,all.high),
                       dim = sapply(dim.names.locations.with.remainder,length),
                       dimnames = dim.names.locations.with.remainder)
     
