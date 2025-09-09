@@ -7,7 +7,7 @@ source("future_projections/extract_projection_results.R")
 
 RUN.INDIV.COUNTRY = F
 LOAD.GLOBAL.SIMSET = T
-N.CHAINS = 2
+N.CHAINS = 1
 
 if(LOAD.GLOBAL.SIMSET){
   COUNTRIES = "global"

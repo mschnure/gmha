@@ -10,10 +10,10 @@ if(1==1){
   # load("cached/combined.countries.income_2025-08-26_.Rdata")  # using income models, not unaids.remainder 
   # combined.countries = combined.countries.income
   
-  load("cached/combined.countries_2025-08-26_.Rdata")  # using unaids.remainder 
+  #load("cached/combined.countries_2025-08-26_.Rdata")  # using unaids.remainder 
   
   # income models
-  if(1==2){
+  if(1==1){
     load("cached/all.income.models_2025-08-26.Rdata")
     # need to change save line below as well
     combined.countries = all.high.income # all.low.income, all.lower.middle.income, 
@@ -30,7 +30,7 @@ if(1==1){
   
   # convert into a list (not quite the simset, just the simulations list)
   print("converting to simulation list, MAKE SURE TO SET LOCATION")
-  simulation.list = convert.to.simset(collapsed.list,location="r1.high") # CHANGE THIS LOCATION FOR INCOME MODELS 
+  simulation.list = convert.to.simset(collapsed.list,location="all.high") # CHANGE THIS LOCATION FOR INCOME MODELS 
   
   # check to make sure it worked 
   #table(collapsed.list$population[,,,,,35]==simulation.list[[35]]$population[,,,,]) # both of these will collapse over the subgroup dimension but it's there 
@@ -112,6 +112,9 @@ if(1==2){
   load("cached/all.results_merged_malawi_2025-08-25.Rdata")
   simset.malawi = simset.list.full$no.int
   
+  pring("loading France, ONLY to merge into all.high")
+
+
   #if(USE.INCOME.MODELS){
  # print("combining countries, using income models")
   # combined.countries.income = combine.simsets(simset.r1.low,
