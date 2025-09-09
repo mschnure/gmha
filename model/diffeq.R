@@ -106,6 +106,10 @@ compute.dx <- function(time,
                            dim = sapply(trans.dim.names, length),
                            dimnames = trans.dim.names)#indexed [age, sex, subgroup]
     
+    dx.lai.art = array(0,
+                       dim = sapply(trans.dim.names, length),
+                       dimnames = trans.dim.names)#indexed [age, sex, subgroup]
+    
     ##----------------------------------##
     ##-- COMPUTE THE CHANGES IN STATE --##
     ##----------------------------------##
@@ -264,6 +268,11 @@ compute.dx <- function(time,
     dx.state[,,,'engaged_suppressed'] = as.numeric(dx.state[,,,'engaged_suppressed']) - unsuppressed
     dx.state[,,,'engaged_unsuppressed'] = as.numeric(dx.state[,,,'engaged_unsuppressed']) + unsuppressed
     
+    #-- LAI ART - moves from engaged_suppressed only --#
+    lai.art = pp$LAI.RATES * as.numeric(state[,,,'engaged_suppressed'])
+    dx.state[,,,'engaged_suppressed'] = as.numeric(dx.state[,,,'engaged_suppressed']) - lai.art
+    dx.state[,,,'lai_art'] = as.numeric(dx.state[,,,'lai_art']) + lai.art
+    
     
     #-- RECORD PREVALENCE --#
     dx.prevalence = dx.state[,,,-1]
@@ -284,7 +293,8 @@ compute.dx <- function(time,
            as.numeric(dx.engagement),
            as.numeric(dx.disengagement.unsuppressed),
            as.numeric(dx.disengagement.suppressed),
-           as.numeric(dx.suppression)
+           as.numeric(dx.suppression),
+           as.numeric(dx.lai.art)
     )
     
     #   if(any(is.na(rv)))
@@ -308,7 +318,7 @@ set.up.initial.diffeq.vector <- function(initial.state,
         4 * state.length + #state plus three mortality arrays
         1 * prev.length + # prevalence array (doesn't have hiv negative)
         2 * trans.length + #incidence plus new diagnoses
-        4 * trans.length #engagement, disengagement x2, suppression
+        5 * trans.length #engagement, disengagement x2, suppression, lai.art
     
     
     rv = numeric(total.length) #opens a 1-D vector of 0s to this length
@@ -478,6 +488,12 @@ process.ode.results <- function(ode.results,
     
     #suppression
     rv$suppression=array(ode.results[keep.years,index+1:trans.length]-ode.results[previous.years,index+1:trans.length],
+                         dim = sapply(trans.dim.names,length),
+                         dimnames = trans.dim.names)
+    index=index+trans.length
+    
+    #lai.art
+    rv$lai.art=array(ode.results[keep.years,index+1:trans.length]-ode.results[previous.years,index+1:trans.length],
                          dim = sapply(trans.dim.names,length),
                          dimnames = trans.dim.names)
     index=index+trans.length
