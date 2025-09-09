@@ -295,7 +295,8 @@ simplot = function(...,
         if(for.paper==T){
             if(show.calibration.data==T){
                 plot = ggplot() + 
-                    geom_ribbon(data = df.sim, aes(x = year, ymin = lower, ymax = upper, fill = sim.id),alpha = 0.3) + 
+                    #geom_ribbon(data = df.sim, aes(x = year, ymin = lower, ymax = upper, fill = sim.id),alpha = 0.3) + 
+                    geom_ribbon(data = df.sim, aes(x = year, ymin = lower, ymax = upper, fill = sim.id,group = group.id),alpha = 0.3) + 
                     geom_line(data = df.sim, aes(x = year, y = value, color = sim.id, group = group.id), lwd=1.25,show.legend = F) +
                     geom_point(data = df.truth, aes(x = year, y = value, color = sim.id, group = group.id, shape = split), 
                                size=2,alpha = 0.75,show.legend = F) +
