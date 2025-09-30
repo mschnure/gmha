@@ -109,7 +109,24 @@ extract.data = function(sim,
                                       sexes=sexes,
                                       subgroups=subgroups,
                                       keep.dimensions=keep.dimensions)
-        
+
+    else if (data.type=='suppression.oral')
+        rv = extract.suppressed.oral(sim,
+                                      years=years, 
+                                      ages=ages,
+                                      sexes=sexes,
+                                      subgroups=subgroups,
+                                      keep.dimensions=keep.dimensions)
+    
+    else if (data.type=='suppression.lai')
+        rv = extract.suppressed.lai(sim,
+                                      years=years, 
+                                      ages=ages,
+                                      sexes=sexes,
+                                      subgroups=subgroups,
+                                      keep.dimensions=keep.dimensions)
+    
+    
     else if (data.type=='annual.suppression')
         rv = extract.annual.suppression(sim,
                                         years=years, 
@@ -521,7 +538,41 @@ extract.total.suppressed <- function(sim,
         subgroups = subgroups,
         sexes = sexes,
         keep.dimensions = keep.dimensions,
-        hiv.status = "engaged_suppressed"
+        hiv.status = c("engaged_suppressed","lai_art") # change this to both compartments
+    )
+}
+
+extract.suppressed.oral <- function(sim,
+                                     years = sim$years,
+                                     ages = sim$AGES,
+                                     subgroups = sim$SUBGROUPS,
+                                     sexes = sim$SEXES,
+                                     keep.dimensions = 'year'){
+    extract.population(
+        sim = sim,
+        years = years,
+        ages = ages,
+        subgroups = subgroups,
+        sexes = sexes,
+        keep.dimensions = keep.dimensions,
+        hiv.status = c("engaged_suppressed") 
+    )
+}
+
+extract.suppressed.lai <- function(sim,
+                                    years = sim$years,
+                                    ages = sim$AGES,
+                                    subgroups = sim$SUBGROUPS,
+                                    sexes = sim$SEXES,
+                                    keep.dimensions = 'year'){
+    extract.population(
+        sim = sim,
+        years = years,
+        ages = ages,
+        subgroups = subgroups,
+        sexes = sexes,
+        keep.dimensions = keep.dimensions,
+        hiv.status = c("lai_art") 
     )
 }
 
