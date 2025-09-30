@@ -81,7 +81,7 @@ simplot = function(...,
 
                     if(proportion){
                         # Extract denominator from simulation (denom for eng/supp is aware; denom for aware/mort is prev)
-                        if((d=="engagement") | (d=="suppression")){
+                        if(d %in% c("engagement","suppression","suppression.oral","suppression.lai")){
                             denominator = extract.data(sim, 
                                                        years = years, 
                                                        age=ages, 
@@ -126,7 +126,7 @@ simplot = function(...,
         
                 if(proportion){
                     # Extract denominator from simulation (denom for eng/supp is aware; denom for aware/mort is prev)
-                    if((d=="engagement") | (d=="suppression")){
+                    if(d %in% c("engagement","suppression","suppression.oral","suppression.lai")){
                         denominator.1 = extract.data(sims.for.i[[1]],
                                                      years = years,
                                                      age=ages,
