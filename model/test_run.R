@@ -51,6 +51,11 @@ simplot(sim,
 
 simplot(sim,
         years=1980:2030, 
+        data.types=c("suppression","suppression.oral","suppression.lai"), 
+        proportion=T)
+
+simplot(sim,
+        years=1980:2030, 
         data.types=c('awareness',"engagement","suppression"), 
         facet.by=c('age','sex'), 
         proportion=T)
