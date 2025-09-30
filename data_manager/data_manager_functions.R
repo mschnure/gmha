@@ -60,6 +60,9 @@ get.surveillance.data = function(data.manager,
                                  sexes = data.manager[[data.type]]$SEXES, 
                                  locations = data.manager[[data.type]]$LOCATIONS,
                                  keep.dimensions = 'year'){
+    if(data.type %in% c("suppression.oral","suppression.lai"))
+        data.type="suppression"
+    
     if(!("year" %in% keep.dimensions))
         stop("Must keep dimension 'year'")
     
