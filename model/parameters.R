@@ -967,10 +967,11 @@ map.model.parameters <- function(parameters,
     #-- LAI ART --#
     lai.art.model = get.lai.art.rates(location = location)
     
-    lai.times = 2019
-    lai.rates = c(list(array(lai.art.model$annual.lai.rate,
+    lai.times = c(1975:min(project.to.year,sampled.parameters["cascade.improvement.end.year"], na.rm = T))
+    lai.rates = rep(list(array(lai.art.model$annual.lai.rate,
                                        dim=sapply(trans.dim.names, length),
-                                       dimnames=trans.dim.names)))
+                                       dimnames=trans.dim.names)),
+                    length(lai.times))
     
     parameters = set.rates.for.interventions(baseline.rates = lai.rates, # list 
                                              baseline.times = lai.times, # vector
