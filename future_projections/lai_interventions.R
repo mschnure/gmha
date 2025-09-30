@@ -2,8 +2,17 @@ source('model/run_systematic.R')
 source("future_projections/create_and_run_interventions_functions.R")
 START.TIME = 2022
 
-load("final_simsets_and_results/all.results_merged_south_africa_2025-08-27.Rdata")
-simset.no.int = simset.list.full$no.int
+# load("final_simsets_and_results/all.results_merged_south_africa_2025-08-27.Rdata")
+# simset.no.int = simset.list.full$no.int
+
+# on remote only
+load("mcmc_runs/mcmc_files/merged/mcmc_chains12_south_africa_2025-08-27.Rdata")
+
+simset = extract.simset(mcmc,
+                        additional.burn=5000,
+                        additional.thin=3000)
+save(simset,file="future_projections/simset_50_for_lai.Rdata") 
+
 
 lai.10.from.es.unit = create.intervention.unit(parameter = "LAI.RATES", 
                                                scale = "proportion",
