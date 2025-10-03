@@ -307,7 +307,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$suppression.uppers = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "_upper")
         # multiply (suppress/on ART) * (on ART/aware) in order to make denominator aware: 
     rv$suppression.uppers$year = (rv$suppression.uppers$year*rv$engagement.uppers$year) # FIXED THIS STEP 10/3!!
-    rv$suppression.uppers$year.location = (rv$suppression.uppers$location*rv$engagement.uppers$year.location)
+    rv$suppression.uppers$year.location = (rv$suppression.uppers$year.location*rv$engagement.uppers$year.location)
     rv$suppression.uppers$year.age.sex = (rv$suppression.uppers$year.age.sex*rv$engagement.uppers$year.age.sex)
     rv$suppression.uppers$year.age.sex.location = (rv$suppression.uppers$year.age.sex.location*rv$engagement.uppers$year.age.sex.location)
     
