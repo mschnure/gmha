@@ -10,7 +10,8 @@ source('model/diffeq.R')
 source('model/age_mappings.R') 
 NO.INTERVENTION = c()
 
-load('cached/data.manager_global_2025-08-27.Rdata') # added merged income countries
+load('cached/data.manager_global_2025-10-03.Rdata') # fixed suppression data
+#load('cached/data.manager_global_2025-08-27.Rdata') # added merged income countries
 #load('cached/data.manager_global_2025-08-13.Rdata') # fixed r1 high and removed incorrect US data 
 #load('cached/data.manager_global_2025-08-08.Rdata') # rescaled remainder models (r1.high all NA's though - need to fix )
 #load('cached/data.manager_global_2025-08-06.Rdata') # removed 0's from HIV mortality for r1.high

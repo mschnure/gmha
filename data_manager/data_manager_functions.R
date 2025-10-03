@@ -221,8 +221,9 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     
     ## Default suppression denominator = all aware PLHIV (option for all PLHIV below)
     rv$suppression = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "")
-    rv$suppression$global = (rv$suppression$global*rv$engagement$global)
-    rv$suppression$location = (rv$suppression$location*rv$engagement$location)
+        # multiply (suppress/on ART) * (on ART/aware) in order to make denominator aware: 
+    rv$suppression$year = (rv$suppression$year*rv$engagement$year) # FIXED THIS STEP 10/3!! 
+    rv$suppression$year.location = (rv$suppression$year.location*rv$engagement$year.location)
     rv$suppression$year.age.sex = (rv$suppression$year.age.sex*rv$engagement$year.age.sex)
     rv$suppression$year.age.sex.location = (rv$suppression$year.age.sex.location*rv$engagement$year.age.sex.location)
     
@@ -295,13 +296,15 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     
     ## Default suppression denominator = all aware PLHIV (option for all PLHIV below)
     rv$suppression.lowers = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "_lower")
-    rv$suppression.lowers$global = (rv$suppression.lowers$global*rv$engagement.lowers$global)
-    rv$suppression.lowers$location = (rv$suppression.lowers$location*rv$engagement.lowers$location)
+        # multiply (suppress/on ART) * (on ART/aware) in order to make denominator aware: 
+    rv$suppression.lowers$year = (rv$suppression.lowers$year*rv$engagement$year) # FIXED THIS STEP 10/3!! 
+    rv$suppression.lowers$year.location = (rv$suppression.lowers$year.location*rv$engagement$year.location)
     rv$suppression.lowers$year.age.sex = (rv$suppression.lowers$year.age.sex*rv$engagement.lowers$year.age.sex)
     rv$suppression.lowers$year.age.sex.location = (rv$suppression.lowers$year.age.sex.location*rv$engagement.lowers$year.age.sex.location)
     rv$suppression.uppers = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "_upper")
-    rv$suppression.uppers$global = (rv$suppression.uppers$global*rv$engagement.uppers$global)
-    rv$suppression.uppers$location = (rv$suppression.uppers$location*rv$engagement.uppers$location)
+        # multiply (suppress/on ART) * (on ART/aware) in order to make denominator aware: 
+    rv$suppression.uppers$year = (rv$suppression.uppers$year*rv$engagement$year) # FIXED THIS STEP 10/3!! 
+    rv$suppression.uppers$year.location = (rv$suppression.uppers$year.location*rv$engagement$year.location)
     rv$suppression.uppers$year.age.sex = (rv$suppression.uppers$year.age.sex*rv$engagement.uppers$year.age.sex)
     rv$suppression.uppers$year.age.sex.location = (rv$suppression.uppers$year.age.sex.location*rv$engagement.uppers$year.age.sex.location)
     
