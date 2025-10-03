@@ -964,21 +964,50 @@ map.model.parameters <- function(parameters,
     
     
     
-    #-- LAI ART --#
-    lai.art.model = get.lai.art.rates(location = location)
-    
+    #-- LAI ART: 3 arrows --#
     lai.times = c(1975:min(project.to.year,sampled.parameters["cascade.improvement.end.year"], na.rm = T))
-    lai.rates = rep(list(array(lai.art.model$annual.lai.rate,
+    
+    ## Engaged suppressed --> LAI ART 
+    lai.es.art.model = get.lai.es.art.rates(location = location)
+    lai.es.rates = rep(list(array(lai.es.art.model$annual.lai.rate,
                                        dim=sapply(trans.dim.names, length),
                                        dimnames=trans.dim.names)),
                     length(lai.times))
     
-    parameters = set.rates.for.interventions(baseline.rates = lai.rates, # list 
+    parameters = set.rates.for.interventions(baseline.rates = lai.es.rates, # list 
                                              baseline.times = lai.times, # vector
                                              interventions = interventions,
                                              scale = "rate", 
                                              parameters = parameters,
-                                             parameter.name = "LAI.RATES")
+                                             parameter.name = "LAI.ES.RATES")
+    
+    ## Engaged unsuppressed --> LAI ART 
+    lai.eu.art.model = get.lai.eu.art.rates(location = location)
+    lai.eu.rates = rep(list(array(lai.eu.art.model$annual.lai.rate,
+                                  dim=sapply(trans.dim.names, length),
+                                  dimnames=trans.dim.names)),
+                       length(lai.times))
+    
+    parameters = set.rates.for.interventions(baseline.rates = lai.eu.rates, # list 
+                                             baseline.times = lai.times, # vector
+                                             interventions = interventions,
+                                             scale = "rate", 
+                                             parameters = parameters,
+                                             parameter.name = "LAI.EU.RATES")
+    
+    ## Diagnosed unengaged --> LAI ART 
+    lai.du.art.model = get.lai.du.art.rates(location = location)
+    lai.du.rates = rep(list(array(lai.du.art.model$annual.lai.rate,
+                                  dim=sapply(trans.dim.names, length),
+                                  dimnames=trans.dim.names)),
+                       length(lai.times))
+    
+    parameters = set.rates.for.interventions(baseline.rates = lai.du.rates, # list 
+                                             baseline.times = lai.times, # vector
+                                             interventions = interventions,
+                                             scale = "rate", 
+                                             parameters = parameters,
+                                             parameter.name = "LAI.DU.RATES")
 
     
     

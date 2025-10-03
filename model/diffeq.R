@@ -268,11 +268,21 @@ compute.dx <- function(time,
     dx.state[,,,'engaged_suppressed'] = as.numeric(dx.state[,,,'engaged_suppressed']) - unsuppressed
     dx.state[,,,'engaged_unsuppressed'] = as.numeric(dx.state[,,,'engaged_unsuppressed']) + unsuppressed
     
-    #-- LAI ART - moves from engaged_suppressed only --#
-    lai.art = pp$LAI.RATES * as.numeric(state[,,,'engaged_suppressed'])
-    dx.state[,,,'engaged_suppressed'] = as.numeric(dx.state[,,,'engaged_suppressed']) - lai.art
-    dx.state[,,,'lai_art'] = as.numeric(dx.state[,,,'lai_art']) + lai.art
+    #-- LAI ART --#
+    # from engaged_suppressed
+    lai.es.art = pp$LAI.ES.RATES * as.numeric(state[,,,'engaged_suppressed'])
+    dx.state[,,,'engaged_suppressed'] = as.numeric(dx.state[,,,'engaged_suppressed']) - lai.es.art
+    dx.state[,,,'lai_art'] = as.numeric(dx.state[,,,'lai_art']) + lai.es.art
     
+    # from engaged_unsuppressed
+    lai.eu.art = pp$LAI.EU.RATES * as.numeric(state[,,,'engaged_unsuppressed'])
+    dx.state[,,,'engaged_unsuppressed'] = as.numeric(dx.state[,,,'engaged_unsuppressed']) - lai.eu.art
+    dx.state[,,,'lai_art'] = as.numeric(dx.state[,,,'lai_art']) + lai.eu.art
+    
+    # from diagnosed_unengaged
+    lai.du.art = pp$LAI.DU.RATES * as.numeric(state[,,,'diagnosed_unengaged'])
+    dx.state[,,,'diagnosed_unengaged'] = as.numeric(dx.state[,,,'diagnosed_unengaged']) - lai.du.art
+    dx.state[,,,'lai_art'] = as.numeric(dx.state[,,,'lai_art']) + lai.du.art
     
     #-- RECORD PREVALENCE --#
     dx.prevalence = dx.state[,,,-1]
