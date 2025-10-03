@@ -224,8 +224,9 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     
     ## Default suppression denominator = all aware PLHIV (option for all PLHIV below)
     rv$suppression = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "")
-    rv$suppression$global = (rv$suppression$global*rv$engagement$global)
-    rv$suppression$location = (rv$suppression$location*rv$engagement$location)
+        # multiply (suppress/on ART) * (on ART/aware) in order to make denominator aware: 
+    rv$suppression$year = (rv$suppression$year*rv$engagement$year) # FIXED THIS STEP 10/3!! 
+    rv$suppression$year.location = (rv$suppression$year.location*rv$engagement$year.location)
     rv$suppression$year.age.sex = (rv$suppression$year.age.sex*rv$engagement$year.age.sex)
     rv$suppression$year.age.sex.location = (rv$suppression$year.age.sex.location*rv$engagement$year.age.sex.location)
     
@@ -298,13 +299,15 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     
     ## Default suppression denominator = all aware PLHIV (option for all PLHIV below)
     rv$suppression.lowers = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "_lower")
-    rv$suppression.lowers$global = (rv$suppression.lowers$global*rv$engagement.lowers$global)
-    rv$suppression.lowers$location = (rv$suppression.lowers$location*rv$engagement.lowers$location)
+        # multiply (suppress/on ART) * (on ART/aware) in order to make denominator aware: 
+    rv$suppression.lowers$year = (rv$suppression.lowers$year*rv$engagement.lowers$year) # FIXED THIS STEP 10/3!!
+    rv$suppression.lowers$year.location = (rv$suppression.lowers$year.location*rv$engagement.lowers$year.location)
     rv$suppression.lowers$year.age.sex = (rv$suppression.lowers$year.age.sex*rv$engagement.lowers$year.age.sex)
     rv$suppression.lowers$year.age.sex.location = (rv$suppression.lowers$year.age.sex.location*rv$engagement.lowers$year.age.sex.location)
     rv$suppression.uppers = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "_upper")
-    rv$suppression.uppers$global = (rv$suppression.uppers$global*rv$engagement.uppers$global)
-    rv$suppression.uppers$location = (rv$suppression.uppers$location*rv$engagement.uppers$location)
+        # multiply (suppress/on ART) * (on ART/aware) in order to make denominator aware: 
+    rv$suppression.uppers$year = (rv$suppression.uppers$year*rv$engagement.uppers$year) # FIXED THIS STEP 10/3!!
+    rv$suppression.uppers$year.location = (rv$suppression.uppers$location*rv$engagement.uppers$year.location)
     rv$suppression.uppers$year.age.sex = (rv$suppression.uppers$year.age.sex*rv$engagement.uppers$year.age.sex)
     rv$suppression.uppers$year.age.sex.location = (rv$suppression.uppers$year.age.sex.location*rv$engagement.uppers$year.age.sex.location)
     
@@ -714,7 +717,6 @@ read.cascade.data.files = function(dir = 'data_manager/data',
                                    sex,
                                    suffix){
     sub.dir = file.path(dir, paste0(data.type,"_",denominator))
-    
     files = list.files(file.path(sub.dir))
     
     ## Total and locations
@@ -723,10 +725,10 @@ read.cascade.data.files = function(dir = 'data_manager/data',
     
     if (length(file)!=1)
         stop("can only pull one file at a time")
-    
     one.df = read.csv(file.path(sub.dir,file), row.names = 1)
     colnames(one.df) = substring(colnames(one.df),2)
     years = unique(substr(colnames(one.df),1,4))
+
     rownames(one.df)[rownames(one.df)=="United Republic of Tanzania"] = "Tanzania"
     location.names = rownames(one.df)[c(-1,-nrow(one.df))]
     one.df = one.df[,!grepl("Footnote",names(one.df))]
@@ -740,7 +742,11 @@ read.cascade.data.files = function(dir = 'data_manager/data',
     one.df.t = transpose(one.df)
     rownames(one.df.t) = colnames(one.df)
     colnames(one.df.t) = rownames(one.df)
-    
+
+    if("2024" %in% years){
+        years = years[years!="2024"]
+    }
+        
     dim.names.global = list(year=as.character(years, suffix))
 
     global =  suppressWarnings(array((as.numeric(gsub(" ","",gsub(">","",one.df.t[paste0(years, suffix),ncol(one.df.t)])))/100),
