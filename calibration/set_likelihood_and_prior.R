@@ -15,7 +15,15 @@ source('calibration/prior_distributions/thailand_prior.R')
 source('calibration/prior_distributions/cambodia_prior.R')
 
 set.likelihood.and.prior.by.location = function(location,
+                                                initial.run=F,
                                                 weighted.prevalence = F){
+    
+    if(initial.run){
+        WEIGHT.MULTIPLIER = (1/8) # used in likelihood code 
+    } else {
+        WEIGHT.MULTIPLIER = 1
+    }
+    
     if(weighted.prevalence){
         likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = location),
                                               location=location,
@@ -34,8 +42,8 @@ set.likelihood.and.prior.by.location = function(location,
         params.start.values = params.start.values
     } else if(location=="South Africa"){
         prior = SOUTH.AFRICA.PRIOR
-        load("calibration/starting_values/2025_08_11_south_africa_start_values.Rdata")
-        params.start.values = params.start.values
+        # load("calibration/starting_values/2025_08_11_south_africa_start_values.Rdata")
+        # params.start.values = params.start.values
     } else if(location=="France"){
         prior = FRANCE.PRIOR
         load("calibration/starting_values/2025_08_13_france_start_values.Rdata")

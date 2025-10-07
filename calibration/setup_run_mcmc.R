@@ -3,20 +3,29 @@ library(distributions)
 library(ggplot2) 
 source("model/run_systematic.R")
 
-CHAIN = 2
+CHAIN = 1
+MCMC.CODE = 'youth.supp' # will paste this in the cache and mcmc files, use "" for original version (I think)
 
 set.seed(4321*CHAIN)
 # All countries, 8/04 - 4321
 # 8/18: updated with *CHAIN 
 
-LOCATION = "Tanzania" 
-RESUME.RUNNING = F
-RESUME.RUNNING.WITH.CHAIN = T
-WEIGHTED.PREVALENCE = F # if set to T, will run with 4x prevalence weight 
-N.ITER = 100000
+LOCATION = "South Africa" 
 
-if(!RESUME.RUNNING & !RESUME.RUNNING.WITH.CHAIN){
+# weight/iteration options 
+{
+    INITIAL.RUN = T  # if true, total weight set to 1/8
+    WEIGHTED.PREVALENCE = F # if set to T, will run with 4x prevalence weight 
+    N.ITER = 30000
+}
+
+# resume running option
+RESUME.RUNNING = F
+
+# if a fresh run (i.e., not resuming)
+if(!RESUME.RUNNING){
     LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION,
+                                                            initial.run=INITIAL.RUN, # if true, total weight set to 1/8
                                                             weighted.prevalence = WEIGHTED.PREVALENCE)
   
   control = create.adaptive.blockwise.metropolis.control(var.names = LOCATION.DETAILS$prior@var.names,
@@ -30,7 +39,7 @@ if(!RESUME.RUNNING & !RESUME.RUNNING.WITH.CHAIN){
                                                          thin = 5)
   
   
-  print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION,": chain ",CHAIN)))
+  print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION,": chain ",CHAIN, "; mcmc code: ",MCMC.CODE)))
   
   # set starting.values 
   mcmc = run.mcmc.with.cache(control = control,
@@ -38,52 +47,30 @@ if(!RESUME.RUNNING & !RESUME.RUNNING.WITH.CHAIN){
                              starting.values = LOCATION.DETAILS$params.start.values,
                              update.frequency = 100,
                              cache.frequency = 200,
-                             cache.dir = file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",CHAIN))
+                             cache.dir = file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",MCMC.CODE,"_",CHAIN))
   )
   
-  save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_chain",CHAIN,"_",Sys.Date(),".Rdata"))
+  save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_",MCMC.CODE,"_chain",CHAIN,"_",Sys.Date(),".Rdata"))
   
   simset = extract.simset(mcmc,
                           additional.burn=200,
                           additional.thin=20)
   
-  save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_chain",CHAIN,"_",Sys.Date(),".Rdata")) 
+  save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_",MCMC.CODE,"_chain",CHAIN,"_",Sys.Date(),".Rdata")) 
   
 }
 
 if(RESUME.RUNNING){
-    print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION)))
-    mcmc = run.mcmc.from.cache(dir=paste0("mcmc_cache/",convert_string(LOCATION)),
+    print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION,": chain ",CHAIN)))
+    mcmc = run.mcmc.from.cache(dir=file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",CHAIN)),
                                update.frequency = 100)
     
-    # once all of chain 1 is done, convert to this:   
-    # print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION,": chain ",CHAIN)))
-    # mcmc = run.mcmc.from.cache(dir=file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",CHAIN)),
-    #                            update.frequency = 100)
-    
-    # and put this outside of the if(RESUME.RUNNING) statement
-    save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_",Sys.Date(),".Rdata"))
+    save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_chain",CHAIN,"_",Sys.Date(),".Rdata"))
     
     simset = extract.simset(mcmc,
                             additional.burn=200,
                             additional.thin=20)
     
-    save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_",Sys.Date(),".Rdata"))
-}
-
-if(RESUME.RUNNING.WITH.CHAIN){
-  # once all of chain 1 is done, convert to this:   
-  print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION,": chain ",CHAIN)))
-  mcmc = run.mcmc.from.cache(dir=file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",CHAIN)),
-                             update.frequency = 100)
-  
-  # and put this outside of the if(RESUME.RUNNING) statement
-  save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_chain",CHAIN,"_",Sys.Date(),".Rdata"))
-  
-  simset = extract.simset(mcmc,
-                          additional.burn=200,
-                          additional.thin=20)
-  
-  save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_chain",CHAIN,"_",Sys.Date(),".Rdata")) 
+    save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_chain",CHAIN,"_",Sys.Date(),".Rdata")) 
 }
 
