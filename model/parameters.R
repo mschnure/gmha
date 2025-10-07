@@ -117,13 +117,18 @@ get.default.parameters = function(location){
         log.OR.testing.intercept=0, # 0 because on log scale
         log.OR.testing.slope=0,
         log.OR.engagement.slope=0,
+        log.OR.0.14.engagement.slope=0,
         unsuppressed.disengagement.rates=0.1392621, # KENYA value, updated below 
         suppressed.disengagement.rates = 0.1025866, # KENYA value, updated below 
         log.OR.suppression.slope=0,
+        log.OR.0.14.suppression.slope=0,
         unsuppression.rates=0.2196, # KENYA value, using for all except SA for now
         male.awareness.multiplier=1,
         male.engagement.multiplier=1,
         male.suppression.multiplier=1,
+        age.0.14.awareness.multiplier=1,
+        age.0.14.engagement.multiplier=1,
+        age.0.14.suppression.multiplier=1,
         cascade.improvement.end.year=2040,
         
         ## Mortality/fertility parameters ##
@@ -520,6 +525,7 @@ map.model.parameters <- function(parameters,
         projected.p = projected.p*testing.model$max.proportion
         projected.rate = -log(1-projected.p)
         projected.rate[,"male",] = projected.rate[,"male",]*sampled.parameters["male.awareness.multiplier"]
+        projected.rate[c("0-4","5-9","10-14"),,] = projected.rate[c("0-4","5-9","10-14"),,]*sampled.parameters["age.0.14.awareness.multiplier"]
         
         projected.rate
         
@@ -841,7 +847,8 @@ map.model.parameters <- function(parameters,
                                            dim=sapply(trans.dim.names, length),
                                            dimnames=trans.dim.names)
             projected.rate.age.sex[,"male",] = projected.rate.age.sex[,"male",]*sampled.parameters["male.engagement.multiplier"]
-
+            projected.rate.age.sex[c("0-4","5-9","10-14"),,] = projected.rate.age.sex[c("0-4","5-9","10-14"),,]*sampled.parameters["age.0.14.engagement.multiplier"]
+            
             projected.rate.age.sex
 
         }))
@@ -854,8 +861,11 @@ map.model.parameters <- function(parameters,
             sapply(trans.dim.names$age, function(age){
                 eng.cat = names(MODEL.TO.IEDEA.AGE.MAPPING)[sapply(MODEL.TO.IEDEA.AGE.MAPPING, function(x) age %in% x)]
                 
+                slope = (engagement.model$slope+sampled.parameters['log.OR.engagement.slope']) # original slope 
+                slope = slope + (eng.cat=="10-19")*(sampled.parameters['log.OR.0.14.engagement.slope']) # if 0-14, add in multiplier 
+                
                 engagement.model$intercept + 
-                    (engagement.model$slope+sampled.parameters['log.OR.engagement.slope'])*(year-engagement.model$anchor.year) + 
+                    slope*(year-engagement.model$anchor.year) + 
                     (engagement.model$age.10.19*(eng.cat=="10-19")) + 
                     (engagement.model$age.20.29*(eng.cat=="20-29")) + 
                     (engagement.model$age.40.49*(eng.cat=="40-49")) + 
@@ -872,6 +882,7 @@ map.model.parameters <- function(parameters,
         projected.p = projected.p*engagement.model$max.proportion 
         projected.rate = -log(1-projected.p)   
         projected.rate[,"male",] = projected.rate[,"male",]*sampled.parameters["male.engagement.multiplier"]
+        projected.rate[c("0-4","5-9","10-14"),,] = projected.rate[c("0-4","5-9","10-14"),,]*sampled.parameters["age.0.14.engagement.multiplier"]
         projected.rate
         
     }))
@@ -921,8 +932,11 @@ map.model.parameters <- function(parameters,
             sapply(trans.dim.names$age, function(age){
                 eng.cat = names(MODEL.TO.IEDEA.AGE.MAPPING)[sapply(MODEL.TO.IEDEA.AGE.MAPPING, function(x) age %in% x)]
                 
+                slope = (suppression.model$slope+sampled.parameters['log.OR.suppression.slope']) # original slope 
+                slope = slope + (eng.cat=="10-19")*(sampled.parameters['log.OR.0.14.suppression.slope']) # if 0-14, add in multiplier 
+                
                 suppression.model$intercept + 
-                    (suppression.model$slope+sampled.parameters['log.OR.suppression.slope'])*(year-suppression.model$anchor.year) + 
+                    slope*(year-suppression.model$anchor.year) + 
                     (suppression.model$age.10.19*(eng.cat=="10-19")) + 
                     (suppression.model$age.20.29*(eng.cat=="20-29")) + 
                     (suppression.model$age.40.49*(eng.cat=="40-49")) + 
@@ -934,11 +948,16 @@ map.model.parameters <- function(parameters,
         dim(projected.log.odds) = sapply(trans.dim.names,length)
         dimnames(projected.log.odds) = trans.dim.names
         
+        # when it's formulated as a log OR, doesn't really change the overall level
+        # when it's formulated as a rate multiplier, helps more (below)
+        #projected.log.odds[c("0-4","5-9","10-14"),,] = projected.log.odds[c("0-4","5-9","10-14"),,]+sampled.parameters["age.0.14.suppression.multiplier"]
+        
         projected.p = 1/(1+exp(-projected.log.odds)) 
         
         projected.p = projected.p*suppression.model$max.proportion 
         projected.rate = -log(1-projected.p)   
         projected.rate[,"male",] = projected.rate[,"male",]*sampled.parameters["male.suppression.multiplier"]
+        projected.rate[c("0-4","5-9","10-14"),,] = projected.rate[c("0-4","5-9","10-14"),,]*sampled.parameters["age.0.14.suppression.multiplier"]
         projected.rate
         
     }))

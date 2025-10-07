@@ -20,6 +20,13 @@ SOUTH.AFRICA.PRIOR = join.distributions(
     birth.transmission.risk.1 = Logitnormal.Distribution(logit(0.3), log(3)/2), 
     # see Kenya prior for notes on a Logitnormal distribution 
     
+    # NEW FOR YOUTH CASCADE CALIBRATION: 
+    age.0.14.awareness.multiplier = Lognormal.Distribution(log(1), log(8)/2), 
+    age.0.14.engagement.multiplier = Lognormal.Distribution(log(1), log(8)/2), 
+    age.0.14.suppression.multiplier = Lognormal.Distribution(log(1), log(8)/2), # used the same as the male cascade multipliers since those are applied the same way 
+    log.OR.0.14.engagement.slope = Normal.Distribution(0, log(4)/2),
+    log.OR.0.14.suppression.slope = Normal.Distribution(0, log(4)/2),
+    
     # THE REST OF THESE DON'T CHANGE 
     proportion.trate.change.by.3.5 = Beta.Distribution(alpha = 21,beta = 7),
     
