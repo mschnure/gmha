@@ -46,14 +46,19 @@ PARAMETER.VAR.BLOCKS = list(
                            "birth.transmission.risk.1"),
     
     testing = c("log.OR.testing.intercept",
-                "log.OR.testing.slope"),
+                "log.OR.testing.slope",
+                "age.0.14.awareness.multiplier"),
     
     engagement.disengagement = c("log.OR.engagement.slope",
                                  "unsuppressed.disengagement.rates",
-                                 "suppressed.disengagement.rates"),
+                                 "suppressed.disengagement.rates",
+                                 "age.0.14.engagement.multiplier",
+                                 "log.OR.0.14.engagement.slope"),
 
     suppression = c("log.OR.suppression.slope",
-                    "unsuppression.rates"),
+                    "unsuppression.rates",
+                    "age.0.14.suppression.multiplier",
+                    "log.OR.0.14.suppression.slope"),
     
     male.cascade.multiplier = c("male.awareness.multiplier",
                                 "male.engagement.multiplier",

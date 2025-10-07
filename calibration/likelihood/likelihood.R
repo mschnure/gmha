@@ -21,7 +21,9 @@ WEIGHTS.BY.YEAR = rep(1, length(WEIGHT.YEARS))
 WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2000) # before 2000, 1/4x
 WEIGHTS.BY.YEAR[WEIGHT.YEARS>=2018] = 4 # from 2018, 4x
 names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
-WEIGHTS.BY.YEAR = WEIGHTS.BY.YEAR * WEIGHT.MULTIPLIER # set in set_likelihood_and_prior.R; if an initial run set to 1/8
+WEIGHT.MULTIPLIER = 1/8
+WEIGHTS.BY.YEAR = WEIGHTS.BY.YEAR*WEIGHT.MULTIPLIER
+print(paste0("Weights multiplied by ",WEIGHT.MULTIPLIER))
 
 # for france only, remove pre-1995 years 
 # WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
@@ -36,7 +38,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              parameters,
                              location,
                              years = 1995:2023, # 1980:2023
-                             total.weight = WEIGHTS.BY.YEAR, # [[convert_string(location)]], 
+                             total.weight = WEIGHTS.BY.YEAR, 
                              #incidence
                              incidence.years=years,
                              incidence.weight=2, 

@@ -1,4 +1,4 @@
-source('calibration/likelihood/likelihood.R')
+#source('calibration/likelihood/likelihood.R') # should already be sourced in source code 
 source('calibration/prior_distributions/kenya_prior.R')
 source('calibration/prior_distributions/south_africa_prior.R')
 source('calibration/prior_distributions/france_prior.R')
@@ -15,14 +15,7 @@ source('calibration/prior_distributions/thailand_prior.R')
 source('calibration/prior_distributions/cambodia_prior.R')
 
 set.likelihood.and.prior.by.location = function(location,
-                                                initial.run=F,
                                                 weighted.prevalence = F){
-    
-    if(initial.run){
-        WEIGHT.MULTIPLIER = (1/8) # used in likelihood code 
-    } else {
-        WEIGHT.MULTIPLIER = 1
-    }
     
     if(weighted.prevalence){
         likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = location),

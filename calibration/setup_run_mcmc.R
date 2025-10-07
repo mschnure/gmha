@@ -14,7 +14,6 @@ LOCATION = "South Africa"
 
 # weight/iteration options 
 {
-    INITIAL.RUN = T  # if true, total weight set to 1/8
     WEIGHTED.PREVALENCE = F # if set to T, will run with 4x prevalence weight 
     N.ITER = 30000
 }
@@ -25,7 +24,6 @@ RESUME.RUNNING = F
 # if a fresh run (i.e., not resuming)
 if(!RESUME.RUNNING){
     LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION,
-                                                            initial.run=INITIAL.RUN, # if true, total weight set to 1/8
                                                             weighted.prevalence = WEIGHTED.PREVALENCE)
   
   control = create.adaptive.blockwise.metropolis.control(var.names = LOCATION.DETAILS$prior@var.names,
