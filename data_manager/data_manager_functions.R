@@ -201,45 +201,47 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     
     ## Awareness denominator = all PLHIV
     rv$awareness = read.cascade.data.type(sub.data.type = "status", denominator = "allPLHIV", suffix = "")
-    rv$awareness$AGES = c('15+')
-    rv$awareness$AGE.LOWERS = c(15)
-    rv$awareness$AGE.UPPERS = c(Inf)
+    rv$awareness$AGES = c('0-14','15+')
+    rv$awareness$AGE.LOWERS = c(0,15)
+    rv$awareness$AGE.UPPERS = c(15,Inf)
     rv$awareness$SEXES = c('male','female')
     rv$awareness$LOCATIONS = dimnames(rv$awareness$year.location)$location
 
     ## Default engagement denominator = all aware PLHIV (option for all PLHIV below)
     rv$engagement = read.cascade.data.type(sub.data.type = "ART", denominator = "aware", suffix = "")
-    rv$engagement$AGES = c('15+')
-    rv$engagement$AGE.LOWERS = c(15)
-    rv$engagement$AGE.UPPERS = c(Inf)
+    rv$engagement$AGES = c('0-14','15+')
+    rv$engagement$AGE.LOWERS = c(0,15)
+    rv$engagement$AGE.UPPERS = c(15,Inf)
     rv$engagement$SEXES = c('male','female')
     rv$engagement$LOCATIONS = dimnames(rv$engagement$year.location)$location
         
     rv$engagement.allPLHIV = read.cascade.data.type(sub.data.type = "ART", denominator = "allPLHIV", suffix = "")
-    rv$engagement.allPLHIV$AGES = c('15+')
-    rv$engagement.allPLHIV$AGE.LOWERS = c(15)
-    rv$engagement.allPLHIV$AGE.UPPERS = c(Inf)
+    rv$engagement.allPLHIV$AGES = c('0-14','15+')
+    rv$engagement.allPLHIV$AGE.LOWERS = c(0,15)
+    rv$engagement.allPLHIV$AGE.UPPERS = c(15,Inf)
     rv$engagement.allPLHIV$SEXES = c('male','female')
     rv$engagement.allPLHIV$LOCATIONS = dimnames(rv$engagement.allPLHIV$year.location)$location
     
     ## Default suppression denominator = all aware PLHIV (option for all PLHIV below)
     rv$suppression = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "")
         # multiply (suppress/on ART) * (on ART/aware) in order to make denominator aware: 
-    rv$suppression$year = (rv$suppression$year*rv$engagement$year) # FIXED THIS STEP 10/3!! 
+    rv$suppression$year = (rv$suppression$year*rv$engagement$year) 
     rv$suppression$year.location = (rv$suppression$year.location*rv$engagement$year.location)
+    rv$suppression$year.age = (rv$suppression$year.age*rv$engagement$year.age)
+    rv$suppression$year.age.location = (rv$suppression$year.age.location*rv$engagement$year.age.location)
     rv$suppression$year.age.sex = (rv$suppression$year.age.sex*rv$engagement$year.age.sex)
     rv$suppression$year.age.sex.location = (rv$suppression$year.age.sex.location*rv$engagement$year.age.sex.location)
     
-    rv$suppression$AGES = c('15+')
-    rv$suppression$AGE.LOWERS = c(15)
-    rv$suppression$AGE.UPPERS = c(Inf)
+    rv$suppression$AGES = c('0-14','15+')
+    rv$suppression$AGE.LOWERS = c(0,15)
+    rv$suppression$AGE.UPPERS = c(15,Inf)
     rv$suppression$SEXES = c('male','female')
     rv$suppression$LOCATIONS = dimnames(rv$suppression$year.location)$location
     
     rv$suppression.allPLHIV = read.cascade.data.type(sub.data.type = "suppress", denominator = "allPLHIV", suffix = "")
-    rv$suppression.allPLHIV$AGES = c('15+')
-    rv$suppression.allPLHIV$AGE.LOWERS = c(15)
-    rv$suppression.allPLHIV$AGE.UPPERS = c(Inf)
+    rv$suppression.allPLHIV$AGES = c('0-14','15+')
+    rv$suppression.allPLHIV$AGE.LOWERS = c(0,15)
+    rv$suppression.allPLHIV$AGE.UPPERS = c(15,Inf)
     rv$suppression.allPLHIV$SEXES = c('male','female')
     rv$suppression.allPLHIV$LOCATIONS = dimnames(rv$suppression.allPLHIV$year.location)$location
     
@@ -273,26 +275,26 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     
     rv$awareness.lowers = read.cascade.data.type(sub.data.type = "status", denominator = "allPLHIV", suffix = "_lower")
     rv$awareness.uppers = read.cascade.data.type(sub.data.type = "status", denominator = "allPLHIV", suffix = "_upper")
-    rv$awareness.lowers$AGES = rv$awareness.uppers$AGES = c('15+')
-    rv$awareness.lowers$AGE.LOWERS = rv$awareness.uppers$AGE.LOWERS = c(15)
-    rv$awareness.lowers$AGE.UPPERS = rv$awareness.uppers$AGE.UPPERS = c(Inf)
+    rv$awareness.lowers$AGES = rv$awareness.uppers$AGES = c('0-14','15+')
+    rv$awareness.lowers$AGE.LOWERS = rv$awareness.uppers$AGE.LOWERS = c(0,15)
+    rv$awareness.lowers$AGE.UPPERS = rv$awareness.uppers$AGE.UPPERS = c(15,Inf)
     rv$awareness.lowers$SEXES = rv$awareness.uppers$SEXES = c('male','female')
     rv$awareness.lowers$LOCATIONS = rv$awareness.uppers$LOCATIONS = dimnames(rv$awareness.lowers$year.location)$location
     
     ## Default engagement denominator = all aware PLHIV (option for all PLHIV below)
     rv$engagement.lowers = read.cascade.data.type(sub.data.type = "ART", denominator = "aware", suffix = "_lower")
     rv$engagement.uppers = read.cascade.data.type(sub.data.type = "ART", denominator = "aware", suffix = "_upper")
-    rv$engagement.lowers$AGES = rv$engagement.uppers$AGES = c('15+')
-    rv$engagement.lowers$AGE.LOWERS = rv$engagement.uppers$AGE.LOWERS = c(15)
-    rv$engagement.lowers$AGE.UPPERS = rv$engagement.uppers$AGE.UPPERS = c(Inf)
+    rv$engagement.lowers$AGES = rv$engagement.uppers$AGES = c('0-14','15+')
+    rv$engagement.lowers$AGE.LOWERS = rv$engagement.uppers$AGE.LOWERS = c(0,15)
+    rv$engagement.lowers$AGE.UPPERS = rv$engagement.uppers$AGE.UPPERS = c(15,Inf)
     rv$engagement.lowers$SEXES = rv$engagement.uppers$SEXES = c('male','female')
     rv$engagement.lowers$LOCATIONS = rv$engagement.uppers$LOCATIONS = dimnames(rv$engagement.lowers$year.location)$location
     
     rv$engagement.allPLHIV.lowers = read.cascade.data.type(sub.data.type = "ART", denominator = "allPLHIV", suffix = "_lower")
     rv$engagement.allPLHIV.uppers = read.cascade.data.type(sub.data.type = "ART", denominator = "allPLHIV", suffix = "_upper")
-    rv$engagement.allPLHIV.lowers$AGES = rv$engagement.allPLHIV.uppers$AGES = c('15+')
-    rv$engagement.allPLHIV.lowers$AGE.LOWERS = rv$engagement.allPLHIV.uppers$AGE.LOWERS = c(15)
-    rv$engagement.allPLHIV.lowers$AGE.UPPERS = rv$engagement.allPLHIV.uppers$AGE.UPPERS = c(Inf)
+    rv$engagement.allPLHIV.lowers$AGES = rv$engagement.allPLHIV.uppers$AGES = c('0-14','15+')
+    rv$engagement.allPLHIV.lowers$AGE.LOWERS = rv$engagement.allPLHIV.uppers$AGE.LOWERS = c(0,15)
+    rv$engagement.allPLHIV.lowers$AGE.UPPERS = rv$engagement.allPLHIV.uppers$AGE.UPPERS = c(15,Inf)
     rv$engagement.allPLHIV.lowers$SEXES = rv$engagement.allPLHIV.uppers$SEXES = c('male','female')
     rv$engagement.allPLHIV.lowers$LOCATIONS = rv$engagement.allPLHIV.uppers$LOCATIONS = 
         dimnames(rv$engagement.allPLHIV.lowers$year.location)$location
@@ -300,28 +302,32 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     ## Default suppression denominator = all aware PLHIV (option for all PLHIV below)
     rv$suppression.lowers = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "_lower")
         # multiply (suppress/on ART) * (on ART/aware) in order to make denominator aware: 
-    rv$suppression.lowers$year = (rv$suppression.lowers$year*rv$engagement.lowers$year) # FIXED THIS STEP 10/3!!
+    rv$suppression.lowers$year = (rv$suppression.lowers$year*rv$engagement.lowers$year)
     rv$suppression.lowers$year.location = (rv$suppression.lowers$year.location*rv$engagement.lowers$year.location)
+    rv$suppression.lowers$year.age = (rv$suppression.lowers$year.age*rv$engagement$year.age)
+    rv$suppression.lowers$year.age.location = (rv$suppression.lowers$year.age.location*rv$engagement$year.age.location)
     rv$suppression.lowers$year.age.sex = (rv$suppression.lowers$year.age.sex*rv$engagement.lowers$year.age.sex)
     rv$suppression.lowers$year.age.sex.location = (rv$suppression.lowers$year.age.sex.location*rv$engagement.lowers$year.age.sex.location)
     rv$suppression.uppers = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "_upper")
         # multiply (suppress/on ART) * (on ART/aware) in order to make denominator aware: 
-    rv$suppression.uppers$year = (rv$suppression.uppers$year*rv$engagement.uppers$year) # FIXED THIS STEP 10/3!!
+    rv$suppression.uppers$year = (rv$suppression.uppers$year*rv$engagement.uppers$year) 
     rv$suppression.uppers$year.location = (rv$suppression.uppers$year.location*rv$engagement.uppers$year.location)
+    rv$suppression.uppers$year.age = (rv$suppression.uppers$year.age*rv$engagement$year.age)
+    rv$suppression.uppers$year.age.location = (rv$suppression.uppers$year.age.location*rv$engagement$year.age.location)
     rv$suppression.uppers$year.age.sex = (rv$suppression.uppers$year.age.sex*rv$engagement.uppers$year.age.sex)
     rv$suppression.uppers$year.age.sex.location = (rv$suppression.uppers$year.age.sex.location*rv$engagement.uppers$year.age.sex.location)
     
-    rv$suppression.lowers$AGES = rv$suppression.uppers$AGES = c('15+')
-    rv$suppression.lowers$AGE.LOWERS = rv$suppression.uppers$AGE.LOWERS = c(15)
-    rv$suppression.lowers$AGE.UPPERS = rv$suppression.uppers$AGE.UPPERS = c(Inf)
+    rv$suppression.lowers$AGES = rv$suppression.uppers$AGES = c('0-14','15+')
+    rv$suppression.lowers$AGE.LOWERS = rv$suppression.uppers$AGE.LOWERS = c(0,15)
+    rv$suppression.lowers$AGE.UPPERS = rv$suppression.uppers$AGE.UPPERS = c(15,Inf)
     rv$suppression.lowers$SEXES = rv$suppression.uppers$SEXES = c('male','female')
     rv$suppression.lowers$LOCATIONS = rv$suppression.uppers$LOCATIONS = dimnames(rv$suppression.lowers$year.location)$location
     
     rv$suppression.allPLHIV.lowers = read.cascade.data.type(sub.data.type = "suppress", denominator = "allPLHIV", suffix = "_lower")
     rv$suppression.allPLHIV.uppers = read.cascade.data.type(sub.data.type = "suppress", denominator = "allPLHIV", suffix = "_upper")
-    rv$suppression.allPLHIV.lowers$AGES = rv$suppression.allPLHIV.uppers$AGES = c('15+')
-    rv$suppression.allPLHIV.lowers$AGE.LOWERS = rv$suppression.allPLHIV.uppers$AGE.LOWERS = c(15)
-    rv$suppression.allPLHIV.lowers$AGE.UPPERS = rv$suppression.allPLHIV.uppers$AGE.UPPERS = c(Inf)
+    rv$suppression.allPLHIV.lowers$AGES = rv$suppression.allPLHIV.uppers$AGES = c('0-14','15+')
+    rv$suppression.allPLHIV.lowers$AGE.LOWERS = rv$suppression.allPLHIV.uppers$AGE.LOWERS = c(0,15)
+    rv$suppression.allPLHIV.lowers$AGE.UPPERS = rv$suppression.allPLHIV.uppers$AGE.UPPERS = c(15,Inf)
     rv$suppression.allPLHIV.lowers$SEXES = rv$suppression.allPLHIV.uppers$SEXES = c('male','female')
     rv$suppression.allPLHIV.lowers$LOCATIONS = rv$suppression.allPLHIV.uppers$LOCATIONS = 
         dimnames(rv$suppression.allPLHIV.lowers$year.location)$location
@@ -621,7 +627,6 @@ read.cascade.data.type = function(data.type="cascade",
                                        sex="All",
                                        suffix = suffix)
     
-    
     rv$year.location = read.cascade.data.files(data.type=data.type,
                                           sub.data.type=sub.data.type,
                                           denominator=denominator,
@@ -629,6 +634,72 @@ read.cascade.data.type = function(data.type="cascade",
                                           sex="All",
                                           include.countries = T,
                                           suffix = suffix)
+    
+    ## Year.Age (0-14) ##
+    year.age = read.cascade.data.files(data.type=data.type,
+                                       sub.data.type=sub.data.type,
+                                       denominator=denominator,
+                                       age='0-14',
+                                       sex="",
+                                       include.countries = F,
+                                       suffix = suffix)
+    # add 15+ as an age, add back in the age dimension
+    year.age = array(c(year.age,rv$year), 
+                     dim = c(dim(year.age)[1],age=2),
+                     dimnames = list(year = dimnames(year.age)[[1]],
+                                     age = c("0-14","15+")))
+    rv$year.age = year.age
+    
+    ## Year.Age.Country (0-14) ## Also adding 15+ into this as well 
+    year.age.location = read.cascade.data.files(data.type=data.type,
+                                                sub.data.type=sub.data.type,
+                                                denominator=denominator,
+                                                age='0-14',
+                                                sex="",
+                                                include.countries = T,
+                                                suffix = suffix)
+
+    # 1. Define combined dimensions
+    all_years <- dimnames(year.age.location)[[1]]
+    all_locs  <- union(dimnames(year.age.location)[[2]],
+                       dimnames(rv$year.location)[[2]])
+    
+    # 2. Create NA-filled arrays for both, covering all locations
+    year.age.location_full <- array(
+        NA,
+        dim = c(length(all_years), length(all_locs)),
+        dimnames = list(year = all_years, location = all_locs)
+    )
+    
+    rv_year.location_full <- array(
+        NA,
+        dim = c(length(all_years), length(all_locs)),
+        dimnames = list(year = all_years, location = all_locs)
+    )
+    
+    # 3. Fill in available values
+    year.age.location_full[, dimnames(year.age.location)[[2]]] <- year.age.location
+    rv_year.location_full[, dimnames(rv$year.location)[[2]]]   <- rv$year.location
+    
+    # 4. Combine along the new "age" dimension
+    combined <- array(
+        NA,
+        dim = c(
+            year = length(all_years),
+            age = 2,
+            location = length(all_locs)
+        ),
+        dimnames = list(
+            year = all_years,
+            age = c("0-14", "15+"),
+            location = all_locs
+        )
+    )
+    
+    combined[, "0-14", ] <- year.age.location_full
+    combined[, "15+", ]  <- rv_year.location_full
+
+    rv$year.age.location = combined
     
     ## Year.Age.Sex ##
     rv$year.age.sex = read.cascade.data.stratified(data.type=data.type,
