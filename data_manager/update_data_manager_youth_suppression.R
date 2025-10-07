@@ -13,67 +13,62 @@ INDIVIDUAL.COUNTRIES = c("South Africa","Mozambique","Nigeria","Tanzania","Ugand
     #  Awareness denominator = all PLHIV
     #  Default engagement denominator = all aware PLHIV 
 
-names(DATA.MANAGER$suppression)# need to ADD year.age.location to include 0-14 
-DATA.MANAGER$suppression$AGES # need to update to include 0-14 and 15-24
+names(DATA.MANAGER$suppression)# need to ADD year.age.location and year.age to include 0-14 
+DATA.MANAGER$suppression$AGES # need to update to include 0-14 (and 15-24?)
 DATA.MANAGER$suppression$AGE.LOWERS 
 DATA.MANAGER$suppression$AGE.UPPERS
-dimnames(DATA.MANAGER$suppression$year.age.sex.location)[-4] # looking at dims without location for now
 
-# this is % of people on ART who achieve viral suppression - have to fix denominator somehow 
-x = read.cascade.data.files(dir = 'data_manager/data',
-                            data.type="cascade",
-                            sub.data.type = "suppress",
-                            denominator = "aware",
-                            suffix = "",
-                            include.countries = T,
-                            age  = c("0-14"),
-                            sex="")
+# this is % of PEOPLE ON ART who achieve viral suppression
+# in the data manager functions, I multiply this by engagement to get the right denominator: 
+    # multiply (suppress/on ART) * (on ART/aware) in order to make denominator aware: 
+children.supp.denom.eng = read.cascade.data.files(dir = 'data_manager/data',
+                                                  data.type="cascade",
+                                                  sub.data.type = "suppress",
+                                                  denominator = "aware",
+                                                  suffix = "",
+                                                  include.countries = T,
+                                                  age  = c("0-14"),
+                                                  sex="")
+#children.supp.denom.eng[,"South Africa"]
+children.eng = read.cascade.data.files(dir = 'data_manager/data',
+                                                  data.type="cascade",
+                                                  sub.data.type = "ART",
+                                                  denominator = "aware",
+                                                  suffix = "",
+                                                  include.countries = T,
+                                                  age  = c("0-14"),
+                                                  sex="")
+children.supp.denom.aware = children.supp.denom.eng*children.eng
+children.supp.denom.aware = children.supp.denom.aware[,"South Africa"]
+children.supp.denom.aware
+DATA.MANAGER$suppression$year.age.location[,,"South Africa"] 
 
-all.ages.test = read.cascade.data.files(dir = 'data_manager/data',
-                            data.type="cascade",
-                            sub.data.type = "suppress",
-                            denominator = "aware",
-                            suffix = "",
-                            include.countries = T,
-                            age  = c("All ages"),
-                            sex="All")
-all.ages.test = all.ages.test[,"South Africa"]
+dim(DATA.MANAGER$suppression$year.age)
+dim(DATA.MANAGER$suppression$year.age.location)
 
+# check how I do it for all ages: 
+all.ages.supp.denom.eng = read.cascade.data.files(dir = 'data_manager/data',
+                                                  data.type="cascade",
+                                                  sub.data.type = "suppress",
+                                                  denominator = "aware",
+                                                  suffix = "",
+                                                  include.countries = T,
+                                                  age  = c("All ages"),
+                                                  sex="All")
+all.ages.eng = read.cascade.data.files(dir = 'data_manager/data',
+                                        data.type="cascade",
+                                        sub.data.type = "ART",
+                                        denominator = "aware",
+                                        suffix = "",
+                                        include.countries = T,
+                                        age  = c("All ages"),
+                                        sex="All")
+all.ages.supp.denom.aware = all.ages.supp.denom.eng*all.ages.eng
+all.ages.supp.denom.aware = all.ages.supp.denom.aware[,"South Africa"]
 
-source('model/run_systematic.R')
+# these should be the same - good 
+all.ages.supp.denom.aware
+DATA.MANAGER$suppression$year.location[,"South Africa"]
 
-#variable.parameters = get.default.parameters(location = "South Africa")
-load("calibration/starting_values/2025_08_11_south_africa_start_values.Rdata")
-variable.parameters = params.start.values
-
-sim = run.model.for.parameters(location="South Africa",variable.parameters = variable.parameters)
-
-sim.numerator = extract.data(sim = sim,
-                             data.type = "suppression",
-                             years= 2010:2020,
-                             keep.dimensions = c("year"))
-
-sim.denominator = extract.data(sim = sim,
-                               data.type = "awareness",
-                               years= 2010:2020,
-                               keep.dimensions = c("year"))
-
-sim.suppression = sim.numerator/sim.denominator # suppressed/aware
-DATA.MANAGER$suppression$year.location[,"South Africa"] # this is suppression out of PEOPLE ON ART - INCORRECT!! 
-DATA.MANAGER$engagement$year.location[,"South Africa"] # this is out of AWARENESS - CORRECT 
-
-suppress.copy = DATA.MANAGER$suppression$year.location[,"South Africa"]
-rv = DATA.MANAGER
-new.suppress = (rv$suppression$year.location*rv$engagement$year.location)
-new.suppress = new.suppress[,"South Africa"]
-
-simplot(sim,   
-    years=1980:2030, 
-    data.types=c("suppression"), 
-    proportion=T) +geom_hline(yintercept = .64226759031) +geom_hline(yintercept = 0.84) + geom_vline(xintercept = 2015)
-# 2015 sim value and data value 
-# fixed 2015 data value: 0.5695 (old value: 0.84)
-
-sim.numerator/sim.denominator
 
 

@@ -57,7 +57,14 @@ simplot(sim,
 simplot(sim,
         years=1980:2030, 
         data.types=c('awareness',"engagement","suppression"), 
-        facet.by=c('age','sex'), 
+        facet.by=c('age','sex'), # now 0-14 is showing by sex - make sure likelihood doesn't have a problem with that 
+        ages = "15+", # shouldn't be a problem - comparable to incidence by age/sex; if I don't include this age line below it does the same thing
+        proportion=T)
+
+simplot(sim,
+        years=1980:2030, 
+        data.types=c('awareness',"engagement","suppression"), 
+        facet.by=c('age'), 
         proportion=T)
 
 simplot(sim, 
