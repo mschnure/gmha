@@ -19,7 +19,7 @@ LOCATION = "South Africa"
 }
 
 # resume running option
-RESUME.RUNNING = F
+RESUME.RUNNING = T
 
 # if a fresh run (i.e., not resuming)
 if(!RESUME.RUNNING){
@@ -59,16 +59,16 @@ if(!RESUME.RUNNING){
 }
 
 if(RESUME.RUNNING){
-    print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION,": chain ",CHAIN)))
-    mcmc = run.mcmc.from.cache(dir=file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",CHAIN)),
-                               update.frequency = 100)
-    
-    save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_chain",CHAIN,"_",Sys.Date(),".Rdata"))
-    
-    simset = extract.simset(mcmc,
-                            additional.burn=200,
-                            additional.thin=20)
-    
-    save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_chain",CHAIN,"_",Sys.Date(),".Rdata")) 
+  print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION,": chain ",CHAIN, "; mcmc code: ",MCMC.CODE)))
+  mcmc = run.mcmc.from.cache(dir=file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",MCMC.CODE,"_",CHAIN)),
+                             update.frequency = 100)
+  
+  save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_",MCMC.CODE,"_chain",CHAIN,"_",Sys.Date(),".Rdata"))
+  
+  simset = extract.simset(mcmc,
+                          additional.burn=200,
+                          additional.thin=20)
+  
+  save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_",MCMC.CODE,"_chain",CHAIN,"_",Sys.Date(),".Rdata")) 
 }
 
