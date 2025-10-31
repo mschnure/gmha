@@ -3,7 +3,7 @@ library(distributions)
 library(ggplot2) 
 source("model/run_systematic.R")
 
-CHAIN = 1
+CHAIN = 2
 MCMC.CODE = 'youth.supp' # will paste this in the cache and mcmc files, use "" for original version (I think)
 
 set.seed(4321*CHAIN)
@@ -15,7 +15,8 @@ LOCATION = "South Africa"
 # weight/iteration options 
 {
     WEIGHTED.PREVALENCE = F # if set to T, will run with 4x prevalence weight 
-    N.ITER = 30000
+    WEIGHTED.CASCADE = F # if set to T, will run with 4x awareness, engagement, suppression weights
+    N.ITER = 100000
 }
 
 # resume running option
@@ -24,7 +25,8 @@ RESUME.RUNNING = T
 # if a fresh run (i.e., not resuming)
 if(!RESUME.RUNNING){
     LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION,
-                                                            weighted.prevalence = WEIGHTED.PREVALENCE)
+                                                            weighted.prevalence = WEIGHTED.PREVALENCE,
+                                                            weighted.cascade = WEIGHTED.CASCADE)
   
   control = create.adaptive.blockwise.metropolis.control(var.names = LOCATION.DETAILS$prior@var.names,
                                                          simulation.function = SIMULATION.FUNCTION,
@@ -47,15 +49,7 @@ if(!RESUME.RUNNING){
                              cache.frequency = 200,
                              cache.dir = file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",MCMC.CODE,"_",CHAIN))
   )
-  
-  save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_",MCMC.CODE,"_chain",CHAIN,"_",Sys.Date(),".Rdata"))
-  
-  simset = extract.simset(mcmc,
-                          additional.burn=200,
-                          additional.thin=20)
-  
-  save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_",MCMC.CODE,"_chain",CHAIN,"_",Sys.Date(),".Rdata")) 
-  
+
 }
 
 if(RESUME.RUNNING){
@@ -63,12 +57,12 @@ if(RESUME.RUNNING){
   mcmc = run.mcmc.from.cache(dir=file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",MCMC.CODE,"_",CHAIN)),
                              update.frequency = 100)
   
-  save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_",MCMC.CODE,"_chain",CHAIN,"_",Sys.Date(),".Rdata"))
-  
-  simset = extract.simset(mcmc,
-                          additional.burn=200,
-                          additional.thin=20)
-  
-  save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_",MCMC.CODE,"_chain",CHAIN,"_",Sys.Date(),".Rdata")) 
 }
 
+save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_",MCMC.CODE,"_chain",CHAIN,"_",Sys.Date(),".Rdata"))
+
+simset = extract.simset(mcmc,
+                        additional.burn=200,
+                        additional.thin=20)
+
+save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_",MCMC.CODE,"_chain",CHAIN,"_",Sys.Date(),".Rdata"))

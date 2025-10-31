@@ -15,18 +15,28 @@ source('calibration/prior_distributions/thailand_prior.R')
 source('calibration/prior_distributions/cambodia_prior.R')
 
 set.likelihood.and.prior.by.location = function(location,
-                                                weighted.prevalence = F){
-    
-    if(weighted.prevalence){
-        likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = location),
-                                              location=location,
-                                              prevalence.weight = 4)
-    } else {
-        likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = location),
-                                              location=location)
-    }
+                                                weighted.prevalence = F,
+                                                weighted.cascade = F){
+  
+  PREVALENCE.WEIGHT = 1
+  CASCADE.WEIGHT = 1
+  
+  if(weighted.prevalence){
+    PREVALENCE.WEIGHT = 4
+  }
+  
+  if(weighted.cascade){
+    CASCADE.WEIGHT = 4
+  }
 
-    
+  print(paste0("prevalence weight set to ",PREVALENCE.WEIGHT," and cascade weight set to ",CASCADE.WEIGHT))
+  likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = location),
+                                        location=location,
+                                        prevalence.weight = PREVALENCE.WEIGHT,
+                                        awareness.weight = CASCADE.WEIGHT,
+                                        engagement.weight = CASCADE.WEIGHT,
+                                        suppression.weight = CASCADE.WEIGHT)
+  
     params.start.values = get.default.parameters(location = location)
     
     if(location=="Kenya"){
@@ -36,7 +46,9 @@ set.likelihood.and.prior.by.location = function(location,
     } else if(location=="South Africa"){
         prior = SOUTH.AFRICA.PRIOR
         # load("calibration/starting_values/2025_08_11_south_africa_start_values.Rdata")
-        # params.start.values = params.start.values
+        #load("calibration/starting_values/2025_10_08_south_africa_start_values.Rdata")
+        load("calibration/starting_values/2025_10_23_south_africa_start_values.Rdata")
+        params.start.values = params.start.values
     } else if(location=="France"){
         prior = FRANCE.PRIOR
         load("calibration/starting_values/2025_08_13_france_start_values.Rdata")

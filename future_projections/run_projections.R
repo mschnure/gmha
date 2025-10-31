@@ -5,20 +5,21 @@
 source("model/run_systematic.R")
 source("future_projections/extract_projection_results.R")
 
-RUN.INDIV.COUNTRY = F
-LOAD.GLOBAL.SIMSET = T
-N.CHAINS = 1
+RUN.INDIV.COUNTRY = T
+LOAD.GLOBAL.SIMSET = F
+N.CHAINS = 2
 
 if(LOAD.GLOBAL.SIMSET){
   COUNTRIES = "global"
 } else if(RUN.INDIV.COUNTRY){
-  COUNTRIES = c(#"Mozambique","Uganda","Kenya","Zambia"
-                #"Zimbabwe","unaids.remainder","non.unaids.remainder"
-                #"r1.low","r1.lower.middle","r1.upper.middle","r1.high"
-                #"Tanzania","South Africa",
-                #"Malawi" #,"Nigeria"
-
-    )
+  COUNTRIES = "South Africa"
+  # COUNTRIES = c(#"Mozambique","Uganda","Kenya","Zambia"
+  #               #"Zimbabwe","unaids.remainder","non.unaids.remainder"
+  #               #"r1.low","r1.lower.middle","r1.upper.middle","r1.high"
+  #               #"Tanzania","South Africa",
+  #               #"Malawi" #,"Nigeria"
+  # 
+  #   )
 } else stop("can only select run.indiv.country or load.global.simset")
 
 for(country in COUNTRIES){

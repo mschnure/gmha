@@ -80,9 +80,14 @@ simplot(simset,
         years=1980:end.year, 
         data.types=c('awareness',"engagement","suppression"), 
         facet.by=c('age','sex'), 
+        ages = "15+",
         proportion=T)
 
-
+simplot(simset,
+        years=1980:end.year, 
+        data.types=c('awareness',"engagement","suppression"), 
+        facet.by=c('age'), 
+        proportion=T)
 
 # AGE DISTRIBUTION PLOT
 plot.limits = c("Global" = 5500000,
