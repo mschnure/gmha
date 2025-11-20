@@ -15,48 +15,86 @@ simset.no.int = run.intervention.on.simset(simset,
                                            intervention = NO.INTERVENTION)
 
 print("running ES")
-simset.lai.es.10 = run.intervention.on.simset(simset,
+simset.lai.es = run.intervention.on.simset(simset,
                                               end.year = 2040,
-                                              intervention = lai.10.from.es)
+                                              intervention = lai.from.es)
 
 print("running EU")
-simset.lai.eu.10 = run.intervention.on.simset(simset,
+simset.lai.eu = run.intervention.on.simset(simset,
                                               end.year = 2040,
-                                              intervention = lai.10.from.eu)
+                                              intervention = lai.from.eu)
 
 print("running DU")
-simset.lai.du.10 = run.intervention.on.simset(simset,
+simset.lai.du = run.intervention.on.simset(simset,
                                               end.year = 2040,
-                                              intervention = lai.10.from.du)
+                                              intervention = lai.from.du)
 
 print("running all")
-simset.lai.all.10 = run.intervention.on.simset(simset,
+simset.lai.all = run.intervention.on.simset(simset,
                                                end.year = 2040,
-                                               intervention = lai.10.from.all)
+                                               intervention = lai.from.all)
 
-simplot(simset.no.int,
-        #simset.lai.es.10,
-        #simset.lai.eu.10,
-        #simset.lai.du.10,
-        #simset.lai.all.10,
-        years=1980:2040, 
-        data.types=c("suppression","suppression.oral","suppression.lai"), 
-        proportion=T) + geom_hline(y=0.91)
+print("running all with disengagement")
+simset.lai.all.dis = run.intervention.on.simset(simset,
+                                                end.year = 2040,
+                                                intervention = lai.from.all.with.disengagement)
 
-simplot(simset.no.int,
-        #simset.lai.es.10,
-        #simset.lai.eu.10,
-        #simset.lai.du.10,
-        simset.lai.all.10,
-        years=1980:2040, 
-        data.types = c("incidence","prevalence"))
+simset.list.full = list(no.int = simset.no.int,
+                        es = simset.lai.es,
+                        eu = simset.lai.eu,
+                        du = simset.lai.du,
+                        all = simset.lai.all,
+                        dis = simset.lai.all.dis)
 
-simplot(simset.no.int,
-        #simset.lai.es.10,
-        #simset.lai.eu.10,
-        #simset.lai.du.10,
-        simset.lai.all.10,
-        years=1980:2040, 
-        data.types=c("suppression","suppression.oral","suppression.lai"), 
-        facet.by=c('age','sex'), 
-        proportion=T)
+print("generating full.results.array")
+full.results.array = generate.full.results.array(simset.list = simset.list.full)
+infections.averted = calculate.infections.averted(full.results.array,
+                                                  interventions = c("es","eu","du","all","dis"),
+                                                  years = 2022:2030)
+if(1==2){
+    simplot(simset.no.int,
+            simset.lai.all,
+            simset.lai.all.dis,
+            years=1980:2040, 
+            data.types=c("suppression","suppression.oral","suppression.lai"), 
+            proportion=T)
+    
+    simplot(simset.no.int,
+            simset.lai.all,
+            simset.lai.all.dis,
+            years=1980:2040, 
+            ages = "15-24",
+            data.types=c("suppression","suppression.oral","suppression.lai"), 
+            facet.by=c('age'), 
+            proportion=T)
+
+    simplot(simset.no.int,
+            simset.lai.all,
+            simset.lai.all.dis,
+            years=1980:2040, 
+            data.types = c("incidence","prevalence"))
+    
+    simplot(simset.no.int,
+            simset.lai.all,
+            simset.lai.all.dis,
+            facet.by='age', 
+            years=1980:2040, 
+            data.types = c("incidence","prevalence"))
+    
+    simplot(simset.no.int,
+            simset.lai.all,
+            simset.lai.all.dis,
+            facet.by=c('age','sex'), 
+            ages = "15+",
+            years=1980:2040, 
+            data.types = c("incidence","prevalence"))
+    
+    simplot(simset.no.int,
+            simset.lai.all,
+            simset.lai.all.dis,
+            years=1980:2040, 
+            data.types=c("suppression","suppression.oral","suppression.lai"), 
+            facet.by=c('age','sex'), 
+            proportion=T)  
+}
+

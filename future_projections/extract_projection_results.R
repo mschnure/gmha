@@ -15,6 +15,68 @@ library("scales")
 #     10. generate.percent.over.age.table
 #     11. calculate.incidence.reduction
 
+calculate.infections.averted = function(results.array,
+                                        interventions,
+                                        years,
+                                        ages=NULL,
+                                        sexes=NULL){
+    
+    one.array = calculate.infections.averted.one.int(results.array = results.array,
+                                                    intervention = interventions[1],
+                                                    year = years,
+                                                    ages = ages,
+                                                    sexes = sexes)
+    dim.names = c(dimnames(one.array),
+                  list(intervention = interventions))
+    rv = array(NA,
+               dim = sapply(dim.names,length),
+               dimnames  = dim.names)
+    
+    for(intervention in interventions){
+      rv[,,intervention] = calculate.infections.averted.one.int(results.array = results.array,
+                                                                  intervention = intervention,
+                                                                  year = years,
+                                                                  ages = ages,
+                                                                  sexes = sexes)
+    }
+    
+    rv
+}
+
+calculate.infections.averted.one.int = function(results.array,
+                                        intervention,
+                                        years,
+                                        ages=NULL,
+                                        sexes=NULL){
+    results.array.year = results.array[as.character(years),,,"incidence",,]
+    if(!is.null(ages)){
+        results.array.year = results.array.year[,ages,,,,drop = F]
+    } 
+    if(!is.null(sexes)){
+        results.array.year = results.array.year[,,sexes,,,drop = F]
+    }
+    
+    inf.no.int = apply(results.array.year[,,,,"no.int"],c("age","sex","sim"),sum)
+    inf.intervention = apply(results.array.year[,,,,intervention],c("age","sex","sim"),sum)
+    inf.averted = inf.no.int - inf.intervention
+    
+    inf.no.int.total = apply(inf.no.int,c("sim"),sum)
+    inf.intervention.total = apply(inf.intervention,c("sim"),sum)
+    inf.averted.total = apply(inf.averted,c("sim"),sum)
+    rel.inf.averted = inf.averted.total/inf.no.int.total
+    
+    dim.names = list(metric = c("2.5%","50%","97.5%"),
+                     outcome = c("baseline","intervention","inf.averted","percent.inf.averted"))
+    
+    rv = array(c(quantile(inf.no.int.total,probs=c(.025,.5,.975), na.rm=T),
+                 quantile(inf.intervention.total,probs=c(.025,.5,.975), na.rm=T),
+                 quantile(inf.averted.total,probs=c(.025,.5,.975), na.rm=T),
+                 quantile(rel.inf.averted,probs=c(.025,.5,.975), na.rm=T)),
+               dim = sapply(dim.names,length),
+               dimnames = dim.names)
+               
+    rv
+}
 
 generate.csv = function(summary.results){
     

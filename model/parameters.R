@@ -984,6 +984,7 @@ map.model.parameters <- function(parameters,
     
     
     #-- LAI ART: 3 arrows --#
+    # plus disengagement back to engaged-suppressed
     lai.times = c(1975:min(project.to.year,sampled.parameters["cascade.improvement.end.year"], na.rm = T))
     
     ## Engaged suppressed --> LAI ART 
@@ -1028,6 +1029,22 @@ map.model.parameters <- function(parameters,
                                              parameters = parameters,
                                              parameter.name = "LAI.DU.RATES")
 
+    
+    # LAI ART --> engaged suppressed
+    # Normally 0; when intervention ends, need this to move everyone off of LAI 
+    lai.disengagement.model = get.lai.disengagement.rates(location = location)
+    lai.disengagement.rates = rep(list(array(lai.disengagement.model$annual.lai.disengagement.rate,
+                                             dim=sapply(trans.dim.names, length),
+                                             dimnames=trans.dim.names)),
+                                  length(lai.times))
+    
+    parameters = set.rates.for.interventions(baseline.rates = lai.disengagement.rates, # list 
+                                             baseline.times = lai.times, # vector
+                                             interventions = interventions,
+                                             scale = "rate", 
+                                             parameters = parameters,
+                                             parameter.name = "LAI.DISENGAGEMENT.RATES")
+    
     
     
     #-- RETURN --#

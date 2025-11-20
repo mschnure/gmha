@@ -110,6 +110,10 @@ compute.dx <- function(time,
                        dim = sapply(trans.dim.names, length),
                        dimnames = trans.dim.names)#indexed [age, sex, subgroup]
     
+    dx.lai.disengagement = array(0,
+                                 dim = sapply(trans.dim.names, length),
+                                 dimnames = trans.dim.names)#indexed [age, sex, subgroup]
+    
     ##----------------------------------##
     ##-- COMPUTE THE CHANGES IN STATE --##
     ##----------------------------------##
@@ -284,6 +288,14 @@ compute.dx <- function(time,
     dx.state[,,,'diagnosed_unengaged'] = as.numeric(dx.state[,,,'diagnosed_unengaged']) - lai.du.art
     dx.state[,,,'lai_art'] = as.numeric(dx.state[,,,'lai_art']) + lai.du.art
     
+    #-- DISENGAGEMENT FROM LAI ART --#
+    lai.disengagement = pp$LAI.DISENGAGEMENT.RATES * as.numeric(state[,,,'lai_art'])
+    dx.state[,,,'lai_art'] = as.numeric(dx.state[,,,'lai_art']) - lai.disengagement
+    dx.state[,,,'engaged_suppressed'] = as.numeric(dx.state[,,,'engaged_suppressed']) + lai.disengagement
+    dx.lai.disengagement = lai.disengagement
+    
+    dx.lai.art = lai.es.art + lai.eu.art + lai.du.art - lai.disengagement
+    
     #-- RECORD PREVALENCE --#
     dx.prevalence = dx.state[,,,-1]
     
@@ -304,7 +316,8 @@ compute.dx <- function(time,
            as.numeric(dx.disengagement.unsuppressed),
            as.numeric(dx.disengagement.suppressed),
            as.numeric(dx.suppression),
-           as.numeric(dx.lai.art)
+           as.numeric(dx.lai.art),
+           as.numeric(dx.lai.disengagement)
     )
     
     #   if(any(is.na(rv)))
@@ -328,7 +341,7 @@ set.up.initial.diffeq.vector <- function(initial.state,
         4 * state.length + #state plus three mortality arrays
         1 * prev.length + # prevalence array (doesn't have hiv negative)
         2 * trans.length + #incidence plus new diagnoses
-        5 * trans.length #engagement, disengagement x2, suppression, lai.art
+        6 * trans.length #engagement, disengagement x2, suppression, lai.art, lai disenagement
     
     
     rv = numeric(total.length) #opens a 1-D vector of 0s to this length
@@ -506,6 +519,12 @@ process.ode.results <- function(ode.results,
     rv$lai.art=array(ode.results[keep.years,index+1:trans.length]-ode.results[previous.years,index+1:trans.length],
                          dim = sapply(trans.dim.names,length),
                          dimnames = trans.dim.names)
+    index=index+trans.length
+    
+    #lai.art disengagement
+    rv$lai.disengagement=array(ode.results[keep.years,index+1:trans.length]-ode.results[previous.years,index+1:trans.length],
+                               dim = sapply(trans.dim.names,length),
+                               dimnames = trans.dim.names)
     index=index+trans.length
     
     class(rv)="hiv_simulation" 
