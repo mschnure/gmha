@@ -11,6 +11,7 @@ source("model/run_systematic.R")
 COUNTRIES = c("Mozambique","Uganda","Kenya","Zambia",
     "Zimbabwe","unaids.remainder","non.unaids.remainder",
     "r1.low","r1.lower.middle","r1.upper.middle","r1.high",
+    "all.low","all.lower.middle","all.upper.middle","all.high",
     "Malawi" ,"South Africa"#,
     #"Tanzania","Nigeria"
     
@@ -19,7 +20,7 @@ COUNTRIES = c("Mozambique","Uganda","Kenya","Zambia",
 # do these ones manually and check simset.no.int@simulations[[1]]$location to make sure they save in the right location
 # Tanzania, Nigeria, global, global.income, all.low, all.lower.middle, all.upper.middle, all.high 
 
-country = COUNTRIES[13]
+country = COUNTRIES[15]
 
 #for(country in COUNTRIES){
     
@@ -63,8 +64,8 @@ country = COUNTRIES[13]
                               sexes = c("female","male"),
                               plot.limits=c(0,plot.limit)) +
         scale_fill_manual(labels = c("no.int/2025" = "2025",
-                                     "no.int/2040" = "Status quo, 2040",
-                                     "no.int/2040" = "Status quo, 2040"), 
+                                     "no.int/2040" = "Forecasted 2040",
+                                     "no.int/2040" = "Forecasted 2040"), 
                           values=alpha(c("no.int/2025" = pal[1],
                                          "no.int/2040" = pal[2], 
                                          "no.int/2040" = pal[3]),alpha), 
