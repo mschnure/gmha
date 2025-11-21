@@ -16,28 +16,28 @@ simset.no.int = run.intervention.on.simset(simset,
 
 print("running ES")
 simset.lai.es = run.intervention.on.simset(simset,
-                                              end.year = 2040,
-                                              intervention = lai.from.es)
+                                           end.year = 2040,
+                                           intervention = list(lai.from.es,lai.disengagement))
 
 print("running EU")
 simset.lai.eu = run.intervention.on.simset(simset,
-                                              end.year = 2040,
-                                              intervention = lai.from.eu)
+                                           end.year = 2040,
+                                           intervention = list(lai.from.eu,lai.disengagement))
 
 print("running DU")
 simset.lai.du = run.intervention.on.simset(simset,
-                                              end.year = 2040,
-                                              intervention = lai.from.du)
+                                           end.year = 2040,
+                                           intervention = list(lai.from.du,lai.disengagement))
 
-print("running all")
+print("running all, WITHOUT disengagement")
 simset.lai.all = run.intervention.on.simset(simset,
-                                               end.year = 2040,
-                                               intervention = lai.from.all)
+                                            end.year = 2040,
+                                            intervention = lai.from.all)
 
-print("running all with disengagement")
+print("running all, WITH disengagement")
 simset.lai.all.dis = run.intervention.on.simset(simset,
-                                                end.year = 2040,
-                                                intervention = lai.from.all.with.disengagement)
+                                            end.year = 2040,
+                                            intervention = list(lai.from.all,lai.disengagement))
 
 simset.list.full = list(no.int = simset.no.int,
                         es = simset.lai.es,
@@ -53,25 +53,28 @@ infections.averted = calculate.infections.averted(full.results.array,
                                                   years = 2022:2030)
 if(1==2){
     simplot(simset.no.int,
-            simset.lai.all,
+            simset.lai.eu,
+            #simset.lai.all,
             simset.lai.all.dis,
             years=1980:2040, 
             data.types=c("suppression","suppression.oral","suppression.lai"), 
             proportion=T)
     
     simplot(simset.no.int,
-            simset.lai.all,
+            simset.lai.eu,
+            #simset.lai.all,
             simset.lai.all.dis,
-            years=1980:2040, 
-            ages = "15-24",
+            years=2020:2040, 
+            ages = c("15-24","15+"),
             data.types=c("suppression","suppression.oral","suppression.lai"), 
             facet.by=c('age'), 
             proportion=T)
 
     simplot(simset.no.int,
-            simset.lai.all,
+            simset.lai.eu,
+            #simset.lai.all,
             simset.lai.all.dis,
-            years=1980:2040, 
+            years=2020:2040, 
             data.types = c("incidence","prevalence"))
     
     simplot(simset.no.int,
@@ -90,8 +93,8 @@ if(1==2){
             data.types = c("incidence","prevalence"))
     
     simplot(simset.no.int,
-            simset.lai.all,
-            simset.lai.all.dis,
+            #simset.lai.all,
+            #simset.lai.all.dis,
             years=1980:2040, 
             data.types=c("suppression","suppression.oral","suppression.lai"), 
             facet.by=c('age','sex'), 

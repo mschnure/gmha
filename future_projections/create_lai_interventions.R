@@ -16,6 +16,7 @@ lai.from.es.unit = create.intervention.unit(parameter = "LAI.ES.RATES",
                                             start.time = START.TIME, # time when intervention starts scaling up
                                             effect.time = 2023, # times when intervention reaches value
                                             end.time = 2027, # when intervention should end, default to Inf
+                                                # change to 2026, unless I make the below removal instantaneous 
                                             effect.value = annual.lai.suppression.rate.es, 
                                             allow.lower.than.baseline = F)
 lai.from.eu.unit = create.intervention.unit(parameter = "LAI.EU.RATES", 
@@ -29,14 +30,14 @@ lai.from.du.unit = create.intervention.unit(parameter = "LAI.DU.RATES",
                                             scale = "rate",
                                             start.time = START.TIME,
                                             effect.time = 2023,
-                                            end.time = 2027,
+                                            end.time = 2027, 
                                             effect.value = annual.lai.suppression.rate.du, 
                                             allow.lower.than.baseline = F)
 
-lai.disengagement.unit = create.intervention.unit(parameter = "LAI.DISENGAGEMENT.RATES", 
+lai.disengagement.unit = create.intervention.unit(parameter = "LAI.DISENGAGEMENT.RATES", # removal 
                                                   scale = "rate",
                                                   start.time = 2027, # start in 2027
-                                                  effect.time = 2028, # reach full effect in 1 year
+                                                  effect.time = 2028, # reach full effect in 1 year; maybe change to 2027
                                                   effect.value = 52, # basically instantaneous rate removing them? 
                                                   allow.lower.than.baseline = F)
 
@@ -60,7 +61,12 @@ lai.from.all = create.intervention.from.units(lai.from.es.unit,
                                               target.ages = c("15-19","20-24"),
                                               code="lai.all")
 
-lai.from.all.with.disengagement = create.intervention.from.units(lai.from.es.unit,
+lai.disengagement = create.intervention.from.units(lai.disengagement.unit,
+                                                   code="lai.all")
+
+# make the analogous removal intervention that removes 25+ starting 2022
+
+lai.from.all.with.disengagement.old = create.intervention.from.units(lai.from.es.unit,
                                                                  lai.from.eu.unit,
                                                                  lai.from.du.unit,
                                                                  lai.disengagement.unit, # I want this to apply to all ages

@@ -1185,6 +1185,7 @@ set.rates.for.interventions = function(baseline.rates,
     times=baseline.times
     
     for(intervention in interventions){
+        
         intervention.unit = intervention$units[[parameter.name]]
         
         ages = intervention$target.ages

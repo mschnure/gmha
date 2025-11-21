@@ -296,6 +296,8 @@ compute.dx <- function(time,
     
     dx.lai.art = lai.es.art + lai.eu.art + lai.du.art - lai.disengagement
     
+    # track from each compartment 
+    
     #-- RECORD PREVALENCE --#
     dx.prevalence = dx.state[,,,-1]
     
