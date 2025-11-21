@@ -12,6 +12,7 @@ COUNTRIES = c("Mozambique","Uganda","Kenya","Zambia",
     "Zimbabwe","unaids.remainder","non.unaids.remainder",
     "r1.low","r1.lower.middle","r1.upper.middle","r1.high",
     "all.low","all.lower.middle","all.upper.middle","all.high",
+    "global",
     "Malawi" ,"South Africa"#,
     #"Tanzania","Nigeria"
     
@@ -20,7 +21,7 @@ COUNTRIES = c("Mozambique","Uganda","Kenya","Zambia",
 # do these ones manually and check simset.no.int@simulations[[1]]$location to make sure they save in the right location
 # Tanzania, Nigeria, global, global.income, all.low, all.lower.middle, all.upper.middle, all.high 
 
-country = COUNTRIES[15]
+country = COUNTRIES[16]
 
 #for(country in COUNTRIES){
     
@@ -92,9 +93,9 @@ country = COUNTRIES[15]
                                   percent=F,
                                   sexes = c("female","male"),
                                   plot.limits=c(0,plot.limit)) +
-            scale_fill_manual(labels = c("no.int/2025" = "Calibrated population, 2025",
-                                         "no.int/2040" = "Calibrated population, 2040",
-                                         "no.int/2040" = "Calibrated population, 2040"), 
+            scale_fill_manual(labels = c("no.int/2025" = "2025",
+                                         "no.int/2040" = "Forecasted 2040",
+                                         "no.int/2040" = "Forecasted 2040"), 
                               values=alpha(c("no.int/2025" = pal[1],
                                              "no.int/2040" = pal[2], 
                                              "no.int/2040" = pal[3]),alpha), 
@@ -103,7 +104,7 @@ country = COUNTRIES[15]
                   axis.title.y = element_text(colour = "black",vjust = 3,
                                               margin = margin(l = 15)),
                   axis.text = element_text(colour = "black"),
-                  legend.position = c(0.22, 0.87)
+                  legend.position = c(0.15, 0.87)
             )+
             labs(title = NULL,subtitle = NULL) +
             ylab(label = "Number of people living with HIV") +
