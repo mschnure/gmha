@@ -110,9 +110,21 @@ compute.dx <- function(time,
                        dim = sapply(trans.dim.names, length),
                        dimnames = trans.dim.names)#indexed [age, sex, subgroup]
     
-    dx.lai.disengagement = array(0,
-                                 dim = sapply(trans.dim.names, length),
-                                 dimnames = trans.dim.names)#indexed [age, sex, subgroup]
+    dx.lai.es = array(0,
+                       dim = sapply(trans.dim.names, length),
+                       dimnames = trans.dim.names)#indexed [age, sex, subgroup]
+    
+    dx.lai.eu = array(0,
+                       dim = sapply(trans.dim.names, length),
+                       dimnames = trans.dim.names)#indexed [age, sex, subgroup]
+    
+    dx.lai.du = array(0,
+                       dim = sapply(trans.dim.names, length),
+                       dimnames = trans.dim.names)#indexed [age, sex, subgroup]
+    
+    dx.lai.removal = array(0,
+                           dim = sapply(trans.dim.names, length),
+                           dimnames = trans.dim.names)#indexed [age, sex, subgroup]
     
     ##----------------------------------##
     ##-- COMPUTE THE CHANGES IN STATE --##
@@ -277,24 +289,27 @@ compute.dx <- function(time,
     lai.es.art = pp$LAI.ES.RATES * as.numeric(state[,,,'engaged_suppressed'])
     dx.state[,,,'engaged_suppressed'] = as.numeric(dx.state[,,,'engaged_suppressed']) - lai.es.art
     dx.state[,,,'lai_art'] = as.numeric(dx.state[,,,'lai_art']) + lai.es.art
+    dx.lai.es = lai.es.art
     
     # from engaged_unsuppressed
     lai.eu.art = pp$LAI.EU.RATES * as.numeric(state[,,,'engaged_unsuppressed'])
     dx.state[,,,'engaged_unsuppressed'] = as.numeric(dx.state[,,,'engaged_unsuppressed']) - lai.eu.art
     dx.state[,,,'lai_art'] = as.numeric(dx.state[,,,'lai_art']) + lai.eu.art
+    dx.lai.eu = lai.eu.art
     
     # from diagnosed_unengaged
     lai.du.art = pp$LAI.DU.RATES * as.numeric(state[,,,'diagnosed_unengaged'])
     dx.state[,,,'diagnosed_unengaged'] = as.numeric(dx.state[,,,'diagnosed_unengaged']) - lai.du.art
     dx.state[,,,'lai_art'] = as.numeric(dx.state[,,,'lai_art']) + lai.du.art
+    dx.lai.du = lai.du.art
     
-    #-- DISENGAGEMENT FROM LAI ART --#
-    lai.disengagement = pp$LAI.DISENGAGEMENT.RATES * as.numeric(state[,,,'lai_art'])
-    dx.state[,,,'lai_art'] = as.numeric(dx.state[,,,'lai_art']) - lai.disengagement
-    dx.state[,,,'engaged_suppressed'] = as.numeric(dx.state[,,,'engaged_suppressed']) + lai.disengagement
-    dx.lai.disengagement = lai.disengagement
+    #-- REMOVAL FROM LAI ART --#
+    lai.removal = pp$LAI.REMOVAL.RATES * as.numeric(state[,,,'lai_art'])
+    dx.state[,,,'lai_art'] = as.numeric(dx.state[,,,'lai_art']) - lai.removal
+    dx.state[,,,'engaged_suppressed'] = as.numeric(dx.state[,,,'engaged_suppressed']) + lai.removal
+    dx.lai.removal = lai.removal
     
-    dx.lai.art = lai.es.art + lai.eu.art + lai.du.art - lai.disengagement
+    dx.lai.art = lai.es.art + lai.eu.art + lai.du.art - lai.removal
     
     # track from each compartment 
     
@@ -319,7 +334,10 @@ compute.dx <- function(time,
            as.numeric(dx.disengagement.suppressed),
            as.numeric(dx.suppression),
            as.numeric(dx.lai.art),
-           as.numeric(dx.lai.disengagement)
+           as.numeric(dx.lai.es),
+           as.numeric(dx.lai.eu),
+           as.numeric(dx.lai.du),
+           as.numeric(dx.lai.removal)
     )
     
     #   if(any(is.na(rv)))
@@ -343,7 +361,7 @@ set.up.initial.diffeq.vector <- function(initial.state,
         4 * state.length + #state plus three mortality arrays
         1 * prev.length + # prevalence array (doesn't have hiv negative)
         2 * trans.length + #incidence plus new diagnoses
-        6 * trans.length #engagement, disengagement x2, suppression, lai.art, lai disenagement
+        9 * trans.length #engagement, disengagement x2, suppression, lai.art x4, lai removal
     
     
     rv = numeric(total.length) #opens a 1-D vector of 0s to this length
@@ -518,13 +536,31 @@ process.ode.results <- function(ode.results,
     index=index+trans.length
     
     #lai.art
-    rv$lai.art=array(ode.results[keep.years,index+1:trans.length]-ode.results[previous.years,index+1:trans.length],
+    rv$lai.art.total=array(ode.results[keep.years,index+1:trans.length]-ode.results[previous.years,index+1:trans.length],
                          dim = sapply(trans.dim.names,length),
                          dimnames = trans.dim.names)
     index=index+trans.length
+
+    # lai.es
+    rv$lai.art.es=array(ode.results[keep.years,index+1:trans.length]-ode.results[previous.years,index+1:trans.length],
+                     dim = sapply(trans.dim.names,length),
+                     dimnames = trans.dim.names)
+    index=index+trans.length
     
-    #lai.art disengagement
-    rv$lai.disengagement=array(ode.results[keep.years,index+1:trans.length]-ode.results[previous.years,index+1:trans.length],
+    # lai.eu
+    rv$lai.art.eu=array(ode.results[keep.years,index+1:trans.length]-ode.results[previous.years,index+1:trans.length],
+                     dim = sapply(trans.dim.names,length),
+                     dimnames = trans.dim.names)
+    index=index+trans.length
+    
+    # lai.du
+    rv$lai.art.du=array(ode.results[keep.years,index+1:trans.length]-ode.results[previous.years,index+1:trans.length],
+                     dim = sapply(trans.dim.names,length),
+                     dimnames = trans.dim.names)
+    index=index+trans.length
+    
+    #lai.art removal
+    rv$lai.removal=array(ode.results[keep.years,index+1:trans.length]-ode.results[previous.years,index+1:trans.length],
                                dim = sapply(trans.dim.names,length),
                                dimnames = trans.dim.names)
     index=index+trans.length

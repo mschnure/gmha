@@ -19,8 +19,8 @@ get.lai.du.art.rates = function(location = "South Africa"){
     rv
 }
 
-get.lai.disengagement.rates = function(location = "South Africa"){
-    rv = list("annual.lai.disengagement.rate" = 0.0)
+get.lai.removal.rates = function(location = "South Africa"){
+    rv = list("annual.lai.removal.rate" = 0.0)
     
     rv
 }
