@@ -15,6 +15,51 @@ library("scales")
 #     10. generate.percent.over.age.table
 #     11. calculate.incidence.reduction
 
+calculate.totals.on.lai = function(results.array,
+                                   years = 2015:2040,
+                                   sexes = c("male","female"),
+                                   outcomes = "lai.art.total"){
+    if(is.null(outcomes)){
+        outcomes = dimnames(results.array)$outcome[grepl("lai",dimnames(results.array)$outcome)]    
+    }
+    
+    lai.results = results.array[as.character(years),,sexes,outcomes,,, drop = F]
+    all.ages = apply(lai.results,c("year","outcome","sim","intervention"),sum)
+    youth = apply(lai.results[,c(MODEL.TO.SURVEILLANCE.AGE.MAPPING$`15-24`),,,,, drop = F],c("year","outcome","sim","intervention"),sum)
+    over.25 = apply(lai.results[,c(MODEL.TO.SURVEILLANCE.AGE.MAPPING$`25 and over`),,,,, drop = F],c("year","outcome","sim","intervention"),sum)
+    
+    all.ages.median.by.year = apply(all.ages,c("year","outcome","intervention"),median,na.rm = T)
+    youth.median.by.year = apply(youth,c("year","outcome","intervention"),median,na.rm = T)
+    over.25.median.by.year = apply(over.25,c("year","outcome","intervention"),median,na.rm = T)
+    
+    dim.names = c(dimnames(all.ages),
+                  list(age = c("All ages","15-24","25 and over")))
+    
+    medians.by.year = array(c(all.ages.median.by.year,youth.median.by.year,over.25.median.by.year),
+                            dim = sapply(dim.names[-3],length),
+                            dimnames = dim.names[-3])
+    
+    # sum over years
+    all.ages.total.by.time = apply(all.ages,c("outcome","intervention","sim"),sum)
+    youth.total.by.time = apply(youth,c("outcome","intervention","sim"),sum)
+    over.25.total.by.time = apply(over.25,c("outcome","intervention","sim"),sum)
+    
+    all.ages.median = apply(all.ages.total.by.time,c("outcome","intervention"),median,na.rm = T)
+    youth.median = apply(youth.total.by.time,c("outcome","intervention"),median,na.rm = T)
+    over.25.median = apply(over.25.total.by.time,c("outcome","intervention"),median,na.rm = T)
+    
+    totals.medians = array(c(all.ages.median,youth.median,over.25.median),
+                           dim = sapply(dim.names[c(-1,-3)],length),
+                           dimnames = dim.names[c(-1,-3)])
+    
+    #totals.medians = aperm(totals.medians,c(1,3,2))
+ 
+    rv = list(medians.by.year = round(medians.by.year),
+              totals.medians = round(totals.medians))
+
+    rv       
+}
+
 calculate.infections.averted = function(results.array,
                                         interventions,
                                         years,
@@ -171,7 +216,10 @@ generate.full.results.array = function(simset.list,
                                            "incidence","diagnoses","annual.engagement","annual.suppression",
                                            "disengagement.unsuppressed","disengagement.suppressed",
                                            # MORTALITY: 
-                                           "hiv.mortality","non.hiv.mortality","total.mortality"
+                                           "hiv.mortality","non.hiv.mortality","total.mortality",
+                                           # LAI ART: 
+                                           "lai.art.total","lai.art.es","lai.art.eu","lai.art.du","lai.removal"
+                                           # lai.art.total is all three arrows minus removal 
                                        )){
     sims = paste0("sim",c(1:simset.list[[1]]@n.sim))
     simset.list = simset.list

@@ -166,6 +166,42 @@ extract.data = function(sim,
                                                 subgroups=subgroups,
                                                 keep.dimensions=keep.dimensions)
     
+    else if (data.type=='lai.art.total') # this is all three arrows minus removal 
+        rv = extract.annual.lai.art.total(sim,
+                                          years=years, 
+                                          ages=ages,
+                                          sexes=sexes,
+                                          subgroups=subgroups,
+                                          keep.dimensions=keep.dimensions)
+    else if (data.type=='lai.art.es')
+        rv = extract.annual.lai.art.es(sim,
+                                       years=years, 
+                                       ages=ages,
+                                       sexes=sexes,
+                                       subgroups=subgroups,
+                                       keep.dimensions=keep.dimensions)
+    else if (data.type=='lai.art.eu')
+        rv = extract.annual.lai.art.eu(sim,
+                                       years=years, 
+                                       ages=ages,
+                                       sexes=sexes,
+                                       subgroups=subgroups,
+                                       keep.dimensions=keep.dimensions)
+    else if (data.type=='lai.art.du')
+        rv = extract.annual.lai.art.du(sim,
+                                       years=years, 
+                                       ages=ages,
+                                       sexes=sexes,
+                                       subgroups=subgroups,
+                                       keep.dimensions=keep.dimensions)
+    else if (data.type=='lai.removal')
+        rv = extract.annual.lai.removal(sim,
+                                        years=years, 
+                                        ages=ages,
+                                        sexes=sexes,
+                                        subgroups=subgroups,
+                                        keep.dimensions=keep.dimensions)
+    
     else stop("not a valid data type")
     # fill in other ones
     
@@ -666,6 +702,93 @@ extract.disengagement.unsuppressed <- function(sim,
         keep.dimensions = keep.dimensions
     )
 }
+
+## EXTRACTING LAI ART ANNUAL TRANSITIONS
+extract.annual.lai.art.total <- function(sim,
+                                         years = sim$years,
+                                         ages = sim$AGES,
+                                         subgroups = sim$SUBGROUPS,
+                                         sexes = sim$SEXES,
+                                         keep.dimensions = 'year'){
+    do.extract.3D(
+        sim = sim,
+        arr = sim$lai.art.total,
+        years = years,
+        ages = ages,
+        subgroups = subgroups,
+        sexes = sexes,
+        keep.dimensions = keep.dimensions
+    )
+}
+
+extract.annual.lai.art.es <- function(sim,
+                                       years = sim$years,
+                                       ages = sim$AGES,
+                                       subgroups = sim$SUBGROUPS,
+                                       sexes = sim$SEXES,
+                                       keep.dimensions = 'year'){
+    do.extract.3D(
+        sim = sim,
+        arr = sim$lai.art.es,
+        years = years,
+        ages = ages,
+        subgroups = subgroups,
+        sexes = sexes,
+        keep.dimensions = keep.dimensions
+    )
+}
+
+extract.annual.lai.art.eu <- function(sim,
+                                       years = sim$years,
+                                       ages = sim$AGES,
+                                       subgroups = sim$SUBGROUPS,
+                                       sexes = sim$SEXES,
+                                       keep.dimensions = 'year'){
+    do.extract.3D(
+        sim = sim,
+        arr = sim$lai.art.eu,
+        years = years,
+        ages = ages,
+        subgroups = subgroups,
+        sexes = sexes,
+        keep.dimensions = keep.dimensions
+    )
+}
+
+extract.annual.lai.art.du <- function(sim,
+                                       years = sim$years,
+                                       ages = sim$AGES,
+                                       subgroups = sim$SUBGROUPS,
+                                       sexes = sim$SEXES,
+                                       keep.dimensions = 'year'){
+    do.extract.3D(
+        sim = sim,
+        arr = sim$lai.art.du,
+        years = years,
+        ages = ages,
+        subgroups = subgroups,
+        sexes = sexes,
+        keep.dimensions = keep.dimensions
+    )
+}
+
+extract.annual.lai.removal <- function(sim,
+                                       years = sim$years,
+                                       ages = sim$AGES,
+                                       subgroups = sim$SUBGROUPS,
+                                       sexes = sim$SEXES,
+                                       keep.dimensions = 'year'){
+    do.extract.3D(
+        sim = sim,
+        arr = sim$lai.removal,
+        years = years,
+        ages = ages,
+        subgroups = subgroups,
+        sexes = sexes,
+        keep.dimensions = keep.dimensions
+    )
+}
+
 
 # Function to make sure keep dimensions are valid and returns array in the right order 
 check.keep.dimensions = function(keep.dimensions,
