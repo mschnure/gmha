@@ -62,7 +62,7 @@ get.surveillance.data = function(data.manager,
                                  keep.dimensions = 'year'){
     if(data.type %in% c("suppression.oral","suppression.lai"))
         data.type="suppression"
-    
+
     if(!("year" %in% keep.dimensions))
         stop("Must keep dimension 'year'")
     
@@ -245,8 +245,20 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$suppression.allPLHIV$SEXES = c('male','female')
     rv$suppression.allPLHIV$LOCATIONS = dimnames(rv$suppression.allPLHIV$year.location)$location
     
+    # LAI vs oral suppression - just adding ages/sexes for plotting purposes
+    rv$suppression.oral = NULL
+    rv$suppression.oral$AGES = c('0-14','15+')
+    rv$suppression.oral$AGE.LOWERS = c(0,15)
+    rv$suppression.oral$AGE.UPPERS = c(15,Inf)
+    rv$suppression.oral$SEXES = c('male','female')
+    rv$suppression.oral$LOCATIONS = dimnames(rv$suppression$year.location)$location
     
-    
+    rv$suppression.lai = NULL
+    rv$suppression.lai$AGES = c('0-14','15+')
+    rv$suppression.lai$AGE.LOWERS = c(0,15)
+    rv$suppression.lai$AGE.UPPERS = c(15,Inf)
+    rv$suppression.lai$SEXES = c('male','female')
+    rv$suppression.lai$LOCATIONS = dimnames(rv$suppression$year.location)$location
     
     ## UPPER/LOWER ESTIMATES ##
     rv$incidence.lowers = read.surveillance.data.type(data.type = 'incidence', suffix = "_lower")

@@ -55,6 +55,12 @@ get.age.brackets.in.range = function(age.cutoffs = MODEL.AGE.CUTOFFS,
 
 
 ## SPECIFIC VERSION ##
+# YOUTH.AGE.MAPPING = list(
+#     "0-14" = c("0-4","5-9","10-14"),
+#     "15-24" = c("15-19","20-24"),
+#     "25 and over" = c("25-29","30-34","35-39","40-44","45-49","50-54",
+#                       "55-59","60-64","65-69","70-74","75-79","80 and over"))
+
 # Hard coded; created a generic version below but not really using it
 MODEL.TO.SURVEILLANCE.AGE.MAPPING = list(
     "0-14" = c("0-4","5-9","10-14"),
@@ -65,7 +71,9 @@ MODEL.TO.SURVEILLANCE.AGE.MAPPING = list(
               "60-64","65-69","70-74","75-79","80 and over"),
     "50 and over" = c("50-54","55-59","60-64","65-69","70-74","75-79","80 and over"),
     "All ages" = c("0-4","5-9","10-14","15-19", "20-24","25-29","30-34","35-39","40-44","45-49","50-54","55-59",
-                   "60-64","65-69","70-74","75-79","80 and over")
+                   "60-64","65-69","70-74","75-79","80 and over"),
+    "25 and over" = c("25-29","30-34","35-39","40-44","45-49","50-54",
+                      "55-59","60-64","65-69","70-74","75-79","80 and over") # added this 12/2/2025 for viewing non-youth for LAI 
 )
 
 MODEL.TO.IEDEA.AGE.MAPPING = list(

@@ -10,7 +10,8 @@ source('model/diffeq.R')
 source('model/age_mappings.R') 
 NO.INTERVENTION = c()
 
-load('cached/data.manager_global_2025-10-06.Rdata') # added 0-14 suppression data 
+load('cached/data.manager_global_2025-12-02.Rdata') # added lai and oral placeholders to plot age/sex more easily
+#load('cached/data.manager_global_2025-10-06.Rdata') # added 0-14 suppression data 
 #load('cached/data.manager_global_2025-10-03.Rdata') # fixed suppression data
 #load('cached/data.manager_global_2025-08-27.Rdata') # added merged income countries
 #load('cached/data.manager_global_2025-08-13.Rdata') # fixed r1 high and removed incorrect US data 
