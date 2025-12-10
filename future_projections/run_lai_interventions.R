@@ -1,12 +1,13 @@
 source('future_projections/create_lai_interventions.R')
-load("future_projections/simset_10_for_lai.Rdata")
+#load("future_projections/simset_10_for_lai.Rdata")
+load("cached/simset_50_for_lai.Rdata")
 
 # on remote only
 # load("mcmc_runs/mcmc_files/merged/mcmc_chains12_south_africa_2025-10-31.Rdata")
 # simset = extract.simset(mcmc,
 #                         additional.burn=5000,
-#                         additional.thin=3000)
-# save(simset,file="future_projections/simset_10_for_lai.Rdata")
+#                         additional.thin=600) #3000 for 10
+# save(simset,file="cached/simset_50_for_lai.Rdata")
 
 set.seed(5678)
 
