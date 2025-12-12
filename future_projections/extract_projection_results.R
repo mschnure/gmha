@@ -24,6 +24,7 @@ calculate.totals.on.lai = function(results.array,
     }
     
     lai.results = results.array[as.character(years),,sexes,outcomes,,, drop = F]
+    
     all.ages = apply(lai.results,c("year","outcome","sim","intervention"),sum)
     youth = apply(lai.results[,c(MODEL.TO.SURVEILLANCE.AGE.MAPPING$`15-24`),,,,, drop = F],c("year","outcome","sim","intervention"),sum)
     over.25 = apply(lai.results[,c(MODEL.TO.SURVEILLANCE.AGE.MAPPING$`25 and over`),,,,, drop = F],c("year","outcome","sim","intervention"),sum)

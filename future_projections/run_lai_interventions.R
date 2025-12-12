@@ -60,23 +60,36 @@ infections.averted = calculate.infections.averted(full.results.array,
                                                   interventions = c("es","eu","du","all","rem.by.time","rem.by.age"),
                                                   years = 2022:2030)
 totals.on.lai = calculate.totals.on.lai(full.results.array)
-totals.on.lai$medians.by.year[,,c("rem.by.time","rem.by.age"),]
-totals.on.lai$totals.medians[,c("rem.by.time","rem.by.age"),]
+totals.on.lai$medians.by.year[,,c("all","rem.by.time","rem.by.age"),]
+totals.on.lai$totals.medians[,c("all","rem.by.time","rem.by.age"),]
+
+totals.on.lai.no.removal = calculate.totals.on.lai(full.results.array,outcomes = c("lai.art.es","lai.art.eu","lai.art.du"))
+apply(totals.on.lai.no.removal$medians.by.year[,,c("all","rem.by.time","rem.by.age"),],c("year","intervention","age"),sum)[,,"All ages"]
+apply(totals.on.lai.no.removal$totals.medians[,c("all","rem.by.time","rem.by.age"),],c("intervention","age"),sum)
+
+# this is the total ever put on LAI 
+apply(
+    totals.on.lai.no.removal$medians.by.year[,,c("all","rem.by.time","rem.by.age"),],
+    c("intervention", "age"),
+    function(x) sum(x[x > 0], na.rm = TRUE)
+)
+
+
 
 if(1==2){
     simplot(simset.no.int,
             #simset.lai.eu,
             #simset.lai.all.no.removal,
             #simset.5.year.removal,
-            #simset.age.removal,
-            years=1980:2040, 
+            simset.age.removal,
+            years=2010:2030, 
             data.types=c("suppression","suppression.oral","suppression.lai"), 
             proportion=T)
     
     simplot(simset.no.int,
             #simset.lai.eu,
             #simset.lai.all.no.removal,
-            simset.5.year.removal,
+            #simset.5.year.removal,
             simset.age.removal,
             years=2020:2040, 
             ages = c("15-24","25 and over"),
@@ -87,19 +100,19 @@ if(1==2){
 
     simplot(simset.no.int,
             #simset.lai.eu,
-            #simset.lai.all.no.removal,
+            simset.lai.all.no.removal,
             simset.5.year.removal,
             simset.age.removal,
-            years=2020:2040, 
+            years=2000:2030, 
             data.types = c("incidence","prevalence"))
     
     simplot(simset.no.int,
-            #simset.lai.all.no.removal,
+            simset.lai.all.no.removal,
             simset.5.year.removal,
             simset.age.removal,
             facet.by='age', 
-            ages = c("15-24","25 and over"),
-            years=2020:2040, 
+            ages = c("15-24"),
+            years=2000:2030, 
             data.types = c("incidence","prevalence"))
     
     simplot(simset.no.int,

@@ -68,11 +68,11 @@ lai.from.all = create.intervention.from.units(lai.from.es.unit,
                                               code="lai.all")
 
 lai.removal.after.5.years = create.intervention.from.units(lai.removal.after.5.years.unit, # this unit starts in 2027 
-                                                           code="lai.all")
+                                                           code="lai.rem.by.time")
 
 lai.removal.by.age = create.intervention.from.units(lai.removal.by.age.unit, # this unit starts in 2022
                                                     target.ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`25 and over`,
-                                                    code="lai.all")
+                                                    code="lai.rem.by.age")
 
 # make the analogous removal intervention that removes 25+ starting 2022
 
