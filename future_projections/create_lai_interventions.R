@@ -11,6 +11,9 @@ source("model/parameter_mappings/get_lai_art_rates_intervention.R")
 # calculated in model/parameter_mappings/get_lai_art_rates_intervention.R, based on PROB.5.YEAR above 
 
 START.TIME = 2022
+NO.INTERVENTION = create.intervention.from.units(code="no.int")
+
+# Individual arrows, base rates 
 lai.from.es.unit = create.intervention.unit(parameter = "LAI.ES.RATES", 
                                             scale = "rate",
                                             start.time = START.TIME, # time when intervention starts scaling up
@@ -32,14 +35,23 @@ lai.from.du.unit = create.intervention.unit(parameter = "LAI.DU.RATES",
                                             end.time = 2027, 
                                             effect.value = annual.lai.suppression.rate.du, 
                                             allow.lower.than.baseline = F)
+# EU and DU, using ES rate (faster)
+lai.from.eu.RAPID.unit = create.intervention.unit(parameter = "LAI.EU.RATES", 
+                                            scale = "rate",
+                                            start.time = START.TIME,
+                                            effect.time = 2023,
+                                            end.time = 2027,
+                                            effect.value = annual.lai.suppression.rate.es, 
+                                            allow.lower.than.baseline = F)
+lai.from.du.RAPID.unit = create.intervention.unit(parameter = "LAI.DU.RATES", 
+                                            scale = "rate",
+                                            start.time = START.TIME,
+                                            effect.time = 2023,
+                                            end.time = 2027, 
+                                            effect.value = annual.lai.suppression.rate.es, 
+                                            allow.lower.than.baseline = F)
 
-lai.removal.after.5.years.unit = create.intervention.unit(parameter = "LAI.REMOVAL.RATES", 
-                                                          scale = "rate",
-                                                          start.time = 2027, # start in 2027
-                                                          effect.time = 2027, # instantaneous
-                                                          effect.value = 52, # one week to remove them 
-                                                          allow.lower.than.baseline = F)
-
+# Removal 
 lai.removal.by.age.unit = create.intervention.unit(parameter = "LAI.REMOVAL.RATES", 
                                                    scale = "rate",
                                                    start.time = START.TIME, # start in 2022 - immediately start removing 25+ 
@@ -47,9 +59,7 @@ lai.removal.by.age.unit = create.intervention.unit(parameter = "LAI.REMOVAL.RATE
                                                    effect.value = 52, 
                                                    allow.lower.than.baseline = F)
 
-
-NO.INTERVENTION = create.intervention.from.units(code="no.int")
-
+## Add age component and combine units 
 lai.from.es = create.intervention.from.units(lai.from.es.unit,
                                              target.ages = c("15-19","20-24"),
                                              code="lai.es")
@@ -59,6 +69,14 @@ lai.from.eu = create.intervention.from.units(lai.from.eu.unit,
 lai.from.du = create.intervention.from.units(lai.from.du.unit,
                                              target.ages = c("15-19","20-24"),
                                              code="lai.du")
+# Rapid versions of EU and DU
+lai.from.eu.RAPID = create.intervention.from.units(lai.from.eu.RAPID.unit,
+                                                   target.ages = c("15-19","20-24"),
+                                                   code="lai.eu.rapid")
+lai.from.du.RAPID = create.intervention.from.units(lai.from.du.RAPID.unit,
+                                                   target.ages = c("15-19","20-24"),
+                                                   code="lai.du.rapid")
+
 
 # combine all three arrows
 lai.from.all = create.intervention.from.units(lai.from.es.unit,
@@ -67,14 +85,30 @@ lai.from.all = create.intervention.from.units(lai.from.es.unit,
                                               target.ages = c("15-19","20-24"),
                                               code="lai.all")
 
-lai.removal.after.5.years = create.intervention.from.units(lai.removal.after.5.years.unit, # this unit starts in 2027 
-                                                           code="lai.rem.by.time")
+lai.from.all.rapid = create.intervention.from.units(lai.from.es.unit,
+                                                    lai.from.eu.RAPID.unit,
+                                                    lai.from.du.RAPID.unit,
+                                                    target.ages = c("15-19","20-24"),
+                                                    code="lai.all.rapid")
 
 lai.removal.by.age = create.intervention.from.units(lai.removal.by.age.unit, # this unit starts in 2022
                                                     target.ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`25 and over`,
                                                     code="lai.rem.by.age")
 
-# make the analogous removal intervention that removes 25+ starting 2022
+
+# lai.removal.after.5.years.unit = create.intervention.unit(parameter = "LAI.REMOVAL.RATES", 
+#                                                           scale = "rate",
+#                                                           start.time = 2027, # start in 2027
+#                                                           effect.time = 2027, # instantaneous
+#                                                           effect.value = 52, # one week to remove them 
+#                                                           allow.lower.than.baseline = F)
+
+# lai.removal.after.5.years = create.intervention.from.units(lai.removal.after.5.years.unit, # this unit starts in 2027 
+#                                                            code="lai.rem.by.time")
+
+
+
+
 
 
 

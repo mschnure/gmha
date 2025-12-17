@@ -16,63 +16,100 @@ simset.no.int = run.intervention.on.simset(simset,
                                            end.year = 2040,
                                            intervention = NO.INTERVENTION)
 
-print("running ES")
-simset.lai.es = run.intervention.on.simset(simset,
-                                           end.year = 2040,
-                                           intervention = list(lai.from.es,lai.removal.after.5.years))
+print("running ES with removal by age")
+simset.es = run.intervention.on.simset(simset,
+                                       end.year = 2040,
+                                       intervention = list(lai.from.es,
+                                                           lai.removal.by.age))
 
-print("running EU")
-simset.lai.eu = run.intervention.on.simset(simset,
-                                           end.year = 2040,
-                                           intervention = list(lai.from.eu,lai.removal.after.5.years))
+print("running EU with removal by age")
+simset.eu = run.intervention.on.simset(simset,
+                                       end.year = 2040,
+                                       intervention = list(lai.from.eu,
+                                                           lai.removal.by.age))
 
-print("running DU")
-simset.lai.du = run.intervention.on.simset(simset,
-                                           end.year = 2040,
-                                           intervention = list(lai.from.du,lai.removal.after.5.years))
+print("running DU with removal by age")
+simset.du = run.intervention.on.simset(simset,
+                                       end.year = 2040,
+                                       intervention = list(lai.from.du,
+                                                           lai.removal.by.age))
+
+print("running EU RAPID with removal by age")
+simset.eu.rapid = run.intervention.on.simset(simset,
+                                             end.year = 2040,
+                                             intervention = list(lai.from.eu.RAPID,
+                                                                 lai.removal.by.age))
+
+print("running DU RAPID with removal by age")
+simset.du.rapid = run.intervention.on.simset(simset,
+                                             end.year = 2040,
+                                             intervention = list(lai.from.du.RAPID,
+                                                                 lai.removal.by.age))
 
 print("running all, WITHOUT removal")
-simset.lai.all.no.removal = run.intervention.on.simset(simset,
-                                                       end.year = 2040,
-                                                       intervention = lai.from.all)
+simset.no.removal = run.intervention.on.simset(simset,
+                                               end.year = 2040,
+                                               intervention = lai.from.all)
 
-print("running all, WITH removal after 5 years")
-simset.5.year.removal = run.intervention.on.simset(simset,
-                                                   end.year = 2040,
-                                                   intervention = list(lai.from.all,lai.removal.after.5.years))
-
-print("running all, WITH removal when you turn 25")
+print("running all, WITH removal by age")
 simset.age.removal = run.intervention.on.simset(simset,
                                                 end.year = 2040,
-                                                intervention = list(lai.from.all,lai.removal.by.age))
+                                                intervention = list(lai.from.all,
+                                                                    lai.removal.by.age))
+
+print("running all, RAPID, WITHOUT removal")
+simset.no.removal.rapid = run.intervention.on.simset(simset,
+                                                     end.year = 2040,
+                                                     intervention = lai.from.all.rapid)
+
+print("running all, RAPID, WITH removal by age")
+simset.age.removal.rapid = run.intervention.on.simset(simset,
+                                                      end.year = 2040,
+                                                      intervention = list(lai.from.all.rapid,
+                                                                          lai.removal.by.age))
 
 simset.list.full = list(no.int = simset.no.int,
-                        es = simset.lai.es,
-                        eu = simset.lai.eu,
-                        du = simset.lai.du,
-                        all = simset.lai.all.no.removal,
-                        rem.by.time = simset.5.year.removal,
-                        rem.by.age = simset.age.removal)
+                        es = simset.es,
+                        eu = simset.eu,
+                        du = simset.du,
+                        all.no.rem = simset.no.removal, 
+                        all.age.rem = simset.age.removal,
+                        all.no.rem.rapid = simset.no.removal.rapid, 
+                        all.age.rem.rapid = simset.age.removal.rapid
+                        )
 
 print("generating full.results.array")
 full.results.array = generate.full.results.array(simset.list = simset.list.full)
+
+save(full.results.array,file = paste0("cached/nextgen_results_",Sys.Date()))
+
 infections.averted = calculate.infections.averted(full.results.array,
-                                                  interventions = c("es","eu","du","all","rem.by.time","rem.by.age"),
+                                                  interventions = c("es","eu","du",
+                                                                    "all.no.rem","all.age.rem",
+                                                                    "all.no.rem.rapid","all.age.rem.rapid",),
                                                   years = 2022:2030)
-totals.on.lai = calculate.totals.on.lai(full.results.array)
-totals.on.lai$medians.by.year[,,c("all","rem.by.time","rem.by.age"),]
-totals.on.lai$totals.medians[,c("all","rem.by.time","rem.by.age"),]
 
-totals.on.lai.no.removal = calculate.totals.on.lai(full.results.array,outcomes = c("lai.art.es","lai.art.eu","lai.art.du"))
-apply(totals.on.lai.no.removal$medians.by.year[,,c("all","rem.by.time","rem.by.age"),],c("year","intervention","age"),sum)[,,"All ages"]
-apply(totals.on.lai.no.removal$totals.medians[,c("all","rem.by.time","rem.by.age"),],c("intervention","age"),sum)
-
-# this is the total ever put on LAI 
-apply(
-    totals.on.lai.no.removal$medians.by.year[,,c("all","rem.by.time","rem.by.age"),],
-    c("intervention", "age"),
-    function(x) sum(x[x > 0], na.rm = TRUE)
-)
+if(1==2){
+    totals.on.lai = calculate.totals.on.lai(full.results.array)
+    totals.on.lai$medians.by.year[,,c("all.no.rem","all.age.rem","all.no.rem.rapid","all.age.rem.rapid"),]
+    totals.on.lai$totals.medians[,c("all.no.rem","all.age.rem","all.no.rem.rapid","all.age.rem.rapid"),]
+    
+    totals.on.lai.no.removal = calculate.totals.on.lai(full.results.array,outcomes = c("lai.art.es","lai.art.eu","lai.art.du"))
+    apply(totals.on.lai.no.removal$medians.by.year[,,c("all.no.rem","all.age.rem"),],c("year","intervention","age"),sum)[,,"All ages"]
+    apply(totals.on.lai.no.removal$totals.medians[,c("all.no.rem","all.age.rem"),],c("intervention","age"),sum)
+    
+    # this is the total ever put on LAI
+    apply(
+        totals.on.lai.no.removal$medians.by.year[,,c("all.no.rem","all.age.rem"),],
+        c("intervention", "age"),
+        function(x) sum(x[x > 0], na.rm = TRUE)
+    )
+    
+    ### Difference by cohort ###
+    sum(infections.averted["50%","percent.inf.averted",c("es","eu","du")])
+    (infections.averted["50%","percent.inf.averted",c("es","eu","du")])
+    infections.averted["50%","percent.inf.averted",c("all.age.rem")]    
+}
 
 
 
@@ -130,5 +167,35 @@ if(1==2){
             data.types=c("suppression","suppression.oral","suppression.lai"), 
             facet.by=c('age','sex'), 
             proportion=T)  
+}
+
+
+
+
+## OLD CODE
+if(1==2){
+    
+    # testing to make sure combining individual units was the same as combined unit - it was 
+    print("running all, WITHOUT removal, piecewise")
+    simset.combined.no.removal = run.intervention.on.simset(simset,
+                                                            end.year = 2040,
+                                                            intervention = list(lai.from.es,
+                                                                                lai.from.eu,
+                                                                                lai.from.du))
+    
+    print("running all, WITH removal by age, piecewise ")
+    simset.combined.age.removal = run.intervention.on.simset(simset,
+                                                             end.year = 2040,
+                                                             intervention = list(lai.from.es,
+                                                                                 lai.from.eu,
+                                                                                 lai.from.du,
+                                                                                 lai.removal.by.age)) 
+    
+    
+    # print("running all, WITH removal after 5 years")
+    # simset.5.year.removal = run.intervention.on.simset(simset,
+    #                                                    end.year = 2040,
+    #                                                    intervention = list(lai.from.all,lai.removal.after.5.years))
+    
 }
 
