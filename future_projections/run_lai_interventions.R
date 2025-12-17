@@ -72,6 +72,8 @@ simset.list.full = list(no.int = simset.no.int,
                         es = simset.es,
                         eu = simset.eu,
                         du = simset.du,
+                        eu.rapid = simset.eu.rapid,
+                        du.rapid = simset.du.rapid,
                         all.no.rem = simset.no.removal, 
                         all.age.rem = simset.age.removal,
                         all.no.rem.rapid = simset.no.removal.rapid, 
@@ -81,12 +83,13 @@ simset.list.full = list(no.int = simset.no.int,
 print("generating full.results.array")
 full.results.array = generate.full.results.array(simset.list = simset.list.full)
 
-save(full.results.array,file = paste0("cached/nextgen_results_",Sys.Date()))
+save(full.results.array,file = paste0("cached/nextgen_results_",Sys.Date(),".Rdata"))
 
 infections.averted = calculate.infections.averted(full.results.array,
                                                   interventions = c("es","eu","du",
+                                                                    "eu.rapid","du.rapid",
                                                                     "all.no.rem","all.age.rem",
-                                                                    "all.no.rem.rapid","all.age.rem.rapid",),
+                                                                    "all.no.rem.rapid","all.age.rem.rapid"),
                                                   years = 2022:2030)
 
 if(1==2){
@@ -106,9 +109,15 @@ if(1==2){
     )
     
     ### Difference by cohort ###
-    sum(infections.averted["50%","percent.inf.averted",c("es","eu","du")])
     (infections.averted["50%","percent.inf.averted",c("es","eu","du")])
-    infections.averted["50%","percent.inf.averted",c("all.age.rem")]    
+    sum(infections.averted["50%","percent.inf.averted",c("es","eu","du")])
+    infections.averted["50%","percent.inf.averted",c("all.age.rem")]   
+    
+    (infections.averted["50%","percent.inf.averted",c("es","eu.rapid","du.rapid")])
+    
+    # WHY AREN'T THESE TWO THE SAME: 
+    sum(infections.averted["50%","percent.inf.averted",c("es","eu.rapid","du.rapid")])
+    infections.averted["50%","percent.inf.averted",c("all.age.rem.rapid")]   
 }
 
 
