@@ -15,58 +15,55 @@ print("running no int")
 simset.no.int = run.intervention.on.simset(simset,
                                            end.year = 2040,
                                            intervention = NO.INTERVENTION)
-
-print("running ES with removal by age")
+print("running ES")
 simset.es = run.intervention.on.simset(simset,
                                        end.year = 2040,
                                        intervention = list(lai.from.es,
                                                            lai.removal.by.age))
-
-print("running EU with removal by age")
+print("running EU")
 simset.eu = run.intervention.on.simset(simset,
                                        end.year = 2040,
                                        intervention = list(lai.from.eu,
                                                            lai.removal.by.age))
-
-print("running DU with removal by age")
+print("running DU")
 simset.du = run.intervention.on.simset(simset,
                                        end.year = 2040,
                                        intervention = list(lai.from.du,
                                                            lai.removal.by.age))
-
-print("running EU RAPID with removal by age")
+print("running EU RAPID")
 simset.eu.rapid = run.intervention.on.simset(simset,
                                              end.year = 2040,
                                              intervention = list(lai.from.eu.RAPID,
                                                                  lai.removal.by.age))
-
-print("running DU RAPID with removal by age")
+print("running DU RAPID")
 simset.du.rapid = run.intervention.on.simset(simset,
                                              end.year = 2040,
                                              intervention = list(lai.from.du.RAPID,
                                                                  lai.removal.by.age))
-
-print("running all, WITHOUT removal")
-simset.no.removal = run.intervention.on.simset(simset,
-                                               end.year = 2040,
-                                               intervention = lai.from.all)
-
-print("running all, WITH removal by age")
-simset.age.removal = run.intervention.on.simset(simset,
-                                                end.year = 2040,
-                                                intervention = list(lai.from.all,
-                                                                    lai.removal.by.age))
-
-print("running all, RAPID, WITHOUT removal")
-simset.no.removal.rapid = run.intervention.on.simset(simset,
-                                                     end.year = 2040,
-                                                     intervention = lai.from.all.rapid)
-
-print("running all, RAPID, WITH removal by age")
-simset.age.removal.rapid = run.intervention.on.simset(simset,
-                                                      end.year = 2040,
-                                                      intervention = list(lai.from.all.rapid,
-                                                                          lai.removal.by.age))
+print("running all")
+simset.all = run.intervention.on.simset(simset,
+                                        end.year = 2040,
+                                        intervention = list(lai.from.all,
+                                                            lai.removal.by.age))
+print("running all RAPID")
+simset.all.rapid = run.intervention.on.simset(simset,
+                                              end.year = 2040,
+                                              intervention = list(lai.from.all.rapid,
+                                                                  lai.removal.by.age))
+print("running combined, EU RAPID only")
+simset.comb.eu.rapid = run.intervention.on.simset(simset,
+                                                  end.year = 2040,
+                                                  intervention = list(lai.from.es,
+                                                                      lai.from.eu.RAPID,
+                                                                      lai.from.du,
+                                                                      lai.removal.by.age))
+print("running combined, DU RAPID only")
+simset.comb.du.rapid = run.intervention.on.simset(simset,
+                                                  end.year = 2040,
+                                                  intervention = list(lai.from.es,
+                                                                      lai.from.eu,
+                                                                      lai.from.du.RAPID,
+                                                                      lai.removal.by.age))
 
 simset.list.full = list(no.int = simset.no.int,
                         es = simset.es,
@@ -74,10 +71,10 @@ simset.list.full = list(no.int = simset.no.int,
                         du = simset.du,
                         eu.rapid = simset.eu.rapid,
                         du.rapid = simset.du.rapid,
-                        all.no.rem = simset.no.removal, 
-                        all.age.rem = simset.age.removal,
-                        all.no.rem.rapid = simset.no.removal.rapid, 
-                        all.age.rem.rapid = simset.age.removal.rapid
+                        all = simset.all,
+                        all.rapid = simset.all.rapid,
+                        all.eu.rapid = simset.comb.eu.rapid,
+                        all.du.rapid = simset.comb.du.rapid
                         )
 
 print("generating full.results.array")
@@ -88,8 +85,8 @@ save(simset.list.full,full.results.array,file = paste0("cached/nextgen_results_"
 infections.averted = calculate.infections.averted(full.results.array,
                                                   interventions = c("es","eu","du",
                                                                     "eu.rapid","du.rapid",
-                                                                    "all.no.rem","all.age.rem",
-                                                                    "all.no.rem.rapid","all.age.rem.rapid"),
+                                                                    "all","all.rapid",
+                                                                    "all.eu.rapid","all.du.rapid"),
                                                   years = 2022:2030)
 
 if(1==2){
@@ -208,6 +205,17 @@ if(1==2){
                                                                                  lai.from.eu,
                                                                                  lai.from.du,
                                                                                  lai.removal.by.age)) 
+    
+    # print("running all, WITHOUT removal")
+    # simset.no.removal = run.intervention.on.simset(simset,
+    #                                                end.year = 2040,
+    #                                                intervention = lai.from.all)
+    
+    
+    # print("running all, RAPID, WITHOUT removal")
+    # simset.no.removal.rapid = run.intervention.on.simset(simset,
+    #                                                      end.year = 2040,
+    #                                                      intervention = lai.from.all.rapid)
     
     
     # print("running all, WITH removal after 5 years")
