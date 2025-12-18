@@ -83,7 +83,7 @@ simset.list.full = list(no.int = simset.no.int,
 print("generating full.results.array")
 full.results.array = generate.full.results.array(simset.list = simset.list.full)
 
-save(full.results.array,file = paste0("cached/nextgen_results_",Sys.Date(),".Rdata"))
+save(simset.list.full,full.results.array,file = paste0("cached/nextgen_results_",Sys.Date(),".Rdata"))
 
 infections.averted = calculate.infections.averted(full.results.array,
                                                   interventions = c("es","eu","du",
@@ -115,7 +115,11 @@ if(1==2){
     
     (infections.averted["50%","percent.inf.averted",c("es","eu.rapid","du.rapid")])
     
-    # WHY AREN'T THESE TWO THE SAME: 
+    # WHY AREN'T THESE TWO THE SAME
+    # I think there's competition between the arrows: people who are captured in ES alone might now be captured sooner in DU or EU rapid
+    # When you add the individual interventions, it double counts those people, essentially
+    
+    # what I need to do is break out the tracking within the combined intervention - see where they came from 
     sum(infections.averted["50%","percent.inf.averted",c("es","eu.rapid","du.rapid")])
     infections.averted["50%","percent.inf.averted",c("all.age.rem.rapid")]   
 }
@@ -124,26 +128,23 @@ if(1==2){
 
 if(1==2){
     simplot(simset.no.int,
-            #simset.lai.eu,
-            #simset.lai.all.no.removal,
-            #simset.5.year.removal,
-            simset.age.removal,
+            #simset.age.removal,
+            #simset.age.removal.rapid,
             years=2010:2030, 
             data.types=c("suppression","suppression.oral","suppression.lai"), 
             proportion=T)
     
     simplot(simset.no.int,
-            #simset.lai.eu,
-            #simset.lai.all.no.removal,
-            #simset.5.year.removal,
-            simset.age.removal,
+            #simset.age.removal,
+            simset.age.removal.rapid,
+            #simset.du,
+            #simset.du.rapid,
             years=2020:2040, 
             ages = c("15-24","25 and over"),
             data.types=c("suppression","suppression.oral","suppression.lai"), 
-            #data.types=c("suppression.lai"), 
             facet.by=c('age'), 
-            proportion=T) #+ geom_vline(xintercept = 2022)
-
+            proportion=T)
+    
     simplot(simset.no.int,
             #simset.lai.eu,
             simset.lai.all.no.removal,
@@ -153,9 +154,12 @@ if(1==2){
             data.types = c("incidence","prevalence"))
     
     simplot(simset.no.int,
-            simset.lai.all.no.removal,
-            simset.5.year.removal,
-            simset.age.removal,
+            #simset.age.removal,
+            simset.age.removal.rapid,
+            #simset.du,
+            simset.es,
+            simset.eu.rapid,
+            simset.du.rapid,
             facet.by='age', 
             ages = c("15-24"),
             years=2000:2030, 
