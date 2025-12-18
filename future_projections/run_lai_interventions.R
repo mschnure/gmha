@@ -122,6 +122,11 @@ if(1==2){
     # what I need to do is break out the tracking within the combined intervention - see where they came from 
     sum(infections.averted["50%","percent.inf.averted",c("es","eu.rapid","du.rapid")])
     infections.averted["50%","percent.inf.averted",c("all.age.rem.rapid")]   
+    
+    # You can see that the rapid scenario makes more people join LAI via EU and DU 
+    (totals.on.lai.no.removal$medians.by.year[as.character(2021:2030),,c("all.age.rem"),"All ages"])
+    (totals.on.lai.no.removal$medians.by.year[as.character(2021:2030),,c("all.age.rem.rapid"),"All ages"])
+    
 }
 
 

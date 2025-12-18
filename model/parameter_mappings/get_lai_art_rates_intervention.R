@@ -17,7 +17,11 @@ annual.fraction.accepting.lai = prob.1.year
 # per AFINAty poster: 
 # "172 participants were enrolled across 3 cohorts, of which 134 were virally suppressed after screening and switched to LAI."
 # don't have any differences by cohort 
-fraction.gaining.suppression = 134/172 # 0.7790698
+#fraction.gaining.suppression = 134/172 # 0.7790698
+fraction.gaining.suppression.es = 59/66 # 0.8939394
+fraction.gaining.suppression.eu = 35/52 # 0.6730769
+fraction.gaining.suppression.du = 40/54 # 0.7407407
+
 
 # (C) Rate of suppression
 # Different for the three cohorts 
@@ -45,8 +49,8 @@ if(1==2){
 }
 
 # ANNUAL RATE 
-annual.lai.suppression.rate.es = annual.fraction.accepting.lai * fraction.gaining.suppression * lai.suppression.rate.es 
-annual.lai.suppression.rate.eu = annual.fraction.accepting.lai * fraction.gaining.suppression * lai.suppression.rate.eu 
-annual.lai.suppression.rate.du = annual.fraction.accepting.lai * fraction.gaining.suppression * lai.suppression.rate.du 
+annual.lai.suppression.rate.es = annual.fraction.accepting.lai * fraction.gaining.suppression.es * lai.suppression.rate.es 
+annual.lai.suppression.rate.eu = annual.fraction.accepting.lai * fraction.gaining.suppression.eu * lai.suppression.rate.eu 
+annual.lai.suppression.rate.du = annual.fraction.accepting.lai * fraction.gaining.suppression.du * lai.suppression.rate.du 
 
 
