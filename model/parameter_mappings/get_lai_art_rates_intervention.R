@@ -9,7 +9,7 @@
 prob.5.year = PROB.5.YEAR # set this in "create_lai_interventions.R"
 rate.5.year = (-log(1-prob.5.year))/5
 prob.1.year = 1 - exp(-rate.5.year*1)
-#rate.1.year = (-log(1-prob.1.year))/1 # this should be the exact same as rate.5.year, just checking 
+rate.1.year = (-log(1-prob.1.year))/1 # this should be the exact same as rate.5.year, just checking 
 annual.fraction.accepting.lai = prob.1.year 
 
 
@@ -52,5 +52,9 @@ if(1==2){
 annual.lai.suppression.rate.es = annual.fraction.accepting.lai * fraction.gaining.suppression.es * lai.suppression.rate.es 
 annual.lai.suppression.rate.eu = annual.fraction.accepting.lai * fraction.gaining.suppression.eu * lai.suppression.rate.eu 
 annual.lai.suppression.rate.du = annual.fraction.accepting.lai * fraction.gaining.suppression.du * lai.suppression.rate.du 
+
+# rapid - remove the fraction gaining? 
+annual.lai.suppression.rate.eu.RAPID = annual.fraction.accepting.lai * fraction.gaining.suppression.eu * lai.suppression.rate.es # changed this last term
+annual.lai.suppression.rate.du.RAPID = annual.fraction.accepting.lai * fraction.gaining.suppression.du * lai.suppression.rate.es  # changed this last term
 
 

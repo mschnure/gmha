@@ -41,14 +41,14 @@ lai.from.eu.RAPID.unit = create.intervention.unit(parameter = "LAI.EU.RATES",
                                             start.time = START.TIME,
                                             effect.time = 2023,
                                             end.time = 2027,
-                                            effect.value = annual.lai.suppression.rate.es, 
+                                            effect.value = annual.lai.suppression.rate.eu.RAPID, # changed this 
                                             allow.lower.than.baseline = F)
 lai.from.du.RAPID.unit = create.intervention.unit(parameter = "LAI.DU.RATES", 
                                             scale = "rate",
                                             start.time = START.TIME,
                                             effect.time = 2023,
                                             end.time = 2027, 
-                                            effect.value = annual.lai.suppression.rate.es, 
+                                            effect.value = annual.lai.suppression.rate.du.RAPID, # changed this 
                                             allow.lower.than.baseline = F)
 
 # Removal 

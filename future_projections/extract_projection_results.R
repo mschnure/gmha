@@ -18,10 +18,17 @@ library("scales")
 calculate.totals.on.lai = function(results.array,
                                    years = 2015:2040,
                                    sexes = c("male","female"),
-                                   outcomes = "lai.art.total"){
+                                   outcomes = "lai.art.total",
+                                   estimate = "median")  # "lower","upper"
+{
     if(is.null(outcomes)){
         outcomes = dimnames(results.array)$outcome[grepl("lai",dimnames(results.array)$outcome)]    
     }
+    
+    # this is a slow way to do it but oh well
+    if(estimate=="median") probs = 0.5
+    if(estimate=="lower") probs = 0.025
+    if(estimate=="upper") probs = 0.975
     
     lai.results = results.array[as.character(years),,sexes,outcomes,,, drop = F]
     
@@ -29,9 +36,10 @@ calculate.totals.on.lai = function(results.array,
     youth = apply(lai.results[,c(MODEL.TO.SURVEILLANCE.AGE.MAPPING$`15-24`),,,,, drop = F],c("year","outcome","sim","intervention"),sum)
     over.25 = apply(lai.results[,c(MODEL.TO.SURVEILLANCE.AGE.MAPPING$`25 and over`),,,,, drop = F],c("year","outcome","sim","intervention"),sum)
     
-    all.ages.median.by.year = apply(all.ages,c("year","outcome","intervention"),median,na.rm = T)
-    youth.median.by.year = apply(youth,c("year","outcome","intervention"),median,na.rm = T)
-    over.25.median.by.year = apply(over.25,c("year","outcome","intervention"),median,na.rm = T)
+    # point estimate
+    all.ages.median.by.year = apply(all.ages,c("year","outcome","intervention"),quantile,probs = probs,na.rm = T)
+    youth.median.by.year = apply(youth,c("year","outcome","intervention"),quantile,probs = probs,na.rm = T)
+    over.25.median.by.year = apply(over.25,c("year","outcome","intervention"),quantile,probs = probs,na.rm = T)
     
     dim.names = c(dimnames(all.ages),
                   list(age = c("All ages","15-24","25 and over")))
@@ -45,19 +53,19 @@ calculate.totals.on.lai = function(results.array,
     youth.total.by.time = apply(youth,c("outcome","intervention","sim"),sum)
     over.25.total.by.time = apply(over.25,c("outcome","intervention","sim"),sum)
     
-    all.ages.median = apply(all.ages.total.by.time,c("outcome","intervention"),median,na.rm = T)
-    youth.median = apply(youth.total.by.time,c("outcome","intervention"),median,na.rm = T)
-    over.25.median = apply(over.25.total.by.time,c("outcome","intervention"),median,na.rm = T)
+    all.ages.median = apply(all.ages.total.by.time,c("outcome","intervention"),quantile,probs = probs,na.rm = T)
+    youth.median = apply(youth.total.by.time,c("outcome","intervention"),quantile,probs = probs,na.rm = T)
+    over.25.median = apply(over.25.total.by.time,c("outcome","intervention"),quantile,probs = probs,na.rm = T)
     
     totals.medians = array(c(all.ages.median,youth.median,over.25.median),
                            dim = sapply(dim.names[c(-1,-3)],length),
                            dimnames = dim.names[c(-1,-3)])
     
     #totals.medians = aperm(totals.medians,c(1,3,2))
- 
+    
     rv = list(medians.by.year = round(medians.by.year),
               totals.medians = round(totals.medians))
-
+    
     rv       
 }
 

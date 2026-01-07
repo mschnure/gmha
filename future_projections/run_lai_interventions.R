@@ -89,40 +89,34 @@ infections.averted = calculate.infections.averted(full.results.array,
                                                                     "all.eu.rapid","all.du.rapid"),
                                                   years = 2022:2030)
 
+write.csv(infections.averted, file = paste0("cached/nextgen_infections_averted_",Sys.Date(),".csv"))
+
 if(1==2){
-    totals.on.lai = calculate.totals.on.lai(full.results.array)
-    totals.on.lai$medians.by.year[,,c("all.no.rem","all.age.rem","all.no.rem.rapid","all.age.rem.rapid"),]
-    totals.on.lai$totals.medians[,c("all.no.rem","all.age.rem","all.no.rem.rapid","all.age.rem.rapid"),]
+    #interventions = c("all","all.rapid")
+    #interventions = c("all.eu.rapid","all.du.rapid")
+    #interventions = c("all","all.rapid","all.eu.rapid","all.du.rapid")
+    interventions = c("es","eu","du","eu.rapid","du.rapid")
     
-    totals.on.lai.no.removal = calculate.totals.on.lai(full.results.array,outcomes = c("lai.art.es","lai.art.eu","lai.art.du"))
-    apply(totals.on.lai.no.removal$medians.by.year[,,c("all.no.rem","all.age.rem"),],c("year","intervention","age"),sum)[,,"All ages"]
-    apply(totals.on.lai.no.removal$totals.medians[,c("all.no.rem","all.age.rem"),],c("intervention","age"),sum)
+    totals.on.lai = calculate.totals.on.lai(full.results.array, outcomes = c("lai.art.es","lai.art.eu","lai.art.du"))
+    #totals.on.lai = calculate.totals.on.lai(full.results.array, outcomes = c("lai.art.es","lai.art.eu","lai.art.du"),estimate = "lower")
+    #totals.on.lai = calculate.totals.on.lai(full.results.array, outcomes = c("lai.art.es","lai.art.eu","lai.art.du"),estimate = "upper")
+    totals.on.lai$medians.by.year[as.character(2021:2028),,interventions,"All ages"] 
+    #totals.on.lai$totals.medians[,interventions,"All ages"] # this one doesn't match exactly - use the applies below instead 
     
     # this is the total ever put on LAI
     apply(
-        totals.on.lai.no.removal$medians.by.year[,,c("all.no.rem","all.age.rem"),],
-        c("intervention", "age"),
+        totals.on.lai$medians.by.year[,,interventions,"All ages"],
+        c("intervention"),
         function(x) sum(x[x > 0], na.rm = TRUE)
     )
     
-    ### Difference by cohort ###
-    (infections.averted["50%","percent.inf.averted",c("es","eu","du")])
-    sum(infections.averted["50%","percent.inf.averted",c("es","eu","du")])
-    infections.averted["50%","percent.inf.averted",c("all.age.rem")]   
+    # by cohort 
+    apply(
+        totals.on.lai$medians.by.year[,,interventions,"All ages"],
+        c("outcome","intervention"),
+        function(x) sum(x[x > 0], na.rm = TRUE)
+    )
     
-    (infections.averted["50%","percent.inf.averted",c("es","eu.rapid","du.rapid")])
-    
-    # WHY AREN'T THESE TWO THE SAME
-    # I think there's competition between the arrows: people who are captured in ES alone might now be captured sooner in DU or EU rapid
-    # When you add the individual interventions, it double counts those people, essentially
-    
-    # what I need to do is break out the tracking within the combined intervention - see where they came from 
-    sum(infections.averted["50%","percent.inf.averted",c("es","eu.rapid","du.rapid")])
-    infections.averted["50%","percent.inf.averted",c("all.age.rem.rapid")]   
-    
-    # You can see that the rapid scenario makes more people join LAI via EU and DU 
-    (totals.on.lai.no.removal$medians.by.year[as.character(2021:2030),,c("all.age.rem"),"All ages"])
-    (totals.on.lai.no.removal$medians.by.year[as.character(2021:2030),,c("all.age.rem.rapid"),"All ages"])
     
 }
 
@@ -189,6 +183,27 @@ if(1==2){
 
 ## OLD CODE
 if(1==2){
+    
+    ### Difference by cohort ###
+    (infections.averted["50%","percent.inf.averted",c("es","eu","du")])
+    sum(infections.averted["50%","percent.inf.averted",c("es","eu","du")])
+    infections.averted["50%","percent.inf.averted",c("all.age.rem")]   
+    
+    (infections.averted["50%","percent.inf.averted",c("es","eu.rapid","du.rapid")])
+    
+    # WHY AREN'T THESE TWO THE SAME
+    # I think there's competition between the arrows: people who are captured in ES alone might now be captured sooner in DU or EU rapid
+    # When you add the individual interventions, it double counts those people, essentially
+    
+    # what I need to do is break out the tracking within the combined intervention - see where they came from 
+    sum(infections.averted["50%","percent.inf.averted",c("es","eu.rapid","du.rapid")])
+    infections.averted["50%","percent.inf.averted",c("all.age.rem.rapid")]   
+    
+    # You can see that the rapid scenario makes more people join LAI via EU and DU 
+    (totals.on.lai.no.removal$medians.by.year[as.character(2021:2030),,c("all.age.rem"),"All ages"])
+    (totals.on.lai.no.removal$medians.by.year[as.character(2021:2030),,c("all.age.rem.rapid"),"All ages"])
+    
+    
     
     # testing to make sure combining individual units was the same as combined unit - it was 
     print("running all, WITHOUT removal, piecewise")
