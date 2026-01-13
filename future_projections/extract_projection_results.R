@@ -15,6 +15,71 @@ library("scales")
 #     10. generate.percent.over.age.table
 #     11. calculate.incidence.reduction
 
+
+calculate.infections.averted = function(results.array,
+                                        interventions,
+                                        output,
+                                        years,
+                                        ages=NULL,
+                                        sexes=NULL){
+    
+    one.array = calculate.infections.averted.one.int(results.array = results.array,
+                                                     intervention = interventions[1],
+                                                     output = output,
+                                                     year = years,
+                                                     ages = ages,
+                                                     sexes = sexes)
+    dim.names = list(sim = names(one.array),
+                     intervention = interventions)
+    rv = array(NA,
+               dim = sapply(dim.names,length),
+               dimnames  = dim.names)
+    
+    for(intervention in interventions){
+        rv[,intervention] = calculate.infections.averted.one.int(results.array = results.array,
+                                                                  intervention = intervention,
+                                                                  output = output,
+                                                                  year = years,
+                                                                  ages = ages,
+                                                                  sexes = sexes)
+    }
+    
+    rv
+}
+
+calculate.infections.averted.one.int = function(results.array,
+                                                intervention,
+                                                output, # "number" or "percent"
+                                                years,
+                                                ages=NULL,
+                                                sexes=NULL){
+    results.array.year = results.array[as.character(years),,,"incidence",,]
+    if(!is.null(ages)){
+        results.array.year = results.array.year[,ages,,,,drop = F]
+    } 
+    if(!is.null(sexes)){
+        results.array.year = results.array.year[,,sexes,,,drop = F]
+    }
+    
+    inf.no.int = apply(results.array.year[,,,,"no.int"],c("age","sex","sim"),sum)
+    inf.intervention = apply(results.array.year[,,,,intervention],c("age","sex","sim"),sum)
+    inf.averted = inf.no.int - inf.intervention
+    
+    inf.no.int.total = apply(inf.no.int,c("sim"),sum)
+    inf.intervention.total = apply(inf.intervention,c("sim"),sum)
+    inf.averted.total = apply(inf.averted,c("sim"),sum)
+    rel.inf.averted = inf.averted.total/inf.no.int.total
+    
+    if(output=="number"){
+        rv = inf.averted.total 
+    } else if (output=="percent"){
+        rv = rel.inf.averted
+    } else stop ("output must be either number or percent")
+    
+    rv
+}
+
+
 calculate.totals.on.lai = function(results.array,
                                    years = 2015:2040,
                                    sexes = c("male","female"),
@@ -69,13 +134,13 @@ calculate.totals.on.lai = function(results.array,
     rv       
 }
 
-calculate.infections.averted = function(results.array,
+calculate.infections.averted.summary = function(results.array,
                                         interventions,
                                         years,
                                         ages=NULL,
                                         sexes=NULL){
     
-    one.array = calculate.infections.averted.one.int(results.array = results.array,
+    one.array = calculate.infections.averted.one.int.summary(results.array = results.array,
                                                     intervention = interventions[1],
                                                     year = years,
                                                     ages = ages,
@@ -87,7 +152,7 @@ calculate.infections.averted = function(results.array,
                dimnames  = dim.names)
     
     for(intervention in interventions){
-      rv[,,intervention] = calculate.infections.averted.one.int(results.array = results.array,
+      rv[,,intervention] = calculate.infections.averted.one.int.summary(results.array = results.array,
                                                                   intervention = intervention,
                                                                   year = years,
                                                                   ages = ages,
@@ -97,7 +162,7 @@ calculate.infections.averted = function(results.array,
     rv
 }
 
-calculate.infections.averted.one.int = function(results.array,
+calculate.infections.averted.one.int.summary = function(results.array,
                                         intervention,
                                         years,
                                         ages=NULL,

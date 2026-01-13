@@ -48,13 +48,52 @@ if(1==2){
     -log(1-y) # 2017 rate of engagement is 2.3 
 }
 
-# ANNUAL RATE 
-annual.lai.suppression.rate.es = annual.fraction.accepting.lai * fraction.gaining.suppression.es * lai.suppression.rate.es 
-annual.lai.suppression.rate.eu = annual.fraction.accepting.lai * fraction.gaining.suppression.eu * lai.suppression.rate.eu 
-annual.lai.suppression.rate.du = annual.fraction.accepting.lai * fraction.gaining.suppression.du * lai.suppression.rate.du 
+# fraction we offer it to 
+# fraction who are eligible disregarding viral suppression 
+# we need total in each group, total who were ineligible because they weren't suppressed, total who were ineligible for other reasons
+# we would tune the fraction ineligible because they weren't suppressed 
 
-# rapid - remove the fraction gaining? 
-annual.lai.suppression.rate.eu.RAPID = annual.fraction.accepting.lai * fraction.gaining.suppression.eu * lai.suppression.rate.es # changed this last term
-annual.lai.suppression.rate.du.RAPID = annual.fraction.accepting.lai * fraction.gaining.suppression.du * lai.suppression.rate.es  # changed this last term
+total = 172
+number.ineligible = 12 # always would have been ineligible 
+
+fraction.eligible = (total - number.ineligible) / total # can't change this 
+
+# in the special scenario, set this equal to fraction eligible; because if we remove the suppression requirement, the best we can do is 93%
+# the 7% who were ineligible were ineligible with nothing to do with suppression requirements 
+fraction.eligible.retained.and.suppressed = c(fraction.gaining.suppression.es,
+                                              fraction.gaining.suppression.eu, 
+                                              fraction.gaining.suppression.du)
+
+time.to.suppression.baseline = c(0,3/12,3/12) # with oral lead-in
+time.to.suppression.rapid = c(0,1/12,1/12) # rapid version - LAI speeds up suppression time to 1 month 
 
 
+# rates
+# baseline
+rate.acceptance.and.suppress.baseline = -log(1-annual.fraction.accepting.lai*fraction.eligible.retained.and.suppressed)
+final.rate.baseline = 1/(time.to.suppression.baseline + (1/rate.acceptance.and.suppress.baseline)) # add the times 
+names(final.rate.baseline) = c("ES","EU","DU")
+# ES, EU, DU 
+
+# direct
+rate.acceptance.and.suppress.rapid = -log(1-annual.fraction.accepting.lai*fraction.eligible) # remove suppression requirement from fraction 
+final.rate.direct = 1/(time.to.suppression.rapid + (1/rate.acceptance.and.suppress.rapid)) # add the times 
+names(final.rate.direct) = c("ES","EU","DU")
+
+
+#annual.proportion = 1-exp(-final.rate.direct) # just checking proportion who move to LAI in a given year 
+
+# old way 
+if(1==2){
+    # ANNUAL RATE 
+    annual.lai.suppression.rate.es = annual.fraction.accepting.lai * fraction.gaining.suppression.es * lai.suppression.rate.es 
+    annual.lai.suppression.rate.eu = annual.fraction.accepting.lai * fraction.gaining.suppression.eu * lai.suppression.rate.eu 
+    annual.lai.suppression.rate.du = annual.fraction.accepting.lai * fraction.gaining.suppression.du * lai.suppression.rate.du 
+    
+    # rapid 
+    annual.lai.suppression.rate.eu.RAPID = annual.fraction.accepting.lai * fraction.gaining.suppression.eu * lai.suppression.rate.es # changed this last term
+    annual.lai.suppression.rate.du.RAPID = annual.fraction.accepting.lai * fraction.gaining.suppression.du * lai.suppression.rate.es  # changed this last term
+    
+    
+    
+}
