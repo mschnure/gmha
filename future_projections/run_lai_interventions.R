@@ -1,12 +1,12 @@
 source('future_projections/create_lai_interventions.R')
-load("cached/simset_50_for_lai.Rdata")
+load("cached/simset_200_for_lai.Rdata")
 
 # on remote only
 # load("mcmc_runs/mcmc_files/merged/mcmc_chains12_south_africa_2025-10-31.Rdata")
 # simset = extract.simset(mcmc,
 #                         additional.burn=5000,
-#                         additional.thin=600) #3000 for 10
-# save(simset,file="cached/simset_50_for_lai.Rdata")
+#                         additional.thin=150) #3000 for 10, 600 for 50
+# save(simset,file="cached/simset_200_for_lai.Rdata")
 
 set.seed(5678)
 
@@ -64,5 +64,5 @@ save(simset.du, file = paste0("cached/simset.du_",(PROB.5.YEAR*100),"_",Sys.Date
 save(simset.es.direct, file = paste0("cached/simset.es.direct_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
 save(simset.eu.direct, file = paste0("cached/simset.eu.direct_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
 save(simset.du.direct, file = paste0("cached/simset.du.direct_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
-save(simset.all, file = paste0("cached/simset.all_",Sys.Date(),(PROB.5.YEAR*100),"_",".Rdata"))
+save(simset.all, file = paste0("cached/simset.all_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
 save(simset.all.direct, file = paste0("cached/simset.all.direct_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
