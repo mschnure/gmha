@@ -1,29 +1,18 @@
 
 DATE.TO.LOAD = "2026-01-13"
-PROB.5.YEAR = 0.25
+PROB.5.YEAR = 1
 
-load("cached/simset.noint_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata")
-load("cached/simset.es_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata")
-load("cached/simset.eu_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata")
-load("cached/simset.du_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata")
-load("cached/simset.es.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata")
-load("cached/simset.eu.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata")
-load("cached/simset.du.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata")
-load("cached/simset.all_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata")
-load("cached/simset.all.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata")
+load(paste0("cached/simset.noint_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+load(paste0("cached/simset.es_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+load(paste0("cached/simset.eu_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+load(paste0("cached/simset.du_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+load(paste0("cached/simset.es.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+load(paste0("cached/simset.eu.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+load(paste0("cached/simset.du.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+load(paste0("cached/simset.all_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+load(paste0("cached/simset.all.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
 
-simset.list.full.25 = list(no.int = simset.no.int,
-                           es = simset.es,
-                           eu = simset.eu,
-                           du = simset.du,
-                           es.direct = simset.es.direct,
-                           eu.direct = simset.eu.direct,
-                           du.direct = simset.du.direct,
-                           all = simset.all,
-                           all.direct = simset.all.direct
-)
-
-# simset.list.full.100 = list(no.int = simset.no.int,
+# simset.list.full.25 = list(no.int = simset.no.int,
 #                            es = simset.es,
 #                            eu = simset.eu,
 #                            du = simset.du,
@@ -33,6 +22,17 @@ simset.list.full.25 = list(no.int = simset.no.int,
 #                            all = simset.all,
 #                            all.direct = simset.all.direct
 # )
+
+simset.list.full.100 = list(no.int = simset.no.int,
+                           es = simset.es,
+                           eu = simset.eu,
+                           du = simset.du,
+                           es.direct = simset.es.direct,
+                           eu.direct = simset.eu.direct,
+                           du.direct = simset.du.direct,
+                           all = simset.all,
+                           all.direct = simset.all.direct
+)
 
 simset.list.full = c(simset.list.full.25,
                      simset.list.full.100)
@@ -44,6 +44,8 @@ dimnames(full.results.array)$intervention = paste0(
 )
 
 dimnames(full.results.array)$intervention[1] = "no.int"
+
+save(full.results.array, file = paste0("cached/full.results.array_",Sys.Date(),".Rdata"))
 
 YEARS.TO.SUMMARIZE = 2022:2030
 INTERVENTIONS = dimnames(full.results.array)$intervention[c(-1,-10)] # remove no intervention
@@ -87,5 +89,24 @@ if(1==2){
                                                                                years = YEARS.TO.SUMMARIZE)
     
     infections.averted.summary
-    infections.averted.15.to.24.summary        
+    infections.averted.15.to.24.summary   
+    
+    load(paste0("cached/simset.all_25_",DATE.TO.LOAD,".Rdata"))
+    simset.all.25 = simset.all
+    load(paste0("cached/simset.all.direct_25_",DATE.TO.LOAD,".Rdata"))
+    simset.all.direct.25 = simset.all.direct
+    
+    load(paste0("cached/simset.all_100_",DATE.TO.LOAD,".Rdata"))
+    simset.all.100 = simset.all
+    load(paste0("cached/simset.all.direct_100_",DATE.TO.LOAD,".Rdata"))
+    simset.all.direct.100 = simset.all.direct
+    
+    simplot(simset.no.int,
+            simset.all.25,
+            simset.all.direct.25,
+            simset.all.100,
+            simset.all.direct.100,
+            years=2000:2030, 
+            #ages = c("15-24"),
+            data.types = c("incidence"))
 }

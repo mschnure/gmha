@@ -1,7 +1,7 @@
 source('model/run_systematic.R')
 source("future_projections/create_and_run_interventions_functions.R")
 
-PROB.5.YEAR = 0.25 # this is the % uptake you want over 5 years 
+PROB.5.YEAR = 1 # this is the % uptake you want over 5 years 
 # applying only to ages 15-24
 
 source("model/parameter_mappings/get_lai_art_rates_intervention.R")
