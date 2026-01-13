@@ -46,13 +46,14 @@ dimnames(full.results.array)$intervention = paste0(
 dimnames(full.results.array)$intervention[1] = "no.int"
 
 YEARS.TO.SUMMARIZE = 2022:2030
-INTERVENTIONS = dimnames(full.results.array)$intervention[c(-1,-10)] # remove no interventionss
-AGES = NULL # c("15-19","20-24")
+INTERVENTIONS = dimnames(full.results.array)$intervention[c(-1,-10)] # remove no intervention
 
 infections.averted = calculate.infections.averted(full.results.array,
                                                   output = "number",
                                                   interventions = INTERVENTIONS,
                                                   years = YEARS.TO.SUMMARIZE)
+
+#table(is.na(infections.averted))
 
 initiated.on.lai = full.results.array[as.character(YEARS.TO.SUMMARIZE),,,c("lai.art.es","lai.art.eu","lai.art.du"),,INTERVENTIONS, drop = F]
 initiated.on.lai = apply(initiated.on.lai,c("outcome","sim","intervention"),sum)
@@ -82,7 +83,7 @@ if(1==2){
     
     infections.averted.15.to.24.summary = calculate.infections.averted.summary(full.results.array,
                                                                                interventions = INTERVENTIONS,
-                                                                               c("15-19","20-24"),
+                                                                               ages = c("15-19","20-24"),
                                                                                years = YEARS.TO.SUMMARIZE)
     
     infections.averted.summary
