@@ -66,8 +66,14 @@ initiated.on.lai = array(c(initiated.on.lai,initiated.on.lai.total),
                          dim = sapply(dim.names,length),
                          dimnames = dim.names)
 
+# Numbers initiated on LAI by intervention and arrow 
+lai.by.arrow = apply(initiated.on.lai,c("outcome","intervention"),quantile,probs = c(0.025,0.5,0.975),na.rm = T)
+
+# LAI per infection averted 
 initiated.per.infection.averted = initiated.on.lai[,,"total"]/infections.averted
 lai.per.IA = apply(initiated.per.infection.averted,c("intervention"),quantile,probs = c(0.025,0.5,0.975),na.rm = T)
+
+
 
 if(1==2){
     infections.averted.summary = calculate.infections.averted.summary(full.results.array,
