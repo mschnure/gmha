@@ -99,8 +99,84 @@ plot.engagement.fit = function(location="South Africa",
     
 }
 
-# THIS IS OLD 
+
 generate.engagement.parameter.table = function(locations){
+    
+    rv = list()
+    
+    for(location in locations){
+        engagement.model = get.engagement.model(location=location)
+
+        # Age 30-39, female 
+        sex="female"
+        age = "30-39"
+        year = 2015
+        
+        log.odds.ref = engagement.model$intercept + 
+            (engagement.model$slope*(year-engagement.model$anchor.year)) + 
+            (engagement.model$sex.female*(sex=="female"))  
+            #(engagement.model$age.10.19*(eng.cat=="10-19")) + 
+            #(engagement.model$age.20.29*(eng.cat=="20-29")) + 
+            #(engagement.model$age.40.49*(eng.cat=="40-49")) + 
+            #(engagement.model$age.50.plus*(eng.cat=="50 and over")) + 
+
+        odds.ref = exp(log.odds.ref)
+        lower.odds.ref = odds.ref/4
+        upper.odds.ref = odds.ref*4
+        
+        lower.prob.ref = (lower.odds.ref/(1+lower.odds.ref))*engagement.model$max.proportion
+        upper.prob.ref = (upper.odds.ref/(1+upper.odds.ref))*engagement.model$max.proportion
+        
+        prob.ref = 1/(1+exp(-log.odds.ref)) 
+        prob.ref = prob.ref*engagement.model$max.proportion
+        
+        # ORs by age
+        age.10.19.OR = exp(engagement.model$age.10.19)  
+        age.10.19.OR.lower = age.10.19.OR/4
+        age.10.19.OR.upper = age.10.19.OR*4
+        
+        age.20.29.OR = exp(engagement.model$age.20.29)  
+        age.20.29.OR.lower = age.20.29.OR/4
+        age.20.29.OR.upper = age.20.29.OR*4
+        
+        age.40.49.OR = exp(engagement.model$age.40.49)  
+        age.40.49.OR.lower = age.40.49.OR/4
+        age.40.49.OR.upper = age.40.49.OR*4
+        
+        age.50.plus.OR = exp(engagement.model$age.50.plus)  
+        age.50.plus.OR.lower = age.50.plus.OR/4
+        age.50.plus.OR.upper = age.50.plus.OR*4
+        
+        table = data.frame(
+            Parameter = c("Probability of engaging, Female, age 30-39, 2015",
+                          "Odds ratio of engaging, age 10-19 vs 30-39",
+                          "Odds ratio of engaging, age 20-29 vs 30-39",
+                          "Odds ratio of engaging, age 40-49 vs 30-39",
+                          "Odds ratio of engaging, age 50 and over vs 30-39",
+                          "Ratio of engagement rates among male versus female"),
+            Estimate.lower.upper=c(paste0(round(prob.ref,2), " (",round(lower.prob.ref,2),"-",
+                                          round(upper.prob.ref,2),")"),
+                                   paste0(round(age.10.19.OR,2), " (",round(age.10.19.OR.lower,2),"-",
+                                          round(age.10.19.OR.upper,2),")"),
+                                   paste0(round(age.20.29.OR,2), " (",round(age.20.29.OR.lower,2),"-",
+                                          round(age.20.29.OR.upper,2),")"),
+                                   paste0(round(age.40.49.OR,2), " (",round(age.40.49.OR.lower,2),"-",
+                                          round(age.40.49.OR.upper,2),")"),
+                                   paste0(round(age.50.plus.OR,2), " (",round(age.50.plus.OR.lower,2),"-",
+                                          round(age.50.plus.OR.upper,2),")"),
+                                   paste0("1 (0.25-4)")))
+        
+        rv[[location]] = table
+    }
+    
+    rv
+    
+}
+
+
+
+# THIS IS OLD 
+generate.engagement.parameter.table.old = function(locations){
     
     rv = list()
     
