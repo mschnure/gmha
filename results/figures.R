@@ -21,7 +21,7 @@ COUNTRIES = c("Mozambique","Uganda","Kenya","Zambia",
 # do these ones manually and check simset.no.int@simulations[[1]]$location to make sure they save in the right location
 # Tanzania, Nigeria, global, global.income, all.low, all.lower.middle, all.upper.middle, all.high 
 
-country = COUNTRIES[14]
+country = COUNTRIES[15]
 
 #for(country in COUNTRIES){
     
@@ -50,7 +50,7 @@ country = COUNTRIES[14]
                     "all.low" = 1000000,
                     "all.lower.middle" = 1600000,
                     "all.upper.middle" = 1750000,
-                    "all.high" = 100000
+                    "all.high" = 110000
     )
     plot.limit = plot.limits[simset.no.int@simulations[[1]]$location]
     
