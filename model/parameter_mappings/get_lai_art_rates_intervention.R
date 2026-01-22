@@ -6,11 +6,14 @@
 # Start from X% over 5 years (set in create_lai_interventions.R ), back-calculate to what proportion accept per year 
 # rate = (-log(1-prob))/time
 # prob = 1 - exp(-rate*time)
-prob.5.year = PROB.5.YEAR # set this in "create_lai_interventions.R"
-rate.5.year = (-log(1-prob.5.year))/5
-prob.1.year = 1 - exp(-rate.5.year*1)
-rate.1.year = (-log(1-prob.1.year))/1 # this should be the exact same as rate.5.year, just checking 
-annual.fraction.accepting.lai = prob.1.year 
+if(1==2){
+    prob.5.year = PROB.5.YEAR # set this in "create_lai_interventions.R"
+    rate.5.year = (-log(1-prob.5.year))/5
+    prob.1.year = 1 - exp(-rate.5.year*1)
+    rate.1.year = (-log(1-prob.1.year))/1 # this should be the exact same as rate.5.year, just checking 
+    annual.fraction.accepting.lai = prob.1.year     
+}
+annual.fraction.accepting.lai = PROB.1.YEAR
 
 
 # (B) Fraction who get virally suppressed
@@ -69,7 +72,7 @@ time.to.suppression.rapid = c(0,1/12,1/12) # rapid version - LAI speeds up suppr
 
 
 # rates
-# baseline
+# baseline (rate = -log(1-p)/time)
 rate.acceptance.and.suppress.baseline = -log(1-annual.fraction.accepting.lai*fraction.eligible.retained.and.suppressed)
 final.rate.baseline = 1/(time.to.suppression.baseline + (1/rate.acceptance.and.suppress.baseline)) # add the times 
 names(final.rate.baseline) = c("ES","EU","DU")
