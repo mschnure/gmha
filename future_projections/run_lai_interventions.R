@@ -10,6 +10,7 @@ load("cached/simset_200_for_lai.Rdata")
 
 set.seed(5678)
 
+print(paste0("1-year coverage = ",PROB.1.YEAR))
 print("running no int")
 simset.no.int = run.intervention.on.simset(simset,
                                            end.year = 2040,
@@ -56,13 +57,25 @@ simset.all.direct = run.intervention.on.simset(simset,
                                               intervention = list(lai.from.all.direct,
                                                                   lai.removal.by.age))
 
+save(simset.no.int, file = paste0("cached/simset.noint_",(PROB.1.YEAR*100),"_1yr_",Sys.Date(),".Rdata"))
+save(simset.es, file = paste0("cached/simset.es_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
+save(simset.eu, file = paste0("cached/simset.eu_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
+save(simset.du, file = paste0("cached/simset.du_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
+save(simset.es.direct, file = paste0("cached/simset.es.direct_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
+save(simset.eu.direct, file = paste0("cached/simset.eu.direct_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
+save(simset.du.direct, file = paste0("cached/simset.du.direct_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
+save(simset.all, file = paste0("cached/simset.all_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
+save(simset.all.direct, file = paste0("cached/simset.all.direct_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
 
-save(simset.no.int, file = paste0("cached/simset.noint_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
-save(simset.es, file = paste0("cached/simset.es_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
-save(simset.eu, file = paste0("cached/simset.eu_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
-save(simset.du, file = paste0("cached/simset.du_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
-save(simset.es.direct, file = paste0("cached/simset.es.direct_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
-save(simset.eu.direct, file = paste0("cached/simset.eu.direct_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
-save(simset.du.direct, file = paste0("cached/simset.du.direct_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
-save(simset.all, file = paste0("cached/simset.all_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
-save(simset.all.direct, file = paste0("cached/simset.all.direct_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
+if(1==2){
+  save(simset.no.int, file = paste0("cached/simset.noint_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
+  save(simset.es, file = paste0("cached/simset.es_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
+  save(simset.eu, file = paste0("cached/simset.eu_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
+  save(simset.du, file = paste0("cached/simset.du_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
+  save(simset.es.direct, file = paste0("cached/simset.es.direct_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
+  save(simset.eu.direct, file = paste0("cached/simset.eu.direct_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
+  save(simset.du.direct, file = paste0("cached/simset.du.direct_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
+  save(simset.all, file = paste0("cached/simset.all_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
+  save(simset.all.direct, file = paste0("cached/simset.all.direct_",(PROB.5.YEAR*100),"_",Sys.Date(),".Rdata"))
+}
+
