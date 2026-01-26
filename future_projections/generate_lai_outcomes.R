@@ -1,39 +1,57 @@
 library(colorspace)
+source('future_projections/create_lai_interventions.R')
 
-DATE.TO.LOAD = "2026-01-13"
-PROB.5.YEAR = 1
+DATE.TO.LOAD = "2026-01-22"
+#PROB.5.YEAR = 1
+PROB.1.YEAR = 1
 
-load(paste0("cached/simset.noint_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
-load(paste0("cached/simset.es_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
-load(paste0("cached/simset.eu_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
-load(paste0("cached/simset.du_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
-load(paste0("cached/simset.es.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
-load(paste0("cached/simset.eu.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
-load(paste0("cached/simset.du.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
-load(paste0("cached/simset.all_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
-load(paste0("cached/simset.all.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+load(paste0("cached/simset.noint_",(PROB.1.YEAR*100),"_1yr_",Sys.Date(),".Rdata"))
+load(paste0("cached/simset.es_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
+load(paste0("cached/simset.eu_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
+load(paste0("cached/simset.du_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
+load(paste0("cached/simset.es.direct_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
+load(paste0("cached/simset.eu.direct_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
+load(paste0("cached/simset.du.direct_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
+load(paste0("cached/simset.all_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
+load(paste0("cached/simset.all.direct_",(PROB.1.YEAR*100),"_",Sys.Date(),".Rdata"))
 
-# simset.list.full.25 = list(no.int = simset.no.int,
-#                            es = simset.es,
-#                            eu = simset.eu,
-#                            du = simset.du,
-#                            es.direct = simset.es.direct,
-#                            eu.direct = simset.eu.direct,
-#                            du.direct = simset.du.direct,
-#                            all = simset.all,
-#                            all.direct = simset.all.direct
-# )
+if(1==2){
+    load(paste0("cached/simset.noint_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+    load(paste0("cached/simset.es_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+    load(paste0("cached/simset.eu_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+    load(paste0("cached/simset.du_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+    load(paste0("cached/simset.es.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+    load(paste0("cached/simset.eu.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+    load(paste0("cached/simset.du.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+    load(paste0("cached/simset.all_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))
+    load(paste0("cached/simset.all.direct_",(PROB.5.YEAR*100),"_",DATE.TO.LOAD,".Rdata"))    
+}
 
-simset.list.full.100 = list(no.int = simset.no.int,
-                           es = simset.es,
-                           eu = simset.eu,
-                           du = simset.du,
-                           es.direct = simset.es.direct,
-                           eu.direct = simset.eu.direct,
-                           du.direct = simset.du.direct,
-                           all = simset.all,
-                           all.direct = simset.all.direct
-)
+if(PROB.1.YEAR==0.25){
+    simset.list.full.25 = list(no.int = simset.no.int,
+                               es = simset.es,
+                               eu = simset.eu,
+                               du = simset.du,
+                               es.direct = simset.es.direct,
+                               eu.direct = simset.eu.direct,
+                               du.direct = simset.du.direct,
+                               all = simset.all,
+                               all.direct = simset.all.direct
+    )
+}
+
+if(PROB.1.YEAR==1){
+    simset.list.full.100 = list(no.int = simset.no.int,
+                                es = simset.es,
+                                eu = simset.eu,
+                                du = simset.du,
+                                es.direct = simset.es.direct,
+                                eu.direct = simset.eu.direct,
+                                du.direct = simset.du.direct,
+                                all = simset.all,
+                                all.direct = simset.all.direct
+    )
+}
 
 simset.list.full = c(simset.list.full.25,
                      simset.list.full.100)
@@ -123,26 +141,56 @@ if(1==2){
                     
     )
     
+    
+    cols = c(
+        "#D55E00",  # orange
+        "#0072B2",  # blue
+        "#009E73",  # green
+        "#CC79A7",  # magenta
+        "#56B4E9"   # bright cyan/sky blue
+    )
+    
+    
+    jpeg(file=paste0("../../5_Manuscripts_conferences/2_Conferences/2026_AIDS/nextgen/barplot_",Sys.Date(),".jpeg"),
+         width = 3000,height = 1000,res=200)
     ggplot(df, aes(x = scenario, y = infections.averted.estimate)) +
-        geom_col(fill = "skyblue", color = "black", width = 0.6) +  # bars
+        geom_col(fill = cols[2:5], color = "black", width = 0.6) +  # bars
         geom_errorbar(aes(ymin = infections.averted.lower, ymax = infections.averted.upper), width = 0.2, color = "black") +  # CI lines
         theme_minimal() +
-        ylab("Cumulative infections averted, 2020-2030") +
-        xlab("Scenario") + 
-        scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)})
-    
+        ylab("Cumulative infections averted, 2022-2030") +
+        xlab(NULL) + 
+        scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)}) + 
+        theme(
+            axis.title.y = element_text(size = 16),   # x-axis title larger
+            axis.text.x  = element_text(size = 14),   # x-axis tick labels
+            axis.text.y  = element_text(size = 14)    # y-axis tick labels
+        )
+    dev.off() 
     
     ## Simplot
     
-    
-    load(paste0("cached/simset.noint_25_",DATE.TO.LOAD,".Rdata"))
-    load(paste0("cached/simset.all.direct_25_",DATE.TO.LOAD,".Rdata"))
+    load(paste0("cached/simset.noint_25_1yr_",DATE.TO.LOAD,".Rdata"))
+    load(paste0("cached/simset.all_25_1yr_",DATE.TO.LOAD,".Rdata"))
+    simset.all.25 = simset.all
+    load(paste0("cached/simset.all.direct_25_1yr_",DATE.TO.LOAD,".Rdata"))
     simset.all.direct.25 = simset.all.direct
     
-    load(paste0("cached/simset.all_100_",DATE.TO.LOAD,".Rdata"))
+    load(paste0("cached/simset.all_100_1yr_",DATE.TO.LOAD,".Rdata"))
     simset.all.100 = simset.all
-    load(paste0("cached/simset.all.direct_100_",DATE.TO.LOAD,".Rdata"))
+    load(paste0("cached/simset.all.direct_100_1yr_",DATE.TO.LOAD,".Rdata"))
     simset.all.direct.100 = simset.all.direct
+    
+    if(1==2){
+        load(paste0("cached/simset.noint_25_",DATE.TO.LOAD,".Rdata"))
+        load(paste0("cached/simset.all.direct_25_",DATE.TO.LOAD,".Rdata"))
+        simset.all.direct.25 = simset.all.direct
+        
+        load(paste0("cached/simset.all_100_",DATE.TO.LOAD,".Rdata"))
+        simset.all.100 = simset.all
+        load(paste0("cached/simset.all.direct_100_",DATE.TO.LOAD,".Rdata"))
+        simset.all.direct.100 = simset.all.direct  
+    }
+
     
     simplot(#simset.no.int,
             simset.all.25,
@@ -168,17 +216,12 @@ if(1==2){
             ncol=1) +
         theme(strip.text.x = element_blank(),
               axis.title.x=element_blank(),
+              axis.title.y = element_text(size = 16),
               text = element_text(size = 20),
               legend.position = "none")+
-        scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
+        scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},limits = c(0,NA))
     
-    cols = c(
-        "#D55E00",  # orange
-        "#0072B2",  # blue
-        "#009E73",  # green
-        "#CC79A7",  # magenta
-        "#56B4E9"   # bright cyan/sky blue
-    )
+
     
     ribbon_cols = lighten(cols, amount = 0.3)
     
@@ -188,9 +231,13 @@ if(1==2){
     p$layers[[point_idx]]$mapping$colour <- NULL
     p$layers[[point_idx]]$aes_params$colour <- "grey10"
     
+    jpeg(file=paste0("../../5_Manuscripts_conferences/2_Conferences/2026_AIDS/nextgen/fig_",Sys.Date(),".jpeg"),
+         width = 3000,height = 1000,res=200)
     p +
         scale_color_manual(values = cols) +
-        scale_fill_manual(values = ribbon_cols)
+        scale_fill_manual(values = ribbon_cols) + 
+        ylab("Annual New HIV infections, 2010-2030") 
+    dev.off()
     
     labels <- c("Baseline","25%, suppression requirement", "25%, no suppression requirement", 
                 "100%, suppression requirement", "100%, no suppression requirement")
