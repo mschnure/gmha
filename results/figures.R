@@ -21,7 +21,7 @@ COUNTRIES = c("Mozambique","Uganda","Kenya","Zambia",
 # do these ones manually and check simset.no.int@simulations[[1]]$location to make sure they save in the right location
 # Tanzania, Nigeria, global, global.income, all.low, all.lower.middle, all.upper.middle, all.high 
 
-country = COUNTRIES[15]
+country = COUNTRIES[15] # global = 16, low = 12
 
 #for(country in COUNTRIES){
     
@@ -87,8 +87,10 @@ country = COUNTRIES[15]
         age.labels = simset.no.int@simulations[[1]]$AGES
         age.labels[length(age.labels)] = "80+"
         
-        jpeg(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.jpeg"),
-             width = 2000,height = 1500,res=200)
+        # jpeg(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.jpeg"),
+        #      width = 2000,height = 1500,res=200)
+        pdf(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.pdf"),
+             width = 10,height = 7.5) 
         generate.age.distribution(full.results.array, 
                                   outcome="prevalence", 
                                   intervention.1 = "no.int",year.1="2025",
@@ -127,8 +129,10 @@ country = COUNTRIES[15]
         age.labels = simset.no.int@simulations[[1]]$AGES
         age.labels[length(age.labels)] = "80+"
         
-        jpeg(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.jpeg"),
-             width = 2000,height = 1500,res=200)
+        # jpeg(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.jpeg"),
+        #      width = 2000,height = 1500,res=200)
+        pdf(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.pdf"),
+             width = 10,height = 7.5)
         generate.age.distribution(full.results.array, 
                                   outcome="prevalence", 
                                   intervention.1 = "no.int",year.1="2025",
@@ -195,6 +199,7 @@ country = COUNTRIES[15]
             ncol=4) +
         theme(strip.text.x = element_blank(),
               text = element_text(size = 20),
+              axis.text.x = element_text(angle = 30, hjust = 1),
               legend.position = "none")+
         scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
     dev.off() 
@@ -232,6 +237,7 @@ country = COUNTRIES[15]
             ncol=4) +
         theme(strip.text.x = element_blank(),
               text = element_text(size = 20),
+              axis.text.x = element_text(angle = 30, hjust = 1),
               legend.position = "none")+
         scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
     dev.off() 
