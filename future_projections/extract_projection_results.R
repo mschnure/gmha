@@ -199,7 +199,7 @@ generate.age.distribution = function(results.array,
                                      plot.limits=c(0,200000)){
     
     if(outcome=="incidence"){
-        results.array = results.array[,-c(2:3),,,,]
+        results.array = results.array[,-c(2:3),,,,, drop=F]
     }
     
     results.array.1 = results.array[,,sexes,,,intervention.1]

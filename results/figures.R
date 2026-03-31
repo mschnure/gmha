@@ -21,7 +21,7 @@ COUNTRIES = c("Mozambique","Uganda","Kenya","Zambia",
 # do these ones manually and check simset.no.int@simulations[[1]]$location to make sure they save in the right location
 # Tanzania, Nigeria, global, global.income, all.low, all.lower.middle, all.upper.middle, all.high 
 
-country = COUNTRIES[15] # global = 16, low = 12
+country = COUNTRIES[16] # global = 16, low = 12
 
 #for(country in COUNTRIES){
     
@@ -82,15 +82,17 @@ country = COUNTRIES[15] # global = 16, low = 12
         guides(x =  guide_axis(angle = 45))
     dev.off()
     
-    
+    ## GLOBAL ##
     if(simset.no.int@simulations[[1]]$location=="Global"){
         age.labels = simset.no.int@simulations[[1]]$AGES
         age.labels[length(age.labels)] = "80+"
         
         # jpeg(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.jpeg"),
         #      width = 2000,height = 1500,res=200)
-        pdf(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.pdf"),
-             width = 10,height = 7.5) 
+        # pdf(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.pdf"),
+        #      width = 10,height = 7.5) 
+        svg(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.svg"),
+            width = 10,height = 7.5) 
         generate.age.distribution(full.results.array, 
                                   outcome="prevalence", 
                                   intervention.1 = "no.int",year.1="2025",
@@ -122,6 +124,12 @@ country = COUNTRIES[15] # global = 16, low = 12
                 labels = age.labels) +
             guides(x =  guide_axis(angle = 45))
         dev.off()
+        
+        
+        # SAVE PLOT VALUES 
+        write.csv(summary.results$prevalence.age.distribution,
+                  file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.csv"))
+        
     }
     
     # income plots
@@ -131,8 +139,10 @@ country = COUNTRIES[15] # global = 16, low = 12
         
         # jpeg(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.jpeg"),
         #      width = 2000,height = 1500,res=200)
-        pdf(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.pdf"),
-             width = 10,height = 7.5)
+        # pdf(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.pdf"),
+        #      width = 10,height = 7.5)
+        svg(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.svg"),
+            width = 10, height = 7.5)
         generate.age.distribution(full.results.array, 
                                   outcome="prevalence", 
                                   intervention.1 = "no.int",year.1="2025",
@@ -161,7 +171,13 @@ country = COUNTRIES[15] # global = 16, low = 12
             guides(x =  guide_axis(angle = 45))
         dev.off()
         
+        
+        # SAVE PLOT VALUES 
+        write.csv(summary.results$prevalence.age.distribution,
+                  file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.csv"))
+        
     }
+
     
     
     ### ALL YEARS ### 
