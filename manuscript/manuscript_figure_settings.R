@@ -15,3 +15,15 @@ AGE.DIST.PLOT.HEIGHT = 1500
 AGE.DIST.PLOT.RES = 200
 
 
+PLOT.LIMITS.GEN.POP = list("all.low" = c("break.upper"=200000000,
+                                         "breaks" = 25000000,
+                                         "upper" = 135000000),
+                           "all.lower.middle" = c("break.upper"=240000000,
+                                                  "breaks" = 25000000,
+                                                  "upper" = 235000000),
+                           "all.upper.middle" = c("break.upper"=240000000,
+                                                  "breaks" = 25000000,
+                                                  "upper" = 235000000),
+                           "all.high" = c("break.upper"=130000000,
+                                                  "breaks" = 25000000,
+                                                  "upper" = 135000000))

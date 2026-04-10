@@ -101,10 +101,6 @@ generate.age.distribution(full.results.array,
 dev.off()
 
 { # General population summary stats
-    outcomes = c("population")
-    dim.names = list(intervention=dimnames(full.results.array)$intervention,
-                     outcome.year = paste0(rep(outcomes,each=2),rep(c(".2025",".2040"),2)))
-    
     gen.pop.median.age.table = generate.median.age.table(simset.list = simset.list.full,
                                                          data.types = c("population"),
                                                          years = c(2025,2040))
@@ -113,7 +109,6 @@ dev.off()
                                                             age.point=50,
                                                             data.types = c("population"),
                                                             years=c(2025,2040))
-    
 }
 
 
@@ -131,7 +126,7 @@ simset.no.int = simset.list.full$no.int
 age.labels = simset.no.int@simulations[[1]]$AGES
 age.labels[length(age.labels)] = "80+"
 
-jpeg(file=paste0(PLOT.DIR,"age_dist_incidence/",convert_string(simset.no.int@simulations[[1]]$location),"_age_dist.jpeg"),
+jpeg(file=paste0(PLOT.DIR,"age_dist_incidence/",convert_string(simset.no.int@simulations[[1]]$location),"_age_dist_incidence.jpeg"),
      width = AGE.DIST.PLOT.WIDTH,height = AGE.DIST.PLOT.HEIGHT,res=AGE.DIST.PLOT.RES)
 print(
     generate.age.distribution(full.results.array, 
@@ -164,10 +159,6 @@ print(
 dev.off()
 
 { # Incidence summary stats
-    outcomes = c("incidence")
-    dim.names = list(intervention=dimnames(full.results.array)$intervention,
-                     outcome.year = paste0(rep(outcomes,each=2),rep(c(".2025",".2040"),2)))
-    
     gen.pop.median.age.table = generate.median.age.table(simset.list = simset.list.full,
                                                          data.types = c("incidence"),
                                                          years = c(2025,2040))
@@ -178,6 +169,7 @@ dev.off()
                                                             years=c(2025,2040))
     
 }
+
 
 
 
@@ -224,6 +216,100 @@ for(country in INCOME.COUNTRIES){
         scale_x_discrete( 
             labels = age.labels) +
         guides(x =  guide_axis(angle = 45))
+    )
+    dev.off()
+}
+#### INCOME-LEVEL GENERAL POPULATION AGE DISTRIBUTIONS ####
+print("Generating general population age distributions by income")
+for(country in INCOME.COUNTRIES){
+    files = list.files("final_simsets_and_results/")
+    files = files[grepl("all.results",files)]
+    file = files[grepl(paste0("_",convert_string(country),"_2025"),files)]
+    print(paste0("loading ",file))
+    load(file.path("final_simsets_and_results",file))
+    simset.no.int = simset.list.full$no.int 
+    
+    age.labels = simset.no.int@simulations[[1]]$AGES
+    age.labels[length(age.labels)] = "80+"
+    
+    jpeg(file=paste0(PLOT.DIR,"age_dist_gen_pop/",convert_string(simset.no.int@simulations[[1]]$location),"_age_dist_gen_pop.jpeg"),
+         width = AGE.DIST.PLOT.WIDTH,height = AGE.DIST.PLOT.HEIGHT,res=AGE.DIST.PLOT.RES)
+    print(
+        generate.age.distribution(full.results.array, 
+                                  outcome="population", 
+                                  intervention.1 = "no.int",year.1="2025",
+                                  intervention.2 = "no.int",year.2="2040",
+                                  intervention.3 = "no.int",year.3="2040",
+                                  percent=F,
+                                  sexes = c("female","male")) + 
+            scale_fill_manual(labels = c("no.int/2025" = "2025",
+                                         "no.int/2040" = "Forecasted 2040",
+                                         "no.int/2040" = "Forecasted 2040"), 
+                              values=alpha(c("no.int/2025" = AGE.DIST.PAL[1],
+                                             "no.int/2040" = AGE.DIST.PAL[2],
+                                             "all.max/2040" = AGE.DIST.PAL[3]),AGE.DIST.ALPHA), 
+                              name=NULL) +
+            theme(text = element_text(size = 20),
+                  axis.title.y = element_text(colour = "black",vjust = 3,
+                                              margin = margin(l = 15)),
+                  axis.text = element_text(colour = "black"),
+                  legend.position = c(0.75, 0.87)
+            )+
+            labs(title = NULL,subtitle = NULL) +
+            ylab(label = "Number of individuals") +
+            scale_y_continuous(
+                breaks = seq(0, PLOT.LIMITS.GEN.POP[[country]][["break.upper"]], by = PLOT.LIMITS.GEN.POP[[country]][["breaks"]]),
+                limits = c(0,PLOT.LIMITS.GEN.POP[[country]][["upper"]]),
+                labels = label_number(scale = 1e-6, suffix = "M")) +
+            scale_x_discrete( 
+                labels = age.labels) +
+            guides(x =  guide_axis(angle = 45))
+    )
+    dev.off()
+}
+
+#### INCOME-LEVEL ICIDENCE AGE DISTRIBUTIONS ####
+print("Generating incidence age distributions by income")
+for(country in INCOME.COUNTRIES){
+    files = list.files("final_simsets_and_results/")
+    files = files[grepl("all.results",files)]
+    file = files[grepl(paste0("_",convert_string(country),"_2025"),files)]
+    print(paste0("loading ",file))
+    load(file.path("final_simsets_and_results",file))
+    simset.no.int = simset.list.full$no.int 
+    
+    age.labels = simset.no.int@simulations[[1]]$AGES
+    age.labels[length(age.labels)] = "80+"
+    
+    jpeg(file=paste0(PLOT.DIR,"age_dist_incidence/",convert_string(simset.no.int@simulations[[1]]$location),"_age_dist_incidence.jpeg"),
+         width = AGE.DIST.PLOT.WIDTH,height = AGE.DIST.PLOT.HEIGHT,res=AGE.DIST.PLOT.RES)
+    print(
+        generate.age.distribution(full.results.array, 
+                                  outcome="incidence", 
+                                  intervention.1 = "no.int",year.1="2025",
+                                  intervention.2 = "no.int",year.2="2040",
+                                  intervention.3 = "no.int",year.3="2040",
+                                  percent=F,
+                                  sexes = c("female","male"),
+                                  plot.limits=c(NULL,NULL)) +
+            scale_fill_manual(labels = c("no.int/2025" = "2025",
+                                         "no.int/2040" = "Forecasted 2040",
+                                         "no.int/2040" = "Forecasted 2040"), 
+                              values=alpha(c("no.int/2025" = AGE.DIST.PAL[1],
+                                             "no.int/2040" = AGE.DIST.PAL[2], 
+                                             "no.int/2040" = AGE.DIST.PAL[3]),AGE.DIST.ALPHA), 
+                              name=NULL) +
+            theme(text = element_text(size = 20),
+                  axis.title.y = element_text(colour = "black",vjust = 3,
+                                              margin = margin(l = 15)),
+                  axis.text = element_text(colour = "black"),
+                  legend.position = c(0.75, 0.87)
+            )+
+            labs(title = NULL,subtitle = NULL) +
+            ylab(label = "Number of new HIV infections") +
+            scale_x_discrete( 
+                labels = age.labels) +
+            guides(x =  guide_axis(angle = 45))
     )
     dev.off()
 }
