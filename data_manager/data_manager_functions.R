@@ -1104,7 +1104,8 @@ read.population.data.files = function(dir = 'data_manager/data',
                                        age = ages,
                                        sex = sexes,
                                        location = c(countries.to.pull,"unaids.remainder","non.unaids.remainder",
-                                                    "r1.low","r1.lower.middle","r1.upper.middle","r1.high"))
+                                                    "r1.low","r1.lower.middle","r1.upper.middle","r1.high",
+                                                    "all.low","all.lower.middle","all.upper.middle","all.high"))
     
     total.dim.names.remainder = age.sex.dim.names.remainder[c(1,4)] # year, location 
     
@@ -1155,20 +1156,50 @@ read.population.data.files = function(dir = 'data_manager/data',
     # y = rv$year.age.sex[,,,"World"]
     # table(y - (x+z)) # world - (remainder + individual)
     
+    ## 4/7/26 - adding "all.low", etc.
+    all.low = LOCATIONS.INCOME$low.all
+    all.lower.middle = LOCATIONS.INCOME$lower.middle.all
+    all.upper.middle = LOCATIONS.INCOME$upper.middle.all
+    all.high = LOCATIONS.INCOME$high.all[LOCATIONS.INCOME$high.all %in% remainder.without.st.kitts]
+    
+    all.low.year = rowSums(rv$year[,all.low])
+    all.lower.middle.year = rowSums(rv$year[,all.lower.middle])
+    all.upper.middle.year = rowSums(rv$year[,all.upper.middle])
+    all.high.year = rowSums(rv$year[,all.high])
+    
+    all.low.year.age = apply(rv$year.age[,,all.low],c(1:2),sum)
+    all.lower.middle.year.age = apply(rv$year.age[,,all.lower.middle],c(1:2),sum)
+    all.upper.middle.year.age = apply(rv$year.age[,,all.upper.middle],c(1:2),sum)
+    all.high.year.age = apply(rv$year.age[,,all.high],c(1:2),sum)
+        
+    all.low.year.sex = apply(rv$year.sex[,,all.low],c(1:2),sum)
+    all.lower.middle.year.sex = apply(rv$year.sex[,,all.lower.middle],c(1:2),sum)
+    all.upper.middle.year.sex = apply(rv$year.sex[,,all.upper.middle],c(1:2),sum)
+    all.high.year.sex = apply(rv$year.sex[,,all.high],c(1:2),sum)
+    
+    all.low.year.age.sex = apply(rv$year.age.sex[,,,all.low],c(1:3),sum)
+    all.lower.middle.year.age.sex = apply(rv$year.age.sex[,,,all.lower.middle],c(1:3),sum)
+    all.upper.middle.year.age.sex = apply(rv$year.age.sex[,,,all.upper.middle],c(1:3),sum)
+    all.high.year.age.sex = apply(rv$year.age.sex[,,,all.high],c(1:3),sum)
+    
     rv$year = array(c(rv$year,unaids.remainder.year,non.unaids.remainder.year,
-                      r1.low.year,r1.lower.middle.year,r1.upper.middle.year,r1.high.year),
+                      r1.low.year,r1.lower.middle.year,r1.upper.middle.year,r1.high.year,
+                      all.low.year,all.lower.middle.year,all.upper.middle.year,all.high.year),
                     dim = sapply(total.dim.names.remainder,length),
                     dimnames = total.dim.names.remainder)
     rv$year.age = array(c(rv$year.age,unaids.remainder.year.age,non.unaids.remainder.year.age,
-                          r1.low.year.age,r1.lower.middle.year.age,r1.upper.middle.year.age,r1.high.year.age),
+                          r1.low.year.age,r1.lower.middle.year.age,r1.upper.middle.year.age,r1.high.year.age,
+                          all.low.year.age,all.lower.middle.year.age,all.upper.middle.year.age,all.high.year.age),
                         dim = sapply(age.dim.names.remainder,length),
                         dimnames = age.dim.names.remainder)
     rv$year.sex = array(c(rv$year.sex,unaids.remainder.year.sex,non.unaids.remainder.year.sex,
-                          r1.low.year.sex,r1.lower.middle.year.sex,r1.upper.middle.year.sex,r1.high.year.sex),
+                          r1.low.year.sex,r1.lower.middle.year.sex,r1.upper.middle.year.sex,r1.high.year.sex,
+                          all.low.year.sex,all.lower.middle.year.sex,all.upper.middle.year.sex,all.high.year.sex),
                         dim = sapply(sex.dim.names.remainder,length),
                         dimnames = sex.dim.names.remainder)
     rv$year.age.sex = array(c(rv$year.age.sex,unaids.remainder.year.age.sex,non.unaids.remainder.year.age.sex,
-                              r1.low.year.age.sex,r1.lower.middle.year.age.sex,r1.upper.middle.year.age.sex,r1.high.year.age.sex),
+                              r1.low.year.age.sex,r1.lower.middle.year.age.sex,r1.upper.middle.year.age.sex,r1.high.year.age.sex,
+                              all.low.year.age.sex,all.lower.middle.year.age.sex,all.upper.middle.year.age.sex,all.high.year.age.sex),
                             dim = sapply(age.sex.dim.names.remainder,length),
                             dimnames = age.sex.dim.names.remainder)
     
