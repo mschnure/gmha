@@ -197,10 +197,9 @@ generate.age.distribution = function(results.array,
                                      sexes=c("female","male"),
                                      display="figure",
                                      plot.limits=c(0,200000)){
-    
-    if(outcome=="incidence"){
-        results.array = results.array[,-c(2:3),,,,, drop=F]
-    }
+    # if(outcome=="incidence"){
+    #     results.array = results.array[,-c(2:3),,,,, drop=F]
+    # }
     
     results.array.1 = results.array[,,sexes,,,intervention.1]
     results.array.2 = results.array[,,sexes,,,intervention.2]
