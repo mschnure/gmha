@@ -23,6 +23,10 @@ WEIGHTS.BY.YEAR[WEIGHT.YEARS>=2018] = 4 # from 2018, 4x
 names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
 #WEIGHTS.BY.YEAR = WEIGHTS.BY.YEAR/8
 
+# FOR POPULATION DATA, EXTEND WEIGHTS THROUGH 2040; don't multiply by total weight anymore because that is being factored in here
+POP.WEIGHTS = c(WEIGHTS.BY.YEAR,rep(1,10))
+names(POP.WEIGHTS) = c(names(WEIGHTS.BY.YEAR),2031:2040)
+
 # for france only, remove pre-1995 years 
 # WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
 # WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE[as.character(1995:2030)]
@@ -63,8 +67,8 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              suppression.obs.correlation=0.5,
                              suppression.correlation.structure="compound.symmetry",
                              #population
-                             population.years=years,
-                             population.weight=1/200000, # have to downweight a lot due to large pop size/number of strata
+                             population.years=1995:2040, # UPDATED 4/10/26
+                             population.weight=POP.WEIGHTS*(1/200000), # UPDATED 4/10/26 # have to downweight a lot due to large pop size/number of strata
                              population.obs.correlation=0.5,
                              population.correlation.structure="auto.regressive",
                              #hiv.mortality
@@ -152,7 +156,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                      parameters=parameters,
                                                      denominator.data.type=NULL, 
                                                      obs.is.proportion=F,
-                                                     weight=total.weight*population.weight,
+                                                     weight=population.weight, # UPDATED 4/10/26 removed *total weight because that's now factored in with extra years
                                                      obs.correlation=population.obs.correlation,
                                                      correlation.structure=population.correlation.structure,
                                                      calculate.sds.from.ci=F,
