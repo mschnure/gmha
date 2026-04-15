@@ -5,7 +5,10 @@
 source("model/run_systematic.R")
 source("future_projections/extract_projection_results.R")
 
+# only pick one of these
 RUN.INDIV.COUNTRY = F
+LOAD.REMAINDER.INCOME.SIMSET = F
+LOAD.COMBINED.INCOME.SIMSET = F
 LOAD.GLOBAL.SIMSET = T
 N.CHAINS = 1
 
@@ -13,13 +16,15 @@ if(LOAD.GLOBAL.SIMSET){
   COUNTRIES = "global"
 } else if(RUN.INDIV.COUNTRY){
   COUNTRIES = c(#"Mozambique","Uganda","Kenya","Zambia"
-                #"Zimbabwe","unaids.remainder","non.unaids.remainder"
-                #"r1.low","r1.lower.middle","r1.upper.middle","r1.high"
-                #"Tanzania","South Africa",
-                #"Malawi" #,"Nigeria"
-
-    )
-} else stop("can only select run.indiv.country or load.global.simset")
+    #"Zimbabwe","unaids.remainder","non.unaids.remainder"
+    #"Tanzania","South Africa",
+    #"Malawi" #,"Nigeria"
+  )
+} else if(LOAD.REMAINDER.INCOME.SIMSET){
+  COUNTRIES = c("r1.low" ,"r1.lower.middle","r1.upper.middle","r1.high")
+} else if(LOAD.COMBINED.INCOME.SIMSET){
+  COUNTRIES = c("low_income" ,"lower_middle_income","upper_middle_income","high_income")
+} else stop("can only select run.indiv.country, load.income.simset, or load.global.simset")
 
 for(country in COUNTRIES){
   
@@ -73,7 +78,26 @@ for(country in COUNTRIES){
   if(LOAD.GLOBAL.SIMSET){
     print("loading global simset")
     #load("cached/simset_global_income_2025-08-26_.Rdata") # using income models 
-    load("cached/simset_global_2025-08-27_.Rdata") # using remainder model
+    #load("cached/simset_global_2025-08-27_.Rdata") # using remainder model
+    load("cached/simset_global_2026-04-14_.Rdata")
+    simset.no.int = simset
+  }
+  
+  # income remainder simsets already through 2040 
+  if(LOAD.REMAINDER.INCOME.SIMSET){
+    files = list.files("mcmc_runs")
+    file = files[grepl(paste0(tolower(country),"_2026"),files)]
+    print(paste0("loading file: ",file))
+    load(paste0("mcmc_runs/",file))
+    simset.no.int = simset
+  }
+  
+  # income combined simsets already through 2040 
+  if(LOAD.COMBINED.INCOME.SIMSET){
+    files = list.files("cached")
+    file = files[grepl(paste0(tolower(country),"_2026"),files)]
+    print(paste0("loading file: ",file))
+    load(paste0("cached/",file))
     simset.no.int = simset
   }
   
@@ -104,7 +128,7 @@ for(country in COUNTRIES){
                                                                                    age.point=65,
                                                                                    data.types = c("prevalence"),
                                                                                    years=c(2025,2040))
-  if(simset@simulations[[1]]$location %in% c("Uganda","non.unaids.remainder","r1.upper.middle")){
+  if(simset@simulations[[1]]$location %in% c("Uganda","non.unaids.remainder","r1.upper.middle","all.low")){
     summary.results$median.over.50.year = rep(NA,3)
   } else {
     summary.results$median.over.50.year = pull.year.for.statistic.for.simset(simset=simset.list.full$no.int,

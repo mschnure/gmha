@@ -111,7 +111,7 @@ generate.full.results.array = function(simset.list,
                                            # MORTALITY: 
                                            "hiv.mortality","non.hiv.mortality","total.mortality"
                                        )){
-    sims = paste0("sim",c(1:simset.list[[1]]@n.sim))
+    sims = paste0("sim",c(1:length(simset.list[[1]]@simulations)))
     simset.list = simset.list
     if(is.null(names(simset.list)))
         stop("simset list must be named by intervention")
