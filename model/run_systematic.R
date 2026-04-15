@@ -36,7 +36,7 @@ run.model.for.parameters = function(location,
                                     variable.parameters,
                                     parameters=create.model.parameters(location=location),
                                     start.year=1970,
-                                    end.year=2031,
+                                    end.year=2041, # 2031
                                     interventions=NO.INTERVENTION){
     
     sampled.parameters = get.default.parameters(location=location)
