@@ -82,19 +82,22 @@ set.likelihood.and.prior.by.location = function(location,
         prior = NON.UNAIDS.REMAINDER.PRIOR
     } else if(location %in% c("r1.high")){
         prior = UNAIDS.REMAINDER.PRIOR
-        print("using UNAIDS remainder prior for all r1 models")
+        print("using UNAIDS remainder prior for r1 high model")
     } else if(location=="r1.low"){
       prior = UNAIDS.REMAINDER.PRIOR
-      load("calibration/starting_values/2025_08_12_r1_low_start_values.Rdata")
-      params.start.values = params.start.values
+      print("using UNAIDS remainder prior for r1 low model - UPDATE before next step")
+      # load("calibration/starting_values/2025_08_12_r1_low_start_values.Rdata")
+      # params.start.values = params.start.values
     } else if(location=="r1.lower.middle"){
         prior = UNAIDS.REMAINDER.PRIOR
-        load("calibration/starting_values/2025_08_12_r1_lower_middle_start_values.Rdata")
-        params.start.values = params.start.values
+        print("using UNAIDS remainder prior for r1 lower middle model - UPDATE before next step")
+        # load("calibration/starting_values/2025_08_12_r1_lower_middle_start_values.Rdata")
+        # params.start.values = params.start.values
     } else if(location=="r1.upper.middle"){
       prior = UNAIDS.REMAINDER.PRIOR
-      load("calibration/starting_values/2025_08_12_r1_upper_middle_start_values.Rdata")
-      params.start.values = params.start.values
+      print("using UNAIDS remainder prior for r1 upper middle model - UPDATE before next step")
+      # load("calibration/starting_values/2025_08_12_r1_upper_middle_start_values.Rdata")
+      # params.start.values = params.start.values
     } else stop("Only set up for Kenya, South Africa, France, Mozambique, Tanzania, 
              Uganda, Zambia, Zimbabwe, Malawi, Nigeria, Thailand, Cambodia, and remainder models for now")
     
