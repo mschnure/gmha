@@ -3,17 +3,17 @@ library(distributions)
 library(ggplot2) 
 source("model/run_systematic.R")
 
-CHAIN = 2
+CHAIN = 1
 
 set.seed(4321*CHAIN)
 # All countries, 8/04 - 4321
 # 8/18: updated with *CHAIN 
 
-LOCATION = "Tanzania" 
+LOCATION = "r1.high" 
 RESUME.RUNNING = F
-RESUME.RUNNING.WITH.CHAIN = T
-WEIGHTED.PREVALENCE = F # if set to T, will run with 4x prevalence weight 
-N.ITER = 100000
+RESUME.RUNNING.WITH.CHAIN = F
+WEIGHTED.PREVALENCE = T # if set to T, will run with 4x prevalence weight 
+N.ITER = 50000
 
 if(!RESUME.RUNNING & !RESUME.RUNNING.WITH.CHAIN){
     LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION,

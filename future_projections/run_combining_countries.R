@@ -1,36 +1,43 @@
 source('model/run_systematic.R')
 source("future_projections/combining_countries.R")
 
-#USE.INCOME.MODELS = F
+USE.INCOME.MODELS = T
 
 # combined object; ran the below lines and then saved it 
 if(1==1){
 
   print("loading combined object")
-  # load("cached/combined.countries.income_2025-08-26_.Rdata")  # using income models, not unaids.remainder 
-  # combined.countries = combined.countries.income
   
-  #load("cached/combined.countries_2025-08-26_.Rdata")  # using unaids.remainder 
-  
+  if(1==2){
+    load("cached/combined.countries.income_2026-04-14_.Rdata")  # using income models, not unaids.remainder 
+    #load("cached/combined.countries.income_2025-08-26_.Rdata") 
+    combined.countries = combined.countries.income
+    
+    #load("cached/combined.countries_2025-08-26_.Rdata")  # using unaids.remainder 
+  }
+
   # income models
   if(1==1){
-    load("cached/all.income.models_2025-08-26.Rdata")
+    load("cached/all.income.models_2026-04-14.Rdata")
+    #load("cached/all.income.models_2025-08-26.Rdata")
     # need to change save line below as well
-    combined.countries = all.high.income # all.low.income, all.lower.middle.income, 
+    combined.countries = all.upper.middle.income # all.low.income, all.lower.middle.income, 
                                         # all.upper.middle.income, all.high.income
     
   }
   
   print("sorting by prevalence")
-  combined.countries.sorted = sort.by.prevalence(combined.countries)
+  combined.countries.sorted = sort.by.prevalence(combined.countries)  # skip for all.high
+  #combined.countries.sorted = combined.countries # for all.high only 
   
   # collapse over the country dimension of the full array 
   print("collapsing country dimension")
-  collapsed.list = collapse.country.dim(combined.countries.sorted)
+  collapsed.list = collapse.country.dim(combined.countries.sorted) 
   
   # convert into a list (not quite the simset, just the simulations list)
   print("converting to simulation list, MAKE SURE TO SET LOCATION")
-  simulation.list = convert.to.simset(collapsed.list,location="all.high") # CHANGE THIS LOCATION FOR INCOME MODELS 
+  simulation.list = convert.to.simset(collapsed.list,
+                                       location="all.upper.middle") # CHANGE THIS LOCATION FOR INCOME MODELS (default is Global)
   
   # check to make sure it worked 
   #table(collapsed.list$population[,,,,,35]==simulation.list[[35]]$population[,,,,]) # both of these will collapse over the subgroup dimension but it's there 
@@ -44,28 +51,36 @@ if(1==1){
   #save(simset,file=paste0("cached/simset_global_income_",Sys.Date(),"_.Rdata"))
   #save(simset,file=paste0("cached/simset_global_",Sys.Date(),"_.Rdata"))
   #save(simset,file=paste0("cached/simset_low_income_",Sys.Date(),".Rdata"))
-  # save(simset,file=paste0("cached/simset_lower_middle_income_",Sys.Date(),".Rdata"))
-  #save(simset,file=paste0("cached/simset_upper_middle_income_",Sys.Date(),".Rdata"))
-   save(simset,file=paste0("cached/simset_high_income_",Sys.Date(),".Rdata"))
+  #save(simset,file=paste0("cached/simset_lower_middle_income_",Sys.Date(),".Rdata"))
+  save(simset,file=paste0("cached/simset_upper_middle_income_",Sys.Date(),".Rdata"))
+  #save(simset,file=paste0("cached/simset_high_income_",Sys.Date(),".Rdata"))
 }
 
 # this will take 5-9 hours; do it once and then save/load the file later 
 if(1==2){
 
-  print("loading r1.low, merged")
-  load("cached/all.results_merged_r1.low_2025-08-25.Rdata")
+  #print("loading r1.low, merged")
+  #load("cached/all.results_merged_r1.low_2025-08-25.Rdata")
+  print("loading r1.low, temporary 4/14/26 version")
+  load("cached/all.results_r1.low_2026-04-14.Rdata")
   simset.r1.low = simset.list.full$no.int
   
-  print("loading r1.lower.middle, merged")
-  load("cached/all.results_merged_r1.lower.middle_2025-08-25.Rdata")
+  #print("loading r1.lower.middle, merged")
+  #load("cached/all.results_merged_r1.lower.middle_2025-08-25.Rdata")
+  print("loading r1.lower.middle, temporary 4/14/26 version")
+  load("cached/all.results_r1.lower.middle_2026-04-14.Rdata")
   simset.r1.lower.middle = simset.list.full$no.int
   
-  print("loading r1.upper.middle, merged")
-  load("cached/all.results_merged_r1.upper.middle_2025-08-25.Rdata")
+  # print("loading r1.upper.middle, merged")
+  # load("cached/all.results_merged_r1.upper.middle_2025-08-25.Rdata")
+  print("loading r1.upper.middle, temporary 4/14/26 version")
+  load("cached/all.results_r1.upper.middle_2026-04-14.Rdata")
   simset.r1.upper.middle = simset.list.full$no.int
   
-  print("loading r1.high, merged")
-  load("cached/all.results_merged_r1.high_2025-08-25.Rdata")
+  # print("loading r1.high, merged")
+  # load("cached/all.results_merged_r1.high_2025-08-25.Rdata")
+  print("loading r1.high, temporary 4/14/26 version")
+  load("cached/all.results_r1.high_2026-04-14.Rdata")
   simset.r1.high = simset.list.full$no.int
   
   print("loading unaids.remainder, merged")
@@ -112,29 +127,29 @@ if(1==2){
   load("cached/all.results_merged_malawi_2025-08-25.Rdata")
   simset.malawi = simset.list.full$no.int
   
-  pring("loading France, ONLY to merge into all.high")
+  #print("loading France, ONLY to merge into all.high")
 
 
-  #if(USE.INCOME.MODELS){
- # print("combining countries, using income models")
-  # combined.countries.income = combine.simsets(simset.r1.low,
-  #                                             simset.r1.lower.middle,
-  #                                             simset.r1.upper.middle,
-  #                                             simset.r1.high,
-  #                                             simset.non.unaids,
-  #                                             simset.south.africa,
-  #                                             simset.mozambique,
-  #                                             simset.nigeria,
-  #                                             simset.tanzania,
-  #                                             simset.uganda,
-  #                                             simset.kenya,
-  #                                             simset.zambia,
-  #                                             simset.zimbabwe,
-  #                                             simset.malawi,
-  #                                             countries = c("r1.low","r1.lower.middle","r1.upper.middle","r1.high",
-  #                                                           "non.unaids.remainder","south.africa","mozambique",
-  #                                                           "nigeria","tanzania","uganda","kenya","zambia","zimbabwe","malawi")) 
-  #  } else {
+ if(USE.INCOME.MODELS){
+ print("combining countries, using income models")
+ combined.countries.income = combine.simsets(simset.r1.low,
+                                             simset.r1.lower.middle,
+                                             simset.r1.upper.middle,
+                                             simset.r1.high,
+                                             simset.non.unaids,
+                                             simset.south.africa,
+                                             simset.mozambique,
+                                             simset.nigeria,
+                                             simset.tanzania,
+                                             simset.uganda,
+                                             simset.kenya,
+                                             simset.zambia,
+                                             simset.zimbabwe,
+                                             simset.malawi,
+                                             countries = c("r1.low","r1.lower.middle","r1.upper.middle","r1.high",
+                                                           "non.unaids.remainder","south.africa","mozambique",
+                                                           "nigeria","tanzania","uganda","kenya","zambia","zimbabwe","malawi"))
+  } else {
   print("combining countries, NOT using income models")
   combined.countries = combine.simsets(simset.unaids,
                                        simset.non.unaids,
@@ -149,7 +164,7 @@ if(1==2){
                                        simset.malawi,
                                        countries = c("unaids.remainder","non.unaids.remainder","south.africa","mozambique",
                                                      "nigeria","tanzania","uganda","kenya","zambia","zimbabwe","malawi"))
-  #  }
+    }
   
   print("combining all low income models (r1.low, mozambique, uganda, malawi)")
   all.low.income = combine.simsets(simset.r1.low,
@@ -175,25 +190,33 @@ if(1==2){
                                             countries = c("r1.upper.middle","south.africa")) 
   
   print("assigning high income model, r1.high only")
-  all.high.income = simset.r1.high
+  all.high.income = combine.simsets(simset.r1.high,
+                                    countries = c("r1.high")) 
 
   
   # make sure they're all the same 
-  table(combined.countries$population[,,,,,1,1]==simset.unaids@simulations[[1]]$population[,,,1,])
-  table(combined.countries$non.hiv.mortality[,,,,,35,1]==simset.unaids@simulations[[35]]$non.hiv.mortality[,,,1,])
+  # table(combined.countries$population[,,,,,1,1]==simset.unaids@simulations[[1]]$population[,,,1,])
+  # table(combined.countries$non.hiv.mortality[,,,,,35,1]==simset.unaids@simulations[[35]]$non.hiv.mortality[,,,1,])
+  # 
+  # table(combined.countries$population[,,,,,1,2]==simset.non.unaids@simulations[[1]]$population[,,,1,])
+  # table(combined.countries$engagement[,,,,45,2]==simset.non.unaids@simulations[[45]]$engagement[,,,1])
+  # 
+  # table(combined.countries$population[,,,,,1,7]==simset.uganda@simulations[[1]]$population[,,,1,])
+  # table(combined.countries$prevalence[,,,,,65,7]==simset.uganda@simulations[[65]]$prevalence[,,,1,])
   
-  table(combined.countries$population[,,,,,1,2]==simset.non.unaids@simulations[[1]]$population[,,,1,])
-  table(combined.countries$engagement[,,,,45,2]==simset.non.unaids@simulations[[45]]$engagement[,,,1])
+  # income version: 
+  # table(combined.countries.income$prevalence[,,,,,65,1]==simset.r1.low@simulations[[65]]$prevalence[1:71,,,1,])
+  # table(combined.countries.income$non.hiv.mortality[,,,,,35,1]==simset.r1.low@simulations[[35]]$non.hiv.mortality[1:71,,,1,])
   
-  table(combined.countries$population[,,,,,1,7]==simset.uganda@simulations[[1]]$population[,,,1,])
-  table(combined.countries$prevalence[,,,,,65,7]==simset.uganda@simulations[[65]]$prevalence[,,,1,])
+  # table(combined.countries.income$population[,,,,,1,10]==simset.uganda@simulations[[1]]$population[,,,1,])
+  # table(combined.countries.income$prevalence[,,,,,65,10]==simset.uganda@simulations[[65]]$prevalence[,,,1,])
   
   print("saving combined.countries")
-  #  if(USE.INCOME.MODELS){
-  #save(combined.countries.income,file=paste0("cached/combined.countries.income_",Sys.Date(),"_.Rdata"))  
-  #  } else{
+   if(USE.INCOME.MODELS){
+  save(combined.countries.income,file=paste0("cached/combined.countries.income_",Sys.Date(),"_.Rdata"))
+   } else{
   save(combined.countries,file=paste0("cached/combined.countries_",Sys.Date(),"_.Rdata"))  
-  #  }
+   }
   
   print("saving income models")
   save(all.low.income,

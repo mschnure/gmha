@@ -19,6 +19,12 @@ combine.simsets = function(...,
                  country = countries))
     })
     
+    # remove 2041 (accidentally generated from the new income simsets)
+    dim.name.list = sapply(dim.name.list, function(x) {
+      x$year = x$year[x$year != "2041"]
+      x
+    })
+    
     rv = list()
     for (x in outcome.names) {
         rv[[x]] = array(NA,
@@ -29,7 +35,8 @@ combine.simsets = function(...,
     for(simset.index in 1:length(simset.list)){
       print(paste0("getting outcomes from SIMSET ",simset.list[[simset.index]]@simulations[[1]]$location))
       
-        for(sim.index in 1:length(simset.list[[simset.index]]@simulations)){
+      for(sim.index in 1:490){ # TEMPORARY 4/14/26 UNTIL I RUN ALL CHAINS PROPERLY
+        #for(sim.index in 1:length(simset.list[[simset.index]]@simulations)){
           
           print(paste0("getting outcomes from ",simset.list[[simset.index]]@simulations[[1]]$location,", SIM ", sim.index))
           
@@ -49,7 +56,10 @@ combine.simsets = function(...,
                 
                 sim = simset.list[[simset.index]]@simulations[[sim.index]]
                 
-                rv[[outcome]] = do.call("[<-", c(list(rv[[outcome]]), index, list(value = sim[[outcome]])))
+                # remove 2041 from sim object
+                sim.outcome = abind::asub(sim[[outcome]], idx = which(dimnames(sim[[outcome]])$year != "2041"), dims = which(names(dimnames(sim[[outcome]])) == "year"))
+                rv[[outcome]] = do.call("[<-", c(list(rv[[outcome]]), index, list(value = sim.outcome)))
+                #rv[[outcome]] = do.call("[<-", c(list(rv[[outcome]]), index, list(value = sim[[outcome]])))
                 
             }
             
@@ -64,6 +74,7 @@ combine.simsets = function(...,
 sort.by.prevalence = function(result.list){
     
     total.prev.2022 = apply(result.list$prevalence["2022",,,,,,],c("sim","country"),sum)
+    #total.prev.2022 = apply(result.list$prevalence["2022",,,,,,],c("sim"),sum) # only for all.high (only one country)
     
     countries = dimnames(total.prev.2022)[[2]]
     
