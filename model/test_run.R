@@ -1,18 +1,18 @@
 source('model/run_systematic.R')
 
-variable.parameters = get.default.parameters(location = "non.unaids.remainder")
-variable.parameters["trate.0"] = .0001 # to check just data without sim 
-
-sim = run.model.for.parameters(location="non.unaids.remainder",variable.parameters = variable.parameters)
-
+variable.parameters.high=get.default.parameters(location = "r1.high")
+sim.high = run.model.for.parameters(location="r1.high",variable.parameters = variable.parameters.high)
 
 simplot(sim,
         years=c(1970:2030),
         data.types = c("incidence","prevalence"))
 
-simplot(sim,
+simplot(sim.low,
+        sim.high,
+        #simset.high,
         years=c(1980:2020),
         data.types = c("incidence"),
+        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         facet.by = 'age')
 
 simplot(sim,

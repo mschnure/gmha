@@ -17,9 +17,9 @@ INCOME.COUNTRIES = c("all.low","all.lower.middle","all.upper.middle","all.high")
 
 #### GLOBAL AGE DISTRIBUTION ####
 print("Generating global age distribution")
-file = "all.results_global_2025-08-27.Rdata"
+file = "all.results_global_2026-04-14.Rdata"
 print(paste0("loading ",file))
-load(file.path("final_simsets_and_results",file))
+load(file.path("final_simsets_and_results/updated_04_14_2026",file))
 simset.no.int = simset.list.full$no.int 
 
 age.labels = simset.no.int@simulations[[1]]$AGES
@@ -62,9 +62,9 @@ dev.off()
 
 #### GLOBAL GENERAL POPULATION AGE DISTRIBUTION ####
 print("Generating global general population age distribution")
-file = "all.results_global_2025-08-27.Rdata"
+file = "all.results_global_2026-04-14.Rdata"
 print(paste0("loading ",file))
-load(file.path("final_simsets_and_results",file))
+load(file.path("final_simsets_and_results/updated_04_14_2026",file))
 simset.no.int = simset.list.full$no.int 
 
 jpeg(file=paste0(PLOT.DIR,"age_dist_gen_pop/",convert_string(simset.no.int@simulations[[1]]$location),"_age_dist_gen_pop.jpeg"),
@@ -118,9 +118,9 @@ dev.off()
 
 #### GLOBAL INCIDENCE AGE DISTRIBUTION ####
 print("Generating global incidence age distribution")
-file = "all.results_global_2025-08-27.Rdata"
+file = "all.results_global_2026-04-14.Rdata"
 print(paste0("loading ",file))
-load(file.path("final_simsets_and_results",file))
+load(file.path("final_simsets_and_results/updated_04_14_2026",file))
 simset.no.int = simset.list.full$no.int 
 
 age.labels = simset.no.int@simulations[[1]]$AGES
@@ -176,11 +176,11 @@ dev.off()
 #### INCOME-LEVEL AGE DISTRIBUTIONS ####
 print("Generating age distributions by income")
 for(country in INCOME.COUNTRIES){
-    files = list.files("final_simsets_and_results/")
+    files = list.files("final_simsets_and_results/updated_04_14_2026/")
     files = files[grepl("all.results",files)]
-    file = files[grepl(paste0("_",convert_string(country),"_2025"),files)]
+    file = files[grepl(paste0("_",convert_string(country),"_2026"),files)]
     print(paste0("loading ",file))
-    load(file.path("final_simsets_and_results",file))
+    load(file.path("final_simsets_and_results/updated_04_14_2026",file))
     simset.no.int = simset.list.full$no.int 
     
     age.labels = simset.no.int@simulations[[1]]$AGES
@@ -222,11 +222,11 @@ for(country in INCOME.COUNTRIES){
 #### INCOME-LEVEL GENERAL POPULATION AGE DISTRIBUTIONS ####
 print("Generating general population age distributions by income")
 for(country in INCOME.COUNTRIES){
-    files = list.files("final_simsets_and_results/")
+    files = list.files("final_simsets_and_results/updated_04_14_2026/")
     files = files[grepl("all.results",files)]
-    file = files[grepl(paste0("_",convert_string(country),"_2025"),files)]
+    file = files[grepl(paste0("_",convert_string(country),"_2026"),files)]
     print(paste0("loading ",file))
-    load(file.path("final_simsets_and_results",file))
+    load(file.path("final_simsets_and_results/updated_04_14_2026",file))
     simset.no.int = simset.list.full$no.int 
     
     age.labels = simset.no.int@simulations[[1]]$AGES
@@ -271,11 +271,11 @@ for(country in INCOME.COUNTRIES){
 #### INCOME-LEVEL ICIDENCE AGE DISTRIBUTIONS ####
 print("Generating incidence age distributions by income")
 for(country in INCOME.COUNTRIES){
-    files = list.files("final_simsets_and_results/")
+    files = list.files("final_simsets_and_results/updated_04_14_2026/")
     files = files[grepl("all.results",files)]
-    file = files[grepl(paste0("_",convert_string(country),"_2025"),files)]
+    file = files[grepl(paste0("_",convert_string(country),"_2026"),files)]
     print(paste0("loading ",file))
-    load(file.path("final_simsets_and_results",file))
+    load(file.path("final_simsets_and_results/updated_04_14_2026",file))
     simset.no.int = simset.list.full$no.int 
     
     age.labels = simset.no.int@simulations[[1]]$AGES
