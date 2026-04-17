@@ -13,6 +13,10 @@ source('calibration/prior_distributions/unaids_remainder_prior.R')
 source('calibration/prior_distributions/non_unaids_remainder_prior.R')
 source('calibration/prior_distributions/thailand_prior.R')
 source('calibration/prior_distributions/cambodia_prior.R')
+source("calibration/prior_distributions/r1_low_prior.R")
+source("calibration/prior_distributions/r1_lower_middle_prior.R")
+source("calibration/prior_distributions/r1_upper_middle_prior.R")
+source("calibration/prior_distributions/r1_high_prior.R")
 
 set.likelihood.and.prior.by.location = function(location,
                                                 weighted.prevalence = F){
@@ -80,22 +84,22 @@ set.likelihood.and.prior.by.location = function(location,
         prior = UNAIDS.REMAINDER.PRIOR
     } else if(location=="non.unaids.remainder"){
         prior = NON.UNAIDS.REMAINDER.PRIOR
-    } else if(location %in% c("r1.high")){
-        prior = UNAIDS.REMAINDER.PRIOR
-        print("using UNAIDS remainder prior for r1 high model")
+    } else if(location == "r1.high"){
+        prior = R1.HIGH.PRIOR
+        print("using prior values - do you need to update starting values?")
     } else if(location=="r1.low"){
-      prior = UNAIDS.REMAINDER.PRIOR
-      print("using UNAIDS remainder prior for r1 low model - UPDATE before next step")
+      prior = R1.LOW.PRIOR
+      print("using prior values - do you need to update starting values?")
       # load("calibration/starting_values/2025_08_12_r1_low_start_values.Rdata")
       # params.start.values = params.start.values
     } else if(location=="r1.lower.middle"){
-        prior = UNAIDS.REMAINDER.PRIOR
-        print("using UNAIDS remainder prior for r1 lower middle model - UPDATE before next step")
+        prior = R1.LOWER.MIDDLE.PRIOR
+        print("using prior values - do you need to update starting values?")
         # load("calibration/starting_values/2025_08_12_r1_lower_middle_start_values.Rdata")
         # params.start.values = params.start.values
     } else if(location=="r1.upper.middle"){
-      prior = UNAIDS.REMAINDER.PRIOR
-      print("using UNAIDS remainder prior for r1 upper middle model - UPDATE before next step")
+      prior = R1.UPPER.MIDDLE.PRIOR
+      print("using prior values - do you need to update starting values?")
       # load("calibration/starting_values/2025_08_12_r1_upper_middle_start_values.Rdata")
       # params.start.values = params.start.values
     } else stop("Only set up for Kenya, South Africa, France, Mozambique, Tanzania, 
