@@ -9,9 +9,13 @@ simset.bad = simset
 load("~/gmha/mcmc_runs/simset_r1.high_1_2026-04-23.Rdata")
 simset.new = simset
 
+load("~/gmha/mcmc_runs/simset_r1.high_1_2026-04-27.Rdata")
+simset.new.2 = simset
+
 simplot(simset.old,
         #simset.bad,
         simset.new, 
+        simset.new.2, 
         years=1980:2040, 
         facet.by='age', 
         ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
