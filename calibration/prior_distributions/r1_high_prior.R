@@ -3,11 +3,11 @@ source('calibration/make_joint_distribution.R')
 R1.HIGH.PRIOR = join.distributions(
     
     # general 
-    trate.0 = Lognormal.Distribution(log(.77), log(4)/2),
-    trate.1 = Lognormal.Distribution(log(.1), log(4)/2), 
-    trate.2 = Lognormal.Distribution(log(.1), log(4)/2), 
-    trate.3 = Lognormal.Distribution(log(.1), log(4)/2), 
-    trate.4 = Lognormal.Distribution(log(.1), log(4)/2), 
+    trate.0 = Lognormal.Distribution(log(0.66222610), log(4)/2), # 0.77
+    trate.1 = Lognormal.Distribution(log(0.06307164), log(4)/2), # 0.1
+    trate.2 = Lognormal.Distribution(log(.08), log(4)/2), # 0.1
+    trate.3 = Lognormal.Distribution(log(.08), log(4)/2), # 0.1
+    trate.4 = Lognormal.Distribution(log(.08), log(4)/2), # 0.1
     
     # COUNTRY-SPECIFIC; MUST EDIT:
     unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.1392621), log(4)/2), # Kenya's value, I'm going to keep this
