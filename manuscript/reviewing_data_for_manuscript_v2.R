@@ -15,11 +15,19 @@ simset.new.2 = simset
 default.params = get.default.parameters(location = "r1.high")
 #default.params.low = get.default.parameters(location = "r1.low")
 variable.parameters.test = default.params
-variable.parameters.test["trate.0"] = 0.66222610 
+variable.parameters.test["trate.0"] = 0.61#6222610 
 variable.parameters.test["trate.1"] = 0.06307164
 variable.parameters.test["trate.2"] = .08 #0.11092556 
 variable.parameters.test["trate.3"] = .08 # 0.12017985
 variable.parameters.test["trate.4"] = .08 # 0.11661092
+variable.parameters.test["age.40.to.49.transmission.multiplier.0"] = 0.8
+variable.parameters.test["age.40.to.49.transmission.multiplier.1"] = 0.8
+variable.parameters.test["age.40.to.49.transmission.multiplier.2"] = 0.8
+variable.parameters.test["age.40.to.49.transmission.multiplier.3"] = 0.8
+variable.parameters.test["age.50.and.over.transmission.multiplier.0"] = 0.5
+variable.parameters.test["age.50.and.over.transmission.multiplier.1"] = 0.5
+variable.parameters.test["age.50.and.over.transmission.multiplier.2"] = 0.5
+variable.parameters.test["age.50.and.over.transmission.multiplier.3"] = 0.5
 #variable.parameters.test["hiv.specific.mortality.rates.0"] = 0.008120033
 #variable.parameters.test["hiv.specific.mortality.rates.1"] = 0.004635217
 #variable.parameters.test["hiv.specific.mortality.rates.2"] = 0.003877367
@@ -37,7 +45,7 @@ simplot(#sim.default,
         years=1980:2040, 
         facet.by='age', 
         ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
-        data.types='incidence')# + geom_vline(xintercept = 1997)+ geom_vline(xintercept = 2018)
+        data.types='incidence') #+ geom_vline(xintercept = 1997)+ geom_vline(xintercept = 2018)
        #data.types='prevalence')#+ geom_vline(xintercept = 1997)+ geom_vline(xintercept = 2018)
        #data.types='population')+ geom_vline(xintercept = 1997)+ geom_vline(xintercept = 2018)
 
@@ -52,7 +60,7 @@ params.new = simset.new@parameters[490,]
 params.new.2 = simset.new.2@parameters[490,] 
 
 cbind(#params.bad[grepl("transmission.multiplier|trate",names(params.bad))],
-      params.new[grepl("transmission.multiplier|trate",names(params.new))],
+      default.params[grepl("transmission.multiplier|trate",names(default.params))],
       params.new.2[grepl("transmission.multiplier|trate",names(params.new.2))])
 
 cbind(default.params[grepl("trate",names(default.params))],
