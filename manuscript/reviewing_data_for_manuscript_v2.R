@@ -12,6 +12,9 @@ simset.new = simset
 load("mcmc_runs/simset_r1.high_1_2026-04-27.Rdata")
 simset.new.2 = simset
 
+load("mcmc_runs/simset_r1.high_chain1_2026-05-19.Rdata")
+simset.5.19 = simset
+
 default.params = get.default.parameters(location = "r1.high")
 #default.params.low = get.default.parameters(location = "r1.low")
 variable.parameters.test = default.params
@@ -38,9 +41,10 @@ variable.parameters.test["age.50.and.over.transmission.multiplier.3"] = 0.5
 sim.test = run.model.for.parameters(location="r1.high",variable.parameters = variable.parameters.test)
 
 simplot(#sim.default,
-        sim.test.old,
-        sim.test,
+        #sim.test.old,
+        #sim.test,
         simset.new.2, 
+        simset.5.19,
         #sim.default.low,
         years=1980:2040, 
         facet.by='age', 
