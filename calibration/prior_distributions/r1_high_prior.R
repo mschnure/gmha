@@ -26,42 +26,63 @@ R1.HIGH.PRIOR = join.distributions(
     # sex transmission multipliers
     female.to.male.multiplier = Lognormal.Distribution(log(1), log(4)/2), 
     
+    # age transmission multipliers -  updated 5/21/26 so that they are correlated by both age and time
+    age.time.multipliers = make.joint.distribution.age.time(median.r2.age.15.to.19 = 1,
+                                                            median.r2.age.20.to.29 = 1,
+                                                            median.r2.age.40.to.49 = 0.8,
+                                                            median.r2.age.50.and.over = .5,
+                                                            median.r0.to.r1 = 1, #time 0 relative to 1
+                                                            median.r1.to.r2 = 1, #time 1 relative to 2
+                                                            median.r3.to.r2 = 1, #time 3 relative to 2
+                                                            sd.r2 = log(2)/2,
+                                                            sd.r0.to.r1 = log(2)/2,
+                                                            sd.r1.to.r2= log(2)/2,
+                                                            sd.r3.to.r2 = log(2)/2,
+                                                            corr.15.to.19.with.20.to.29 = 0.5, # age 1 * age 2 correlation 
+                                                            corr.20.to.29.with.40.to.49 = 0.25, # age 2 * age 4 correlation 
+                                                            corr.40.to.49.with.50.and.over = 0.5, # age 4 * age 5 correlation 
+                                                            age.prefix.names = c("age.15.to.19.transmission.multiplier",
+                                                                                 "age.20.to.29.transmission.multiplier",
+                                                                                 "age.40.to.49.transmission.multiplier",
+                                                                                 "age.50.and.over.transmission.multiplier"),
+                                                            time.suffixes = c(".0",".1",".2",".3")),
+    
     # age transmission multipliers -  updated 4/17/26
-    age.15.to.19.multipliers = make.joint.distribution(median.r2 = 1, sd.r2=log(2)/2,
-                                                       median.r0.to.r1 = 1, sd.r0.to.r1 = log(2)/2,
-                                                       median.r1.to.r2 = 1, sd.r1.to.r2 = log(2)/2,
-                                                       median.r3.to.r2 = 1, sd.r3.to.r2 = log(2)/2,
-                                                       var.names = c("age.15.to.19.transmission.multiplier.0",
-                                                                     "age.15.to.19.transmission.multiplier.1",
-                                                                     "age.15.to.19.transmission.multiplier.2",
-                                                                     "age.15.to.19.transmission.multiplier.3")), 
-    
-    age.20.to.29.multipliers = make.joint.distribution(median.r2 = 1, sd.r2=log(2)/2,
-                                                       median.r0.to.r1 = 1, sd.r0.to.r1 = log(2)/2,
-                                                       median.r1.to.r2 = 1, sd.r1.to.r2 = log(2)/2,
-                                                       median.r3.to.r2 = 1, sd.r3.to.r2 = log(2)/2,
-                                                       var.names = c("age.20.to.29.transmission.multiplier.0",
-                                                                     "age.20.to.29.transmission.multiplier.1",
-                                                                     "age.20.to.29.transmission.multiplier.2",
-                                                                     "age.20.to.29.transmission.multiplier.3")), 
-    
-    age.40.to.49.multipliers = make.joint.distribution(median.r2 = 0.8, sd.r2=log(2)/2,
-                                                       median.r0.to.r1 = 0.8, sd.r0.to.r1 = log(2)/2,
-                                                       median.r1.to.r2 = 0.8, sd.r1.to.r2 = log(2)/2,
-                                                       median.r3.to.r2 = 0.8, sd.r3.to.r2 = log(2)/2,
-                                                       var.names = c("age.40.to.49.transmission.multiplier.0",
-                                                                     "age.40.to.49.transmission.multiplier.1",
-                                                                     "age.40.to.49.transmission.multiplier.2",
-                                                                     "age.40.to.49.transmission.multiplier.3")), 
-    
-    age.50.and.over.multipliers = make.joint.distribution(median.r2 = 0.5, sd.r2=log(2)/2,
-                                                          median.r0.to.r1 = 0.5, sd.r0.to.r1 = log(2)/2,
-                                                          median.r1.to.r2 = 0.5, sd.r1.to.r2 = log(2)/2,
-                                                          median.r3.to.r2 = 0.5, sd.r3.to.r2 = log(2)/2,
-                                                          var.names = c("age.50.and.over.transmission.multiplier.0",
-                                                                        "age.50.and.over.transmission.multiplier.1",
-                                                                        "age.50.and.over.transmission.multiplier.2",
-                                                                        "age.50.and.over.transmission.multiplier.3")), 
+    # age.15.to.19.multipliers = make.joint.distribution(median.r2 = 1, sd.r2=log(2)/2,
+    #                                                    median.r0.to.r1 = 1, sd.r0.to.r1 = log(2)/2,
+    #                                                    median.r1.to.r2 = 1, sd.r1.to.r2 = log(2)/2,
+    #                                                    median.r3.to.r2 = 1, sd.r3.to.r2 = log(2)/2,
+    #                                                    var.names = c("age.15.to.19.transmission.multiplier.0",
+    #                                                                  "age.15.to.19.transmission.multiplier.1",
+    #                                                                  "age.15.to.19.transmission.multiplier.2",
+    #                                                                  "age.15.to.19.transmission.multiplier.3")), 
+    # 
+    # age.20.to.29.multipliers = make.joint.distribution(median.r2 = 1, sd.r2=log(2)/2,
+    #                                                    median.r0.to.r1 = 1, sd.r0.to.r1 = log(2)/2,
+    #                                                    median.r1.to.r2 = 1, sd.r1.to.r2 = log(2)/2,
+    #                                                    median.r3.to.r2 = 1, sd.r3.to.r2 = log(2)/2,
+    #                                                    var.names = c("age.20.to.29.transmission.multiplier.0",
+    #                                                                  "age.20.to.29.transmission.multiplier.1",
+    #                                                                  "age.20.to.29.transmission.multiplier.2",
+    #                                                                  "age.20.to.29.transmission.multiplier.3")), 
+    # 
+    # age.40.to.49.multipliers = make.joint.distribution(median.r2 = 0.8, sd.r2=log(2)/2,
+    #                                                    median.r0.to.r1 = 1, sd.r0.to.r1 = log(2)/2,
+    #                                                    median.r1.to.r2 = 1, sd.r1.to.r2 = log(2)/2,
+    #                                                    median.r3.to.r2 = 1, sd.r3.to.r2 = log(2)/2,
+    #                                                    var.names = c("age.40.to.49.transmission.multiplier.0",
+    #                                                                  "age.40.to.49.transmission.multiplier.1",
+    #                                                                  "age.40.to.49.transmission.multiplier.2",
+    #                                                                  "age.40.to.49.transmission.multiplier.3")), 
+    # 
+    # age.50.and.over.multipliers = make.joint.distribution(median.r2 = 0.5, sd.r2=log(2)/2,
+    #                                                       median.r0.to.r1 = 1, sd.r0.to.r1 = log(2)/2,
+    #                                                       median.r1.to.r2 = 1, sd.r1.to.r2 = log(2)/2,
+    #                                                       median.r3.to.r2 = 1, sd.r3.to.r2 = log(2)/2,
+    #                                                       var.names = c("age.50.and.over.transmission.multiplier.0",
+    #                                                                     "age.50.and.over.transmission.multiplier.1",
+    #                                                                     "age.50.and.over.transmission.multiplier.2",
+    #                                                                     "age.50.and.over.transmission.multiplier.3")), 
     
     # other transmission multipliers
     age.assortativity = Lognormal.Distribution(log(1), log(1.5)/2), 

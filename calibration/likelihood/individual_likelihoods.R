@@ -7,11 +7,11 @@ WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2000) # before 2000, 1/4x
 WEIGHTS.BY.YEAR[WEIGHT.YEARS>=2018] = 4 # from 2018, 4x
 names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
 
-# for france only, remove pre-1995 years 
-WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
-WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE[as.character(1995:2030)]
+# FOR POPULATION DATA, EXTEND WEIGHTS THROUGH 2040; don't multiply by total weight anymore because that is being factored in here
+POP.WEIGHTS = c(WEIGHTS.BY.YEAR,rep(1,10))
+names(POP.WEIGHTS) = c(names(WEIGHTS.BY.YEAR),2031:2040)
 
-LOCATION = "r1.upper.middle"
+LOCATION = "r1.high"
 WEIGHTED.PREVALENCE = T # if set to T, will run with 4x prevalence weight 
 
 
@@ -21,10 +21,6 @@ if(WEIGHTED.PREVALENCE){
     PREVALENCE.WEIGHT = 1
 }
 
-if(LOCATION=="France"){
-    WEIGHTS.BY.YEAR = WEIGHTS.BY.YEAR.FRANCE
-}
-    
 
 BASE.PARAMETERS=create.model.parameters(location = LOCATION)
 
@@ -60,19 +56,19 @@ create.individual.likelihood = function(data.type,
                                         suppression.obs.correlation=0.5,
                                         suppression.correlation.structure="compound.symmetry",
                                         #population
-                                        population.years=years,
-                                        population.weight=1/200000, # have to downweight a lot due to large pop size/number of strata
+                                        population.years=1995:2040, # UPDATED 4/10/26
+                                        population.weight=POP.WEIGHTS*(1/200000), # UPDATED 4/10/26 # have to downweight a lot due to large pop size/number of strata
                                         population.obs.correlation=0.5,
                                         population.correlation.structure="auto.regressive",
                                         #hiv.mortality
                                         hiv.mortality.years=years,
-                                        hiv.mortality.weight=1/1000000, 
+                                        hiv.mortality.weight=1/256, 
                                         hiv.mortality.obs.correlation=0.5, 
                                         hiv.mortality.correlation.structure="auto.regressive",
                                         #total.mortality
                                         total.mortality.years=years,
-                                        total.mortality.weight=1/200000, 
-                                        total.mortality.weight.by.age = c("80 and over" = 0.1),
+                                        total.mortality.weight=1/1000, 
+                                        total.mortality.weight.by.age = c("80 and over" = 0.25), # changed from 0.25
                                         total.mortality.obs.correlation=0.5, 
                                         total.mortality.correlation.structure="auto.regressive"
 ){
@@ -141,7 +137,7 @@ create.individual.likelihood = function(data.type,
                                               parameters=parameters,
                                               denominator.data.type=NULL, 
                                               obs.is.proportion=F,
-                                              weight=total.weight*population.weight,
+                                              weight=population.weight, # UPDATED 5/21 
                                               obs.correlation=population.obs.correlation,
                                               correlation.structure=population.correlation.structure,
                                               calculate.sds.from.ci=F,
