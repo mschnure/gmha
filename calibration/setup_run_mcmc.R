@@ -10,7 +10,7 @@ set.seed(1234*CHAIN)
 
 LOCATION = "r1.high" 
 RESUME.RUNNING = F
-WEIGHTED.PREVALENCE = T # if set to T, will run with 4x prevalence weight 
+WEIGHTED.PREVALENCE = F # if set to T, will run with 4x prevalence weight 
 N.ITER = 50000
 
 if(!RESUME.RUNNING){
