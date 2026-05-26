@@ -8,13 +8,18 @@ CHAIN = 1
 set.seed(1234*CHAIN)
 # All countries, 8/04 - 4321; low, 4/24 - 1234
 
-LOCATION = "r1.high" 
+LOCATION = "South Africa" 
 RESUME.RUNNING = F
 WEIGHTED.PREVALENCE = F # if set to T, will run with 4x prevalence weight 
 N.ITER = 50000
+TOTAL.WEIGHT = 1/8 
+
+print(paste0("Running MCMC with ",N.ITER," iterations, with total weight = ",TOTAL.WEIGHT,
+             " and weighted prevalence set to ",WEIGHTED.PREVALENCE))
 
 if(!RESUME.RUNNING){
   LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION,
+                                                          total.weight = TOTAL.WEIGHT,
                                                           weighted.prevalence = WEIGHTED.PREVALENCE)
   
   control = create.adaptive.blockwise.metropolis.control(var.names = LOCATION.DETAILS$prior@var.names,

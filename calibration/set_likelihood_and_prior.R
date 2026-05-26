@@ -19,14 +19,31 @@ source("calibration/prior_distributions/r1_upper_middle_prior.R")
 source("calibration/prior_distributions/r1_high_prior.R")
 
 set.likelihood.and.prior.by.location = function(location,
+                                                total.weight = 1,
                                                 weighted.prevalence = F){
+  
+  WEIGHT.YEARS = 1970:2030
+  WEIGHTS.BY.YEAR = rep(1, length(WEIGHT.YEARS))
+  WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2000) # before 2000, 1/4x
+  WEIGHTS.BY.YEAR[WEIGHT.YEARS>=2018] = 4 # from 2018, 4x
+  names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
+  WEIGHTS.BY.YEAR = WEIGHTS.BY.YEAR*total.weight
+  
+  # Population data extended through 2040
+  POP.WEIGHTS = c(WEIGHTS.BY.YEAR,rep(total.weight,10))
+  names(POP.WEIGHTS) = c(names(WEIGHTS.BY.YEAR),2031:2040)
+  
     if(weighted.prevalence){
         likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = location),
                                               location=location,
+                                              total.weight = WEIGHTS.BY.YEAR,
+                                              population.weight=POP.WEIGHTS*(1/200000), # downweighted due to large pop size/number of strata
                                               prevalence.weight = 4)
     } else {
         likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = location),
-                                              location=location)
+                                              location=location,
+                                              total.weight = WEIGHTS.BY.YEAR,
+                                              population.weight=POP.WEIGHTS*(1/200000)) # downweighted due to large pop size/number of strata
     }
 
     print("STARTING FROM PRIORS, NOT MANUAL VALUES - MUST BE INITIAL RUN")

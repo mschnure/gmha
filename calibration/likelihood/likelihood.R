@@ -16,21 +16,7 @@
 
 library("mvtnorm")
 
-WEIGHT.YEARS = 1970:2030
-WEIGHTS.BY.YEAR = rep(1, length(WEIGHT.YEARS))
-WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2000) # before 2000, 1/4x
-WEIGHTS.BY.YEAR[WEIGHT.YEARS>=2018] = 4 # from 2018, 4x
-names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
-#WEIGHTS.BY.YEAR = WEIGHTS.BY.YEAR/8
-
-# FOR POPULATION DATA, EXTEND WEIGHTS THROUGH 2040; don't multiply by total weight anymore because that is being factored in here
-POP.WEIGHTS = c(WEIGHTS.BY.YEAR,rep(1,10))
-names(POP.WEIGHTS) = c(names(WEIGHTS.BY.YEAR),2031:2040)
-
-# for france only, remove pre-1995 years 
-# WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
-# WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE[as.character(1995:2030)]
-# WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE/8
+# WEIGHTS.BY.YEAR AND POP.WEIGHTS set in set.likelihood.and.prior.by.location
 
 # Calls individual "create.likelihood.for.data.type" functions for each data type
 # Each data type function assembles the likelihood elements once (because it is time consuming - e.g., matrix M), 
@@ -40,7 +26,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              parameters,
                              location,
                              years = 1995:2023, # 1980:2023
-                             total.weight = WEIGHTS.BY.YEAR, # [[convert_string(location)]], 
+                             total.weight, # set this in set.likelihood.and.prior.by.location
                              #incidence
                              incidence.years=years,
                              incidence.weight=2, 
@@ -68,7 +54,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              suppression.correlation.structure="compound.symmetry",
                              #population
                              population.years=1995:2040, # UPDATED 4/10/26
-                             population.weight=POP.WEIGHTS*(1/200000), # UPDATED 4/10/26 # have to downweight a lot due to large pop size/number of strata
+                             population.weight,# set this in set.likelihood.and.prior.by.location
                              population.obs.correlation=0.5,
                              population.correlation.structure="auto.regressive",
                              #hiv.mortality
@@ -79,11 +65,11 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              #total.mortality
                              total.mortality.years=years,
                              total.mortality.weight=1/1000, 
-                             total.mortality.weight.by.age = c("80 and over" = 0.25), # changed from 0.25
+                             total.mortality.weight.by.age = c("80 and over" = 0.25),
                              total.mortality.obs.correlation=0.5, 
                              total.mortality.correlation.structure="auto.regressive"
                              ){ 
-    
+  
     incidence.lik = create.likelihood.for.data.type(data.type = "incidence",
                                                     data.manager=data.manager,
                                                     years=incidence.years,
