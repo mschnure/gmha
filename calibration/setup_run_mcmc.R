@@ -6,13 +6,13 @@ source("model/run_systematic.R")
 CHAIN = 1
 
 set.seed(1234*CHAIN)
-# All countries, 8/04 - 4321; low, 4/24 - 1234
+# All countries, 5/26 - 1234; Zambia: 4321; low: 5678
 
-LOCATION = "South Africa" 
+LOCATION = "Malawi"
 RESUME.RUNNING = F
-WEIGHTED.PREVALENCE = F # if set to T, will run with 4x prevalence weight 
+WEIGHTED.PREVALENCE = T # if set to T, will run with 4x prevalence weight 
 N.ITER = 50000
-TOTAL.WEIGHT = 1/8 
+TOTAL.WEIGHT = 1
 
 print(paste0("Running MCMC with ",N.ITER," iterations, with total weight = ",TOTAL.WEIGHT,
              " and weighted prevalence set to ",WEIGHTED.PREVALENCE))

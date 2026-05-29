@@ -46,78 +46,70 @@ set.likelihood.and.prior.by.location = function(location,
                                               population.weight=POP.WEIGHTS*(1/200000)) # downweighted due to large pop size/number of strata
     }
 
-    print("STARTING FROM PRIORS, NOT MANUAL VALUES - MUST BE INITIAL RUN")
+    #print("STARTING FROM PRIORS, NOT MANUAL VALUES - MUST BE INITIAL RUN")
+    print("STARTING FROM 5/29 STARTING VALUES")
     if(location=="Kenya"){
       prior = KENYA.PRIOR
-      params.start.values = get.medians(prior)
-      # load("calibration/starting_values/2025_08_11_kenya_start_values.Rdata")
+      #params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026-05-29_kenya_start_values.Rdata")
     } else if(location=="South Africa"){
       prior = SOUTH.AFRICA.PRIOR
-      params.start.values = get.medians(prior)
-      # load("calibration/starting_values/2025_08_11_south_africa_start_values.Rdata")
-    } else if(location=="France"){
-      prior = FRANCE.PRIOR
-      params.start.values = get.medians(prior)
-      # load("calibration/starting_values/2025_08_13_france_start_values.Rdata")
+      #params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026-05-29_south_africa_start_values.Rdata")
     } else if(location=="Mozambique"){
       prior = MOZAMBIQUE.PRIOR
-      params.start.values = get.medians(prior)
-      # load("calibration/starting_values/2025_08_13_mozambique_start_values.Rdata")
+      #params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026-05-29_mozambique_start_values.Rdata")
     } else if(location=="Tanzania"){
       prior = TANZANIA.PRIOR
-      params.start.values = get.medians(prior)
-      # load("calibration/starting_values/2025_08_13_tanzania_start_values.Rdata")
+      #params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026-05-29_tanzania_start_values.Rdata")
     } else if(location=="Uganda"){
       prior = UGANDA.PRIOR
-      params.start.values = get.medians(prior)
-      # load("calibration/starting_values/2025_08_13_uganda_start_values.Rdata")
+      #params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026-05-29_uganda_start_values.Rdata")
     } else if(location=="Zambia"){
       prior = ZAMBIA.PRIOR
-      params.start.values = get.medians(prior)
-      # load("calibration/starting_values/2025_08_13_zambia_start_values.Rdata")
+      #params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026-05-29_zambia_start_values.Rdata")
     } else if(location=="Zimbabwe"){
       prior = ZIMBABWE.PRIOR
-      params.start.values = get.medians(prior)
-      # load("calibration/starting_values/2025_08_13_zimbabwe_start_values.Rdata")
+      #params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026-05-29_zimbabwe_start_values.Rdata")
     } else if(location=="Malawi"){
       prior = MALAWI.PRIOR
-      params.start.values = get.medians(prior)
-      # load("calibration/starting_values/2025_08_12_malawi_start_values.Rdata")
+      #params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026-05-29_malawi_start_values.Rdata")
     } else if(location=="Nigeria"){
       prior = NIGERIA.PRIOR
-      params.start.values = get.medians(prior)
-      # load("calibration/starting_values/2025_08_13_nigeria_start_values.Rdata")
-    } else if(location=="Thailand"){
-      prior = THAILAND.PRIOR
-      params.start.values = get.medians(prior)
-      # load("calibration/starting_values/2025_08_04_thailand_start_values.Rdata")
-    } else if(location=="Cambodia"){
-      prior = CAMBODIA.PRIOR
-      params.start.values = get.medians(prior)
-      # load("calibration/starting_values/2025_08_04_cambodia_start_values.Rdata")
+      #params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026-05-29_nigeria_start_values.Rdata")
     } else if(location=="unaids.remainder"){
       prior = UNAIDS.REMAINDER.PRIOR
-      params.start.values = get.medians(prior)
+      #params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026-05-29_unaids.remainder_start_values.Rdata")
     } else if(location=="non.unaids.remainder"){
       prior = NON.UNAIDS.REMAINDER.PRIOR
-      params.start.values = get.medians(prior)
-    } else if(location == "r1.high"){
-      prior = R1.HIGH.PRIOR
-      params.start.values = get.medians(prior)
+      #params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026-05-29_non.unaids.remainder_start_values.Rdata")
     } else if(location=="r1.low"){
       prior = R1.LOW.PRIOR
-      params.start.values = get.medians(prior)
-      # load("calibration/starting_values/2025_08_12_r1_low_start_values.Rdata")
+      #params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026-05-29_r1_low_start_values.Rdata")
     } else if(location=="r1.lower.middle"){
       prior = R1.LOWER.MIDDLE.PRIOR
-      params.start.values = get.medians(prior)
-      # load("calibration/starting_values/2025_08_12_r1_lower_middle_start_values.Rdata")
+      #params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026-05-29_r1_lower.middle_start_values.Rdata")
     } else if(location=="r1.upper.middle"){
       prior = R1.UPPER.MIDDLE.PRIOR
-      params.start.values = get.medians(prior)
-      # load("calibration/starting_values/2025_08_12_r1_upper_middle_start_values.Rdata")
-    } else stop("Only set up for Kenya, South Africa, France, Mozambique, Tanzania, 
-             Uganda, Zambia, Zimbabwe, Malawi, Nigeria, Thailand, Cambodia, and remainder models for now")
+      #params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026-05-29_r1_upper.middle_start_values.Rdata")
+    } else if(location == "r1.high"){
+      prior = R1.HIGH.PRIOR
+      #params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026-05-29_r1_high_start_values.Rdata")
+    } else stop("Only set up for Kenya, South Africa, Mozambique, Tanzania, 
+             Uganda, Zambia, Zimbabwe, Malawi, Nigeria, and remainder models for now")
     
     params.start.values = params.start.values[prior@var.names]
     
