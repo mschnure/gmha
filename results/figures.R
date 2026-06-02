@@ -86,6 +86,7 @@ country = COUNTRIES[16] # global = 16, low = 12
     if(simset.no.int@simulations[[1]]$location=="Global"){
         age.labels = simset.no.int@simulations[[1]]$AGES
         age.labels[length(age.labels)] = "80+"
+        age.labels = gsub("-", "\u2013", age.labels) # FOR LANCET FINAL VERSION
         
         # jpeg(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.jpeg"),
         #      width = 2000,height = 1500,res=200)
@@ -119,9 +120,11 @@ country = COUNTRIES[16] # global = 16, low = 12
             scale_y_continuous( 
                 breaks = seq(0, 7000000, by = 1000000),
                 limits = c(0,6100000),
-                labels = label_number(scale = 1e-6, suffix = "M")) +
+                labels = label_number(scale = 1, big.mark = "\u2009")) + # FOR LANCET FINAL VERSION
+                # labels = label_number(scale = 1e-6, suffix = "M")) +
             scale_x_discrete( 
                 labels = age.labels) +
+            xlab(label = "Age (years)") +
             guides(x =  guide_axis(angle = 45))
         dev.off()
         
@@ -136,6 +139,7 @@ country = COUNTRIES[16] # global = 16, low = 12
     if(simset.no.int@simulations[[1]]$location %in% c("all.low","all.lower.middle","all.upper.middle","all.high")){
         age.labels = simset.no.int@simulations[[1]]$AGES
         age.labels[length(age.labels)] = "80+"
+        age.labels = gsub("-", "\u2013", age.labels) # FOR LANCET FINAL VERSION
         
         # jpeg(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.jpeg"),
         #      width = 2000,height = 1500,res=200)
@@ -166,8 +170,11 @@ country = COUNTRIES[16] # global = 16, low = 12
             )+
             labs(title = NULL,subtitle = NULL) +
             ylab(label = "Number of people living with HIV") +
+            scale_y_continuous(
+                labels = label_number(big.mark = "\u2009")) +
             scale_x_discrete( 
                 labels = age.labels) +
+            xlab(label = "Age (years)") +
             guides(x =  guide_axis(angle = 45))
         dev.off()
         
