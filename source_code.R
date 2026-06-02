@@ -10,7 +10,8 @@ source('model/diffeq.R')
 source('model/age_mappings.R') 
 NO.INTERVENTION = c()
 
-load('cached/data.manager_global_2026-04-07.Rdata') # added all.low, etc. population data
+load('cached/data.manager_global_2026-06-02.Rdata') # added all.low, etc. mortality and cascade data 
+#load('cached/data.manager_global_2026-04-07.Rdata') # added all.low, etc. population data
 #load('cached/data.manager_global_2025-10-03.Rdata') # fixed suppression data
 #load('cached/data.manager_global_2025-08-27.Rdata') # added merged income countries
 #load('cached/data.manager_global_2025-08-13.Rdata') # fixed r1 high and removed incorrect US data 
