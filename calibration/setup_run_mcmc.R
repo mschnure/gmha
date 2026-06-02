@@ -5,22 +5,25 @@ source("model/run_systematic.R")
 
 CHAIN = 1
 
-set.seed(1234*CHAIN)
-# All countries, 5/26 - 1234; Zambia: 4321; low: 5678
+set.seed(1010*CHAIN)
+# All countries, 5/29 - 1234
 
-LOCATION = "Malawi"
+LOCATION = "Zimbabwe"
 RESUME.RUNNING = F
 WEIGHTED.PREVALENCE = T # if set to T, will run with 4x prevalence weight 
+TOTAL.MORTALITY.WEIGHT = 1
 N.ITER = 50000
 TOTAL.WEIGHT = 1
 
 print(paste0("Running MCMC with ",N.ITER," iterations, with total weight = ",TOTAL.WEIGHT,
-             " and weighted prevalence set to ",WEIGHTED.PREVALENCE))
+             ", weighted prevalence set to ",WEIGHTED.PREVALENCE,
+             " and total mortality weight set to ",TOTAL.MORTALITY.WEIGHT))
 
 if(!RESUME.RUNNING){
   LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION,
                                                           total.weight = TOTAL.WEIGHT,
-                                                          weighted.prevalence = WEIGHTED.PREVALENCE)
+                                                          weighted.prevalence = WEIGHTED.PREVALENCE,
+                                                          total.mortality.weight = TOTAL.MORTALITY.WEIGHT)
   
   control = create.adaptive.blockwise.metropolis.control(var.names = LOCATION.DETAILS$prior@var.names,
                                                          simulation.function = SIMULATION.FUNCTION,

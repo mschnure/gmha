@@ -20,6 +20,7 @@ source("calibration/prior_distributions/r1_high_prior.R")
 
 set.likelihood.and.prior.by.location = function(location,
                                                 total.weight = 1,
+                                                total.mortality.weight = 1/1000, # added 6/2 to allow third step to have weight = 1
                                                 weighted.prevalence = F){
   
   WEIGHT.YEARS = 1970:2030
@@ -38,76 +39,96 @@ set.likelihood.and.prior.by.location = function(location,
                                               location=location,
                                               total.weight = WEIGHTS.BY.YEAR,
                                               population.weight=POP.WEIGHTS*(1/200000), # downweighted due to large pop size/number of strata
-                                              prevalence.weight = 4)
+                                              prevalence.weight = 4,
+                                              total.mortality.weight = total.mortality.weight)
     } else {
         likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = location),
                                               location=location,
                                               total.weight = WEIGHTS.BY.YEAR,
-                                              population.weight=POP.WEIGHTS*(1/200000)) # downweighted due to large pop size/number of strata
-    }
+                                              population.weight=POP.WEIGHTS*(1/200000), # downweighted due to large pop size/number of strata
+                                              total.mortality.weight = total.mortality.weight)
+                                              }
 
     #print("STARTING FROM PRIORS, NOT MANUAL VALUES - MUST BE INITIAL RUN")
-    print("STARTING FROM 5/29 STARTING VALUES")
+    #print("STARTING FROM 5/29 STARTING VALUES")
+    print("STARTING FROM 6/2 STARTING VALUES")
     if(location=="Kenya"){
       prior = KENYA.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-05-29_kenya_start_values.Rdata")
+      #load("calibration/starting_values/2026-05-29_kenya_start_values.Rdata")
+      load("calibration/starting_values/2026-06-02_kenya_start_values.Rdata")
     } else if(location=="South Africa"){
       prior = SOUTH.AFRICA.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-05-29_south_africa_start_values.Rdata")
+      #load("calibration/starting_values/2026-05-29_south_africa_start_values.Rdata")
+      load("calibration/starting_values/2026-06-02_south_africa_start_values.Rdata")
     } else if(location=="Mozambique"){
       prior = MOZAMBIQUE.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-05-29_mozambique_start_values.Rdata")
+      #load("calibration/starting_values/2026-05-29_mozambique_start_values.Rdata")
+      load("calibration/starting_values/2026-06-02_mozambique_start_values.Rdata")
     } else if(location=="Tanzania"){
       prior = TANZANIA.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-05-29_tanzania_start_values.Rdata")
+      #load("calibration/starting_values/2026-05-29_tanzania_start_values.Rdata")
+      load("calibration/starting_values/2026-06-02_tanzania_start_values.Rdata")
     } else if(location=="Uganda"){
       prior = UGANDA.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-05-29_uganda_start_values.Rdata")
+      #load("calibration/starting_values/2026-05-29_uganda_start_values.Rdata")
+      load("calibration/starting_values/2026-06-02_uganda_start_values.Rdata")
     } else if(location=="Zambia"){
       prior = ZAMBIA.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-05-29_zambia_start_values.Rdata")
+      #load("calibration/starting_values/2026-05-29_zambia_start_values.Rdata")
+      load("calibration/starting_values/2026-06-02_zambia_start_values.Rdata")
     } else if(location=="Zimbabwe"){
       prior = ZIMBABWE.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-05-29_zimbabwe_start_values.Rdata")
+      #load("calibration/starting_values/2026-05-29_zimbabwe_start_values.Rdata")
+      load("calibration/starting_values/2026-06-03_zimbabwe_start_values.Rdata")
     } else if(location=="Malawi"){
       prior = MALAWI.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-05-29_malawi_start_values.Rdata")
+      #load("calibration/starting_values/2026-05-29_malawi_start_values.Rdata")
+      load("calibration/starting_values/2026-06-02_malawi_start_values.Rdata")
     } else if(location=="Nigeria"){
       prior = NIGERIA.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-05-29_nigeria_start_values.Rdata")
+      #load("calibration/starting_values/2026-05-29_nigeria_start_values.Rdata")
+      load("calibration/starting_values/2026-06-03_nigeria_start_values.Rdata")
     } else if(location=="unaids.remainder"){
       prior = UNAIDS.REMAINDER.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-05-29_unaids.remainder_start_values.Rdata")
+      #load("calibration/starting_values/2026-05-29_unaids.remainder_start_values.Rdata")
+      load("calibration/starting_values/2026-06-02_unaids.remainder_start_values.Rdata")
     } else if(location=="non.unaids.remainder"){
       prior = NON.UNAIDS.REMAINDER.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-05-29_non.unaids.remainder_start_values.Rdata")
+      #load("calibration/starting_values/2026-05-29_non.unaids.remainder_start_values.Rdata")
+      load("calibration/starting_values/2026-06-02_non.unaids.remainder_start_values.Rdata")
     } else if(location=="r1.low"){
       prior = R1.LOW.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-05-29_r1_low_start_values.Rdata")
+      #load("calibration/starting_values/2026-05-29_r1_low_start_values.Rdata")
+      load("calibration/starting_values/2026-06-02_r1_low_start_values.Rdata")
     } else if(location=="r1.lower.middle"){
       prior = R1.LOWER.MIDDLE.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-05-29_r1_lower.middle_start_values.Rdata")
+      #load("calibration/starting_values/2026-05-29_r1_lower.middle_start_values.Rdata")
+      load("calibration/starting_values/2026-06-02_r1_lower.middle_start_values.Rdata")
     } else if(location=="r1.upper.middle"){
       prior = R1.UPPER.MIDDLE.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-05-29_r1_upper.middle_start_values.Rdata")
+      #load("calibration/starting_values/2026-05-29_r1_upper.middle_start_values.Rdata")
+      load("calibration/starting_values/2026-06-02_r1_upper.middle_start_values.Rdata")
     } else if(location == "r1.high"){
       prior = R1.HIGH.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-05-29_r1_high_start_values.Rdata")
+      #load("calibration/starting_values/2026-05-29_r1_high_start_values.Rdata")
+      load("calibration/starting_values/2026-06-02_r1_high_start_values.Rdata")
+      
+      
     } else stop("Only set up for Kenya, South Africa, Mozambique, Tanzania, 
              Uganda, Zambia, Zimbabwe, Malawi, Nigeria, and remainder models for now")
     

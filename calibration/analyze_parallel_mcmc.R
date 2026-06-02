@@ -8,8 +8,8 @@ source("model/run_systematic.R")
     # full.results.array --> full array that has all outcomes for all years and all sims, by age/sex
     # summary.results --> list with different summary results like median age, percent over X age, etc. 
     # export.to.csv --> summary results formatted into an array that can be easily exported to a csv 
-load('cached/all.results_malawi_2025-08-12.Rdata')
-simset = simset.list.full$no.int
+#load('cached/all.results_malawi_2025-08-12.Rdata')
+#simset = simset.list.full$no.int
 
 end.year = simset@simulations[[1]]$years[length(simset@simulations[[1]]$years)]
 
