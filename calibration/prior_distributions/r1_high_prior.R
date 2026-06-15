@@ -29,7 +29,7 @@ R1.HIGH.PRIOR = join.distributions(
     # age transmission multipliers -  updated 5/21/26 so that they are correlated by both age and time
     age.time.multipliers = make.joint.distribution.age.time(median.r2.age.15.to.19 = 1,
                                                             median.r2.age.20.to.29 = 1,
-                                                            median.r2.age.40.to.49 = 0.8,
+                                                            median.r2.age.40.to.49 = 1,
                                                             median.r2.age.50.and.over = .5,
                                                             median.r0.to.r1 = 1, #time 0 relative to 1
                                                             median.r1.to.r2 = 1, #time 1 relative to 2
