@@ -15,12 +15,13 @@ source("calibration/prior_distributions/r1_lower_middle_prior.R")
 source("calibration/prior_distributions/r1_upper_middle_prior.R")
 source("calibration/prior_distributions/r1_high_prior.R")
 
-COUNTRIES = c("Kenya","Malawi","Mozambique",
-              #"Nigeria",
-              "South Africa","Tanzania","Uganda","Zambia",
-              #"Zimbabwe",
-              "unaids.remainder","non.unaids.remainder",
-              "r1.low","r1.lower.middle","r1.upper.middle","r1.high")
+COUNTRIES = c(#"Kenya","Malawi","Mozambique",
+              "Nigeria"#,
+              #"South Africa","Tanzania","Uganda","Zambia",
+              #"Zimbabwe"#,
+              #"unaids.remainder","non.unaids.remainder",
+              #"r1.low","r1.lower.middle","r1.upper.middle","r1.high"
+              )
 
 for(country in COUNTRIES){
   print(paste0("processing ",country))
