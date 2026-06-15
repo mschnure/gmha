@@ -8,8 +8,8 @@ source("future_projections/extract_projection_results.R")
 # only pick one of these
 RUN.INDIV.COUNTRY = F
 LOAD.REMAINDER.INCOME.SIMSET = F
-LOAD.COMBINED.INCOME.SIMSET = F
-LOAD.GLOBAL.SIMSET = T
+LOAD.COMBINED.INCOME.SIMSET = T
+LOAD.GLOBAL.SIMSET = F
 N.CHAINS = 1
 
 if(LOAD.GLOBAL.SIMSET){
@@ -34,18 +34,20 @@ for(country in COUNTRIES){
     if(N.CHAINS==1){
       mcmc.files = list.files("mcmc_runs/mcmc_files")
       if(country=="South Africa") country = "South_Africa"
-      mcmc.file = mcmc.files[grepl(paste0(tolower(country),"_2025"),mcmc.files)]
+      mcmc.file = mcmc.files[grepl(paste0(tolower(country),"_chain1_2026"),mcmc.files)]
       # if multiple, this will take the last one by date which is the most recent 
       mcmc.file = mcmc.file[length(mcmc.file)]
       
       print(paste0("loading file: ",mcmc.file))
       load(paste0("mcmc_runs/mcmc_files/",mcmc.file))
       
-      # If running from single chain, burn 10000 and thin by 20 to get to 1000 
+      # If running from single chain of 100k (pre-thinned by 5 to 20k), burn 10k (to 10k) and thin by 10 to get to 1000 
+      # If running from single chain of 50k (pre-thinned by 5 to 10k), burn 5k (to 5k) and thin by 5 to get to 1000 
       simset = suppressWarnings(extract.simset(mcmc,
-                                               additional.burn=10000, 
-                                               additional.thin=10)) 
+                                               additional.burn=4999, # not sure why 5k doesn't work
+                                               additional.thin=5)) 
     } else if(N.CHAINS==2){
+      print("fix N.CHAINS = 2 loading process")
       mcmc.files = list.files("mcmc_runs/mcmc_files/merged")
       if(country=="South Africa") country = "South_Africa"
       mcmc.file = mcmc.files[grepl(paste0("chains12_",tolower(country),"_2025"),mcmc.files)]
@@ -65,12 +67,13 @@ for(country in COUNTRIES){
     } else
       stop("N.CHAINS must be either 1 or 2")
 
-    
-    RUN.SIMULATIONS.TO.YEAR = 2040
-    print("running no.int")
-    simset.no.int = run.intervention.on.simset(simset,
-                                               end.year = RUN.SIMULATIONS.TO.YEAR,
-                                               intervention = NO.INTERVENTION)
+    # new runs (as of 6/2026) already go to 2041
+    simset.no.int = simset
+    # RUN.SIMULATIONS.TO.YEAR = 2040
+    # print("running no.int")
+    # simset.no.int = run.intervention.on.simset(simset,
+    #                                            end.year = RUN.SIMULATIONS.TO.YEAR,
+    #                                            intervention = NO.INTERVENTION)
   }
   
   

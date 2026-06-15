@@ -32,6 +32,10 @@ simplot(simset,
 
 simplot(simset, 
         years=1980:end.year, 
+        data.types='hiv.mortality')
+
+simplot(simset, 
+        years=1980:end.year, 
         facet.by=c('age'), 
         data.types='hiv.mortality')
 

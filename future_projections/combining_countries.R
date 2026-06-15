@@ -37,6 +37,7 @@ combine.simsets = function(...,
       
       for(sim.index in 1:490){ # TEMPORARY 4/14/26 UNTIL I RUN ALL CHAINS PROPERLY
         #for(sim.index in 1:length(simset.list[[simset.index]]@simulations)){
+        print("fix n.sim here - no longer 490")
           
           print(paste0("getting outcomes from ",simset.list[[simset.index]]@simulations[[1]]$location,", SIM ", sim.index))
           
