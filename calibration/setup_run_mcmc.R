@@ -5,17 +5,32 @@ source("model/run_systematic.R")
 
 CHAIN = 1
 
-set.seed(1010*CHAIN)
-# All countries, 5/29 - 1234
+set.seed(5678*CHAIN)
 
-LOCATION = "Zimbabwe"
+LOCATION = "r1.upper.middle"
 RESUME.RUNNING = F
-WEIGHTED.PREVALENCE = T # if set to T, will run with 4x prevalence weight 
-TOTAL.MORTALITY.WEIGHT = 1
-N.ITER = 50000
-TOTAL.WEIGHT = 1
 
-print(paste0("Running MCMC with ",N.ITER," iterations, with total weight = ",TOTAL.WEIGHT,
+STEP = 2
+
+if(STEP==1){
+  WEIGHTED.PREVALENCE = F 
+  TOTAL.MORTALITY.WEIGHT = 1/1000
+  N.ITER = 50000
+  TOTAL.WEIGHT = 1/8 # DIFF FOR STEP 1
+} else if (STEP==2){
+  WEIGHTED.PREVALENCE = T # DIFF FOR STEP 2
+  TOTAL.MORTALITY.WEIGHT = 1/1000 
+  N.ITER = 50000
+  TOTAL.WEIGHT = 1
+} else if(STEP==3){
+  WEIGHTED.PREVALENCE = F 
+  TOTAL.MORTALITY.WEIGHT = 1/100 # DIFF FOR STEP 3
+  N.ITER = 50000
+  TOTAL.WEIGHT = 1
+} else stop("must set STEP")
+
+
+print(paste0("Running STEP ", STEP," MCMC with ",N.ITER," iterations, with total weight = ",TOTAL.WEIGHT,
              ", weighted prevalence set to ",WEIGHTED.PREVALENCE,
              " and total mortality weight set to ",TOTAL.MORTALITY.WEIGHT))
 
@@ -33,7 +48,7 @@ if(!RESUME.RUNNING){
                                                          transformations = LOCATION.DETAILS$transformations,
                                                          initial.covariance.mat = diag((LOCATION.DETAILS$sds/20)^2), # step size
                                                          burn = 0,
-                                                         thin = 5)
+                                                         thin = 1)
   
   
   print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION,": chain ",CHAIN)))

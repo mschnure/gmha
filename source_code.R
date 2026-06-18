@@ -55,7 +55,7 @@ source('calibration/set_likelihood_and_prior.R') # sources all individual priors
 
 # future projections
 source('future_projections/create_and_run_interventions_functions.R')
-source('future_projections/extract_projection_results.R')
+source('future_projections/extract_projection_results_functions.R')
 
 
 
