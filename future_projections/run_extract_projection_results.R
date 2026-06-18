@@ -3,110 +3,32 @@
 ##############################################
 
 source("model/run_systematic.R")
-source("future_projections/extract_projection_results.R")
+source("future_projections/extract_projection_results_functions.R")
 
 # only pick one of these
-RUN.INDIV.COUNTRY = F
-LOAD.REMAINDER.INCOME.SIMSET = F
-LOAD.COMBINED.INCOME.SIMSET = T
-LOAD.GLOBAL.SIMSET = F
+INDIVIDUAL.COUNTRIES = T
+GLOBAL = F
+
+# decide whether to load saved simset (temp) or final MCMC (final step)
+USE.SIMSET = T 
+USE.MCMC = F
+
+DATE.TO.LOAD = "2026-06-05"
+
 N.CHAINS = 1
 
-
-## THIS IS OUTDATED - AS OF 6/2026, ALL MCMCS ARE RUN THROUGH 2040 SO DON'T NEED TO RUN INTO THE FUTURE ## 
-
-
-
-if(LOAD.GLOBAL.SIMSET){
-  COUNTRIES = "global"
-} else if(RUN.INDIV.COUNTRY){
-  COUNTRIES = c(#"Mozambique","Uganda","Kenya","Zambia"
-    #"Zimbabwe","unaids.remainder","non.unaids.remainder"
-    #"Tanzania","South Africa",
-    #"Malawi" #,"Nigeria"
-  )
-} else if(LOAD.REMAINDER.INCOME.SIMSET){
-  COUNTRIES = c("r1.low" ,"r1.lower.middle","r1.upper.middle","r1.high")
-} else if(LOAD.COMBINED.INCOME.SIMSET){
-  COUNTRIES = c("low_income" ,"lower_middle_income","upper_middle_income","high_income")
-} else stop("can only select run.indiv.country, load.income.simset, or load.global.simset")
+COUNTRIES = "r1.high"
+# COUNTRIES = c("Kenya","Malawi","Mozambique","Nigeria","South Africa","Tanzania","Uganda","Zambia","Zimbabwe",
+#               "unaids.remainder","non.unaids.remainder",
+#               "r1.low", "r1.lower.middle","r1.upper.middle","r1.high")
 
 for(country in COUNTRIES){
   
-  # running individual countries through 2040
-  if(RUN.INDIV.COUNTRY){
-    
-    if(N.CHAINS==1){
-      mcmc.files = list.files("mcmc_runs/mcmc_files")
-      if(country=="South Africa") country = "South_Africa"
-      mcmc.file = mcmc.files[grepl(paste0(tolower(country),"_chain1_2026"),mcmc.files)]
-      # if multiple, this will take the last one by date which is the most recent 
-      mcmc.file = mcmc.file[length(mcmc.file)]
-      
-      print(paste0("loading file: ",mcmc.file))
-      load(paste0("mcmc_runs/mcmc_files/",mcmc.file))
-      
-      # 6/15, REMOVED PRE-THINNING 
-      # If running from single chain of 100k (pre-thinned by 5 to 20k), burn 10k (to 10k) and thin by 10 to get to 1000 
-      # If running from single chain of 50k (pre-thinned by 5 to 10k), burn 5k (to 5k) and thin by 5 to get to 1000 
-      simset = suppressWarnings(extract.simset(mcmc,
-                                               additional.burn=4999, # not sure why 5k doesn't work
-                                               additional.thin=5)) 
-    } else if(N.CHAINS==2){
-      print("fix N.CHAINS = 2 loading process")
-      mcmc.files = list.files("mcmc_runs/mcmc_files/merged")
-      if(country=="South Africa") country = "South_Africa"
-      mcmc.file = mcmc.files[grepl(paste0("chains12_",tolower(country),"_2025"),mcmc.files)]
-      # if multiple, this will take the last one by date which is the most recent 
-      mcmc.file = mcmc.file[length(mcmc.file)]
-      
-      print(paste0("loading file: ",mcmc.file))
-      load(paste0("mcmc_runs/mcmc_files/merged/",mcmc.file))
-      
-      # If running from two chains, burn X and thin by Y to get to Z (without anything, XX sims)
-      simset = suppressWarnings(extract.simset(mcmc,
-                                               additional.burn=10000, 
-                                               additional.thin=20)) 
-      save(simset,file=paste0("mcmc_runs/simset_",convert_string(simset@simulations[[1]]$location),"_chains12_",Sys.Date(),".Rdata")) 
-      
-      
-    } else
-      stop("N.CHAINS must be either 1 or 2")
-
-    # new runs (as of 6/2026) already go to 2041
-    simset.no.int = simset
-    # RUN.SIMULATIONS.TO.YEAR = 2040
-    # print("running no.int")
-    # simset.no.int = run.intervention.on.simset(simset,
-    #                                            end.year = RUN.SIMULATIONS.TO.YEAR,
-    #                                            intervention = NO.INTERVENTION)
-  }
   
-  
-  # global simset is already through 2040 
-  if(LOAD.GLOBAL.SIMSET){
-    print("loading global simset")
-    #load("cached/simset_global_income_2025-08-26_.Rdata") # using income models 
-    #load("cached/simset_global_2025-08-27_.Rdata") # using remainder model
-    load("cached/simset_global_2026-04-14_.Rdata")
-    simset.no.int = simset
-  }
-  
-  # income remainder simsets already through 2040 
-  if(LOAD.REMAINDER.INCOME.SIMSET){
-    files = list.files("mcmc_runs")
-    file = files[grepl(paste0(tolower(country),"_chain1_2026"),files)]
+  if(USE.SIMSET){
+    file = paste0("simset_",tolower(country),"_chain1_",DATE.TO.LOAD,".Rdata")
     print(paste0("loading file: ",file))
     load(paste0("mcmc_runs/",file))
-    simset.no.int = simset
-  }
-  
-  # income combined simsets already through 2040 
-  if(LOAD.COMBINED.INCOME.SIMSET){
-    files = list.files("cached")
-    file = files[grepl(paste0(tolower(country),"_2026"),files)]
-    print(paste0("loading file: ",file))
-    load(paste0("cached/",file))
     simset.no.int = simset
   }
   
