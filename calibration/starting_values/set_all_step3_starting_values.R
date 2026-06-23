@@ -15,12 +15,11 @@ source("calibration/prior_distributions/r1_lower_middle_prior.R")
 source("calibration/prior_distributions/r1_upper_middle_prior.R")
 source("calibration/prior_distributions/r1_high_prior.R")
 
-COUNTRIES = c(#"Kenya","Malawi","Mozambique",
-              "Nigeria"#,
+COUNTRIES = c(#"Kenya","Malawi","Mozambique","Nigeria",
               #"South Africa","Tanzania","Uganda","Zambia",
               #"Zimbabwe"#,
-              #"unaids.remainder","non.unaids.remainder",
-              #"r1.low","r1.lower.middle","r1.upper.middle","r1.high"
+              "unaids.remainder","non.unaids.remainder",
+              "r1.low","r1.lower.middle","r1.upper.middle","r1.high"
               )
 
 for(country in COUNTRIES){
@@ -30,8 +29,9 @@ for(country in COUNTRIES){
   print(paste0("loading ",prior.name))
   prior = get(prior.name)
   
-  if(country %in% c("non.unaids.remainder","r1.lower.middle","unaids.remainder","r1.upper.middle")){
-    RUN.DATE = "05-30"
+  if(country %in% c("unaids.remainder","non.unaids.remainder",
+                    "r1.low","r1.lower.middle","r1.upper.middle","r1.high")){
+    RUN.DATE = "06-19"
   } else if (country %in% c("Zambia")){
     RUN.DATE = "06-01"  
   } else if (country %in% c("Nigeria","Zimbabwe")){
