@@ -52,7 +52,9 @@ set.likelihood.and.prior.by.location = function(location,
     #print("STARTING FROM PRIORS, NOT MANUAL VALUES - MUST BE INITIAL RUN")
     #print("STARTING FROM 5/29 STARTING VALUES") # step 2, for all but remainder
     #print("STARTING FROM 6/2 STARTING VALUES")  # step 3, for all but remainder
-    print("STARTING FROM 6/17 STARTING VALUES (step 2, for remainders)")  
+    #print("STARTING FROM 6/17 STARTING VALUES (step 2, for remainders)")  
+    #print("STARTING FROM 6/21 STARTING VALUES (step 3, for remainders)") 
+    print("STARTING FROM PRIORS FOR SINGLE-RUN HIGH ONLY")
     if(location=="Kenya"){
       prior = KENYA.PRIOR
       #params.start.values = get.medians(prior)
@@ -101,33 +103,33 @@ set.likelihood.and.prior.by.location = function(location,
     } else if(location=="unaids.remainder"){
       prior = UNAIDS.REMAINDER.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-06-17_unaids.remainder_start_values.Rdata") # step 2
-      #load("calibration/starting_values/2026-06-02_unaids.remainder_start_values.Rdata")
+      #load("calibration/starting_values/2026-06-17_unaids.remainder_start_values.Rdata") # step 2
+      load("calibration/starting_values/2026-06-21_unaids.remainder_start_values.Rdata") # step 3
     } else if(location=="non.unaids.remainder"){
       prior = NON.UNAIDS.REMAINDER.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-06-17_non.unaids.remainder_start_values.Rdata") # step 2
-      #load("calibration/starting_values/2026-06-02_non.unaids.remainder_start_values.Rdata")
+      #load("calibration/starting_values/2026-06-17_non.unaids.remainder_start_values.Rdata") # step 2
+      load("calibration/starting_values/2026-06-21_non.unaids.remainder_start_values.Rdata") # step 3
     } else if(location=="r1.low"){
       prior = R1.LOW.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-06-17_r1_low_start_values.Rdata") # step 2
-      #load("calibration/starting_values/2026-06-02_r1_low_start_values.Rdata")
+      #load("calibration/starting_values/2026-06-17_r1_low_start_values.Rdata") # step 2
+      load("calibration/starting_values/2026-06-21_r1_low_start_values.Rdata") # step 3
     } else if(location=="r1.lower.middle"){
       prior = R1.LOWER.MIDDLE.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-06-17_r1_lower.middle_start_values.Rdata") # step 2
-      #load("calibration/starting_values/2026-06-02_r1_lower.middle_start_values.Rdata")
+      #load("calibration/starting_values/2026-06-17_r1_lower.middle_start_values.Rdata") # step 2
+      load("calibration/starting_values/2026-06-21_r1_lower.middle_start_values.Rdata") # step 3
     } else if(location=="r1.upper.middle"){
       prior = R1.UPPER.MIDDLE.PRIOR
       #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-06-17_r1_upper.middle_start_values.Rdata") # step 2
-      #load("calibration/starting_values/2026-06-02_r1_upper.middle_start_values.Rdata")
+      #load("calibration/starting_values/2026-06-17_r1_upper.middle_start_values.Rdata") # step 2
+      load("calibration/starting_values/2026-06-21_r1_upper.middle_start_values.Rdata") # step 3
     } else if(location == "r1.high"){
       prior = R1.HIGH.PRIOR
-      #params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-06-17_r1_high_start_values.Rdata") # step 2
-      #load("calibration/starting_values/2026-06-02_r1_high_start_values.Rdata")
+      params.start.values = get.medians(prior)
+      #load("calibration/starting_values/2026-06-17_r1_high_start_values.Rdata") # step 2
+      #load("calibration/starting_values/2026-06-21_r1_high_start_values.Rdata") # step 3
       
       
     } else stop("Only set up for Kenya, South Africa, Mozambique, Tanzania, 

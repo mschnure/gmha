@@ -7,10 +7,10 @@ CHAIN = 1
 
 set.seed(5678*CHAIN)
 
-LOCATION = "r1.upper.middle"
+LOCATION = "r1.high"
 RESUME.RUNNING = F
 
-STEP = 2
+STEP = "SINGLE.STEP"
 
 if(STEP==1){
   WEIGHTED.PREVALENCE = F 
@@ -26,6 +26,11 @@ if(STEP==1){
   WEIGHTED.PREVALENCE = F 
   TOTAL.MORTALITY.WEIGHT = 1/100 # DIFF FOR STEP 3
   N.ITER = 50000
+  TOTAL.WEIGHT = 1
+} else if(STEP=="SINGLE.STEP"){ # overall weight at 1, no upweighted prevalence, but less downweighted mortality
+  WEIGHTED.PREVALENCE = F 
+  TOTAL.MORTALITY.WEIGHT = 1/100 
+  N.ITER = 100000
   TOTAL.WEIGHT = 1
 } else stop("must set STEP")
 

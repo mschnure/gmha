@@ -38,9 +38,9 @@ R1.HIGH.PRIOR = join.distributions(
                                                             sd.r0.to.r1 = log(2)/2,
                                                             sd.r1.to.r2= log(2)/2,
                                                             sd.r3.to.r2 = log(2)/2,
-                                                            corr.15.to.19.with.20.to.29 = 0.5, # age 1 * age 2 correlation 
-                                                            corr.20.to.29.with.40.to.49 = 0.25, # age 2 * age 4 correlation 
-                                                            corr.40.to.49.with.50.and.over = 0.5, # age 4 * age 5 correlation 
+                                                            corr.15.to.19.with.20.to.29 = 0.75, # 0.5 # age 1 * age 2 correlation 
+                                                            corr.20.to.29.with.40.to.49 = 0.5625, # 0.25 # age 2 * age 4 correlation 
+                                                            corr.40.to.49.with.50.and.over = 0.75, # 0.5 # age 4 * age 5 correlation 
                                                             age.prefix.names = c("age.15.to.19.transmission.multiplier",
                                                                                  "age.20.to.29.transmission.multiplier",
                                                                                  "age.40.to.49.transmission.multiplier",
