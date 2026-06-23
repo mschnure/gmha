@@ -32,13 +32,11 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              incidence.weight=2, 
                              incidence.obs.correlation=0.5,
                              incidence.correlation.structure="auto.regressive",
-                             total.incidence.weight.by.age = c("15+" = 0.0001), # NEW 6/23/26
                              #prevalence
                              prevalence.years=years,
                              prevalence.weight=1, 
                              prevalence.obs.correlation=0.5,
                              prevalence.correlation.structure="auto.regressive",
-                             total.prevalence.weight.by.age = c("15+" = 0.0001), # NEW 6/23/26
                              #awareness
                              awareness.years=years,
                              awareness.weight=1*3.734568, # ratio of points, when accounting for weighting by year (see data_point_weighting)
@@ -64,7 +62,6 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              hiv.mortality.weight=1/256, 
                              hiv.mortality.obs.correlation=0.5, 
                              hiv.mortality.correlation.structure="auto.regressive",
-                             total.hiv.mortality.weight.by.age = c("15+" = 0.0001), # NEW 6/23/26
                              #total.mortality
                              total.mortality.years=years,
                              total.mortality.weight=1/1000, 
@@ -81,7 +78,6 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                     denominator.data.type="population", 
                                                     obs.is.proportion=F,
                                                     weight=total.weight*incidence.weight,
-                                                    weight.by.age=total.incidence.weight.by.age, # NEW 6/23/26
                                                     obs.correlation=incidence.obs.correlation,
                                                     correlation.structure=incidence.correlation.structure #,
                                                     # use.total=T, # defaults for all of these are TRUE
@@ -98,7 +94,6 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                      denominator.data.type="population", 
                                                      obs.is.proportion=F,
                                                      weight=total.weight*prevalence.weight,
-                                                     weight.by.age=total.prevalence.weight.by.age, # NEW 6/23/26
                                                      obs.correlation=prevalence.obs.correlation,
                                                      correlation.structure=prevalence.correlation.structure #,
                                                      # use.total=T, # defaults for all of these are TRUE
@@ -165,7 +160,6 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                         denominator.data.type="prevalence", # technically hiv mortality reported as a number
                                                         obs.is.proportion=T, 
                                                         weight=total.weight*hiv.mortality.weight,
-                                                        weight.by.age=total.hiv.mortality.weight.by.age, # NEW 6/23/26
                                                         obs.correlation=hiv.mortality.obs.correlation,
                                                         correlation.structure=hiv.mortality.correlation.structure)
     
