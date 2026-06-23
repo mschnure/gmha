@@ -32,13 +32,13 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              incidence.weight=2, 
                              incidence.obs.correlation=0.5,
                              incidence.correlation.structure="auto.regressive",
-                             total.incidence.weight.by.age = c("15+" = 0), # NEW 6/23/26
+                             total.incidence.weight.by.age = c("15+" = 0.0001), # NEW 6/23/26
                              #prevalence
                              prevalence.years=years,
                              prevalence.weight=1, 
                              prevalence.obs.correlation=0.5,
                              prevalence.correlation.structure="auto.regressive",
-                             total.prevalence.weight.by.age = c("15+" = 0), # NEW 6/23/26
+                             total.prevalence.weight.by.age = c("15+" = 0.0001), # NEW 6/23/26
                              #awareness
                              awareness.years=years,
                              awareness.weight=1*3.734568, # ratio of points, when accounting for weighting by year (see data_point_weighting)
@@ -64,7 +64,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              hiv.mortality.weight=1/256, 
                              hiv.mortality.obs.correlation=0.5, 
                              hiv.mortality.correlation.structure="auto.regressive",
-                             total.hiv.mortality.weight.by.age = c("15+" = 0), # NEW 6/23/26
+                             total.hiv.mortality.weight.by.age = c("15+" = 0.0001), # NEW 6/23/26
                              #total.mortality
                              total.mortality.years=years,
                              total.mortality.weight=1/1000, 
