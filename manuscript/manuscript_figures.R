@@ -187,7 +187,7 @@ for(country in INCOME.COUNTRIES){
     age.labels[length(age.labels)] = "80+"
     plot.limit = PLOT.LIMITS[simset.no.int@simulations[[1]]$location]
 
-    jpeg(file=paste0(PLOT.DIR,"age_dist/",convert_string(simset.no.int@simulations[[1]]$location),"_age_dist.jpeg"),
+    jpeg(file=paste0(PLOT.DIR,"age_dist/",convert_string(simset.no.int@simulations[[1]]$location),"_",Sys.Date(),"_age_dist.jpeg"),
          width = AGE.DIST.PLOT.WIDTH,height = AGE.DIST.PLOT.HEIGHT,res=AGE.DIST.PLOT.RES)
     print(
         generate.age.distribution(full.results.array, 
@@ -281,7 +281,7 @@ for(country in INCOME.COUNTRIES){
     age.labels = simset.no.int@simulations[[1]]$AGES
     age.labels[length(age.labels)] = "80+"
     
-    jpeg(file=paste0(PLOT.DIR,"age_dist_incidence/",convert_string(simset.no.int@simulations[[1]]$location),"_age_dist_incidence.jpeg"),
+    jpeg(file=paste0(PLOT.DIR,"age_dist_incidence/",convert_string(simset.no.int@simulations[[1]]$location),"_",Sys.Date(),"_age_dist_incidence.jpeg"),
          width = AGE.DIST.PLOT.WIDTH,height = AGE.DIST.PLOT.HEIGHT,res=AGE.DIST.PLOT.RES)
     print(
         generate.age.distribution(full.results.array, 
