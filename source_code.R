@@ -10,7 +10,8 @@ source('model/diffeq.R')
 source('model/age_mappings.R') 
 NO.INTERVENTION = c()
 
-load('cached/data.manager_global_2026-06-15.Rdata') # removed France as individual country
+load('cached/data.manager_global_2026-06-25.Rdata') # added back median values for suppressed data
+#load('cached/data.manager_global_2026-06-15.Rdata') # removed France as individual country
 #load('cached/data.manager_global_2026-06-02.Rdata') # added all.low, etc. mortality and cascade data 
 #load('cached/data.manager_global_2026-04-07.Rdata') # added all.low, etc. population data
 #load('cached/data.manager_global_2025-10-03.Rdata') # fixed suppression data
