@@ -268,7 +268,7 @@ for(country in INCOME.COUNTRIES){
     dev.off()
 }
 
-#### INCOME-LEVEL ICIDENCE AGE DISTRIBUTIONS ####
+#### INCOME-LEVEL INCIDENCE AGE DISTRIBUTIONS ####
 print("Generating incidence age distributions by income")
 for(country in INCOME.COUNTRIES){
     files = list.files("final_simsets_and_results/updated_04_14_2026/")

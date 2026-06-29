@@ -12,11 +12,15 @@ load("cached/all.results_r1.high_2026-06-25.Rdata")
 simset.6.25 = simset.list.full$no.int
 full.results.array.6.25 = full.results.array
 
-simplot(simset.6.18,
-        simset.6.25,
+load("cached/all.results_r1.high_2026-06-29_thinned.Rdata")
+simset.6.29 = simset.list.full$no.int
+full.results.array.6.29 = full.results.array
+
+simplot(simset.6.25,
+        simset.6.29,
         years=1980:2040, 
         facet.by='age', 
-        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
+        #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='incidence') 
 
 simplot(simset.6.18,
@@ -26,8 +30,8 @@ simplot(simset.6.18,
         ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='incidence') + geom_hline(yintercept = 2500) 
 
-transmission.params = simset.6.18@parameter.names[grepl("transmission|trate",simset.6.18@parameter.names)]
-cbind(simset.6.18@parameters[490,transmission.params],simset.6.25@parameters[2485,transmission.params])
+transmission.params = simset.6.29@parameter.names[grepl("transmission|trate",simset.6.29@parameter.names)]
+cbind(simset.6.25@parameters[2485,transmission.params],simset.6.29@parameters[100,transmission.params])
 
 
 params.manual = simset.6.25@parameters[length(simset.6.25@simulations),]
