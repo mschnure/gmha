@@ -5,10 +5,10 @@ source("model/run_systematic.R")
 
 CHAIN = 1
 
-set.seed(5678*CHAIN)
+set.seed(1010*CHAIN)
 
 LOCATION = "r1.high"
-RESUME.RUNNING = T
+RESUME.RUNNING = F
 
 STEP = "SINGLE.STEP"
 
