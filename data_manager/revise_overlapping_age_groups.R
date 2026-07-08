@@ -30,10 +30,10 @@ DATA.MANAGER$incidence$AGE.UPPERS = DATA.MANAGER$prevalence$AGE.UPPERS = DATA.MA
   new.25.to.49.incidence = incidence.age[,"15-49",] - incidence.age[,"15-24",]
   
   new.incidence.age =  array(NA,
-                             dim = c(dim(incidence.age)[1], length(new.ages), dim(incidence.age)[3]),
-                             dimnames = list(dimnames(incidence.age)[[1]],  # year
-                                             new.ages,                       # new age categories
-                                             dimnames(incidence.age)[[3]]    # location
+                             dim = c(dim(incidence.age)[1], "age"=length(new.ages), dim(incidence.age)[3]),
+                             dimnames = list("year"=dimnames(incidence.age)[[1]],  # year
+                                             "age"=new.ages,                       # new age categories
+                                             "location"=dimnames(incidence.age)[[3]]    # location
                              )
   )
   
@@ -48,10 +48,10 @@ DATA.MANAGER$incidence$AGE.UPPERS = DATA.MANAGER$prevalence$AGE.UPPERS = DATA.MA
   new.25.to.49.incidence.lowers = incidence.lowers.age[,"15-49",] - incidence.lowers.age[,"15-24",]
   
   new.incidence.lowers.age =  array(NA,
-                                    dim = c(dim(incidence.lowers.age)[1], length(new.ages), dim(incidence.lowers.age)[3]),
-                                    dimnames = list(dimnames(incidence.lowers.age)[[1]],  # year
-                                                    new.ages,                       # new age categories
-                                                    dimnames(incidence.lowers.age)[[3]]    # location
+                                    dim = c(dim(incidence.lowers.age)[1], "age"=length(new.ages), dim(incidence.lowers.age)[3]),
+                                    dimnames = list("year"=dimnames(incidence.lowers.age)[[1]],  # year
+                                                    "age"=new.ages,                       # new age categories
+                                                    "location"=dimnames(incidence.lowers.age)[[3]]    # location
                                     )
   )
   
@@ -66,10 +66,10 @@ DATA.MANAGER$incidence$AGE.UPPERS = DATA.MANAGER$prevalence$AGE.UPPERS = DATA.MA
   new.25.to.49.incidence.uppers = incidence.uppers.age[,"15-49",] - incidence.uppers.age[,"15-24",]
   
   new.incidence.uppers.age =  array(NA,
-                                    dim = c(dim(incidence.uppers.age)[1], length(new.ages), dim(incidence.uppers.age)[3]),
-                                    dimnames = list(dimnames(incidence.uppers.age)[[1]],  # year
-                                                    new.ages,                       # new age categories
-                                                    dimnames(incidence.uppers.age)[[3]]    # location
+                                    dim = c(dim(incidence.uppers.age)[1], "age"=length(new.ages), dim(incidence.uppers.age)[3]),
+                                    dimnames = list("year"=dimnames(incidence.uppers.age)[[1]],  # year
+                                                    "age"=new.ages,                       # new age categories
+                                                    "location"=dimnames(incidence.uppers.age)[[3]]    # location
                                     )
   )
   
@@ -89,10 +89,10 @@ DATA.MANAGER$incidence$AGE.UPPERS = DATA.MANAGER$prevalence$AGE.UPPERS = DATA.MA
   new.25.to.49.prevalence = prevalence.age[,"15-49",] - prevalence.age[,"15-24",]
   
   new.prevalence.age =  array(NA,
-                              dim = c(dim(prevalence.age)[1], length(new.ages), dim(prevalence.age)[3]),
-                              dimnames = list(dimnames(prevalence.age)[[1]],  # year
-                                              new.ages,                       # new age categories
-                                              dimnames(prevalence.age)[[3]]    # location
+                              dim = c(dim(prevalence.age)[1], "age"=length(new.ages), dim(prevalence.age)[3]),
+                              dimnames = list("year"=dimnames(prevalence.age)[[1]],  # year
+                                              "age"=new.ages,                       # new age categories
+                                              "location"=dimnames(prevalence.age)[[3]]    # location
                               )
   )
   
@@ -107,10 +107,10 @@ DATA.MANAGER$incidence$AGE.UPPERS = DATA.MANAGER$prevalence$AGE.UPPERS = DATA.MA
   new.25.to.49.prevalence.lowers = prevalence.lowers.age[,"15-49",] - prevalence.lowers.age[,"15-24",]
   
   new.prevalence.lowers.age =  array(NA,
-                                     dim = c(dim(prevalence.lowers.age)[1], length(new.ages), dim(prevalence.lowers.age)[3]),
-                                     dimnames = list(dimnames(prevalence.lowers.age)[[1]],  # year
-                                                     new.ages,                       # new age categories
-                                                     dimnames(prevalence.lowers.age)[[3]]    # location
+                                     dim = c(dim(prevalence.lowers.age)[1], "age"=length(new.ages), dim(prevalence.lowers.age)[3]),
+                                     dimnames = list("year"=dimnames(prevalence.lowers.age)[[1]],  # year
+                                                     "age"=new.ages,                       # new age categories
+                                                     "location"=dimnames(prevalence.lowers.age)[[3]]    # location
                                      )
   )
   
@@ -125,10 +125,10 @@ DATA.MANAGER$incidence$AGE.UPPERS = DATA.MANAGER$prevalence$AGE.UPPERS = DATA.MA
   new.25.to.49.prevalence.uppers = prevalence.uppers.age[,"15-49",] - prevalence.uppers.age[,"15-24",]
   
   new.prevalence.uppers.age =  array(NA,
-                                     dim = c(dim(prevalence.uppers.age)[1], length(new.ages), dim(prevalence.uppers.age)[3]),
-                                     dimnames = list(dimnames(prevalence.uppers.age)[[1]],  # year
-                                                     new.ages,                       # new age categories
-                                                     dimnames(prevalence.uppers.age)[[3]]    # location
+                                     dim = c(dim(prevalence.uppers.age)[1], "age"=length(new.ages), dim(prevalence.uppers.age)[3]),
+                                     dimnames = list("year"=dimnames(prevalence.uppers.age)[[1]],  # year
+                                                     "age"=new.ages,                       # new age categories
+                                                     "location"=dimnames(prevalence.uppers.age)[[3]]    # location
                                      )
   )
   
@@ -149,10 +149,10 @@ DATA.MANAGER$incidence$AGE.UPPERS = DATA.MANAGER$prevalence$AGE.UPPERS = DATA.MA
   new.25.to.49.hiv.mortality = hiv.mortality.age[,"15-49",] - hiv.mortality.age[,"15-24",]
   
   new.hiv.mortality.age =  array(NA,
-                                 dim = c(dim(hiv.mortality.age)[1], length(new.ages), dim(hiv.mortality.age)[3]),
-                                 dimnames = list(dimnames(hiv.mortality.age)[[1]],  # year
-                                                 new.ages,                       # new age categories
-                                                 dimnames(hiv.mortality.age)[[3]]    # location
+                                 dim = c(dim(hiv.mortality.age)[1], "age"=length(new.ages), dim(hiv.mortality.age)[3]),
+                                 dimnames = list("year"=dimnames(hiv.mortality.age)[[1]],  # year
+                                                 "age"=new.ages,                       # new age categories
+                                                 "location"=dimnames(hiv.mortality.age)[[3]]    # location
                                  )
   )
   
@@ -167,10 +167,10 @@ DATA.MANAGER$incidence$AGE.UPPERS = DATA.MANAGER$prevalence$AGE.UPPERS = DATA.MA
   new.25.to.49.hiv.mortality.lowers = hiv.mortality.lowers.age[,"15-49",] - hiv.mortality.lowers.age[,"15-24",]
   
   new.hiv.mortality.lowers.age =  array(NA,
-                                        dim = c(dim(hiv.mortality.lowers.age)[1], length(new.ages), dim(hiv.mortality.lowers.age)[3]),
-                                        dimnames = list(dimnames(hiv.mortality.lowers.age)[[1]],  # year
-                                                        new.ages,                       # new age categories
-                                                        dimnames(hiv.mortality.lowers.age)[[3]]    # location
+                                        dim = c(dim(hiv.mortality.lowers.age)[1], "age"=length(new.ages), dim(hiv.mortality.lowers.age)[3]),
+                                        dimnames = list("year"=dimnames(hiv.mortality.lowers.age)[[1]],  # year
+                                                        "age"=new.ages,                       # new age categories
+                                                        "location"=dimnames(hiv.mortality.lowers.age)[[3]]    # location
                                         )
   )
   
@@ -185,10 +185,10 @@ DATA.MANAGER$incidence$AGE.UPPERS = DATA.MANAGER$prevalence$AGE.UPPERS = DATA.MA
   new.25.to.49.hiv.mortality.uppers = hiv.mortality.uppers.age[,"15-49",] - hiv.mortality.uppers.age[,"15-24",]
   
   new.hiv.mortality.uppers.age =  array(NA,
-                                        dim = c(dim(hiv.mortality.uppers.age)[1], length(new.ages), dim(hiv.mortality.uppers.age)[3]),
-                                        dimnames = list(dimnames(hiv.mortality.uppers.age)[[1]],  # year
-                                                        new.ages,                       # new age categories
-                                                        dimnames(hiv.mortality.uppers.age)[[3]]    # location
+                                        dim = c(dim(hiv.mortality.uppers.age)[1], "age"=length(new.ages), dim(hiv.mortality.uppers.age)[3]),
+                                        dimnames = list("year"=dimnames(hiv.mortality.uppers.age)[[1]],  # year
+                                                        "age"=new.ages,                       # new age categories
+                                                        "location"=dimnames(hiv.mortality.uppers.age)[[3]]    # location
                                         )
   )
   
