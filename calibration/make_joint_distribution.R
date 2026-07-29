@@ -25,7 +25,6 @@ make.joint.distribution.age.time.all.ages = function(median.r2.age.15.to.19, # =
                                                      #   "age.50.and.over.transmission.multiplier"),
                                                      time.suffixes # = c(".0",".1",".2",".3")
 ){
-  
   var.names = paste0(rep(age.prefix.names,each=length(time.suffixes)),rep(time.suffixes,length(age.prefix.names)))
   
   mean.vector.age.1 = log(c(median.r2.age.15.to.19,
@@ -83,7 +82,7 @@ make.joint.distribution.age.time.all.ages = function(median.r2.age.15.to.19, # =
                          corr.20.to.29.with.30.to.39*corr.30.to.39.with.40.to.49*corr.40.to.49.with.50.and.over, 
                          corr.30.to.39.with.40.to.49*corr.40.to.49.with.50.and.over,
                          corr.40.to.49.with.50.and.over,
-                         1),) 
+                         1)) 
   
   new.mean.vector = rbind(M %*% mean.vector.age.1,
                           M %*% mean.vector.age.2,
