@@ -8,9 +8,9 @@ CHAIN = 1
 set.seed(1010*CHAIN)
 
 LOCATION = "Zambia"
-RESUME.RUNNING = T
+RESUME.RUNNING = F
 
-STEP = 1
+STEP = 2
 
 # new method: 2 steps, first one with weighted prevalence
 if(STEP==1){
