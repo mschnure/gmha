@@ -16,7 +16,7 @@ make.joint.distribution.age.time.all.ages = function(median.r2.age.15.to.19, # =
                                                      sd.r3.to.r2, # = log(2)/2,
                                                      corr.15.to.19.with.20.to.29, # = 0.5,
                                                      corr.20.to.29.with.30.to.39, # = 0.5,
-                                                     corr.30.to.39.with.40.to.49, # = 0.55,
+                                                     corr.30.to.39.with.40.to.49, # = 0.5,
                                                      corr.40.to.49.with.50.and.over, # = 0.5,
                                                      age.prefix.names, # = c("age.15.to.19.transmission.multiplier",
                                                      #   "age.20.to.29.transmission.multiplier",

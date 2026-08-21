@@ -7,32 +7,46 @@ CHAIN = 1
 
 set.seed(1010*CHAIN)
 
-LOCATION = "r1.high"
-RESUME.RUNNING = F
+LOCATION = "Zambia"
+RESUME.RUNNING = T
 
-STEP = "SINGLE.STEP"
+STEP = 1
 
+# new method: 2 steps, first one with weighted prevalence
 if(STEP==1){
-  WEIGHTED.PREVALENCE = F 
+  WEIGHTED.PREVALENCE = T 
   TOTAL.MORTALITY.WEIGHT = 1/1000
-  N.ITER = 50000
-  TOTAL.WEIGHT = 1/8 # DIFF FOR STEP 1
+  N.ITER = 25000
+  TOTAL.WEIGHT = 1
 } else if (STEP==2){
-  WEIGHTED.PREVALENCE = T # DIFF FOR STEP 2
-  TOTAL.MORTALITY.WEIGHT = 1/1000 
-  N.ITER = 50000
-  TOTAL.WEIGHT = 1
-} else if(STEP==3){
-  WEIGHTED.PREVALENCE = F 
-  TOTAL.MORTALITY.WEIGHT = 1/100 # DIFF FOR STEP 3
-  N.ITER = 50000
-  TOTAL.WEIGHT = 1
-} else if(STEP=="SINGLE.STEP"){ # overall weight at 1, no upweighted prevalence, but less downweighted mortality
   WEIGHTED.PREVALENCE = F 
   TOTAL.MORTALITY.WEIGHT = 1/100 
-  N.ITER = 50000
+  N.ITER = 100000
   TOTAL.WEIGHT = 1
 } else stop("must set STEP")
+
+
+# if(STEP==1){
+#   WEIGHTED.PREVALENCE = F 
+#   TOTAL.MORTALITY.WEIGHT = 1/1000
+#   N.ITER = 50000
+#   TOTAL.WEIGHT = 1/8 # DIFF FOR STEP 1
+# } else if (STEP==2){
+#   WEIGHTED.PREVALENCE = T # DIFF FOR STEP 2
+#   TOTAL.MORTALITY.WEIGHT = 1/1000 
+#   N.ITER = 50000
+#   TOTAL.WEIGHT = 1
+# } else if(STEP==3){
+#   WEIGHTED.PREVALENCE = F 
+#   TOTAL.MORTALITY.WEIGHT = 1/100 # DIFF FOR STEP 3
+#   N.ITER = 50000
+#   TOTAL.WEIGHT = 1
+# } else if(STEP=="SINGLE.STEP"){ # overall weight at 1, no upweighted prevalence, but less downweighted mortality
+#   WEIGHTED.PREVALENCE = F 
+#   TOTAL.MORTALITY.WEIGHT = 1/100 
+#   N.ITER = 100000
+#   TOTAL.WEIGHT = 1
+# } else stop("must set STEP")
 
 
 print(paste0("Running STEP ", STEP," MCMC with ",N.ITER," iterations, with total weight = ",TOTAL.WEIGHT,
