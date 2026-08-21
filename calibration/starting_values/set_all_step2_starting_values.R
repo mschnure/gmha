@@ -15,7 +15,11 @@ source("calibration/prior_distributions/r1_lower_middle_prior.R")
 source("calibration/prior_distributions/r1_upper_middle_prior.R")
 source("calibration/prior_distributions/r1_high_prior.R")
 
-COUNTRIES = c("Kenya","Malawi","Mozambique","Nigeria","South Africa","Tanzania","Uganda","Zambia","Zimbabwe",
+COUNTRIES = c("Kenya","Malawi","Mozambique",
+              "Nigeria",
+              "South Africa","Tanzania","Uganda",
+              #"Zambia",
+              "Zimbabwe",
               "unaids.remainder","non.unaids.remainder",
               "r1.low", "r1.lower.middle","r1.upper.middle","r1.high")
 
@@ -26,19 +30,14 @@ for(country in COUNTRIES){
   print(paste0("loading ",prior.name))
   prior = get(prior.name)
   
-  if(country=="r1.lower.middle"){
-    RUN.DATE = "7"
-  } else if (country %in% c("Nigeria","Zambia")){
-    RUN.DATE = "9"  
+  if(country %in% c("Nigeria","Zambia")){
+    RUN.DATE = "21"  
   } else {
-    RUN.DATE = "8"
+    RUN.DATE = "18"
   }
   
-  # initial run of 50,000 with 1/8 weight
-  file = paste0("mcmc_runs/simset_",convert_string(country),"_chain1_2026-05-2",RUN.DATE,".Rdata")
-  if(country %in% c("r1.low","r1.lower.middle","r1.upper.middle","r1.high",
-                    "unaids.remainder","non.unaids.remainder"))
-    file = paste0("mcmc_runs/simset_",convert_string(country),"_chain1_2026-06-17.Rdata")
+  # Step 1 runs
+  file = paste0("mcmc_runs/simset_",convert_string(country),"_chain1_2026-08-",RUN.DATE,".Rdata")
   print(paste0("loading file: ",file))
   load(file)
   
