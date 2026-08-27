@@ -50,7 +50,7 @@ set.likelihood.and.prior.by.location = function(location,
                                               }
 
     # print("STARTING FROM PRIORS FOR STEP 1")
-    print("STARTING FROM 8/21 STARTING VALUES FOR STEP 2, EXCEPT ZAMBIA")
+    print("STARTING FROM 8/21 STARTING VALUES FOR STEP 2")
     if(location=="Kenya"){
       prior = KENYA.PRIOR
       # params.start.values = get.medians(prior)
@@ -74,7 +74,7 @@ set.likelihood.and.prior.by.location = function(location,
     } else if(location=="Zambia"){
       prior = ZAMBIA.PRIOR
       params.start.values = get.medians(prior)
-      #load("calibration/starting_values/2026-08-21_zambia_start_values.Rdata")
+      load("calibration/starting_values/2026-08-24_zambia_start_values.Rdata")
     } else if(location=="Zimbabwe"){
       prior = ZIMBABWE.PRIOR
       # params.start.values = get.medians(prior)
@@ -102,11 +102,11 @@ set.likelihood.and.prior.by.location = function(location,
     } else if(location=="r1.lower.middle"){
       prior = R1.LOWER.MIDDLE.PRIOR
       # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_r1_lower_middle_start_values.Rdata")
+      load("calibration/starting_values/2026-08-21_r1_lower.middle_start_values.Rdata")
     } else if(location=="r1.upper.middle"){
       prior = R1.UPPER.MIDDLE.PRIOR
       # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_r1_upper_middle_start_values.Rdata")
+      load("calibration/starting_values/2026-08-21_r1_upper.middle_start_values.Rdata")
     } else if(location == "r1.high"){
       prior = R1.HIGH.PRIOR
       # params.start.values = get.medians(prior)
