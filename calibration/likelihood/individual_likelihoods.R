@@ -1,18 +1,11 @@
 source("calibration/likelihood/likelihood.R")
 library("mvtnorm")
 
-WEIGHT.YEARS = 1970:2030
-WEIGHTS.BY.YEAR = rep(1, length(WEIGHT.YEARS))
-WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2000) # before 2000, 1/4x
-WEIGHTS.BY.YEAR[WEIGHT.YEARS>=2018] = 4 # from 2018, 4x
-names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
+# WEIGHTS.BY.YEAR AND POP.WEIGHTS set in set.likelihood.and.prior.by.location
 
-# FOR POPULATION DATA, EXTEND WEIGHTS THROUGH 2040; don't multiply by total weight anymore because that is being factored in here
-POP.WEIGHTS = c(WEIGHTS.BY.YEAR,rep(1,10))
-names(POP.WEIGHTS) = c(names(WEIGHTS.BY.YEAR),2031:2040)
 
-LOCATION = "r1.high"
-WEIGHTED.PREVALENCE = T # if set to T, will run with 4x prevalence weight 
+LOCATION = "Kenya"
+WEIGHTED.PREVALENCE = F # if set to T, will run with 4x prevalence weight 
 
 
 if(WEIGHTED.PREVALENCE){
@@ -67,7 +60,7 @@ create.individual.likelihood = function(data.type,
                                         hiv.mortality.correlation.structure="auto.regressive",
                                         #total.mortality
                                         total.mortality.years=years,
-                                        total.mortality.weight=1/1000, 
+                                        total.mortality.weight, # removed default
                                         total.mortality.weight.by.age = c("80 and over" = 0.25), # changed from 0.25
                                         total.mortality.obs.correlation=0.5, 
                                         total.mortality.correlation.structure="auto.regressive"
@@ -227,8 +220,14 @@ aware.trend.lik = create.individual.likelihood(data.type = "awareness.trend",
                                                location = LOCATION)
 total.mortality.lik = create.individual.likelihood(data.type = "total.mortality",
                                                    parameters = BASE.PARAMETERS,
-                                                   location = LOCATION)
-full.lik = create.likelihood(parameters = BASE.PARAMETERS,location = LOCATION)
+                                                   location = LOCATION,
+                                                   total.mortality.weight = TOTAL.MORTALITY.WEIGHT)
+full.lik = create.likelihood(parameters = BASE.PARAMETERS,
+                             location = LOCATION,
+                             total.weight = WEIGHTS.BY.YEAR,
+                             population.weight=POP.WEIGHTS*(1/200000), #
+                             prevalence.weight = PREVALENCE.WEIGHT,
+                             total.mortality.weight = TOTAL.MORTALITY.WEIGHT)
 
 
 if(1==2){

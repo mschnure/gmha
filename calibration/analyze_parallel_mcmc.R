@@ -30,50 +30,50 @@ simplot(simset,
         #ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         data.types='prevalence')
 
-simplot(simset, 
-        years=1980:end.year, 
-        data.types='hiv.mortality')
-
-simplot(simset, 
-        years=1980:end.year, 
-        facet.by=c('age'), 
-        data.types='hiv.mortality')
-
-simplot(simset, 
-        years=1980:end.year, 
-        facet.by=c('age',"sex"), 
-        ages = "15+", 
-        data.types='incidence')
-
-simplot(simset, 
-        years=1980:end.year, 
-        facet.by=c('age',"sex"), 
-        ages = "15+", 
-        data.types='prevalence')
-
-simplot(simset, 
-        years=1980:end.year, 
-        facet.by=c('age',"sex"), 
-        ages = "15+", 
-        data.types='hiv.mortality')
-
-simplot(simset, 
-        years = 1980:end.year, 
-        data.types = "population")
+# simplot(simset, 
+#         years=1980:end.year, 
+#         data.types='hiv.mortality')
+# 
+# simplot(simset, 
+#         years=1980:end.year, 
+#         facet.by=c('age'), 
+#         data.types='hiv.mortality')
+# 
+# simplot(simset, 
+#         years=1980:end.year, 
+#         facet.by=c('age',"sex"), 
+#         ages = "15+", 
+#         data.types='incidence')
+# 
+# simplot(simset, 
+#         years=1980:end.year, 
+#         facet.by=c('age',"sex"), 
+#         ages = "15+", 
+#         data.types='prevalence')
+# 
+# simplot(simset, 
+#         years=1980:end.year, 
+#         facet.by=c('age',"sex"), 
+#         ages = "15+", 
+#         data.types='hiv.mortality')
+# 
+# simplot(simset, 
+#         years = 1980:end.year, 
+#         data.types = "population")
 
 simplot(simset,
         years = 1980:end.year, 
         data.types = "population",
         facet.by='age')
 
-simplot(simset,
-        years=1980:end.year, 
-        data.types='total.mortality')
-
-simplot(simset,
-        years=1980:end.year, 
-        facet.by=c('age'), 
-        data.types='total.mortality')
+# simplot(simset,
+#         years=1980:end.year, 
+#         data.types='total.mortality')
+# 
+# simplot(simset,
+#         years=1980:end.year, 
+#         facet.by=c('age'), 
+#         data.types='total.mortality')
 
 simplot(simset,
         years=1980:end.year, 
@@ -87,34 +87,34 @@ simplot(simset,
         proportion=T)
 
 
-
-# AGE DISTRIBUTION PLOT
-plot.limits = c("Global" = 5500000,
-                "non.unaids.remainder" = 2000000,
-                "unaids.remainder" = 1500000,
-                "South Africa" = 1150000,
-                "Mozambique" = 400000,
-                "Nigeria" = 300000,
-                "Tanzania" = 250000,
-                "Uganda" = 250000,
-                "Kenya" = 200000,
-                "Zambia" = 200000,
-                "Zimbabwe" = 200000,
-                "Malawi" = 160000,
-                "France" = 35000
-)
-pal = c(brewer.pal(n=12,"Paired")[2],brewer.pal(n=12,"Paired")[5],brewer.pal(n=12,"Paired")[4]) 
-alpha = 0.8
-
-plot.limit = plot.limits[simset@simulations[[1]]$location]
-generate.age.distribution(full.results.array, 
-                          outcome="prevalence", 
-                          intervention.1 = "no.int",year.1="2025",
-                          intervention.2 = "no.int",year.2="2040",
-                          intervention.3 = "no.int",year.3="2040",
-                          percent=F,
-                          sexes = c("female","male"),
-                          plot.limits=c(0,plot.limit)) +
+if(1==2){
+  # AGE DISTRIBUTION PLOT
+  plot.limits = c("Global" = 5500000,
+                  "non.unaids.remainder" = 2000000,
+                  "unaids.remainder" = 1500000,
+                  "South Africa" = 1150000,
+                  "Mozambique" = 400000,
+                  "Nigeria" = 300000,
+                  "Tanzania" = 250000,
+                  "Uganda" = 250000,
+                  "Kenya" = 200000,
+                  "Zambia" = 200000,
+                  "Zimbabwe" = 200000,
+                  "Malawi" = 160000,
+                  "France" = 35000
+  )
+  pal = c(brewer.pal(n=12,"Paired")[2],brewer.pal(n=12,"Paired")[5],brewer.pal(n=12,"Paired")[4]) 
+  alpha = 0.8
+  
+  plot.limit = plot.limits[simset@simulations[[1]]$location]
+  generate.age.distribution(full.results.array, 
+                            outcome="prevalence", 
+                            intervention.1 = "no.int",year.1="2025",
+                            intervention.2 = "no.int",year.2="2040",
+                            intervention.3 = "no.int",year.3="2040",
+                            percent=F,
+                            sexes = c("female","male"),
+                            plot.limits=c(0,plot.limit)) +
     scale_fill_manual(labels = c("no.int/2025" = "2025",
                                  "no.int/2040" = "Status quo, 2040",
                                  "no.int/2040" = "Status quo, 2040"), 
@@ -127,4 +127,6 @@ generate.age.distribution(full.results.array,
           plot.title = element_text(size = 18, colour = "grey37"))+
     labs(title = simset@simulations[[1]]$location,subtitle = NULL) +
     ylab(label = "Number of people living with HIV")+
-    guides(x =  guide_axis(angle = 45))
+    guides(x =  guide_axis(angle = 45))  
+}
+

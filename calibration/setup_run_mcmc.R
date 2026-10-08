@@ -3,12 +3,13 @@ library(distributions)
 library(ggplot2) 
 source("model/run_systematic.R")
 
-CHAIN = 1
+CHAIN = 3
 
-set.seed(1010*CHAIN)
+set.seed(3333333*CHAIN) # chain 1: 4 digits (7777), chain 2: 6 digits (999999), 
+#chain 3: 7 digits (3333333), chain 4: 8 digits (88888888)
 
-LOCATION = "Zambia"
-RESUME.RUNNING = F
+LOCATION = "Nigeria"
+RESUME.RUNNING = T
 
 STEP = 2
 
@@ -20,7 +21,7 @@ if(STEP==1){
   TOTAL.WEIGHT = 1
 } else if (STEP==2){
   WEIGHTED.PREVALENCE = F 
-  TOTAL.MORTALITY.WEIGHT = 1/100 
+  TOTAL.MORTALITY.WEIGHT = 1/1000 # SET BACK TO 1/1000 (FROM 1/100)
   N.ITER = 100000
   TOTAL.WEIGHT = 1
 } else stop("must set STEP")
