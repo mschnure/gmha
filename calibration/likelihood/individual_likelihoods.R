@@ -4,7 +4,7 @@ library("mvtnorm")
 # WEIGHTS.BY.YEAR AND POP.WEIGHTS set in set.likelihood.and.prior.by.location
 
 
-LOCATION = "Kenya"
+LOCATION = "Nigeria"
 WEIGHTED.PREVALENCE = F # if set to T, will run with 4x prevalence weight 
 
 

@@ -85,8 +85,9 @@ set.likelihood.and.prior.by.location = function(location,
       load("calibration/starting_values/2026-08-21_malawi_start_values.Rdata")
     } else if(location=="Nigeria"){
       prior = NIGERIA.PRIOR
-      params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_nigeria_start_values.Rdata")
+     # params.start.values = get.medians(prior)
+      load("calibration/starting_values/2026_10_12_nigeria_start_values.Rdata")
+      print("Using 10/12 starting values for Nigeria - change before second stage")
     } else if(location=="unaids.remainder"){
       prior = UNAIDS.REMAINDER.PRIOR
       # params.start.values = get.medians(prior)
