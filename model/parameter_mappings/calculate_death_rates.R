@@ -124,12 +124,23 @@ calculate.all.death.rates = function(data.manager,
 }
 
 # Projects future death rates based on logistic regression by age and sex 
-project.deaths = function(data.manager,
-                          location,
-                          project.to.year,
-                          keep.dimensions = c('year','sex','age','location'),
-                          model.age.cutoffs,
-                          sampled.parameters){
+# Fits log-linear trends to death rates by age and sex (the part of project.deaths that doesn't depend
+# on sampled parameters). Cached per location/settings for the R session when data.manager is
+# DATA.MANAGER; options(gmha.use.location.cache = FALSE) turns the cache off. Re-sourcing this file
+# (e.g., via source_code.R) clears the cache.
+DEATH.RATE.FIT.CACHE = new.env()
+fit.death.rate.trends = function(data.manager,
+                                 location,
+                                 project.to.year,
+                                 keep.dimensions,
+                                 model.age.cutoffs){
+    
+    use.cache = isTRUE(getOption("gmha.use.location.cache", TRUE)) &&
+        exists("DATA.MANAGER", envir = globalenv()) && identical(data.manager, get("DATA.MANAGER", envir = globalenv()))
+    key = paste(location, project.to.year, paste0(keep.dimensions, collapse = ","),
+                paste0(model.age.cutoffs, collapse = ","), sep = "|")
+    if (use.cache && exists(key, envir = DEATH.RATE.FIT.CACHE, inherits = FALSE))
+        return(get(key, envir = DEATH.RATE.FIT.CACHE, inherits = FALSE))
     
     deaths.age.sex.location = calculate.all.death.rates(data.manager = data.manager, 
                                                         location = location,
@@ -158,6 +169,32 @@ project.deaths = function(data.manager,
         names(rv) = c("intercept","slope")
         rv
     })
+    
+    rv = list(mortality.intercepts.slopes.age.sex = mortality.intercepts.slopes.age.sex,
+              desired.years = desired.years,
+              smoothed.years.label = smoothed.years.label)
+    if (use.cache)
+        assign(key, rv, envir = DEATH.RATE.FIT.CACHE)
+    rv
+}
+
+project.deaths = function(data.manager,
+                          location,
+                          project.to.year,
+                          keep.dimensions = c('year','sex','age','location'),
+                          model.age.cutoffs,
+                          sampled.parameters){
+    
+    # The regression fits don't depend on sampled.parameters, so they are computed once per location
+    # per R session (see fit.death.rate.trends above); the sampled multipliers are applied after
+    fits = fit.death.rate.trends(data.manager = data.manager,
+                                 location = location,
+                                 project.to.year = project.to.year,
+                                 keep.dimensions = keep.dimensions,
+                                 model.age.cutoffs = model.age.cutoffs)
+    mortality.intercepts.slopes.age.sex = fits$mortality.intercepts.slopes.age.sex
+    desired.years = fits$desired.years
+    smoothed.years.label = fits$smoothed.years.label
     
     age.45.to.64.age.brackets = get.age.brackets.in.range(lower = 45, 
                                                           upper = 65) 
