@@ -2,6 +2,8 @@ library(bayesian.simulations)
 library(distributions)
 library(ggplot2) 
 source("model/run_systematic.R")
+source("model/diffeq_cpp.R") # compiles the C++ version of the ODE (once per session)
+options(gmha.use.cpp = TRUE) # run.model uses C++ (identical results, ~20x faster ODE); set FALSE for the R version
 
 CHAIN = 3
 

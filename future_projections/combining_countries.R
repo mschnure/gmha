@@ -74,8 +74,12 @@ combine.simsets = function(...,
 # sorts the output of combine simsets (a list) by the 2022 prevalence value for each sim 
 sort.by.prevalence = function(result.list){
     
-    total.prev.2022 = apply(result.list$prevalence["2022",,,,,,],c("sim","country"),sum)
-    #total.prev.2022 = apply(result.list$prevalence["2022",,,,,,],c("sim"),sum) # only for all.high (only one country)
+    # rank by total PLHIV in 2022, computed from population (all HIV+ states) rather than sim$prevalence,
+    # which was mislabeled in older simsets (recycled undiagnosed slice); works for old and new simsets
+    # drop=FALSE keeps the sim/country dimensions even when there is only one country (e.g., all.high)
+    hiv.positive.states = setdiff(dimnames(result.list$population)$hiv.status, "hiv_negative")
+    total.prev.2022 = apply(result.list$population["2022",,,,hiv.positive.states,,,drop=FALSE],
+                            c("sim","country"),sum)
     
     countries = dimnames(total.prev.2022)[[2]]
     
