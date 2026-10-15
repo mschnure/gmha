@@ -328,6 +328,10 @@ create.likelihood.for.data.type = function(data.type,
                                                                use.age.sex=use.age.sex
                                                                )
     
+    # With no denominator (population), the covariance matrix has no model-error term, so it is the
+    # same for every sim: compute.likelihood factors it once and keeps it here
+    chol.cache = if (is.null(denominator.data.type)) new.env() else NULL
+    
     function(sim,debug=F){ # this gets called every single time we invoke likelihood on a simulation; which is why we pre-compute above it
         
         compute.likelihood(sim=sim,
@@ -342,6 +346,7 @@ create.likelihood.for.data.type = function(data.type,
                            obs.cov.mat=likelihood.elements$obs.cov.mat,
                            weight=weight,
                            weight.by.age=weight.by.age,
+                           chol.cache=chol.cache,
                            debug=debug)
         
     }
@@ -607,6 +612,7 @@ compute.likelihood = function(sim,
                               obs.cov.mat, # pre-computed variance-covariance matrix
                               weight,
                               weight.by.age,
+                              chol.cache=NULL, # environment; only passed when the covariance doesn't depend on the sim
                               debug=F){
     
     ## Model component## 
@@ -673,7 +679,27 @@ compute.likelihood = function(sim,
     }
 
     # compute and return the density of the multivariate normal
-    rv = dmvnorm(x = obs,mean = mu,sigma = cov.mat,log = T)
+    if (!is.null(chol.cache) && isTRUE(getOption('gmha.cache.likelihood.chol', TRUE))) {
+        # covariance is the same for every sim here, so do the Cholesky factorization only once
+        if (is.null(chol.cache$dec)) {
+            dec = tryCatch(base::chol(cov.mat), error = function(e) NULL)
+            if (is.null(dec)) # not positive definite: fall back to dmvnorm (which returns -Inf)
+                return(dmvnorm(x = obs,mean = mu,sigma = cov.mat,log = T))
+            chol.cache$dec = dec
+        }
+        rv = dmvnorm.from.chol(x = obs, mean = mu, dec = chol.cache$dec)
+    } else
+        rv = dmvnorm(x = obs,mean = mu,sigma = cov.mat,log = T)
 
     
+}
+
+
+# Log density of a multivariate normal given the Cholesky factor of its covariance matrix
+# (dec = chol(sigma)). Same arithmetic as mvtnorm::dmvnorm(log = TRUE), minus the factorization.
+dmvnorm.from.chol = function(x, mean, dec){
+    p = length(x)
+    tmp = backsolve(dec, matrix(x, ncol = 1) - as.numeric(mean), transpose = TRUE)
+    rss = colSums(tmp^2)
+    -sum(log(diag(dec))) - 0.5 * p * log(2 * pi) - 0.5 * rss
 }

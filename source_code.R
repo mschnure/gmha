@@ -59,5 +59,8 @@ source('calibration/set_likelihood_and_prior.R') # sources all individual priors
 source('future_projections/create_and_run_interventions_functions.R')
 source('future_projections/extract_projection_results_functions.R')
 
+# cache inputs that depend only on location (must come after the functions are defined)
+source('helpers/location_cache.R')
+
 
 
