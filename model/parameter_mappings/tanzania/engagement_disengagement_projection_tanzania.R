@@ -6,7 +6,7 @@
 
 get.engagement.model.tanzania = function(){
     
-    max.proportion = 0.95
+    max.proportion = 0.99
     
     data = suppressMessages(readxl::read_xlsx("data_manager/IeDEA_data.xlsx",sheet="eng_tanz",col_names=T))
     data = suppressWarnings(as.numeric(unlist(c(data[2:5,2:6],data[9:12,2:6]))))

@@ -51,7 +51,7 @@ get.unsuppression.rate.us = function(){
 # Viral suppression within 6 months of ART initiation - Alvarez-Uria et al, 2013 (Maunank cites this paper)
 # https://onlinelibrary.wiley.com/doi/10.1155/2013/384805
 get.suppression.rate.india = function(){
-    max.proportion = 0.95
+    max.proportion = 0.99
     
     suppression.p.6.months = .818
     time = 6/12

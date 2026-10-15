@@ -54,7 +54,7 @@ get.disengagement.model.us = function(){
 # https://onlinelibrary.wiley.com/doi/10.1155/2013/384805
 get.engagement.model.india = function(){
     
-    max.proportion = 0.95
+    max.proportion = 0.99
     
     engagement.p.3.months = .673
     time = 3/12

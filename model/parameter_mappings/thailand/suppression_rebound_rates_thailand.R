@@ -51,7 +51,7 @@ get.unsuppression.rate.thailand = function(){
 # Eamsakulrat et al, 2022 (data are from 2016)
 # % virally suppressed at 12 months 
 get.suppression.rate.thailand = function(){
-    max.proportion = 0.95
+    max.proportion = 0.99
     
     # Oyomopito 2010 (TAHOD, from 2000-2010) 
     {

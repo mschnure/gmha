@@ -29,7 +29,7 @@ get.disengagement.model.kenya = function(){
 # Treatment Outcomes among Patients Enrolling in Care in Sub-Saharan Africa
 get.engagement.model.kenya = function(){
     
-    max.proportion = 0.95
+    max.proportion = 0.99
     
     data = suppressMessages(readxl::read_xlsx("data_manager/IeDEA_data.xlsx",sheet="eng_ken",col_names=T))
     data = suppressWarnings(as.numeric(unlist(c(data[2:5,2:6],data[9:12,2:6]))))
@@ -143,7 +143,7 @@ get.engagement.model.kenya.old.2 = function(){
                     year=engagement.years)
 
     fit = suppressWarnings(glm(value~year, family=binomial,data=df)) 
-    max.proportion = 0.95
+    max.proportion = 0.99
     
     rv = list(intercept=fit$coefficients[1],
               slope=fit$coefficients[2],
@@ -219,7 +219,7 @@ get.engagement.model.kenya.old = function(){
     
     fit.to.use = "fit2"
     
-    max.proportion = 0.95
+    max.proportion = 0.99
     
     if(fit.to.use=="fit1"){
         fit=fit1

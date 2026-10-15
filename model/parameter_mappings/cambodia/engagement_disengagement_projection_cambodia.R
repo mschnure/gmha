@@ -55,7 +55,7 @@ get.engagement.model.asia = function(){
     
     data.df$year = engagement.years
     
-    max.proportion = 0.95
+    max.proportion = 0.99
     
     fit = suppressWarnings(glm(pmin(value/max.proportion,1) ~ year+age+sex, family=binomial, data = data.df)) 
     

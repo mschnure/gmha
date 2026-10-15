@@ -65,7 +65,7 @@ get.engagement.model.unaids = function(){
     df = data.frame(value=engagement.rate,
                     year=engagement.years)
     
-    max.proportion = 0.95
+    max.proportion = 0.99
     fit = suppressWarnings(glm(pmin(value/max.proportion,1)~year, family=binomial,data=df)) 
     
     dim.names.projection = list(year = 1980:2040 - engagement.anchor.year,
@@ -171,7 +171,7 @@ get.engagement.model.unaids.multi.slope = function(){
     
     fit.to.use = "fit2"
     
-    max.proportion = 0.95
+    max.proportion = 0.99
     
     dim.names.projection = list(year = 1980:2040 - engagement.anchor.year,
                                 age = c("10-19","20-29","30-39","40-49","50 and over"),
