@@ -33,8 +33,8 @@ get.testing.model.malawi = function(){
     
     intercepts = sapply(testing.sexes,function(sex){
         
-        fit = suppressWarnings(glm(prop ~ year*age, family=binomial, data = master.df[master.df$sex==sex & master.df$age!=17,])) # Betas will be intercept, year, age, year:age
-        fit.young = suppressWarnings(glm(prop ~ year, family=binomial, data = master.df[master.df$sex==sex & master.df$age==17,]))
+        fit = suppressWarnings(glm(pmin(prop/max.proportion,1) ~ year*age, family=binomial, data = master.df[master.df$sex==sex & master.df$age!=17,])) # Betas will be intercept, year, age, year:age
+        fit.young = suppressWarnings(glm(pmin(prop/max.proportion,1) ~ year, family=binomial, data = master.df[master.df$sex==sex & master.df$age==17,]))
         
         sapply(midpoint.model.ages,function(age){
             if(age>18){
@@ -53,8 +53,8 @@ get.testing.model.malawi = function(){
     
     slopes = sapply(testing.sexes,function(sex){
         
-        fit = suppressWarnings(glm(prop ~ year*age, family=binomial, data = master.df[master.df$sex==sex & master.df$age!=17,])) 
-        fit.young = suppressWarnings(glm(prop ~ year, family=binomial, data = master.df[master.df$sex==sex & master.df$age==17,]))
+        fit = suppressWarnings(glm(pmin(prop/max.proportion,1) ~ year*age, family=binomial, data = master.df[master.df$sex==sex & master.df$age!=17,])) 
+        fit.young = suppressWarnings(glm(pmin(prop/max.proportion,1) ~ year, family=binomial, data = master.df[master.df$sex==sex & master.df$age==17,]))
         
         sapply(midpoint.model.ages,function(age){
             if(age>18){

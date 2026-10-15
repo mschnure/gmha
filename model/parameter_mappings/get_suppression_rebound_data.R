@@ -34,13 +34,13 @@ get.unsuppression.rates = function(location){
     if(location=="South Africa"){
         rv = get.unsuppression.rate.south.africa() 
     } else if(location=="non.unaids.remainder"){
-        get.mean.non.unaids.unsuppression.rate() # using mean of India and US unsuppression data for non-UNAIDS remainder
+        rv = get.mean.non.unaids.unsuppression.rate() # using mean of India and US unsuppression data for non-UNAIDS remainder
     } else if(location=="France"){
-        get.unsuppression.rate.france() 
+        rv = get.unsuppression.rate.france() 
     } else if(location=="Thailand"){
-        get.unsuppression.rate.thailand() 
+        rv = get.unsuppression.rate.thailand() 
     } else if(location=="Cambodia"){
-        get.unsuppression.rate.cambodia() 
+        rv = get.unsuppression.rate.cambodia() 
     } else {
         rv = get.unsuppression.rate.kenya() # use KENYA'S unsuppression data for all other countries 
     }

@@ -50,13 +50,13 @@ get.disengagement.model = function(location){
     if(location=="South Africa"){
         rv = get.disengagement.model.south.africa() 
     } else if(location=="non.unaids.remainder"){
-        get.mean.non.unaids.disengagement.rate() # using mean of India and US disengagement data for non-UNAIDS remainder
+        rv = get.mean.non.unaids.disengagement.rate() # using mean of India and US disengagement data for non-UNAIDS remainder
     } else if(location=="France"){
-        get.disengagement.model.france() 
+        rv = get.disengagement.model.france() 
     } else if(location=="Thailand"){
-        get.disengagement.model.thailand() 
+        rv = get.disengagement.model.thailand() 
     } else if(location=="Cambodia"){
-        get.disengagement.model.cambodia() 
+        rv = get.disengagement.model.cambodia() 
     } else {
         rv = get.disengagement.model.kenya() # use KENYA'S disengagement data for all other countries 
     }
