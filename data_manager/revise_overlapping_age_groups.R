@@ -1,6 +1,10 @@
 source("model/run_systematic.R")
 
-load("cached/data.manager_global_2026-06-25.Rdata")
+# load the most recent (non-revised) data manager made by save_data_manager.R
+base.dm.files = list.files("cached", pattern = "^data\\.manager_global_[0-9-]+\\.Rdata$")
+print(paste0("Revising age groups in: ", max(base.dm.files)))
+load(file.path("cached", max(base.dm.files)))
+#load("cached/data.manager_global_2026-06-25.Rdata")
 
 DATA.MANAGER.OLD = DATA.MANAGER
 
@@ -45,7 +49,9 @@ DATA.MANAGER$incidence$AGE.UPPERS = DATA.MANAGER$prevalence$AGE.UPPERS = DATA.MA
   
   # lowers
   incidence.lowers.age = DATA.MANAGER$incidence.lowers$year.age.location
-  new.25.to.49.incidence.lowers = incidence.lowers.age[,"15-49",] - incidence.lowers.age[,"15-24",]
+  # bounds can't be subtracted (lower(15-49) - lower(15-24) is not a lower bound and often lands above the point);
+  # instead give 25-49 the same relative interval as 15-49 (fixed 10/15/26)
+  new.25.to.49.incidence.lowers = new.25.to.49.incidence * incidence.lowers.age[,"15-49",]/incidence.age[,"15-49",]
   
   new.incidence.lowers.age =  array(NA,
                                     dim = c(dim(incidence.lowers.age)[1], "age"=length(new.ages), dim(incidence.lowers.age)[3]),
@@ -63,7 +69,9 @@ DATA.MANAGER$incidence$AGE.UPPERS = DATA.MANAGER$prevalence$AGE.UPPERS = DATA.MA
   
   # uppers
   incidence.uppers.age = DATA.MANAGER$incidence.uppers$year.age.location
-  new.25.to.49.incidence.uppers = incidence.uppers.age[,"15-49",] - incidence.uppers.age[,"15-24",]
+  # bounds can't be subtracted (lower(15-49) - lower(15-24) is not a lower bound and often lands above the point);
+  # instead give 25-49 the same relative interval as 15-49 (fixed 10/15/26)
+  new.25.to.49.incidence.uppers = new.25.to.49.incidence * incidence.uppers.age[,"15-49",]/incidence.age[,"15-49",]
   
   new.incidence.uppers.age =  array(NA,
                                     dim = c(dim(incidence.uppers.age)[1], "age"=length(new.ages), dim(incidence.uppers.age)[3]),
@@ -104,7 +112,9 @@ DATA.MANAGER$incidence$AGE.UPPERS = DATA.MANAGER$prevalence$AGE.UPPERS = DATA.MA
   
   # lowers
   prevalence.lowers.age = DATA.MANAGER$prevalence.lowers$year.age.location
-  new.25.to.49.prevalence.lowers = prevalence.lowers.age[,"15-49",] - prevalence.lowers.age[,"15-24",]
+  # bounds can't be subtracted (lower(15-49) - lower(15-24) is not a lower bound and often lands above the point);
+  # instead give 25-49 the same relative interval as 15-49 (fixed 10/15/26)
+  new.25.to.49.prevalence.lowers = new.25.to.49.prevalence * prevalence.lowers.age[,"15-49",]/prevalence.age[,"15-49",]
   
   new.prevalence.lowers.age =  array(NA,
                                      dim = c(dim(prevalence.lowers.age)[1], "age"=length(new.ages), dim(prevalence.lowers.age)[3]),
@@ -122,7 +132,9 @@ DATA.MANAGER$incidence$AGE.UPPERS = DATA.MANAGER$prevalence$AGE.UPPERS = DATA.MA
   
   # uppers
   prevalence.uppers.age = DATA.MANAGER$prevalence.uppers$year.age.location
-  new.25.to.49.prevalence.uppers = prevalence.uppers.age[,"15-49",] - prevalence.uppers.age[,"15-24",]
+  # bounds can't be subtracted (lower(15-49) - lower(15-24) is not a lower bound and often lands above the point);
+  # instead give 25-49 the same relative interval as 15-49 (fixed 10/15/26)
+  new.25.to.49.prevalence.uppers = new.25.to.49.prevalence * prevalence.uppers.age[,"15-49",]/prevalence.age[,"15-49",]
   
   new.prevalence.uppers.age =  array(NA,
                                      dim = c(dim(prevalence.uppers.age)[1], "age"=length(new.ages), dim(prevalence.uppers.age)[3]),
@@ -164,7 +176,9 @@ DATA.MANAGER$incidence$AGE.UPPERS = DATA.MANAGER$prevalence$AGE.UPPERS = DATA.MA
   
   # lowers
   hiv.mortality.lowers.age = DATA.MANAGER$hiv.mortality.lowers$year.age.location
-  new.25.to.49.hiv.mortality.lowers = hiv.mortality.lowers.age[,"15-49",] - hiv.mortality.lowers.age[,"15-24",]
+  # bounds can't be subtracted (lower(15-49) - lower(15-24) is not a lower bound and often lands above the point);
+  # instead give 25-49 the same relative interval as 15-49 (fixed 10/15/26)
+  new.25.to.49.hiv.mortality.lowers = new.25.to.49.hiv.mortality * hiv.mortality.lowers.age[,"15-49",]/hiv.mortality.age[,"15-49",]
   
   new.hiv.mortality.lowers.age =  array(NA,
                                         dim = c(dim(hiv.mortality.lowers.age)[1], "age"=length(new.ages), dim(hiv.mortality.lowers.age)[3]),
@@ -182,7 +196,9 @@ DATA.MANAGER$incidence$AGE.UPPERS = DATA.MANAGER$prevalence$AGE.UPPERS = DATA.MA
   
   # uppers
   hiv.mortality.uppers.age = DATA.MANAGER$hiv.mortality.uppers$year.age.location
-  new.25.to.49.hiv.mortality.uppers = hiv.mortality.uppers.age[,"15-49",] - hiv.mortality.uppers.age[,"15-24",]
+  # bounds can't be subtracted (lower(15-49) - lower(15-24) is not a lower bound and often lands above the point);
+  # instead give 25-49 the same relative interval as 15-49 (fixed 10/15/26)
+  new.25.to.49.hiv.mortality.uppers = new.25.to.49.hiv.mortality * hiv.mortality.uppers.age[,"15-49",]/hiv.mortality.age[,"15-49",]
   
   new.hiv.mortality.uppers.age =  array(NA,
                                         dim = c(dim(hiv.mortality.uppers.age)[1], "age"=length(new.ages), dim(hiv.mortality.uppers.age)[3]),
@@ -212,5 +228,8 @@ DATA.MANAGER$hiv.mortality$year.age.location = new.hiv.mortality.age
 DATA.MANAGER$hiv.mortality.lowers$year.age.location = new.hiv.mortality.lowers.age
 DATA.MANAGER$hiv.mortality.uppers$year.age.location = new.hiv.mortality.uppers.age
 
+
+# same bounds clean-up as in save_data_manager.R, now on the new 25-49 group (10/15/26)
+DATA.MANAGER = fix.count.bounds(DATA.MANAGER, elements = "year.age.location")
 
 save(DATA.MANAGER,file=paste0("cached/data.manager_global_revised_ages_",Sys.Date(),".Rdata"))

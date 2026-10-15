@@ -506,12 +506,12 @@ get.likelihood.elements.by.data.type.and.dimension = function(data.type,
     # For data with upper/lower values (everything except pop), use these to calculate the SDs; only keep observations with all three values 
     if(calculate.sds.from.ci){
         obs.data.uppers = as.numeric(get.surveillance.data(data.manager = data.manager,
-                                                           data.type = paste0(data.type,".lowers"),
+                                                           data.type = paste0(data.type,".uppers"), # fixed 10/15/26 (was swapped with .lowers)
                                                            years = years,
                                                            locations = location,
                                                            keep.dimensions = keep.dimensions))
-        obs.data.lowers = as.numeric(get.surveillance.data(data.manager = data.manager,  # placeholder 
-                                                           data.type = paste0(data.type,".uppers"),
+        obs.data.lowers = as.numeric(get.surveillance.data(data.manager = data.manager,
+                                                           data.type = paste0(data.type,".lowers"),
                                                            years = years,
                                                            locations = location,
                                                            keep.dimensions = keep.dimensions))

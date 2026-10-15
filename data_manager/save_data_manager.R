@@ -7,6 +7,16 @@ load('data_manager/remainder_countries.Rdata')
 load('data_manager/cascade_weights.Rdata')
 load('data_manager/locations_income.Rdata')
 
+## Countries with no UNAIDS PLHIV estimates (China, Russia, United States, Japan, UK, Turkiye, Cameroon, ...) are
+## modeled in non.unaids.remainder: their PLHIV already land there (global - reported), so take them out of the
+## remainder/income lists so their population and deaths go there too (otherwise r1.* population includes them
+## while r1.* PLHIV does not). Added 10/15/26.
+NO.PLHIV.DATA.COUNTRIES = get.countries.without.prevalence.data()
+REMAINDER.COUNTRIES.UNAIDS = setdiff(REMAINDER.COUNTRIES.UNAIDS, NO.PLHIV.DATA.COUNTRIES)
+for(group in setdiff(names(LOCATIONS.INCOME), "full"))
+    LOCATIONS.INCOME[[group]] = setdiff(LOCATIONS.INCOME[[group]], NO.PLHIV.DATA.COUNTRIES)
+print(paste0("Moved to non.unaids.remainder (no PLHIV data): ", paste0(NO.PLHIV.DATA.COUNTRIES, collapse = ", ")))
+
 EXTRACT.SUPPRESSED.VALUES = T 
 SCALE.REMAINDER.DATA = T
 
@@ -35,6 +45,9 @@ if(SCALE.REMAINDER.DATA){
     }
 }
 
+
+# non.unaids.remainder bounds relative to Global; clamp any lower > point / upper < point (10/15/26)
+DATA.MANAGER = fix.count.bounds(DATA.MANAGER)
 
 save(DATA.MANAGER,file=paste0("cached/data.manager_global_",Sys.Date(),".Rdata"))
 
