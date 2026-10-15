@@ -1,19 +1,27 @@
 ################################################################################################
 # Description: Runs the MCMC calibration for one or more locations, unattended:
-#   Step 1 (1 chain) -> saves Step 2 starting values -> Step 2 (4 chains in parallel) -> merges them
+#   Step 1 (1 chain) -> saves Step 2 starting values -> Step 2 (4 chains) -> merges them
+#
+# All chains share the parallel R sessions, in priority order: Step 1 for every location, then
+# Step 2 chain 1 for every location, then chain 2 for every location, and so on. A location's Step 2
+# chains start as soon as its own Step 1 is done; a failed chain is retried (resuming from its
+# cache); each location is merged as soon as its four Step 2 chains are done.
 #
 # How to run: on the MCMC machine, open the project, set the options below, then run this file as
 # an RStudio Background Job (Background Jobs tab > Start Background Job > this file, with the
 # project folder as working directory). It keeps going if you close the session.
 #
-# Progress: summary in mcmc_runs/logs/pipeline_<date>_<time>.log, and one log per chain in
-#           mcmc_runs/logs/<location>_step<step>_chain<chain>_<date>.log
+# Progress: - mcmc.progress() in any R session on this machine (after sourcing run_systematic.R and
+#             calibration/mcmc_pipeline.R): % done for every location/step/chain
+#           - status table: mcmc_runs/logs/pipeline_status_<...>.csv (updated as chains finish)
+#           - summary log: mcmc_runs/logs/pipeline_<...>.log; one log per chain in
+#             mcmc_runs/logs/<location>_step<step>_chain<chain>_<date>.log
 #
 # Settings for each step (iterations, weights, chains, seeds) and Nigeria's Step 1 starting values
 # are in calibration/mcmc_settings.R.
 ################################################################################################
 
-LOCATIONS = c("Nigeria")  # e.g. c("Kenya", "South Africa", "r1.low")
+LOCATIONS = "all"         # "all" = all 15 locations, or e.g. c("Kenya", "South Africa", "r1.low")
 STEPS = c(1, 2)           # c(1, 2) = both; 2 = Step 2 only (uses the latest Step 2 starting values)
 N.CORES = max(1, parallel::detectCores() - 1)  # parallel R sessions (Step 2 needs 4 per location).
                           # Running one location per RStudio window? Use N.CORES = 4 in each, and keep
@@ -22,8 +30,9 @@ N.CORES = max(1, parallel::detectCores() - 1)  # parallel R sessions (Step 2 nee
                           # shares N.CORES across them automatically.
 RESUME = FALSE            # TRUE = pick up existing caches (e.g., after a crash or restart) instead
                           #        of starting fresh; FALSE overwrites caches for these runs
-MERGE = TRUE              # merge the Step 2 chains at the end (each chain is also saved on its own,
-                          # so you can review them individually either way - see review_mcmc_chains.R)
+MERGE = TRUE              # merge each location's Step 2 chains when they're done (each chain is also saved
+                          # on its own, so you can review them individually either way - see review_mcmc_chains.R)
+MAX.RETRIES = 1           # times to retry a failed chain (resuming from its cache) before giving up
 
 source("model/run_systematic.R")
 source("calibration/mcmc_pipeline.R")
@@ -32,4 +41,5 @@ results = run.mcmc.pipeline(locations = LOCATIONS,
                             steps = STEPS,
                             n.cores = N.CORES,
                             resume = RESUME,
-                            merge = MERGE)
+                            merge = MERGE,
+                            max.retries = MAX.RETRIES)

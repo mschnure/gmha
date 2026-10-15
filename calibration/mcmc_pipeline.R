@@ -5,8 +5,11 @@
 #     1. run.mcmc.step.chain: runs one chain of one step for one location (create or resume the
 #        cache, save the mcmc and simset; Step 1 also saves the Step 2 starting values)
 #     2. merge.step2.chains: merges the Step 2 chains for a location (most recent file for each chain)
-#     3. run.mcmc.pipeline: for one or more locations, runs Step 1, then all Step 2 chains in
-#        parallel (separate R sessions), then merges the Step 2 chains
+#     3. run.mcmc.pipeline: for one or more locations ("all" = all 15), runs every chain in parallel
+#        R sessions in priority order - Step 1 for every location, then Step 2 chain 1 for every
+#        location, then chain 2, ... (a location's Step 2 starts once its Step 1 is done); retries a
+#        failed chain from its cache; merges each location as soon as its Step 2 chains are done
+#     6. mcmc.progress: how far along every chain is (from the caches)
 #     4. use.cpp.model.if.possible: compiles the C++ ODE, falls back to the R version if it can't
 #     5. make.safe.mcmc.functions: wraps the simulation, likelihood and prior so an error (or an
 #        NA/NaN likelihood) for a proposed parameter set rejects that proposal instead of crashing
@@ -351,29 +354,80 @@ run.mcmc.pipeline = function(locations,
                              steps = c(1, 2),
                              n.cores = max(1, parallel::detectCores() - 1),
                              resume = FALSE,
-                             merge = TRUE){
+                             merge = TRUE,
+                             max.retries = 1){
 
+    if (identical(locations, "all"))
+        locations = names(LOCATION.PRIOR.NAMES)
     for (location in locations) get.location.prior(location)  # check every location is set up
     if (!all(steps %in% c(1, 2)))
         stop("steps must be 1, 2, or c(1, 2)")
 
     dir.create(file.path(MCMC.RUNS.DIR, "logs"), recursive = TRUE, showWarnings = FALSE)
-    pipeline.log = file.path(MCMC.RUNS.DIR, "logs", paste0("pipeline_", paste0(convert_string(locations), collapse = "_"),
-                                                           "_", format(Sys.time(), "%Y-%m-%d_%H%M"), ".log"))
+    run.label = paste0(if (length(locations) > 3) paste0(length(locations), "_locations")
+                       else paste0(convert_string(locations), collapse = "_"),
+                       "_", format(Sys.time(), "%Y-%m-%d_%H%M"))
+    pipeline.log = file.path(MCMC.RUNS.DIR, "logs", paste0("pipeline_", run.label, ".log"))
+    status.file = file.path(MCMC.RUNS.DIR, "logs", paste0("pipeline_status_", run.label, ".csv"))
     say = function(...){
         line = paste0(format(Sys.time(), "%Y-%m-%d %H:%M"), "  ", paste0(...))
         cat(line, "\n")
         cat(line, "\n", file = pipeline.log, append = TRUE)
     }
 
+    ##-- The tasks, in priority order: Step 1 for every location, then Step 2 chain 1 for every
+    ##-- location, then chain 2 for every location, ... A Step 2 chain can start once its
+    ##-- location's Step 1 is done (when Step 1 is part of this run).
+    tasks = list()
+    if (1 %in% steps)
+        for (location in locations)
+            tasks[[length(tasks) + 1]] = list(location = location, step = 1, chain = min(mcmc.step.settings(1)$chains),
+                                              resume = resume, attempts = 0)
     step2.chains = mcmc.step.settings(2)$chains
-    max.tasks = max(if (1 %in% steps) length(locations) else 0,
-                    if (2 %in% steps) length(locations) * length(step2.chains) else 0)
-    n.workers = max(1, min(n.cores, max.tasks))
+    if (2 %in% steps)
+        for (chain in step2.chains)
+            for (location in locations)
+                tasks[[length(tasks) + 1]] = list(location = location, step = 2, chain = chain,
+                                                  resume = resume, attempts = 0)
+    n.tasks = length(tasks)
+    task.label = function(i) paste0(tasks[[i]]$location, " step ", tasks[[i]]$step, " chain ", tasks[[i]]$chain)
+    status = rep("waiting", n.tasks)    # waiting / running / done / FAILED / skipped
+    results = vector("list", n.tasks)
+    started.at = rep(as.POSIXct(NA), n.tasks)
+    step1.index = function(location) which(sapply(tasks, function(t) t$step == 1 && t$location == location))
+    step2.indices = function(location) which(sapply(tasks, function(t) t$step == 2 && t$location == location))
 
-    say("MCMC pipeline: ", paste0(locations, collapse = ", "), " | steps ", paste0(steps, collapse = " & "),
-        " | ", n.workers, " parallel R sessions | resume = ", resume)
-    say("Per-chain logs: ", file.path(MCMC.RUNS.DIR, "logs"), "  (this summary: ", pipeline.log, ")")
+    is.ready = function(i){
+        if (tasks[[i]]$step == 1 || !(1 %in% steps)) return(TRUE)
+        status[step1.index(tasks[[i]]$location)] == "done"
+    }
+    next.task = function(){
+        for (i in seq_len(n.tasks))
+            if (status[i] == "waiting" && is.ready(i)) return(i)
+        NA
+    }
+    write.status = function(){
+        df = do.call(rbind, lapply(seq_len(n.tasks), function(i){
+            r = results[[i]]
+            data.frame(location = tasks[[i]]$location, step = tasks[[i]]$step, chain = tasks[[i]]$chain,
+                       status = status[i], attempts = tasks[[i]]$attempts,
+                       started = if (is.na(started.at[i])) "" else format(started.at[i], "%Y-%m-%d %H:%M"),
+                       hours = if (is.null(r$hours)) NA else r$hours,
+                       acceptance = if (is.null(r$acceptance.rate)) NA else r$acceptance.rate,
+                       errored.proposals = if (is.null(r$n.errors)) NA else r$n.errors,
+                       message = if (is.null(r$message)) "" else r$message,
+                       stringsAsFactors = FALSE)
+        }))
+        write.csv(df, status.file, row.names = FALSE)
+    }
+
+    n.workers = max(1, min(n.cores, n.tasks))
+    say("MCMC pipeline: ", length(locations), " location(s) (", paste0(locations, collapse = ", "), ") | steps ",
+        paste0(steps, collapse = " & "), " | ", n.tasks, " chains to run | ", n.workers, " parallel R sessions | resume = ", resume,
+        " | retries per chain = ", max.retries)
+    say("Status table (updated as chains finish): ", status.file)
+    say("Per-chain logs: ", file.path(MCMC.RUNS.DIR, "logs"), " | progress any time: mcmc.progress()")
+    write.status()
 
     # Worker R sessions: same working directory, same code, same settings as this session
     say("Starting ", n.workers, " R sessions (each loads the model and compiles the C++ ODE, ~1-2 min)")
@@ -383,53 +437,125 @@ run.mcmc.pipeline = function(locations,
     parallel::clusterEvalQ(cl, source("calibration/mcmc_worker_setup.R"))
     parallel::clusterExport(cl, MCMC.SETTING.NAMES, envir = globalenv())
 
-    all.results = list()
-    run.tasks = function(tasks){
-        results = parallel::parLapplyLB(cl, tasks, run.mcmc.task)
-        for (r in results)
-            say("  ", r$location, " step ", r$step, " chain ", r$chain, ": ", r$status, " (", r$hours, " h",
-                if (r$status == "done") paste0(", acceptance ", r$acceptance.rate, ", ", r$n.errors, " proposals rejected for errors") else "",
-                ")", if (r$status != "done") paste0(" - ", r$message, " - see ", r$log.file) else "")
-        all.results <<- c(all.results, results)
-        results
+    # parallel's own load-balancing works the same way (sendCall/recvOneResult); used directly here so
+    # the next chain can be picked when a session frees up, based on what has finished so far
+    worker.task = rep(NA_integer_, n.workers)
+    submit = function(w, i){
+        tasks[[i]]$attempts <<- tasks[[i]]$attempts + 1
+        status[i] <<- "running"
+        started.at[i] <<- Sys.time()
+        worker.task[w] <<- i
+        parallel:::sendCall(cl[[w]], run.mcmc.task, list(tasks[[i]]))
+        say("  started ", task.label(i), if (tasks[[i]]$attempts > 1) paste0(" (attempt ", tasks[[i]]$attempts, ", resuming from cache)") else "")
+    }
+    fill.free.workers = function(){
+        for (w in which(is.na(worker.task))) {
+            i = next.task()
+            if (is.na(i)) break
+            submit(w, i)
+        }
     }
 
-    step2.locations = locations
+    fill.free.workers()
+    write.status()
 
-    if (1 %in% steps) {
-        say("Step 1: ", paste0(locations, collapse = ", "))
-        results = run.tasks(lapply(locations, function(location)
-            list(location = location, step = 1, chain = min(mcmc.step.settings(1)$chains), resume = resume)))
-        step2.locations = locations[sapply(results, function(r) r$status == "done")]
-        if (2 %in% steps && length(step2.locations) < length(locations))
-            say("Skipping Step 2 for ", paste0(setdiff(locations, step2.locations), collapse = ", "), " (Step 1 failed)")
-    }
+    while (any(status == "running")) {
+        received = parallel:::recvOneResult(cl)
+        w = received$node
+        i = worker.task[w]
+        worker.task[w] = NA
+        r = received$value
+        if (inherits(r, "try-error") || !is.list(r) || is.null(r$status))
+            r = list(status = "FAILED", message = paste0(as.character(r), collapse = " "), hours = NA)
 
-    if (2 %in% steps && length(step2.locations) > 0) {
-        say("Step 2: ", paste0(step2.locations, collapse = ", "), " (chains ", paste0(step2.chains, collapse = ", "), ")")
-        tasks = unlist(lapply(step2.locations, function(location)
-            lapply(step2.chains, function(chain) list(location = location, step = 2, chain = chain, resume = resume))),
-            recursive = FALSE)
-        results = run.tasks(tasks)
+        if (r$status == "done") {
+            status[i] = "done"
+            results[[i]] = r
+            say("  finished ", task.label(i), " (", r$hours, " h, acceptance ", r$acceptance.rate, ", ",
+                r$n.errors, " proposals rejected for errors)")
+        } else if (tasks[[i]]$attempts <= max.retries) {
+            status[i] = "waiting"
+            tasks[[i]]$resume = TRUE
+            results[[i]] = r
+            say("  FAILED ", task.label(i), " - ", r$message, " - will retry, resuming from its cache")
+        } else {
+            status[i] = "FAILED"
+            results[[i]] = r
+            say("  FAILED ", task.label(i), " - ", r$message, " - see ", r$log.file)
+            if (tasks[[i]]$step == 1 && 2 %in% steps) {
+                skip = step2.indices(tasks[[i]]$location)
+                status[skip] = "skipped"
+                say("  skipping Step 2 for ", tasks[[i]]$location, " (Step 1 failed)")
+            }
+        }
 
-        if (merge) {
-            for (location in step2.locations) {
-                done = sapply(results, function(r) r$location == location && r$status == "done")
-                if (sum(done) == length(step2.chains)) {
-                    files = sapply(results[done], function(r) r$mcmc.file)
-                    chains = sapply(results[done], function(r) r$chain)
-                    merged = tryCatch(merge.step2.chains(location, chains = chains[order(chains)], mcmc.files = files[order(chains)]),
-                                      error = function(e){ say("  ", location, ": merge FAILED - ", conditionMessage(e)); NULL })
-                    if (!is.null(merged))
-                        say("  ", location, ": merged ", length(chains), " chains -> ", merged$mcmc.file,
-                            if (is.na(merged$simset.file)) paste0(" (merged simset FAILED: ", merged$simset.error, ")")
-                            else paste0(" and ", merged$simset.file))
-                } else
-                    say("  ", location, ": not merging (only ", sum(done), " of ", length(step2.chains), " chains finished)")
+        # start the next chains before merging, so no session waits on the merge
+        fill.free.workers()
+        write.status()
+
+        # merge a location as soon as all of its Step 2 chains are done
+        if (merge && tasks[[i]]$step == 2 && status[i] == "done") {
+            location = tasks[[i]]$location
+            idx = step2.indices(location)
+            if (all(status[idx] == "done")) {
+                chains = sapply(idx, function(j) tasks[[j]]$chain)
+                files = sapply(idx, function(j) results[[j]]$mcmc.file)
+                merged = tryCatch(merge.step2.chains(location, chains = chains[order(chains)], mcmc.files = files[order(chains)]),
+                                  error = function(e){ say("  ", location, ": merge FAILED - ", conditionMessage(e)); NULL })
+                if (!is.null(merged))
+                    say("  merged ", location, " (", length(chains), " chains) -> ", merged$mcmc.file,
+                        if (is.na(merged$simset.file)) paste0(" (merged simset FAILED: ", merged$simset.error, ")")
+                        else paste0(" and ", merged$simset.file))
             }
         }
     }
 
-    say("Pipeline finished")
-    invisible(all.results)
+    n.done = sum(status == "done")
+    say("Pipeline finished: ", n.done, " of ", n.tasks, " chains done",
+        if (any(status %in% c("FAILED", "skipped"))) paste0(" | not done: ", paste0(sapply(which(status %in% c("FAILED", "skipped")),
+                                                                                          function(i) paste0(task.label(i), " (", status[i], ")")), collapse = "; ")) else "")
+    write.status()
+    invisible(lapply(seq_len(n.tasks), function(i) c(tasks[[i]][c("location", "step", "chain")], list(status = status[i]), results[[i]])))
+}
+
+
+##-------------------------------##
+##-- 4. PROGRESS               --##
+##-------------------------------##
+
+# How far along every chain is, read from the caches (works while the pipeline is running, from any
+# R session on the MCMC machine). Prints one row per location: s1 = Step 1, s2c1..s2c4 = Step 2
+# chains; "-" = not started. Returns the details (incl. when each cache was last written) invisibly.
+mcmc.progress = function(locations = names(LOCATION.PRIOR.NAMES),
+                         steps = c(1, 2)){
+    rows = list()
+    for (location in locations)
+        for (step in steps)
+            for (chain in mcmc.step.settings(step)$chains) {
+                dir = mcmc.cache.dir(location, step, chain)
+                pct = NA
+                last.saved = NA
+                if (dir.exists(dir)) {
+                    pct = tryCatch({
+                        s = bayesian.simulations:::get.cache.sampling.status(dir)
+                        round(100 * sum(s$chunks.done) / sum(s$total.chunks))
+                    }, error = function(e) NA)
+                    files = list.files(dir, recursive = TRUE, full.names = TRUE)
+                    if (length(files) > 0) last.saved = max(file.mtime(files))
+                }
+                rows[[length(rows) + 1]] = data.frame(location = location, step = step, chain = chain,
+                                                      column = if (step == 1) "s1" else paste0("s", step, "c", chain),
+                                                      percent.done = pct,
+                                                      last.saved = if (is.na(last.saved)) "" else format(last.saved, "%m-%d %H:%M"),
+                                                      stringsAsFactors = FALSE)
+            }
+    df = do.call(rbind, rows)
+    columns = unique(df$column)
+    wide = matrix("-", nrow = length(locations), ncol = length(columns), dimnames = list(locations, columns))
+    for (k in seq_len(nrow(df)))
+        if (!is.na(df$percent.done[k]))
+            wide[df$location[k], df$column[k]] = paste0(df$percent.done[k], "%")
+    cat("MCMC progress (", format(Sys.time(), "%Y-%m-%d %H:%M"), "): s1 = Step 1, s2c1-s2c4 = Step 2 chains, - = not started\n", sep = "")
+    print(noquote(wide))
+    invisible(df)
 }

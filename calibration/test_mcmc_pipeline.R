@@ -149,6 +149,19 @@ if (RUN.PART.B) {
             diagnose("trace.plot no rhat", function() print(trace.plot(m, var.names = m@var.names[1:3], exact.var.names = TRUE, include.rhat = FALSE)))
             diagnose("acceptance rate", function() get.total.acceptance.rate(m))
         }
+        # scheduler order: Step 1 first, then Step 2 chains (chain 1 before chain 2, ...)
+        status.files = list.files(file.path(MCMC.RUNS.DIR, "logs"), pattern = "^pipeline_status_", full.names = TRUE)
+        if (length(status.files) > 0) {
+            st = read.csv(status.files[1])
+            all.ok = check(all(st$status == "done") && nrow(st) == 1 + length(MCMC.STEP.SETTINGS$step2$chains),
+                           paste0("status table written: ", basename(status.files[1]), " (", nrow(st), " rows, all done)")) && all.ok
+            start.order = order(as.POSIXct(st$started))
+            all.ok = check(st$step[start.order][1] == 1, "Step 1 started before the Step 2 chains") && all.ok
+        } else all.ok = check(FALSE, "status table written") && all.ok
+        progress = tryCatch({ invisible(capture.output(p <- mcmc.progress(PART.B.LOCATION))); p }, error = function(e) NULL)
+        all.ok = check(!is.null(progress) && all(progress$percent.done == 100),
+                       paste0("mcmc.progress(): ", if (is.null(progress)) "failed" else paste0(progress$column, " ", progress$percent.done, "%", collapse = ", "))) && all.ok
+
         logs = list.files(file.path(MCMC.RUNS.DIR, "logs"))
         add("   logs written: ", paste0(logs, collapse = ", "))
 

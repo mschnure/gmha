@@ -13,6 +13,9 @@ source("model/run_systematic.R")
 source("calibration/mcmc_pipeline.R")
 source("calibration/mcmc_review.R")
 
+# how far along every location/step/chain is (works while the pipeline is still running)
+mcmc.progress()
+
 # summary table per chain, R-hats, likelihood + parameter traces, and each chain's fit to the data
 review = review.mcmc.chains(LOCATION, step = STEP)
 
