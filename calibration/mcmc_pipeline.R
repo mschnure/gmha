@@ -358,7 +358,8 @@ run.mcmc.pipeline = function(locations,
         stop("steps must be 1, 2, or c(1, 2)")
 
     dir.create(file.path(MCMC.RUNS.DIR, "logs"), recursive = TRUE, showWarnings = FALSE)
-    pipeline.log = file.path(MCMC.RUNS.DIR, "logs", paste0("pipeline_", format(Sys.time(), "%Y-%m-%d_%H%M"), ".log"))
+    pipeline.log = file.path(MCMC.RUNS.DIR, "logs", paste0("pipeline_", paste0(convert_string(locations), collapse = "_"),
+                                                           "_", format(Sys.time(), "%Y-%m-%d_%H%M"), ".log"))
     say = function(...){
         line = paste0(format(Sys.time(), "%Y-%m-%d %H:%M"), "  ", paste0(...))
         cat(line, "\n")

@@ -15,7 +15,11 @@
 
 LOCATIONS = c("Nigeria")  # e.g. c("Kenya", "South Africa", "r1.low")
 STEPS = c(1, 2)           # c(1, 2) = both; 2 = Step 2 only (uses the latest Step 2 starting values)
-N.CORES = max(1, parallel::detectCores() - 1)  # parallel R sessions (Step 2 needs 4 per location)
+N.CORES = max(1, parallel::detectCores() - 1)  # parallel R sessions (Step 2 needs 4 per location).
+                          # Running one location per RStudio window? Use N.CORES = 4 in each, and keep
+                          # (number of windows x 4) at or below the machine's cores (and watch memory).
+                          # Alternative: one window with all locations in LOCATIONS - the pipeline then
+                          # shares N.CORES across them automatically.
 RESUME = FALSE            # TRUE = pick up existing caches (e.g., after a crash or restart) instead
                           #        of starting fresh; FALSE overwrites caches for these runs
 MERGE = TRUE              # merge the Step 2 chains at the end (each chain is also saved on its own,
