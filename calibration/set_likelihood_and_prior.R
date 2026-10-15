@@ -1,4 +1,6 @@
 source('calibration/likelihood/likelihood.R')
+source('calibration/mcmc_settings.R')      # MCMC step settings, seeds, Step 1 starting value files
+source('calibration/mcmc_start_values.R')  # get.location.prior, get.mcmc.start.values
 source('calibration/prior_distributions/kenya_prior.R')
 source('calibration/prior_distributions/south_africa_prior.R')
 source('calibration/prior_distributions/france_prior.R')
@@ -21,7 +23,9 @@ source("calibration/prior_distributions/r1_high_prior.R")
 set.likelihood.and.prior.by.location = function(location,
                                                 total.weight = 1,
                                                 total.mortality.weight = 1/1000, # added 6/2 to allow third step to have weight = 1
-                                                weighted.prevalence = F){
+                                                weighted.prevalence = F,
+                                                step = 2, # which MCMC step's starting values to use (see calibration/mcmc_start_values.R)
+                                                params.start.values = NULL){ # or pass starting values directly
   
   WEIGHT.YEARS = 1970:2030
   WEIGHTS.BY.YEAR = rep(1, length(WEIGHT.YEARS))
@@ -49,73 +53,12 @@ set.likelihood.and.prior.by.location = function(location,
                                               total.mortality.weight = total.mortality.weight)
                                               }
 
-    # print("STARTING FROM PRIORS FOR STEP 1")
-    print("STARTING FROM 8/21 STARTING VALUES FOR STEP 2")
-    if(location=="Kenya"){
-      prior = KENYA.PRIOR
-      # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_kenya_start_values.Rdata")
-    } else if(location=="South Africa"){
-      prior = SOUTH.AFRICA.PRIOR
-      # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_south_africa_start_values.Rdata")
-    } else if(location=="Mozambique"){
-      prior = MOZAMBIQUE.PRIOR
-      # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_mozambique_start_values.Rdata")
-    } else if(location=="Tanzania"){
-      prior = TANZANIA.PRIOR
-      # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_tanzania_start_values.Rdata")
-    } else if(location=="Uganda"){
-      prior = UGANDA.PRIOR
-      # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_uganda_start_values.Rdata")
-    } else if(location=="Zambia"){
-      prior = ZAMBIA.PRIOR
-      params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-24_zambia_start_values.Rdata")
-    } else if(location=="Zimbabwe"){
-      prior = ZIMBABWE.PRIOR
-      # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_zimbabwe_start_values.Rdata")
-    } else if(location=="Malawi"){
-      prior = MALAWI.PRIOR
-      # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_malawi_start_values.Rdata")
-    } else if(location=="Nigeria"){
-      prior = NIGERIA.PRIOR
-     # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026_10_12_nigeria_start_values.Rdata")
-      print("Using 10/12 starting values for Nigeria - change before second stage")
-    } else if(location=="unaids.remainder"){
-      prior = UNAIDS.REMAINDER.PRIOR
-      # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_unaids.remainder_start_values.Rdata")
-    } else if(location=="non.unaids.remainder"){
-      prior = NON.UNAIDS.REMAINDER.PRIOR
-      # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_non.unaids.remainder_start_values.Rdata")
-    } else if(location=="r1.low"){
-      prior = R1.LOW.PRIOR
-      # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_r1_low_start_values.Rdata")
-    } else if(location=="r1.lower.middle"){
-      prior = R1.LOWER.MIDDLE.PRIOR
-      # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_r1_lower.middle_start_values.Rdata")
-    } else if(location=="r1.upper.middle"){
-      prior = R1.UPPER.MIDDLE.PRIOR
-      # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_r1_upper.middle_start_values.Rdata")
-    } else if(location == "r1.high"){
-      prior = R1.HIGH.PRIOR
-      # params.start.values = get.medians(prior)
-      load("calibration/starting_values/2026-08-21_r1_high_start_values.Rdata")
-      
-    } else stop("Only set up for Kenya, South Africa, Mozambique, Tanzania, 
-             Uganda, Zambia, Zimbabwe, Malawi, Nigeria, and remainder models for now")
-    
+    # prior for this location, and starting values for this MCMC step:
+    #   step 1 -> prior medians, or the file in STEP1.START.VALUE.FILES (calibration/mcmc_settings.R)
+    #   step 2 -> most recent Step 2 starting values file (saved automatically at the end of Step 1)
+    prior = get.location.prior(location)
+    if (is.null(params.start.values))
+        params.start.values = get.mcmc.start.values(location, step = step, prior = prior)
     params.start.values = params.start.values[prior@var.names]
     
     transformations = unlist(sapply(prior@subdistributions,function(dist){

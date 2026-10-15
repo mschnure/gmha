@@ -1,0 +1,55 @@
+################################################################################################
+# Description: Settings for the two-step MCMC calibration (edit these here, not in the run scripts)
+#
+#   Step 1: one chain, starting from the prior medians (or a saved file, see below),
+#           prevalence weighted 4x. When it finishes, the parameters of its last simulation are
+#           saved as the Step 2 starting values (calibration/starting_values/..._step2_start_values.Rdata)
+#   Step 2: four chains, each with its own seed, all starting from those values
+#
+# Used by calibration/mcmc_pipeline.R (run_mcmc_pipeline.R, setup_run_mcmc.R) and
+# set.likelihood.and.prior.by.location
+################################################################################################
+
+MCMC.STEP.SETTINGS = list(
+    step1 = list(weighted.prevalence = TRUE,
+                 total.mortality.weight = 1/1000,
+                 total.weight = 1,
+                 n.iter = 25000,
+                 chains = 1),
+    step2 = list(weighted.prevalence = FALSE,
+                 total.mortality.weight = 1/1000,
+                 total.weight = 1,
+                 n.iter = 100000,
+                 chains = 1:4)
+)
+
+# Seeds: each run's seed is MCMC.BASE.SEED + 1000*step + chain (e.g., Step 2 chain 3 = base + 2003),
+# so every location/step/chain is reproducible and different. Change the base for a whole new set.
+# (Errors from odd parameter values no longer crash a chain - see mcmc_pipeline.R - so you shouldn't
+# need new seeds to get past a crash.)
+MCMC.BASE.SEED = 20261015
+
+# Locations whose Step 1 starts from saved values instead of the prior medians
+STEP1.START.VALUE.FILES = c(
+    "Nigeria" = "calibration/starting_values/2026_10_12_nigeria_start_values.Rdata"
+)
+
+# Sampler and output settings (same values as the previous setup_run_mcmc.R)
+MCMC.UPDATE.FREQUENCY = 100
+MCMC.CACHE.FREQUENCY = 200
+MCMC.INITIAL.STEP.SIZE.DIVISOR = 20   # initial covariance = diag((prior sds / 20)^2)
+SIMSET.ADDITIONAL.BURN = 200
+SIMSET.ADDITIONAL.THIN = 20
+
+# Folders. mcmc_cache and mcmc_runs stay on the machine that runs the MCMC; the Step 2 starting
+# values go in calibration/starting_values, which syncs between machines.
+MCMC.CACHE.DIR = "mcmc_cache"
+MCMC.RUNS.DIR = "mcmc_runs"
+STARTING.VALUES.DIR = "calibration/starting_values"
+
+# Names of the settings above (the pipeline copies these to its worker R sessions, so any changes
+# made in the current session after sourcing this file also apply to the workers)
+MCMC.SETTING.NAMES = c("MCMC.STEP.SETTINGS", "MCMC.BASE.SEED", "STEP1.START.VALUE.FILES",
+                       "MCMC.UPDATE.FREQUENCY", "MCMC.CACHE.FREQUENCY", "MCMC.INITIAL.STEP.SIZE.DIVISOR",
+                       "SIMSET.ADDITIONAL.BURN", "SIMSET.ADDITIONAL.THIN",
+                       "MCMC.CACHE.DIR", "MCMC.RUNS.DIR", "STARTING.VALUES.DIR")

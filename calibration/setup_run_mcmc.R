@@ -1,110 +1,26 @@
-library(bayesian.simulations)
-library(distributions)
-library(ggplot2) 
-source("model/run_systematic.R")
-source("model/diffeq_cpp.R") # compiles the C++ version of the ODE (once per session)
-options(gmha.use.cpp = TRUE) # run.model uses C++ (identical results, ~20x faster ODE); set FALSE for the R version
-
-CHAIN = 3
-
-set.seed(3333333*CHAIN) # chain 1: 4 digits (7777), chain 2: 6 digits (999999), 
-#chain 3: 7 digits (3333333), chain 4: 8 digits (88888888)
+################################################################################################
+# Description: Runs ONE chain of one MCMC step for one location in this R session
+#
+# For the usual workflow (Step 1, then all four Step 2 chains in parallel, then merging), use
+# calibration/run_mcmc_pipeline.R instead. This script is for running or resuming a single chain.
+#
+# Step settings (iterations, weights, chains, seeds), Nigeria's Step 1 starting values, and folders
+# are in calibration/mcmc_settings.R. Starting values are picked automatically:
+#   Step 1 -> prior medians (or the file in STEP1.START.VALUE.FILES)
+#   Step 2 -> most recent Step 2 starting values (saved automatically when Step 1 finishes)
+################################################################################################
 
 LOCATION = "Nigeria"
-RESUME.RUNNING = T
+STEP = 1
+CHAIN = 1          # Step 1: chain 1; Step 2: chains 1-4 (seed = MCMC.BASE.SEED + 1000*step + chain)
+RESUME = FALSE     # TRUE = continue from this chain's existing cache
 
-STEP = 2
+source("calibration/mcmc_worker_setup.R")
 
-# new method: 2 steps, first one with weighted prevalence
-if(STEP==1){
-  WEIGHTED.PREVALENCE = T 
-  TOTAL.MORTALITY.WEIGHT = 1/1000
-  N.ITER = 25000
-  TOTAL.WEIGHT = 1
-} else if (STEP==2){
-  WEIGHTED.PREVALENCE = F 
-  TOTAL.MORTALITY.WEIGHT = 1/1000 # SET BACK TO 1/1000 (FROM 1/100)
-  N.ITER = 100000
-  TOTAL.WEIGHT = 1
-} else stop("must set STEP")
+result = run.mcmc.step.chain(location = LOCATION, step = STEP, chain = CHAIN, resume = RESUME)
 
+# Once all four Step 2 chains are finished (most recent file for each chain is used):
+# merge.step2.chains(LOCATION)
 
-# if(STEP==1){
-#   WEIGHTED.PREVALENCE = F 
-#   TOTAL.MORTALITY.WEIGHT = 1/1000
-#   N.ITER = 50000
-#   TOTAL.WEIGHT = 1/8 # DIFF FOR STEP 1
-# } else if (STEP==2){
-#   WEIGHTED.PREVALENCE = T # DIFF FOR STEP 2
-#   TOTAL.MORTALITY.WEIGHT = 1/1000 
-#   N.ITER = 50000
-#   TOTAL.WEIGHT = 1
-# } else if(STEP==3){
-#   WEIGHTED.PREVALENCE = F 
-#   TOTAL.MORTALITY.WEIGHT = 1/100 # DIFF FOR STEP 3
-#   N.ITER = 50000
-#   TOTAL.WEIGHT = 1
-# } else if(STEP=="SINGLE.STEP"){ # overall weight at 1, no upweighted prevalence, but less downweighted mortality
-#   WEIGHTED.PREVALENCE = F 
-#   TOTAL.MORTALITY.WEIGHT = 1/100 
-#   N.ITER = 100000
-#   TOTAL.WEIGHT = 1
-# } else stop("must set STEP")
-
-
-print(paste0("Running STEP ", STEP," MCMC with ",N.ITER," iterations, with total weight = ",TOTAL.WEIGHT,
-             ", weighted prevalence set to ",WEIGHTED.PREVALENCE,
-             " and total mortality weight set to ",TOTAL.MORTALITY.WEIGHT))
-
-if(!RESUME.RUNNING){
-  LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION,
-                                                          total.weight = TOTAL.WEIGHT,
-                                                          weighted.prevalence = WEIGHTED.PREVALENCE,
-                                                          total.mortality.weight = TOTAL.MORTALITY.WEIGHT)
-  
-  control = create.adaptive.blockwise.metropolis.control(var.names = LOCATION.DETAILS$prior@var.names,
-                                                         simulation.function = SIMULATION.FUNCTION,
-                                                         log.prior.distribution = get.density.function(LOCATION.DETAILS$prior,default.log = T),
-                                                         log.likelihood = LOCATION.DETAILS$likelihood.to.run,
-                                                         var.blocks = PARAMETER.VAR.BLOCKS, # set in calibration/prior_distributions/var_blocks.R
-                                                         transformations = LOCATION.DETAILS$transformations,
-                                                         initial.covariance.mat = diag((LOCATION.DETAILS$sds/20)^2), # step size
-                                                         burn = 0,
-                                                         thin = 1)
-  
-  
-  print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION,": chain ",CHAIN)))
-  
-  # set starting.values 
-  mcmc = run.mcmc.with.cache(control = control,
-                             n.iter = N.ITER,
-                             starting.values = LOCATION.DETAILS$params.start.values,
-                             update.frequency = 100,
-                             cache.frequency = 200,
-                             cache.dir = file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",CHAIN)))
-  
-}
-
-if(RESUME.RUNNING){
-  print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION,": chain ",CHAIN)))
-  mcmc = run.mcmc.from.cache(dir=file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",CHAIN)),
-                             update.frequency = 100)
-  
-}
-
-
-
-# SAVE MCMC AND SIMSET
-mcmc = assemble.mcmc.from.cache(file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",CHAIN)),
-                                allow.incomplete = T, chains = 1) 
-
-save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_chain",CHAIN,"_",Sys.Date(),".Rdata"))
-
-simset = extract.simset(mcmc,
-                        additional.burn=200,
-                        additional.thin=20)
-
-save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_chain",CHAIN,"_",Sys.Date(),".Rdata")) 
-
-
-
+# To make Step 2 starting values from a Step 1 run done before this pipeline existed:
+# save.step2.start.values.from.file(LOCATION, "mcmc_runs/simset_nigeria_chain1_2026-10-14.Rdata")
