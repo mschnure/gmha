@@ -7,9 +7,14 @@
 # chains start as soon as its own Step 1 is done; a failed chain is retried (resuming from its
 # cache); each location is merged as soon as its four Step 2 chains are done.
 #
-# How to run: on the MCMC machine, open the project, set the options below, then run this file as
-# an RStudio Background Job (Background Jobs tab > Start Background Job > this file, with the
-# project folder as working directory). It keeps going if you close the session.
+# How to run: on the MCMC machine, open the project in ONE RStudio window, set the options below, and
+# run this file once as an RStudio Background Job (Background Jobs tab > Start Background Job > this
+# file, working directory = the project folder). It starts its own parallel R sessions for the
+# chains, and your console stays free (e.g., for mcmc.progress()). Keep RStudio open and the machine
+# awake until it finishes; if it gets interrupted, start it again with RESUME = TRUE.
+# (Or, independent of RStudio: Rscript calibration/run_mcmc_pipeline.R from a terminal in the project
+# folder; on Mac/Linux, nohup Rscript calibration/run_mcmc_pipeline.R & keeps it running if the
+# terminal closes.)
 #
 # Progress: - mcmc.progress() in any R session on this machine (after sourcing run_systematic.R and
 #             calibration/mcmc_pipeline.R): % done for every location/step/chain
