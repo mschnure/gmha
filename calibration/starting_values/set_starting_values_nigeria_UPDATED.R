@@ -19,11 +19,11 @@ params.manual["age.50.and.over.transmission.multiplier.3"] = 0.25  # 1
 params.manual["over.50.hiv.mortality.multiplier.0"] = 2  # 1
 params.manual["over.50.hiv.mortality.multiplier.1"] = 2  # 1
 params.manual["over.50.hiv.mortality.multiplier.2"] = 2  # 1
-params.manual["age.0.to.4.hiv.mortality.multiplier.0"] = 2  # 1
-params.manual["age.5.to.14.hiv.mortality.multiplier.0"] = 2  # 1
-params.manual["age.0.to.14.hiv.mortality.multiplier.1"] = 2  # 1
-params.manual["age.0.to.14.hiv.mortality.multiplier.2"] = 2  # 1
-params.manual["age.25.to.49.hiv.mortality.multiplier.2"] = 2  # 1
+# params.manual["age.0.to.4.hiv.mortality.multiplier.0"] = 2  # 1
+# params.manual["age.5.to.14.hiv.mortality.multiplier.0"] = 2  # 1
+# params.manual["age.0.to.14.hiv.mortality.multiplier.1"] = 2  # 1
+# params.manual["age.0.to.14.hiv.mortality.multiplier.2"] = 2  # 1
+# params.manual["age.25.to.49.hiv.mortality.multiplier.2"] = 2  # 1
 
 params.start.values = params.manual
 
