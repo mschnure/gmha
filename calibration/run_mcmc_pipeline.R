@@ -26,6 +26,10 @@
 # are in calibration/mcmc_settings.R.
 ################################################################################################
 
+# source these before the settings, so nothing they load can overwrite them
+source("model/run_systematic.R")
+source("calibration/mcmc_pipeline.R")
+
 LOCATIONS = "all"         # "all" = all 15 locations, or e.g. c("Kenya", "South Africa", "r1.low")
 STEPS = c(1, 2)           # c(1, 2) = both; 2 = Step 2 only (uses the latest Step 2 starting values)
 N.CORES = max(1, parallel::detectCores() - 1)  # parallel R sessions (Step 2 needs 4 per location).
@@ -39,8 +43,6 @@ MERGE = TRUE              # merge each location's Step 2 chains when they're don
                           # on its own, so you can review them individually either way - see review_mcmc_chains.R)
 MAX.RETRIES = 1           # times to retry a failed chain (resuming from its cache) before giving up
 
-source("model/run_systematic.R")
-source("calibration/mcmc_pipeline.R")
 
 results = run.mcmc.pipeline(locations = LOCATIONS,
                             steps = STEPS,
