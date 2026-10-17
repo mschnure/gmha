@@ -10,12 +10,13 @@
 #   Step 2 -> most recent Step 2 starting values (saved automatically when Step 1 finishes)
 ################################################################################################
 
+# source this before the settings, so nothing it loads can overwrite them
+source("calibration/mcmc_worker_setup.R")
+
 LOCATION = "Nigeria"
 STEP = 1
 CHAIN = 1          # Step 1: chain 1; Step 2: chains 1-4 (seed = MCMC.BASE.SEED + 1000*step + chain)
 RESUME = FALSE     # TRUE = continue from this chain's existing cache
-
-source("calibration/mcmc_worker_setup.R")
 
 result = run.mcmc.step.chain(location = LOCATION, step = STEP, chain = CHAIN, resume = RESUME)
 
