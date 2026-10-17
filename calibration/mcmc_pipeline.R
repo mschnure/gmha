@@ -67,11 +67,16 @@ mcmc.cache.dir = function(location, step, chain){
 # Compiles the C++ ODE (model/diffeq_cpp.R) and turns it on; if compiling fails (e.g., no compiler
 # on this machine), warns and uses the R version (identical results, slower)
 use.cpp.model.if.possible = function(){
+    build.output = character()
+    out = textConnection("build.output", "w", local = TRUE)  # keeps what's printed even if it errors
+    sink(out)
     ok = tryCatch({
         source('model/diffeq_cpp.R')
         TRUE
-    }, error = function(e){
-        options(gmha.cpp.error = conditionMessage(e))
+    }, finally = { sink(); close(out) }, error = function(e){
+        # keep the compiler's own messages (R's error just says "Error 1 occurred building shared library")
+        details = trimws(tail(build.output[nzchar(trimws(build.output))], 8))
+        options(gmha.cpp.error = paste0(c(conditionMessage(e), details), collapse = " / "))
         warning(paste0("Could not compile the C++ model (", conditionMessage(e), "). Using the R version of the ODE."))
         FALSE
     })
@@ -430,17 +435,25 @@ run.mcmc.pipeline = function(locations,
     say("Per-chain logs: ", file.path(MCMC.RUNS.DIR, "logs"), " | progress any time: mcmc.progress()")
     write.status()
 
+    # Compile the C++ ODE here first (or load it, if already compiled - see model/diffeq_cpp.R), so the
+    # worker sessions only have to load it; compiling in all of them at once fails on Windows
+    if (!isTRUE(suppressWarnings(use.cpp.model.if.possible()))) {
+        say("STOPPING: the C++ ODE didn't compile in this session: ", getOption("gmha.cpp.error", ""))
+        stop(paste0("The C++ ODE didn't compile (", getOption("gmha.cpp.error", ""), "). Compile it once in the ",
+                    "RStudio console with source('model/diffeq_cpp.R'), then start the pipeline again."))
+    }
+    say("C++ ODE ready (", normalizePath(GMHA.CPP.BUILD.DIR), ")")
+
     # Worker R sessions: same working directory, same code, same settings as this session
-    say("Starting ", n.workers, " R sessions (each loads the model and compiles the C++ ODE, ~1-2 min)")
+    say("Starting ", n.workers, " R sessions (each loads the model and the compiled C++ ODE, ~1-2 min)")
     cl = parallel::makePSOCKcluster(n.workers)
     on.exit(parallel::stopCluster(cl), add = TRUE)
     parallel::clusterCall(cl, setwd, getwd())
     parallel::clusterEvalQ(cl, source("calibration/mcmc_worker_setup.R"))
     parallel::clusterExport(cl, MCMC.SETTING.NAMES, envir = globalenv())
 
-    # Every session must use the C++ ODE (~20x faster than R; same results). Compiling in all sessions at
-    # once can fail (e.g., on Windows), so any session that failed retries on its own, one at a time;
-    # if one still can't compile, stop rather than run the whole calibration on the slow R version
+    # Every session must use the C++ ODE (~20x faster than R; same results). Any session that couldn't
+    # load it retries on its own; if one still can't, stop rather than run on the slow R version
     cpp.ok = unlist(parallel::clusterEvalQ(cl, isTRUE(getOption("gmha.use.cpp"))))
     for (w in which(!cpp.ok)) {
         say("  R session ", w, ": C++ ODE didn't compile (",

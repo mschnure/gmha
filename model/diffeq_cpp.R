@@ -16,7 +16,12 @@
 # run.model.for.parameters / SIMULATION.FUNCTION) use C++, set options(gmha.use.cpp = TRUE).
 
 library(Rcpp)
-Rcpp::sourceCpp('model/diffeq_cpp.cpp') # compiles once per R session (can take ~30-60 seconds)
+# Compiles into a build folder in the project (not the session's temp folder), so it compiles once
+# and later R sessions - e.g., the MCMC pipeline's parallel sessions - load the compiled model
+# without compiling (and so don't need Rtools); recompiles automatically if diffeq_cpp.cpp changes
+GMHA.CPP.BUILD.DIR = file.path('cached', 'cpp_build')
+dir.create(GMHA.CPP.BUILD.DIR, recursive = TRUE, showWarnings = FALSE)
+Rcpp::sourceCpp('model/diffeq_cpp.cpp', cacheDir = GMHA.CPP.BUILD.DIR) # first time ~30-60 seconds
 
 # How each time-varying parameter is used in compute.dx, and so what length the C++ code expects:
 #   state: [age, sex, subgroup, hiv.status]; trans: [age, sex, subgroup];
