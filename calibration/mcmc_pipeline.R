@@ -71,6 +71,7 @@ use.cpp.model.if.possible = function(){
         source('model/diffeq_cpp.R')
         TRUE
     }, error = function(e){
+        options(gmha.cpp.error = conditionMessage(e))
         warning(paste0("Could not compile the C++ model (", conditionMessage(e), "). Using the R version of the ODE."))
         FALSE
     })
@@ -436,6 +437,22 @@ run.mcmc.pipeline = function(locations,
     parallel::clusterCall(cl, setwd, getwd())
     parallel::clusterEvalQ(cl, source("calibration/mcmc_worker_setup.R"))
     parallel::clusterExport(cl, MCMC.SETTING.NAMES, envir = globalenv())
+
+    # Every session must use the C++ ODE (~20x faster than R; same results). Compiling in all sessions at
+    # once can fail (e.g., on Windows), so any session that failed retries on its own, one at a time;
+    # if one still can't compile, stop rather than run the whole calibration on the slow R version
+    cpp.ok = unlist(parallel::clusterEvalQ(cl, isTRUE(getOption("gmha.use.cpp"))))
+    for (w in which(!cpp.ok)) {
+        say("  R session ", w, ": C++ ODE didn't compile (",
+            parallel::clusterEvalQ(cl[w], getOption("gmha.cpp.error", "no error message"))[[1]], "); retrying on its own")
+        cpp.ok[w] = isTRUE(suppressWarnings(parallel::clusterEvalQ(cl[w], use.cpp.model.if.possible())[[1]]))
+    }
+    if (!all(cpp.ok)) {
+        msgs = unique(unlist(parallel::clusterEvalQ(cl[!cpp.ok], getOption("gmha.cpp.error", "no error message"))))
+        say("STOPPING: the C++ ODE didn't compile in ", sum(!cpp.ok), " of ", n.workers, " R sessions: ", paste0(msgs, collapse = " | "))
+        stop(paste0("The C++ ODE didn't compile in ", sum(!cpp.ok), " R session(s): ", paste0(msgs, collapse = " | ")))
+    }
+    say("C++ ODE compiled in all ", n.workers, " R sessions")
 
     # parallel's own load-balancing works the same way (sendCall/recvOneResult); used directly here so
     # the next chain can be picked when a session frees up, based on what has finished so far
