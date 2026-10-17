@@ -440,7 +440,8 @@ run.mcmc.pipeline = function(locations,
     if (!isTRUE(suppressWarnings(use.cpp.model.if.possible()))) {
         say("STOPPING: the C++ ODE didn't compile in this session: ", getOption("gmha.cpp.error", ""))
         stop(paste0("The C++ ODE didn't compile (", getOption("gmha.cpp.error", ""), "). Compile it once in the ",
-                    "RStudio console with source('model/diffeq_cpp.R'), then start the pipeline again."))
+                    "RStudio console with source('model/diffeq_cpp.R') - it's saved in cached/cpp_build, so ",
+                    "this session will load it - then start the pipeline again."))
     }
     say("C++ ODE ready (", normalizePath(GMHA.CPP.BUILD.DIR), ")")
 

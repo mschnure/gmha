@@ -21,7 +21,14 @@ library(Rcpp)
 # without compiling (and so don't need Rtools); recompiles automatically if diffeq_cpp.cpp changes
 GMHA.CPP.BUILD.DIR = file.path('cached', 'cpp_build')
 dir.create(GMHA.CPP.BUILD.DIR, recursive = TRUE, showWarnings = FALSE)
-Rcpp::sourceCpp('model/diffeq_cpp.cpp', cacheDir = GMHA.CPP.BUILD.DIR) # first time ~30-60 seconds
+# pkgbuild puts Rtools on the PATH for the compile, as the RStudio console does; R sessions started
+# outside the console (e.g., by an RStudio Background Job) may not have it otherwise
+if (requireNamespace('pkgbuild', quietly = TRUE)) {
+    pkgbuild::with_build_tools(Rcpp::sourceCpp('model/diffeq_cpp.cpp', cacheDir = GMHA.CPP.BUILD.DIR),
+                               required = FALSE) # first time ~30-60 seconds
+} else {
+    Rcpp::sourceCpp('model/diffeq_cpp.cpp', cacheDir = GMHA.CPP.BUILD.DIR)
+}
 
 # How each time-varying parameter is used in compute.dx, and so what length the C++ code expects:
 #   state: [age, sex, subgroup, hiv.status]; trans: [age, sex, subgroup];
