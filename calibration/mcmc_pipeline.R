@@ -85,6 +85,14 @@ use.cpp.model.if.possible = function(){
 }
 
 
+# Simset from an mcmc, with SIMSET.ADDITIONAL.BURN / SIMSET.ADDITIONAL.THIN (in iterations) converted to
+# the mcmc's own thinning, so it's the same set of iterations whether the mcmc was thinned by 1 or 20
+simset.from.mcmc = function(mcmc){
+    extract.simset(mcmc,
+                   additional.burn = ceiling(SIMSET.ADDITIONAL.BURN / mcmc@thin),
+                   additional.thin = max(1, round(SIMSET.ADDITIONAL.THIN / mcmc@thin)))
+}
+
 mcmc.seed = function(step, chain){
     MCMC.BASE.SEED + 1000*step + chain
 }
@@ -219,7 +227,7 @@ run.mcmc.step.chain = function(location,
                                                                transformations = details$transformations,
                                                                initial.covariance.mat = diag((details$sds/MCMC.INITIAL.STEP.SIZE.DIVISOR)^2), # step size
                                                                burn = 0,
-                                                               thin = 1)
+                                                               thin = MCMC.THIN) # see mcmc_settings.R
         dir.create(dirname(cache.dir), recursive = TRUE, showWarnings = FALSE) # the sampler only creates the last folder
         run.mcmc.with.cache(control = control,
                             n.iter = settings$n.iter,
@@ -237,9 +245,7 @@ run.mcmc.step.chain = function(location,
                           paste0("mcmc_", mcmc.run.name(location, step, chain), "_", Sys.Date(), ".Rdata"))
     save(mcmc, file = mcmc.file)
 
-    simset = extract.simset(mcmc,
-                            additional.burn = SIMSET.ADDITIONAL.BURN,
-                            additional.thin = SIMSET.ADDITIONAL.THIN)
+    simset = simset.from.mcmc(mcmc)
     simset.file = file.path(MCMC.RUNS.DIR, paste0("simset_", mcmc.run.name(location, step, chain), "_", Sys.Date(), ".Rdata"))
     save(simset, file = simset.file)
     print(paste0("Saved ", mcmc.file, " and ", simset.file))
@@ -314,9 +320,7 @@ merge.step2.chains = function(location,
     # simset from the merged mcmc (if this fails, the merged mcmc and each chain's simset are still saved)
     simset.file = file.path(MCMC.RUNS.DIR, paste0("simset_", convert_string(location), "_step2_", chains.label, "_", Sys.Date(), ".Rdata"))
     simset.error = tryCatch({
-        simset = extract.simset(mcmc,
-                                additional.burn = SIMSET.ADDITIONAL.BURN,
-                                additional.thin = SIMSET.ADDITIONAL.THIN)
+        simset = simset.from.mcmc(mcmc)
         save(simset, file = simset.file)
         print(paste0("Saved merged simset: ", simset.file))
         NULL

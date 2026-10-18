@@ -115,6 +115,6 @@ save.step2.start.values.from.file = function(location, file, date = Sys.Date()){
     e = new.env()
     obj = get(load(file, envir = e)[1], envir = e)
     if (!(methods::.hasSlot(obj, "n.sim") && methods::.hasSlot(obj, "parameters")))  # an mcmc, not a simset
-        obj = extract.simset(obj, additional.burn = SIMSET.ADDITIONAL.BURN, additional.thin = SIMSET.ADDITIONAL.THIN)
+        obj = simset.from.mcmc(obj)
     save.step2.start.values(location, obj, date = date)
 }

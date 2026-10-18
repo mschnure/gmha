@@ -38,6 +38,13 @@ STEP1.START.VALUE.FILES = c(
 MCMC.UPDATE.FREQUENCY = 100
 MCMC.CACHE.FREQUENCY = 200
 MCMC.INITIAL.STEP.SIZE.DIVISOR = 20   # initial covariance = diag((prior sds / 20)^2)
+# Thinning while sampling: the sampler stores the simulation of every MCMC.THIN-th iteration only.
+# Doesn't change how the chain moves (same seed -> same chain); only what's saved. With 1, a Step 2
+# chain stores all 100,000 simulations (~16 GB cache + ~16 GB mcmc file); with 20, ~1/20th of that.
+MCMC.THIN = 20
+
+# Simset burn and thin, in ITERATIONS (converted to the mcmc's own thinning when the simset is made,
+# so e.g. burn 200 / thin 20 on an mcmc thinned by 20 = drop the first 10 stored, keep all after)
 SIMSET.ADDITIONAL.BURN = 200
 SIMSET.ADDITIONAL.THIN = 20
 
@@ -50,6 +57,6 @@ STARTING.VALUES.DIR = "calibration/starting_values"
 # Names of the settings above (the pipeline copies these to its worker R sessions, so any changes
 # made in the current session after sourcing this file also apply to the workers)
 MCMC.SETTING.NAMES = c("MCMC.STEP.SETTINGS", "MCMC.BASE.SEED", "STEP1.START.VALUE.FILES",
-                       "MCMC.UPDATE.FREQUENCY", "MCMC.CACHE.FREQUENCY", "MCMC.INITIAL.STEP.SIZE.DIVISOR",
+                       "MCMC.UPDATE.FREQUENCY", "MCMC.CACHE.FREQUENCY", "MCMC.INITIAL.STEP.SIZE.DIVISOR", "MCMC.THIN",
                        "SIMSET.ADDITIONAL.BURN", "SIMSET.ADDITIONAL.THIN",
                        "MCMC.CACHE.DIR", "MCMC.RUNS.DIR", "STARTING.VALUES.DIR")
