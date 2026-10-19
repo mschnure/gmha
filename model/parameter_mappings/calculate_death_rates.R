@@ -123,7 +123,13 @@ calculate.all.death.rates = function(data.manager,
     
 }
 
-# Projects future death rates based on logistic regression by age and sex 
+# Projects future non-HIV death rates by age and sex from log-linear trends fit to the data
+# (log(rate) = intercept + slope * (year - 1980)), adjusted by the sampled intercept and slope multipliers
+
+# Year around which the mortality slope multipliers tilt the fitted trend: no effect in this year, and
+# multiplier^(year - this year) before/after it (see project.deaths)
+MORTALITY.SLOPE.ANCHOR.YEAR = 2020
+
 # Fits log-linear trends to death rates by age and sex (the part of project.deaths that doesn't depend
 # on sampled parameters). Cached per location/settings for the R session when data.manager is
 # DATA.MANAGER; options(gmha.use.location.cache = FALSE) turns the cache off. Re-sourcing this file
@@ -171,6 +177,7 @@ fit.death.rate.trends = function(data.manager,
     })
     
     rv = list(mortality.intercepts.slopes.age.sex = mortality.intercepts.slopes.age.sex,
+              anchor.year = anchor.year,
               desired.years = desired.years,
               smoothed.years.label = smoothed.years.label)
     if (use.cache)
@@ -193,6 +200,7 @@ project.deaths = function(data.manager,
                                  keep.dimensions = keep.dimensions,
                                  model.age.cutoffs = model.age.cutoffs)
     mortality.intercepts.slopes.age.sex = fits$mortality.intercepts.slopes.age.sex
+    fitted.slopes = mortality.intercepts.slopes.age.sex["slope",,]
     desired.years = fits$desired.years
     smoothed.years.label = fits$smoothed.years.label
     
@@ -253,6 +261,13 @@ project.deaths = function(data.manager,
         mortality.intercepts.slopes.age.sex["slope",over.80.age.brackets,"female"] +
         log(sampled.parameters['over.80.mortality.slope.multiplier.female'])
     
+    # The slope multipliers tilt the fitted trend around MORTALITY.SLOPE.ANCHOR.YEAR (not around the fit's
+    # 1980 anchor): rate = intercept multiplier * fitted rate * slope multiplier^(year - MORTALITY.SLOPE.ANCHOR.YEAR).
+    # Done by moving the intercept so the slope change has no effect in the anchor year.
+    slope.change = mortality.intercepts.slopes.age.sex["slope",,] - fitted.slopes
+    mortality.intercepts.slopes.age.sex["intercept",,] = mortality.intercepts.slopes.age.sex["intercept",,] -
+        slope.change * (MORTALITY.SLOPE.ANCHOR.YEAR - fits$anchor.year)
+
     # Smoothed non-HIV mortality: fit regression on desired years only (using mask above)
     smooth.deaths.age.sex = apply(mortality.intercepts.slopes.age.sex,c('age','sex'),function(intercept.slope){
         exp(intercept.slope[1] + intercept.slope[2]*desired.years) #gives projections; exponentiate if log
