@@ -10,7 +10,8 @@
 # plus overview.csv: one row per location (acceptance, worst R-hat, merged simset size, problems).
 #
 # Run on the machine that ran the MCMC (it reads mcmc_runs/). Takes a few minutes per location.
-# Simsets are thinned to ~MAX.PLOT.SIMS simulations for the plots only; saved simsets aren't changed.
+# Step 2 simsets have 250 simulations per chain and 1,000 merged (STEP2.SIMSET.BURN/THIN), so they're
+# plotted in full; anything bigger is thinned to ~MAX.PLOT.SIMS for the plots only.
 # To look at one location interactively in RStudio instead, see calibration/review_mcmc_chains.R.
 ################################################################################################
 
@@ -20,15 +21,16 @@ source("calibration/mcmc_review.R")
 
 LOCATIONS = "all"        # "all" = all 15, or e.g. c("Kenya", "Zambia")
 MAX.PLOT.SIMS = 1000     # simulations per simset in the plots
-REMAKE.MERGED.SIMSETS = TRUE  # first remake each merged simset from its merged mcmc with the current
-                              # MERGED.SIMSET.BURN/THIN (calibration/mcmc_settings.R: burn 50,000, thin 200
-                              # -> 1,000 sims); needed for simsets merged before that setting existed
+REMAKE.STEP2.SIMSETS = TRUE   # first remake the Step 2 simsets (each chain's and the merged one) from the
+                              # saved mcmc files with the current STEP2.SIMSET.BURN/THIN (mcmc_settings.R:
+                              # burn 50,000, thin 200 -> 250 per chain, 1,000 merged); needed for
+                              # simsets made before that setting existed. FALSE once they're remade.
 
 mcmc.progress()          # a location whose chains aren't all done gets reviewed with what's saved so far
 
-if (REMAKE.MERGED.SIMSETS)
+if (REMAKE.STEP2.SIMSETS)
     for (location in (if (identical(LOCATIONS, "all")) names(LOCATION.PRIOR.NAMES) else LOCATIONS))
-        tryCatch(remake.merged.simset(location),
-                 error = function(e) print(paste0(location, ": couldn't remake the merged simset (", conditionMessage(e), ")")))
+        tryCatch(remake.step2.simsets(location),
+                 error = function(e) print(paste0(location, ": couldn't remake the Step 2 simsets (", conditionMessage(e), ")")))
 
 overview = review.to.pdf(LOCATIONS, step = 2, max.plot.sims = MAX.PLOT.SIMS)
