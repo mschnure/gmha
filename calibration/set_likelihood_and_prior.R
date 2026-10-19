@@ -1,6 +1,13 @@
 source('calibration/likelihood/likelihood.R')
 source('calibration/mcmc_settings.R')      # MCMC step settings, seeds, Step 1 starting value files
 source('calibration/mcmc_start_values.R')  # get.location.prior, get.mcmc.start.values
+
+# Prior sd (log scale) for the 6 mortality slope multipliers, used in every location's prior below.
+# Non-HIV mortality = exp(intercept + slope * (year - 1980)), and a slope multiplier adds log(multiplier)
+# to the slope, so its effect compounds over the ~60 years from 1980 to 2040. Allow up to a 4x (or 1/4)
+# change by 2040 at 2 sd: (log(4)/2)/60. (It was log(4)/2, which let mortality blow up - e.g., Zambia
+# reached a non-HIV mortality rate of ~76,000/year and its model runs became ~100x slower.)
+MORTALITY.SLOPE.MULTIPLIER.LOG.SD = (log(4)/2) / 60
 source('calibration/prior_distributions/kenya_prior.R')
 source('calibration/prior_distributions/south_africa_prior.R')
 source('calibration/prior_distributions/france_prior.R')
