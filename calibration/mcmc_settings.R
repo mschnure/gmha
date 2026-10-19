@@ -45,8 +45,13 @@ MCMC.THIN = 20
 
 # Simset burn and thin, in ITERATIONS (converted to the mcmc's own thinning when the simset is made,
 # so e.g. burn 200 / thin 20 on an mcmc thinned by 20 = drop the first 10 stored, keep all after)
-SIMSET.ADDITIONAL.BURN = 200
+SIMSET.ADDITIONAL.BURN = 200   # each chain's own simset (Step 1 -> Step 2 starting values; chain review plots)
 SIMSET.ADDITIONAL.THIN = 20
+
+# The final simset (merged Step 2 chains), also in ITERATIONS per chain: drop the first half of each
+# chain, then keep every 200th -> (100,000 - 50,000) / 200 = 250 per chain = 1,000 from the 4 chains
+MERGED.SIMSET.BURN = 50000
+MERGED.SIMSET.THIN = 200
 
 # Folders. mcmc_cache and mcmc_runs stay on the machine that runs the MCMC; the Step 2 starting
 # values go in calibration/starting_values, which syncs between machines.
@@ -58,5 +63,5 @@ STARTING.VALUES.DIR = "calibration/starting_values"
 # made in the current session after sourcing this file also apply to the workers)
 MCMC.SETTING.NAMES = c("MCMC.STEP.SETTINGS", "MCMC.BASE.SEED", "STEP1.START.VALUE.FILES",
                        "MCMC.UPDATE.FREQUENCY", "MCMC.CACHE.FREQUENCY", "MCMC.INITIAL.STEP.SIZE.DIVISOR", "MCMC.THIN",
-                       "SIMSET.ADDITIONAL.BURN", "SIMSET.ADDITIONAL.THIN",
+                       "SIMSET.ADDITIONAL.BURN", "SIMSET.ADDITIONAL.THIN", "MERGED.SIMSET.BURN", "MERGED.SIMSET.THIN",
                        "MCMC.CACHE.DIR", "MCMC.RUNS.DIR", "STARTING.VALUES.DIR")

@@ -20,7 +20,15 @@ source("calibration/mcmc_review.R")
 
 LOCATIONS = "all"        # "all" = all 15, or e.g. c("Kenya", "Zambia")
 MAX.PLOT.SIMS = 1000     # simulations per simset in the plots
+REMAKE.MERGED.SIMSETS = TRUE  # first remake each merged simset from its merged mcmc with the current
+                              # MERGED.SIMSET.BURN/THIN (calibration/mcmc_settings.R: burn 50,000, thin 200
+                              # -> 1,000 sims); needed for simsets merged before that setting existed
 
 mcmc.progress()          # a location whose chains aren't all done gets reviewed with what's saved so far
+
+if (REMAKE.MERGED.SIMSETS)
+    for (location in (if (identical(LOCATIONS, "all")) names(LOCATION.PRIOR.NAMES) else LOCATIONS))
+        tryCatch(remake.merged.simset(location),
+                 error = function(e) print(paste0(location, ": couldn't remake the merged simset (", conditionMessage(e), ")")))
 
 overview = review.to.pdf(LOCATIONS, step = 2, max.plot.sims = MAX.PLOT.SIMS)

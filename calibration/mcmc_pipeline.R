@@ -85,12 +85,13 @@ use.cpp.model.if.possible = function(){
 }
 
 
-# Simset from an mcmc, with SIMSET.ADDITIONAL.BURN / SIMSET.ADDITIONAL.THIN (in iterations) converted to
-# the mcmc's own thinning, so it's the same set of iterations whether the mcmc was thinned by 1 or 20
-simset.from.mcmc = function(mcmc){
+# Simset from an mcmc, with burn and thin given in iterations (per chain) converted to the mcmc's own
+# thinning, so it's the same set of iterations whether the mcmc was thinned by 1 or 20.
+# Defaults: SIMSET.ADDITIONAL.BURN/THIN (each chain's simset); the merged simset uses MERGED.SIMSET.BURN/THIN
+simset.from.mcmc = function(mcmc, burn = SIMSET.ADDITIONAL.BURN, thin = SIMSET.ADDITIONAL.THIN){
     extract.simset(mcmc,
-                   additional.burn = ceiling(SIMSET.ADDITIONAL.BURN / mcmc@thin),
-                   additional.thin = max(1, round(SIMSET.ADDITIONAL.THIN / mcmc@thin)))
+                   additional.burn = ceiling(burn / mcmc@thin),
+                   additional.thin = max(1, round(thin / mcmc@thin)))
 }
 
 mcmc.seed = function(step, chain){
@@ -320,9 +321,9 @@ merge.step2.chains = function(location,
     # simset from the merged mcmc (if this fails, the merged mcmc and each chain's simset are still saved)
     simset.file = file.path(MCMC.RUNS.DIR, paste0("simset_", convert_string(location), "_step2_", chains.label, "_", Sys.Date(), ".Rdata"))
     simset.error = tryCatch({
-        simset = simset.from.mcmc(mcmc)
+        simset = simset.from.mcmc(mcmc, burn = MERGED.SIMSET.BURN, thin = MERGED.SIMSET.THIN)
         save(simset, file = simset.file)
-        print(paste0("Saved merged simset: ", simset.file))
+        print(paste0("Saved merged simset (", simset@n.sim, " distinct simulations, total weight ", sum(simset@weights), "): ", simset.file))
         NULL
     }, error = function(e) conditionMessage(e))
     if (!is.null(simset.error)) {
@@ -331,6 +332,32 @@ merge.step2.chains = function(location,
     }
 
     invisible(list(mcmc.file = merged.file, simset.file = simset.file, simset.error = simset.error, chain.files = mcmc.files))
+}
+
+
+# Most recently saved merged Step 2 mcmc for a location (from merge.step2.chains); NA if none
+find.latest.merged.mcmc.file = function(location){
+    name = gsub(".", "\\.", convert_string(location), fixed = TRUE)
+    files = list.files(file.path(MCMC.RUNS.DIR, "mcmc_files", "merged"), full.names = TRUE,
+                       pattern = paste0("^mcmc_", name, "_step2_chains[0-9]+_[0-9]{4}-[0-9]{2}-[0-9]{2}\\.Rdata$"))
+    if (length(files) == 0) NA else files[which.max(file.mtime(files))]
+}
+
+# Makes the merged simset again from the saved merged mcmc, with the current MERGED.SIMSET.BURN/THIN
+# (e.g., after changing them), without re-merging the chains. Saved as a new simset file with today's date.
+remake.merged.simset = function(location, mcmc.file = find.latest.merged.mcmc.file(location)){
+    if (is.na(mcmc.file))
+        stop(paste0("No merged Step 2 mcmc found for ", location, " in ", file.path(MCMC.RUNS.DIR, "mcmc_files", "merged")))
+    print(paste0("loading ", mcmc.file))
+    e = new.env()
+    mcmc = get(load(mcmc.file, envir = e)[1], envir = e)
+    simset = simset.from.mcmc(mcmc, burn = MERGED.SIMSET.BURN, thin = MERGED.SIMSET.THIN)
+    chains.label = sub(paste0("^mcmc_", convert_string(location), "_step2_(chains[0-9]+)_.*$"), "\\1", basename(mcmc.file))
+    simset.file = file.path(MCMC.RUNS.DIR, paste0("simset_", convert_string(location), "_step2_", chains.label, "_", Sys.Date(), ".Rdata"))
+    save(simset, file = simset.file)
+    print(paste0("Saved merged simset (", simset@n.sim, " distinct simulations, total weight ", sum(simset@weights),
+                 "; burn ", MERGED.SIMSET.BURN, ", thin ", MERGED.SIMSET.THIN, " iterations per chain): ", simset.file))
+    invisible(simset.file)
 }
 
 
