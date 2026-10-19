@@ -28,6 +28,11 @@ review = review.mcmc.chains(LOCATION, step = STEP)
 # rerun.mcmc.error("mcmc_runs/logs/nigeria_step2_chain1_errors_2026-10-20.csv", location = LOCATION, row = 1)
 # traceback()
 
+# the same calibration plots for the merged Step 2 simset:
+# merged = review.merged.simset(LOCATION)
+
+# every location at once, saved to PDFs: see calibration/review_all_locations.R
+
 # merge (if the pipeline didn't already, or to leave out a chain):
 # merge.step2.chains(LOCATION)                     # all four chains
 # merge.step2.chains(LOCATION, chains = c(1, 2, 4))  # leave out chain 3

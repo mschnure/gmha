@@ -5,6 +5,12 @@
 #     1. load.mcmc.chains: loads the most recent mcmc and simset file for each chain of a step
 #     2. review.mcmc.chains: summary table per chain, likelihood traces, R-hats, parameter trace
 #        plots, and simplots of each chain's simset against the data
+#     3. review.merged.simset: the same simplots for a location's merged Step 2 simset
+#     4. review.to.pdf: all of the above for many locations at once, one PDF per location, plus an
+#        overview table across locations (see calibration/review_all_locations.R)
+#
+# Simsets are thinned to ~max.plot.sims simulations for plotting only (weights kept), since simplot
+# with the full ~20,000 is slow; the saved simsets aren't changed.
 #
 # Needs calibration/mcmc_pipeline.R sourced first. Chains are read from mcmc_runs/, so run this on
 # the machine that ran the MCMC (or copy the files over).
@@ -13,6 +19,32 @@
 load.saved.object = function(file){
     e = new.env()
     get(load(file, envir = e)[1], envir = e)
+}
+
+# A simset thinned to about max.sims simulations, keeping the weighting (for plotting only)
+thin.for.plotting = function(simset, max.sims = 1000){
+    total = sum(simset@weights)
+    if (is.null(max.sims) || total <= max.sims || any(round(simset@weights) != simset@weights))
+        return(simset)
+    thin.simset(simset, thin = ceiling(total / max.sims))
+}
+
+# The simplots from calibration/analyze_parallel_mcmc.R, with all the simsets given on each plot.
+# try.plot(name, fn) runs each one, so one failing doesn't stop the rest
+make.simset.plots = function(simsets, years, try.plot){
+    p = function(name, ...){ args = list(...); try.plot(name, function() do.call(simplot, c(unname(simsets), list(years = years), args))) }
+    list(fit = p("fit"),
+         incidence.by.age = p("incidence.by.age", facet.by = 'age', data.types = 'incidence'),
+         prevalence.by.age = p("prevalence.by.age", facet.by = 'age', data.types = 'prevalence'),
+         population.by.age = p("population.by.age", data.types = 'population', facet.by = 'age'),
+         cascade = p("cascade", data.types = c('awareness', 'engagement', 'suppression'), proportion = T),
+         cascade.by.age.sex = p("cascade.by.age.sex", data.types = c('awareness', 'engagement', 'suppression'),
+                                facet.by = c('age', 'sex'), proportion = T))
+}
+
+default.plot.years = function(simset){
+    sim.years = simset@simulations[[1]]$years
+    1980:sim.years[length(sim.years)]
 }
 
 load.mcmc.chains = function(location,
@@ -49,6 +81,7 @@ review.mcmc.chains = function(location,
                               years = NULL,                 # default: 1980 to the last simulated year
                               n.trace.parameters = 12,      # trace plots for the parameters with the worst R-hats
                               trace.parameters = NULL,      # or name the parameters to plot
+                              max.plot.sims = 1000,         # each chain's simset is thinned to about this many for the simplots
                               plot = TRUE){
 
     LOCATION <<- location
@@ -113,20 +146,9 @@ review.mcmc.chains = function(location,
     simsets = loaded$simsets[!sapply(loaded$simsets, is.null)]
     simset.plot.names = character()
     if (length(simsets) > 0) {
-        if (is.null(years)) {
-            sim.years = simsets[[1]]@simulations[[1]]$years
-            years = 1980:sim.years[length(sim.years)]
-        }
-        chain.simplot = function(...){ args = list(...); try.plot(paste0("simplot ", paste0(unlist(args), collapse = " ")),
-                                                                  function() do.call(simplot, c(unname(simsets), list(years = years), args))) }
-        simset.plots = list(
-            fit = chain.simplot(),
-            incidence.by.age = chain.simplot(facet.by = 'age', data.types = 'incidence'),
-            prevalence.by.age = chain.simplot(facet.by = 'age', data.types = 'prevalence'),
-            population.by.age = chain.simplot(data.types = 'population', facet.by = 'age'),
-            cascade = chain.simplot(data.types = c('awareness', 'engagement', 'suppression'), proportion = T),
-            cascade.by.age.sex = chain.simplot(data.types = c('awareness', 'engagement', 'suppression'),
-                                               facet.by = c('age', 'sex'), proportion = T))
+        if (is.null(years))
+            years = default.plot.years(simsets[[1]])
+        simset.plots = make.simset.plots(lapply(simsets, thin.for.plotting, max.sims = max.plot.sims), years, try.plot)
         plots = c(plots, simset.plots)
         simset.plot.names = names(simset.plots)
     }
@@ -143,6 +165,130 @@ review.mcmc.chains = function(location,
 
     plots = plots[!sapply(plots, is.null)]
     invisible(list(summary = summary, rhats = rhats, plots = plots, plot.errors = plot.errors, loaded = loaded))
+}
+
+
+# Most recently saved merged Step 2 simset for a location (from merge.step2.chains); NA if none
+find.latest.merged.simset = function(location){
+    name = gsub(".", "\\.", convert_string(location), fixed = TRUE)
+    files = list.files(MCMC.RUNS.DIR, full.names = TRUE,
+                       pattern = paste0("^simset_", name, "_step2_chains[0-9]+_[0-9]{4}-[0-9]{2}-[0-9]{2}\\.Rdata$"))
+    if (length(files) == 0) NA else files[which.max(file.mtime(files))]
+}
+
+# The simplots from calibration/analyze_parallel_mcmc.R for a location's merged Step 2 simset
+review.merged.simset = function(location,
+                                simset.file = find.latest.merged.simset(location),
+                                years = NULL,
+                                max.plot.sims = 1000,   # thinned to about this many for plotting
+                                plot = TRUE){
+    if (is.na(simset.file))
+        stop(paste0("No merged Step 2 simset found for ", location, " in ", MCMC.RUNS.DIR))
+    LOCATION <<- location
+    print(paste0("loading ", simset.file))
+    simset = load.saved.object(simset.file)
+    info = data.frame(location = location,
+                      simulations = simset@n.sim,             # distinct simulations
+                      total.weight = sum(simset@weights),     # = saved iterations kept (repeats are weighted)
+                      file = basename(simset.file))
+    print(info, row.names = FALSE)
+
+    if (is.null(years))
+        years = default.plot.years(simset)
+    plot.errors = character()
+    try.plot = function(name, fn){
+        tryCatch(fn(), error = function(e){
+            plot.errors[name] <<- conditionMessage(e)
+            print(paste0("Could not make the '", name, "' plot: ", conditionMessage(e)))
+            NULL
+        })
+    }
+    plots = make.simset.plots(list(thin.for.plotting(simset, max.plot.sims)), years, try.plot)
+    plots = plots[!sapply(plots, is.null)]
+    if (plot)
+        for (nm in names(plots)) {
+            p = plots[[nm]]
+            if (inherits(p, "ggplot"))
+                p = p + ggplot2::ggtitle(paste0(location, " merged Step 2 simset: ", nm))
+            print(p)
+        }
+    invisible(list(info = info, plots = plots, plot.errors = plot.errors, simset.file = simset.file))
+}
+
+# Everything above for many locations: one PDF per location (summary table and R-hats, likelihood and
+# trace plots, each chain's simplots, then the merged simset's simplots) in `dir`, plus overview.csv
+# with one row per location. A location that fails is noted in the overview and the rest continue.
+review.to.pdf = function(locations = "all",
+                         step = 2,
+                         dir = file.path("results", paste0("mcmc_review_", Sys.Date())),
+                         max.plot.sims = 1000){
+    if (identical(locations, "all"))
+        locations = names(LOCATION.PRIOR.NAMES)
+    dir.create(dir, recursive = TRUE, showWarnings = FALSE)
+
+    text.page = function(lines){
+        grid::grid.newpage()
+        grid::grid.text(paste0(lines, collapse = "\n"), x = 0.02, y = 0.98, just = c("left", "top"),
+                        gp = grid::gpar(fontfamily = "mono", fontsize = 8))
+    }
+    print.titled = function(p, title){
+        if (inherits(p, "ggplot"))
+            p = p + ggplot2::ggtitle(title)
+        print(p)
+    }
+
+    overview = list()
+    for (location in locations) {
+        print(paste0("==== ", location, " ===="))
+        pdf.file = file.path(dir, paste0(convert_string(location), "_step", step, "_review.pdf"))
+        pdf.open = FALSE
+        overview[[location]] = tryCatch({
+            chains = review.mcmc.chains(location, step = step, plot = FALSE, max.plot.sims = max.plot.sims)
+            merged = NULL
+            if (step == 2)
+                merged = tryCatch(review.merged.simset(location, plot = FALSE, max.plot.sims = max.plot.sims),
+                                  error = function(e){ print(paste0("No merged simset plots: ", conditionMessage(e))); NULL })
+
+            grDevices::pdf(pdf.file, width = 14, height = 9)
+            pdf.open = TRUE
+            text.page(c(paste0(location, ", step ", step, " (", Sys.Date(), ")"), "",
+                        capture.output(print(chains$summary, row.names = FALSE)), "",
+                        if (!is.null(chains$rhats)) c("Worst R-hats (> 1.1 suggests the chains haven't converged):",
+                                                      capture.output(print(round(head(chains$rhats, 25), 3)))),
+                        if (!is.null(merged)) c("", "Merged simset:", capture.output(print(merged$info, row.names = FALSE))),
+                        if (length(chains$plot.errors) > 0) c("", "Plots that failed:", paste0("  ", names(chains$plot.errors), ": ", chains$plot.errors))))
+            for (nm in names(chains$plots))
+                print.titled(chains$plots[[nm]], paste0(location, " step ", step, ": ", nm,
+                                                        if (nm %in% c("likelihood", "trace") || grepl("^(likelihood|trace)\\.", nm)) "" else " (one color per chain)"))
+            if (!is.null(merged))
+                for (nm in names(merged$plots))
+                    print.titled(merged$plots[[nm]], paste0(location, ": ", nm, " (merged Step 2 simset)"))
+            grDevices::dev.off()
+            pdf.open = FALSE
+
+            data.frame(location = location,
+                       chains = nrow(chains$summary),
+                       min.acceptance = min(chains$summary$acceptance.rate, na.rm = TRUE),
+                       max.acceptance = max(chains$summary$acceptance.rate, na.rm = TRUE),
+                       worst.rhat = if (is.null(chains$rhats)) NA else round(max(chains$rhats, na.rm = TRUE), 3),
+                       errored.proposals = sum(chains$summary$errored.proposals),
+                       merged.simulations = if (is.null(merged)) NA else merged$info$simulations,
+                       merged.total.weight = if (is.null(merged)) NA else merged$info$total.weight,
+                       pdf = pdf.file, problem = "")
+        }, error = function(e){
+            if (pdf.open) grDevices::dev.off()
+            print(paste0("Could not review ", location, ": ", conditionMessage(e)))
+            data.frame(location = location, chains = NA, min.acceptance = NA, max.acceptance = NA, worst.rhat = NA,
+                       errored.proposals = NA, merged.simulations = NA, merged.total.weight = NA,
+                       pdf = NA, problem = conditionMessage(e))
+        })
+        rm(list = intersect(c("chains", "merged"), ls())); gc()
+    }
+    overview = do.call(rbind, overview)
+    write.csv(overview, file.path(dir, "overview.csv"), row.names = FALSE)
+    print(overview, row.names = FALSE)
+    print(paste0("PDFs and overview.csv in ", normalizePath(dir)))
+    invisible(overview)
 }
 
 
