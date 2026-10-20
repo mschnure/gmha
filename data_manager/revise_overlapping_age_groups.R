@@ -1,4 +1,6 @@
+BUILDING.DATA.MANAGER = T # NEXTGEN: tells source_code.R not to load a data manager (we are making it)
 source("model/run_systematic.R")
+BUILDING.DATA.MANAGER = F
 
 # load the most recent (non-revised) data manager made by save_data_manager.R
 # NEXTGEN: uses the LAI version made by save_data_manager.R (cached/data.manager_global_lai_<date>.Rdata)

@@ -14,9 +14,12 @@ NO.INTERVENTION = c()
 #   1. source data_manager/save_data_manager.R            -> cached/data.manager_global_lai_<date>.Rdata
 #   2. source data_manager/revise_overlapping_age_groups.R -> cached/data.manager_global_revised_ages_lai_<date>.Rdata
 # then put the step 2 file name here
-load('cached/data.manager_global_revised_ages_lai_YYYY-MM-DD.Rdata')
-if(!isTRUE(attr(DATA.MANAGER, "lai")))
-    stop("This isn't the LAI data manager - rebuild it on the nextgen branch (see source_code.R)")
+# (skipped when building the data manager - revise_overlapping_age_groups.R sets BUILDING.DATA.MANAGER = T)
+if(!isTRUE(get0("BUILDING.DATA.MANAGER"))){
+    load('cached/data.manager_global_revised_ages_lai_YYYY-MM-DD.Rdata')
+    if(!isTRUE(attr(DATA.MANAGER, "lai")))
+        stop("This isn't the LAI data manager - rebuild it on the nextgen branch (see source_code.R)")
+}
 #load('cached/data.manager_global_2025-12-02.Rdata') # (old nextgen) added lai and oral placeholders to plot age/sex more easily
 #load("cached/data.manager_global_revised_ages_2026-10-15.Rdata") # updated with Claude fixes
 #load('cached/data.manager_global_revised_ages_2026-07-08.Rdata') # removed 15-49 and 15+, added 25-49
