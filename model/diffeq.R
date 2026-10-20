@@ -380,8 +380,8 @@ run.model <- function(parameters,
                       max.run.seconds=10){
     
     # Use the C++ version of the ODE if requested (see model/diffeq_cpp.R; needs that file sourced)
-    # nextgen: the C++ ODE doesn't have the lai_art state, so always use the R version when LAI is in the model
-    if (isTRUE(getOption('gmha.use.cpp', FALSE)) && !('lai_art' %in% parameters$HIV.STATUS))
+    # (nextgen: the C++ ODE includes the lai_art state and LAI flows as of 10/20/26)
+    if (isTRUE(getOption('gmha.use.cpp', FALSE)))
         return(run.model.cpp(parameters=parameters,
                              initial.state=initial.state,
                              start.year=start.year,

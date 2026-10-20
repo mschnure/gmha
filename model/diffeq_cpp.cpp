@@ -86,6 +86,7 @@ struct Dims {
     int male = 0, female = 1;
     int hiv_negative = 0, undiagnosed = 1, diagnosed_unengaged = 2,
         engaged_unsuppressed = 3, engaged_suppressed = 4;
+    int lai_art = -1;   // NEXTGEN: index of the lai_art status; -1 if the model has no LAI
 };
 
 //-- THE MODEL: holds parameters + workspace; operator() is the derivative function --//
@@ -99,11 +100,14 @@ struct Model {
     // offsets into the flattened vector, same order as the rv vector in compute.dx
     std::size_t o_state = 0, o_prev = 0, o_inc = 0, o_diag = 0, o_hiv_mort = 0, o_non_hiv_mort = 0,
                 o_total_mort = 0, o_engagement = 0, o_disengagement_unsuppressed = 0,
-                o_disengagement_suppressed = 0, o_suppression = 0;
+                o_disengagement_suppressed = 0, o_suppression = 0,
+                o_lai_total = 0, o_lai_es = 0, o_lai_eu = 0, o_lai_du = 0, o_lai_removal = 0; // NEXTGEN
+    bool has_lai = false; // NEXTGEN
 
     TimeVaryingParam fertility, maternal_fetal, male_births, aging, hiv_mortality, non_hiv_mortality,
                      testing, transmission, infectiousness, engagement, unsuppressed_disengagement,
-                     suppressed_disengagement, suppression, unsuppression;
+                     suppressed_disengagement, suppression, unsuppression,
+                     lai_es, lai_eu, lai_du, lai_removal; // NEXTGEN
 
     // workspace
     std::vector<double> hiv_births_g, non_hiv_births_g;
@@ -131,6 +135,16 @@ struct Model {
         o_disengagement_suppressed = o_disengagement_unsuppressed + T;
         o_suppression = o_disengagement_suppressed + T;
         total_length = o_suppression + T;
+        // NEXTGEN: lai.art (net), from engaged_suppressed, engaged_unsuppressed, diagnosed_unengaged, and removal
+        has_lai = d.lai_art >= 0;
+        if (has_lai) {
+            o_lai_total = total_length;
+            o_lai_es = o_lai_total + T;
+            o_lai_eu = o_lai_es + T;
+            o_lai_du = o_lai_eu + T;
+            o_lai_removal = o_lai_du + T;
+            total_length = o_lai_removal + T;
+        }
 
         hiv_births_g.assign(d.n_subgroups, 0.0);
         non_hiv_births_g.assign(d.n_subgroups, 0.0);
@@ -308,6 +322,21 @@ struct Model {
         //-- UNSUPPRESSION --// (not tracked)
         status_flow(UNSUPPRESSION, st, dx, d.engaged_suppressed, d.engaged_unsuppressed, nullptr);
 
+        //-- LAI ART (NEXTGEN) --// same flows as compute.dx: three arrows onto LAI, and removal back to engaged_suppressed
+        if (has_lai) {
+            double* d_lai_total = dydt.data() + o_lai_total;
+            double* d_lai_es    = dydt.data() + o_lai_es;
+            double* d_lai_eu    = dydt.data() + o_lai_eu;
+            double* d_lai_du    = dydt.data() + o_lai_du;
+            double* d_lai_rem   = dydt.data() + o_lai_removal;
+            status_flow(lai_es.at(t),      st, dx, d.engaged_suppressed,   d.lai_art, d_lai_es);
+            status_flow(lai_eu.at(t),      st, dx, d.engaged_unsuppressed, d.lai_art, d_lai_eu);
+            status_flow(lai_du.at(t),      st, dx, d.diagnosed_unengaged,  d.lai_art, d_lai_du);
+            status_flow(lai_removal.at(t), st, dx, d.lai_art, d.engaged_suppressed,   d_lai_rem);
+            for (std::size_t j = 0; j < T; ++j)
+                d_lai_total[j] = d_lai_es[j] + d_lai_eu[j] + d_lai_du[j] - d_lai_rem[j];
+        }
+
         //-- RECORD PREVALENCE --// dx.prevalence = dx.state[,,,-1]
         std::copy(dx + T, dx + S, d_prev);
     }
@@ -387,6 +416,11 @@ static void build_model(gmha::Model& m, Rcpp::List spec) {
     m.d.diagnosed_unengaged  = dims["diagnosed_unengaged"];
     m.d.engaged_unsuppressed = dims["engaged_unsuppressed"];
     m.d.engaged_suppressed   = dims["engaged_suppressed"];
+    // NEXTGEN: lai_art is only in dims when the model has the LAI state
+    Rcpp::CharacterVector dim_names = dims.names();
+    m.d.lai_art = -1;
+    for (int k = 0; k < dim_names.size(); ++k)
+        if (Rcpp::as<std::string>(dim_names[k]) == "lai_art") m.d.lai_art = dims[k];
     m.setup();
 
     const std::size_t S = m.S, T = m.T;
@@ -405,6 +439,12 @@ static void build_model(gmha::Model& m, Rcpp::List spec) {
     fill_param(m.suppressed_disengagement,   params, "SUPPRESSED.DISENGAGEMENT.RATES", T);
     fill_param(m.suppression,                params, "SUPPRESSION.RATES", T);
     fill_param(m.unsuppression,              params, "UNSUPPRESSION.RATES", T);
+    if (m.has_lai) { // NEXTGEN
+        fill_param(m.lai_es,                 params, "LAI.ES.RATES", T);
+        fill_param(m.lai_eu,                 params, "LAI.EU.RATES", T);
+        fill_param(m.lai_du,                 params, "LAI.DU.RATES", T);
+        fill_param(m.lai_removal,            params, "LAI.REMOVAL.RATES", T);
+    }
 
     m.max_seconds = Rcpp::as<double>(spec["max.run.seconds"]);
 }

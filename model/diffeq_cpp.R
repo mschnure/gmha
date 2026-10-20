@@ -50,14 +50,25 @@ CPP.TIME.VARYING.PARAMETER.SHAPES = c(
     UNSUPPRESSION.RATES = 'trans'
 )
 
+# NEXTGEN: the LAI flows, used when the model has the lai_art state
+CPP.LAI.PARAMETER.SHAPES = c(
+    LAI.ES.RATES = 'trans',
+    LAI.EU.RATES = 'trans',
+    LAI.DU.RATES = 'trans',
+    LAI.REMOVAL.RATES = 'trans'
+)
+
 prepare.cpp.model.spec <- function(parameters,
                                    max.run.seconds = Inf){
 
     tvp = parameters$time.varying.parameters
+    has.lai = 'lai_art' %in% parameters$HIV.STATUS
+    shapes = CPP.TIME.VARYING.PARAMETER.SHAPES
+    if (has.lai) shapes = c(shapes, CPP.LAI.PARAMETER.SHAPES)
 
     # the C++ code is written for exactly these parameters; stop if compute.dx has moved on
-    missing.params = setdiff(names(CPP.TIME.VARYING.PARAMETER.SHAPES), names(tvp))
-    extra.params = setdiff(names(tvp), names(CPP.TIME.VARYING.PARAMETER.SHAPES))
+    missing.params = setdiff(names(shapes), names(tvp))
+    extra.params = setdiff(names(tvp), names(shapes))
     if (length(missing.params) > 0)
         stop(paste0("Time-varying parameter(s) expected by the C++ model are missing: ",
                     paste0(missing.params, collapse = ", ")))
@@ -72,9 +83,9 @@ prepare.cpp.model.spec <- function(parameters,
                       trans.matrix = trans.length^2,
                       scalar = 1)
 
-    params = lapply(names(CPP.TIME.VARYING.PARAMETER.SHAPES), function(name){
+    params = lapply(names(shapes), function(name){
         param = tvp[[name]]
-        len = shape.lengths[[CPP.TIME.VARYING.PARAMETER.SHAPES[[name]]]]
+        len = shape.lengths[[shapes[[name]]]]
 
         values = vapply(param$values, function(val){
             val = as.numeric(val)
@@ -88,7 +99,7 @@ prepare.cpp.model.spec <- function(parameters,
         list(times = as.numeric(param$times),
              values = matrix(values, nrow = len, ncol = length(param$values)))
     })
-    names(params) = names(CPP.TIME.VARYING.PARAMETER.SHAPES)
+    names(params) = names(shapes)
 
     # dimensions and 0-based indices of the named sexes/hiv statuses compute.dx refers to
     dims = c(n.ages = length(parameters$AGES),
@@ -102,6 +113,8 @@ prepare.cpp.model.spec <- function(parameters,
              diagnosed_unengaged = match('diagnosed_unengaged', parameters$HIV.STATUS) - 1,
              engaged_unsuppressed = match('engaged_unsuppressed', parameters$HIV.STATUS) - 1,
              engaged_suppressed = match('engaged_suppressed', parameters$HIV.STATUS) - 1)
+    if (has.lai)
+        dims = c(dims, lai_art = match('lai_art', parameters$HIV.STATUS) - 1)
     if (any(is.na(dims)))
         stop(paste0("Could not find: ", paste0(names(dims)[is.na(dims)], collapse = ", ")))
     if (dims[['hiv_negative']] != 0)

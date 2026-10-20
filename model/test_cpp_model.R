@@ -20,6 +20,22 @@ source('model/run_systematic.R')  # sources source_code.R; defines run.model.for
 source('model/diffeq_cpp.R')      # compiles the C++ code (~30-60 seconds the first time)
 
 TEST.LOCATIONS = c("South Africa", "r1.high")
+
+# NEXTGEN: also test South Africa with LAI switched on (baseline LAI rates are all 0, so the runs above
+# don't exercise the LAI flows). Made-up rates, just large enough to move people through every LAI arrow.
+lai.test.unit = function(parameter, value)
+    create.intervention.unit(parameter = parameter, scale = "rate", start.time = 2020,
+                             effect.times = 2022, effect.values = value, end.time = 2035,
+                             allow.lower.than.baseline = F)
+LAI.TEST.INTERVENTION = list(create.intervention.from.units(lai.test.unit("LAI.ES.RATES", 2),
+                                                            lai.test.unit("LAI.EU.RATES", 1),
+                                                            lai.test.unit("LAI.DU.RATES", 0.5),
+                                                            lai.test.unit("LAI.REMOVAL.RATES", 0.3),
+                                                            target.ages = c("15-19","20-24"),
+                                                            code = "lai.test"))
+TEST.CASES = c(lapply(TEST.LOCATIONS, function(loc) list(location = loc, label = loc, interventions = NO.INTERVENTION)),
+               list(list(location = "South Africa", label = "South Africa + LAI test intervention",
+                         interventions = LAI.TEST.INTERVENTION)))
 START.YEAR = 1970
 END.YEAR = 2041           # run.model.for.parameters default
 N.CPP.TIMING.REPS = 20
@@ -64,14 +80,14 @@ get.test.details = function(location){
 }
 
 # Same steps as run.model.for.parameters (model/run_systematic.R), up to the ODE
-build.test.inputs = function(location, variable.parameters){
+build.test.inputs = function(location, variable.parameters, interventions = NO.INTERVENTION){
     sampled.parameters = get.default.parameters(location = location)
     sampled.parameters[names(variable.parameters)] = variable.parameters
     parameters = create.model.parameters(location = location)
     parameters = map.model.parameters(parameters,
                                       location = location,
                                       sampled.parameters = sampled.parameters,
-                                      interventions = NO.INTERVENTION)
+                                      interventions = interventions)
     initial.state = get.initial.population(year = "1970",
                                            location = location,
                                            data.manager = DATA.MANAGER,
@@ -96,6 +112,9 @@ get.blocks = function(parameters){
                 hiv.mortality = S.len, non.hiv.mortality = S.len, total.mortality = S.len,
                 engagement = T.len, disengagement.unsuppressed = T.len,
                 disengagement.suppressed = T.len, suppression = T.len)
+    if ('lai_art' %in% parameters$HIV.STATUS) # NEXTGEN
+        lengths = c(lengths, lai.art.total = T.len, lai.art.es = T.len, lai.art.eu = T.len,
+                    lai.art.du = T.len, lai.removal = T.len)
     ends = cumsum(lengths)
     starts = ends - lengths + 1
     setNames(lapply(seq_along(lengths), function(i) starts[i]:ends[i]), names(lengths))
@@ -111,16 +130,17 @@ add("R ", R.version$major, ".", R.version$minor, " | Rcpp ", as.character(packag
 
 worst = c(derivative = 0, raw.ode = 0, end.to.end = 0)
 
-for (location in TEST.LOCATIONS) {
+for (test.case in TEST.CASES) {
 
+    location = test.case$location
     LOCATION = location  # some functions use the global LOCATION
     add("")
-    add("---- ", location, " ----")
+    add("---- ", test.case$label, " ----")
 
     test.details = get.test.details(location)
     variable.parameters = test.details$variable.parameters
 
-    timing.setup = system.time(inputs <- build.test.inputs(location, variable.parameters))[["elapsed"]]
+    timing.setup = system.time(inputs <- build.test.inputs(location, variable.parameters, interventions = test.case$interventions))[["elapsed"]]
     parameters = inputs$parameters
     y0 = set.up.initial.diffeq.vector(inputs$initial.state, parameters)
     blocks = get.blocks(parameters)
@@ -173,11 +193,13 @@ for (location in TEST.LOCATIONS) {
     ## 3. End to end through run.model.for.parameters
     options(gmha.use.cpp = FALSE)
     timing.full.R = system.time(
-        sim.R <- run.model.for.parameters(location = location, variable.parameters = variable.parameters)
+        sim.R <- run.model.for.parameters(location = location, variable.parameters = variable.parameters,
+                                         interventions = test.case$interventions)
     )[["elapsed"]]
     options(gmha.use.cpp = TRUE)
     timing.full.C = system.time(
-        sim.C <- run.model.for.parameters(location = location, variable.parameters = variable.parameters)
+        sim.C <- run.model.for.parameters(location = location, variable.parameters = variable.parameters,
+                                         interventions = test.case$interventions)
     )[["elapsed"]]
     options(gmha.use.cpp = FALSE)
 

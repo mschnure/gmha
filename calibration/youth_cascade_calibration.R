@@ -14,13 +14,14 @@
 ################################################################################################
 source("model/run_systematic.R")     # loads the LAI data manager (has the 0-14 cascade data)
 source("calibration/mcmc_pipeline.R") # make.safe.mcmc.functions
+use.cpp.model.if.possible()           # C++ ODE (includes LAI as of 10/20/26) if it compiles, otherwise R
 
 LOCATION = "South Africa"
 SIMSET.FILE = "mcmc_runs/simset_south_africa_step2_chains1234_2026-10-20.Rdata"
 MASTER.DATA.MANAGER.FILE = "cached/data.manager_global_revised_ages_2026-10-15.Rdata" # the one the calibration used
 N.CANDIDATE.SIMS = 100   # simulations scored to pick the base simulation
-N.ITER = 10000           # youth MCMC iterations
-YOUTH.BURN = 2000        # iterations dropped from the start of the youth MCMC
+N.ITER = 20000           # youth MCMC iterations (5 parameters; check the trace plots below)
+YOUTH.BURN = 5000        # iterations dropped from the start of the youth MCMC
 YOUTH.CACHE.DIR = file.path(MCMC.CACHE.DIR, paste0("south_africa_youth_", Sys.Date()))
 set.seed(20261020)
 
@@ -132,6 +133,10 @@ youth.mcmc = run.mcmc.with.cache(control = control,
 
 dir.create(file.path(MCMC.RUNS.DIR, "mcmc_files"), recursive = TRUE, showWarnings = FALSE)
 save(youth.mcmc, BASE.INDEX, file = file.path(MCMC.RUNS.DIR, "mcmc_files", paste0("mcmc_south_africa_youth_", Sys.Date(), ".Rdata")))
+
+# convergence: traces should look like flat, well-mixed noise after YOUTH.BURN, with no drift; if they're
+# still drifting at the end, increase N.ITER and resume (run.mcmc.from.cache above)
+print(trace.plot(youth.mcmc))
 
 youth.simset = extract.simset(youth.mcmc, additional.burn = YOUTH.BURN, additional.thin = 1)
 print(paste0("Youth posterior: ", youth.simset@n.sim, " distinct simulations"))
