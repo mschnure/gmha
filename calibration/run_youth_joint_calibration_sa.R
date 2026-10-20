@@ -11,11 +11,23 @@
 #     - youth parameters: posterior medians from that youth calibration (fitted to simulation 738)
 #
 # Kept apart from master's runs: caches in mcmc_cache/nextgen, outputs and logs in mcmc_runs/nextgen,
-# starting values in calibration/starting_values/nextgen.
+# starting values in calibration/starting_values/nextgen (master's pipeline only looks in the top level
+# of calibration/starting_values, so it never picks these up).
 #
-# Run from Terminal (in the gmha folder):
-#   nohup caffeinate -i Rscript calibration/run_youth_joint_calibration_sa.R > mcmc_runs/logs/nextgen_joint_sa.log 2>&1 &
-# To resume after a crash/sleep/restart, add "resume" at the end of the Rscript command.
+# Needs (all on the nextgen branch): the LAI data manager in cached/ (force-added to git) and the
+# starting values file in calibration/starting_values/nextgen/. Takes ~5 hours (4 chains in parallel,
+# ~0.17 s/iteration on a MacBook Pro); uses 4 cores.
+#
+# HOW TO RUN
+#   Windows (RStudio), in a separate worktree so the master checkout is untouched:
+#     git fetch origin
+#     git worktree add ../gmha_nextgen nextgen      (once; later: cd ../gmha_nextgen && git pull)
+#     Then in RStudio: Jobs tab > Start Background Job > script = this file,
+#     working directory = the gmha_nextgen folder. Progress: mcmc_runs/nextgen/logs/
+#   Mac/Linux Terminal (in the repo folder):
+#     nohup caffeinate -i Rscript calibration/run_youth_joint_calibration_sa.R > mcmc_runs/logs/nextgen_joint_sa.log 2>&1 &
+#
+# TO RESUME after a crash/sleep/restart: set RESUME = TRUE below (or add "resume" to the Rscript command)
 ################################################################################################
 source("model/run_systematic.R")
 source("calibration/mcmc_pipeline.R")
@@ -25,7 +37,8 @@ MCMC.RUNS.DIR = "mcmc_runs/nextgen"
 STARTING.VALUES.DIR = "calibration/starting_values/nextgen"
 for(d in c(MCMC.CACHE.DIR, MCMC.RUNS.DIR, STARTING.VALUES.DIR)) dir.create(d, recursive = TRUE, showWarnings = FALSE)
 
-RESUME = "resume" %in% commandArgs(trailingOnly = TRUE)
+RESUME = FALSE
+RESUME = RESUME || "resume" %in% commandArgs(trailingOnly = TRUE)
 N.CORES = 4
 
 MASTER.SIMSET.FILE = "mcmc_runs/simset_south_africa_step2_chains1234_2026-10-20.Rdata"
