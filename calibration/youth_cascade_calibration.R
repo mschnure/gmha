@@ -150,7 +150,7 @@ print(paste0("Youth posterior: ", youth.simset@n.sim, " distinct simulations"))
 print(round(apply(youth.simset@parameters[,YOUTH.PARAMS], 2, quantile, probs = c(0.025,0.5,0.975)), 3))
 
 # youth fit for the base simulation
-print(simplot(youth.simset,
+invisible(simplot(youth.simset,
         years = 2000:2030,
         data.types = c('awareness','engagement','suppression'),
         facet.by = 'age',
@@ -174,13 +174,13 @@ save(simset, file = paste0("mcmc_runs/simset_south_africa_step2_chains1234_youth
 print(paste0("Saved mcmc_runs/simset_south_africa_step2_chains1234_youth_", Sys.Date(), ".Rdata - use this for the LAI runs"))
 
 # full fit, all simulations
-print(simplot(simset,
+invisible(simplot(simset,
         years = 2000:2040,
         data.types = c('awareness','engagement','suppression'),
         facet.by = 'age',
         ages = c('0-14','15+'),
         proportion = T))
-print(simplot(simset, years = 1980:2040, data.types = c('incidence','prevalence')))
+invisible(simplot(simset, years = 1980:2040, data.types = c('incidence','prevalence')))
 
 if(!interactive()) dev.off()
 print("Youth calibration finished")
