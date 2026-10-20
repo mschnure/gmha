@@ -16,7 +16,7 @@ NO.INTERVENTION = c()
 # then put the step 2 file name here
 # (skipped when building the data manager - revise_overlapping_age_groups.R sets BUILDING.DATA.MANAGER = T)
 if(!isTRUE(get0("BUILDING.DATA.MANAGER"))){
-    load('cached/data.manager_global_revised_ages_lai_YYYY-MM-DD.Rdata')
+    load('cached/data.manager_global_revised_ages_lai_2026-10-20.Rdata')
     if(!isTRUE(attr(DATA.MANAGER, "lai")))
         stop("This isn't the LAI data manager - rebuild it on the nextgen branch (see source_code.R)")
 }
