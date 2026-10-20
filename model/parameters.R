@@ -898,6 +898,8 @@ map.model.parameters <- function(parameters,
     })
     iedea.cat.by.trans = rep(iedea.cat.by.age, times = length(trans.dim.names$sex))
     sex.by.trans = rep(trans.dim.names$sex, each = length(trans.dim.names$age))
+    # NEXTGEN: model ages 0-14, laid out over [age, sex] (the youth cascade slopes apply only to these ages)
+    is.0.14.by.trans = rep(trans.dim.names$age %in% c("0-4","5-9","10-14"), times = length(trans.dim.names$sex))
     
     #-- ENGAGEMENT --#
     engagement.model = get.engagement.model(location = location)
@@ -929,7 +931,7 @@ map.model.parameters <- function(parameters,
         # same terms, added in the same order, as a vector over [age, sex] (age category/sex lookups done once, above)
         projected.log.odds = as.numeric(engagement.model$intercept + 
                     (engagement.model$slope+sampled.parameters['log.OR.engagement.slope'] + 
-                     (iedea.cat.by.trans=="10-19")*sampled.parameters['log.OR.0.14.engagement.slope'])*  # nextgen: extra slope for youth (IeDEA 10-19 = model ages 0-19)
+                     is.0.14.by.trans*sampled.parameters['log.OR.0.14.engagement.slope'])*  # nextgen: extra slope for ages 0-14 only (10/20/26; was IeDEA 10-19 = ages 0-19)
                     (year-engagement.model$anchor.year) + 
                     (engagement.model$age.10.19*(iedea.cat.by.trans=="10-19")) + 
                     (engagement.model$age.20.29*(iedea.cat.by.trans=="20-29")) + 
@@ -993,7 +995,7 @@ map.model.parameters <- function(parameters,
         # same terms, added in the same order, as a vector over [age, sex] (age category/sex lookups done once, above)
         projected.log.odds = as.numeric(suppression.model$intercept + 
                     (suppression.model$slope+sampled.parameters['log.OR.suppression.slope'] + 
-                     (iedea.cat.by.trans=="10-19")*sampled.parameters['log.OR.0.14.suppression.slope'])*  # nextgen: extra slope for youth (IeDEA 10-19 = model ages 0-19)
+                     is.0.14.by.trans*sampled.parameters['log.OR.0.14.suppression.slope'])*  # nextgen: extra slope for ages 0-14 only (10/20/26; was IeDEA 10-19 = ages 0-19)
                     (year-suppression.model$anchor.year) + 
                     (suppression.model$age.10.19*(iedea.cat.by.trans=="10-19")) + 
                     (suppression.model$age.20.29*(iedea.cat.by.trans=="20-29")) + 
