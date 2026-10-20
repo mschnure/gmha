@@ -25,6 +25,13 @@ YOUTH.BURN = 5000        # iterations dropped from the start of the youth MCMC
 YOUTH.CACHE.DIR = file.path(MCMC.CACHE.DIR, paste0("south_africa_youth_", Sys.Date()))
 set.seed(20261020)
 
+# when run outside RStudio (e.g., Rscript from Terminal), save the plots to a PDF
+if(!interactive()){
+    YOUTH.PLOT.FILE = file.path(MCMC.RUNS.DIR, paste0("youth_calibration_plots_", Sys.Date(), ".pdf"))
+    pdf(YOUTH.PLOT.FILE, width = 11, height = 8.5)
+    print(paste0("Plots will be saved to ", YOUTH.PLOT.FILE))
+}
+
 YOUTH.PARAMS = c("age.0.14.awareness.multiplier","age.0.14.engagement.multiplier","age.0.14.suppression.multiplier",
                  "log.OR.0.14.engagement.slope","log.OR.0.14.suppression.slope")
 
@@ -143,12 +150,12 @@ print(paste0("Youth posterior: ", youth.simset@n.sim, " distinct simulations"))
 print(round(apply(youth.simset@parameters[,YOUTH.PARAMS], 2, quantile, probs = c(0.025,0.5,0.975)), 3))
 
 # youth fit for the base simulation
-simplot(youth.simset,
+print(simplot(youth.simset,
         years = 2000:2030,
         data.types = c('awareness','engagement','suppression'),
         facet.by = 'age',
         ages = c('0-14','15+'),
-        proportion = T)
+        proportion = T))
 
 ##------------------------------------------------------------------------------------------##
 ##-- 3. Pair every simulation with a youth posterior draw, re-run, save for LAI           --##
@@ -167,10 +174,13 @@ save(simset, file = paste0("mcmc_runs/simset_south_africa_step2_chains1234_youth
 print(paste0("Saved mcmc_runs/simset_south_africa_step2_chains1234_youth_", Sys.Date(), ".Rdata - use this for the LAI runs"))
 
 # full fit, all simulations
-simplot(simset,
+print(simplot(simset,
         years = 2000:2040,
         data.types = c('awareness','engagement','suppression'),
         facet.by = 'age',
         ages = c('0-14','15+'),
-        proportion = T)
-simplot(simset, years = 1980:2040, data.types = c('incidence','prevalence'))
+        proportion = T))
+print(simplot(simset, years = 1980:2040, data.types = c('incidence','prevalence')))
+
+if(!interactive()) dev.off()
+print("Youth calibration finished")
