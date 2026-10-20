@@ -7,16 +7,26 @@ load('data_manager/remainder_countries.Rdata')
 load('data_manager/cascade_weights.Rdata')
 load('data_manager/locations_income.Rdata')
 
-EXTRACT.SUPPRESSED.VALUES = F 
+## Countries with no UNAIDS PLHIV estimates (China, Russia, United States, Japan, UK, Turkiye, Cameroon, ...) are
+## modeled in non.unaids.remainder: their PLHIV already land there (global - reported), so take them out of the
+## remainder/income lists so their population and deaths go there too (otherwise r1.* population includes them
+## while r1.* PLHIV does not). Added 10/15/26.
+NO.PLHIV.DATA.COUNTRIES = get.countries.without.prevalence.data()
+REMAINDER.COUNTRIES.UNAIDS = setdiff(REMAINDER.COUNTRIES.UNAIDS, NO.PLHIV.DATA.COUNTRIES)
+for(group in setdiff(names(LOCATIONS.INCOME), "full"))
+    LOCATIONS.INCOME[[group]] = setdiff(LOCATIONS.INCOME[[group]], NO.PLHIV.DATA.COUNTRIES)
+print(paste0("Moved to non.unaids.remainder (no PLHIV data): ", paste0(NO.PLHIV.DATA.COUNTRIES, collapse = ", ")))
+
+EXTRACT.SUPPRESSED.VALUES = T 
 SCALE.REMAINDER.DATA = T
 
 ## all countries other than these individual countries will be modeled as the remainder
 ## if you want to change this, need to edit data_manager/remainder_countries.R" file 
 INDIVIDUAL.COUNTRIES = c("South Africa","Mozambique","Nigeria","Tanzania","Uganda","Kenya",
-                         "Zambia","Zimbabwe","Malawi","France","Thailand","Cambodia") # removed Brazil, Chile, Netherlands
+                         "Zambia","Zimbabwe","Malawi") # removed France, Thailand, Cambodia, Brazil, Chile, Netherlands
                                                                 
 COUNTRIES.TO.PULL.PDFS = c("South Africa","Mozambique","Nigeria","Tanzania","Uganda","Kenya",
-                           "Zambia","Zimbabwe","Malawi","France","Thailand", "Cambodia",
+                           "Zambia","Zimbabwe","Malawi", # "France","Thailand", "Cambodia",
                            "UNAIDS remainder","Non UNAIDS remainder")
 # remainder countries both have NAs for PDFs for now 
 
@@ -35,6 +45,9 @@ if(SCALE.REMAINDER.DATA){
     }
 }
 
+
+# non.unaids.remainder bounds relative to Global; clamp any lower > point / upper < point (10/15/26)
+DATA.MANAGER = fix.count.bounds(DATA.MANAGER)
 
 save(DATA.MANAGER,file=paste0("cached/data.manager_global_",Sys.Date(),".Rdata"))
 

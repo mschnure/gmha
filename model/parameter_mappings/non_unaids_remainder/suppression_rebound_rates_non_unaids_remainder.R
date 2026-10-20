@@ -51,7 +51,7 @@ get.unsuppression.rate.us = function(){
 # Viral suppression within 6 months of ART initiation - Alvarez-Uria et al, 2013 (Maunank cites this paper)
 # https://onlinelibrary.wiley.com/doi/10.1155/2013/384805
 get.suppression.rate.india = function(){
-    max.proportion = 0.95
+    max.proportion = 0.99
     
     suppression.p.6.months = .818
     time = 6/12
@@ -79,7 +79,7 @@ get.suppression.rate.india = function(){
     
     data.df$year = suppression.years
     
-    fit = suppressWarnings(glm(value ~ year+age+sex, family=binomial, data = data.df)) 
+    fit = suppressWarnings(glm(pmin(value/max.proportion,1) ~ year+age+sex, family=binomial, data = data.df)) 
     
     dim.names.projection = list(year = 1980:2040 - suppression.anchor.year,
                                 age = c("10-19","20-29","30-39","40-49","50 and over"),

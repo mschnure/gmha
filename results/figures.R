@@ -11,6 +11,8 @@ source("model/run_systematic.R")
 COUNTRIES = c("Mozambique","Uganda","Kenya","Zambia",
     "Zimbabwe","unaids.remainder","non.unaids.remainder",
     "r1.low","r1.lower.middle","r1.upper.middle","r1.high",
+    "all.low","all.lower.middle","all.upper.middle","all.high",
+    "global",
     "Malawi" ,"South Africa"#,
     #"Tanzania","Nigeria"
     
@@ -19,7 +21,7 @@ COUNTRIES = c("Mozambique","Uganda","Kenya","Zambia",
 # do these ones manually and check simset.no.int@simulations[[1]]$location to make sure they save in the right location
 # Tanzania, Nigeria, global, global.income, all.low, all.lower.middle, all.upper.middle, all.high 
 
-country = COUNTRIES[13]
+country = COUNTRIES[16] # global = 16, low = 12
 
 #for(country in COUNTRIES){
     
@@ -44,7 +46,11 @@ country = COUNTRIES[13]
                     "Zambia" = 200000,
                     "Zimbabwe" = 200000,
                     "Malawi" = 160000,
-                    "France" = 35000
+                    "France" = 35000,
+                    "all.low" = 1000000,
+                    "all.lower.middle" = 1600000,
+                    "all.upper.middle" = 1750000,
+                    "all.high" = 110000
     )
     plot.limit = plot.limits[simset.no.int@simulations[[1]]$location]
     
@@ -63,8 +69,8 @@ country = COUNTRIES[13]
                               sexes = c("female","male"),
                               plot.limits=c(0,plot.limit)) +
         scale_fill_manual(labels = c("no.int/2025" = "2025",
-                                     "no.int/2040" = "Status quo, 2040",
-                                     "no.int/2040" = "Status quo, 2040"), 
+                                     "no.int/2040" = "Forecasted 2040",
+                                     "no.int/2040" = "Forecasted 2040"), 
                           values=alpha(c("no.int/2025" = pal[1],
                                          "no.int/2040" = pal[2], 
                                          "no.int/2040" = pal[3]),alpha), 
@@ -76,13 +82,18 @@ country = COUNTRIES[13]
         guides(x =  guide_axis(angle = 45))
     dev.off()
     
-    
+    ## GLOBAL ##
     if(simset.no.int@simulations[[1]]$location=="Global"){
         age.labels = simset.no.int@simulations[[1]]$AGES
         age.labels[length(age.labels)] = "80+"
+        age.labels = gsub("-", "\u2013", age.labels) # FOR LANCET FINAL VERSION
         
-        jpeg(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.jpeg"),
-             width = 2000,height = 1500,res=200)
+        # jpeg(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.jpeg"),
+        #      width = 2000,height = 1500,res=200)
+        # pdf(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.pdf"),
+        #      width = 10,height = 7.5) 
+        svg(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.svg"),
+            width = 10,height = 7.5) 
         generate.age.distribution(full.results.array, 
                                   outcome="prevalence", 
                                   intervention.1 = "no.int",year.1="2025",
@@ -91,9 +102,9 @@ country = COUNTRIES[13]
                                   percent=F,
                                   sexes = c("female","male"),
                                   plot.limits=c(0,plot.limit)) +
-            scale_fill_manual(labels = c("no.int/2025" = "Calibrated population, 2025",
-                                         "no.int/2040" = "Calibrated population, 2040",
-                                         "no.int/2040" = "Calibrated population, 2040"), 
+            scale_fill_manual(labels = c("no.int/2025" = "2025",
+                                         "no.int/2040" = "Forecasted 2040",
+                                         "no.int/2040" = "Forecasted 2040"), 
                               values=alpha(c("no.int/2025" = pal[1],
                                              "no.int/2040" = pal[2], 
                                              "no.int/2040" = pal[3]),alpha), 
@@ -102,20 +113,78 @@ country = COUNTRIES[13]
                   axis.title.y = element_text(colour = "black",vjust = 3,
                                               margin = margin(l = 15)),
                   axis.text = element_text(colour = "black"),
-                  legend.position = c(0.22, 0.87)
+                  legend.position = c(0.15, 0.87)
             )+
             labs(title = NULL,subtitle = NULL) +
             ylab(label = "Number of people living with HIV") +
             scale_y_continuous( 
                 breaks = seq(0, 7000000, by = 1000000),
                 limits = c(0,6100000),
-                labels = label_number(scale = 1e-6, suffix = "M")) +
+                labels = label_number(scale = 1, big.mark = "\u2009")) + # FOR LANCET FINAL VERSION
+                # labels = label_number(scale = 1e-6, suffix = "M")) +
             scale_x_discrete( 
                 labels = age.labels) +
+            xlab(label = "Age (years)") +
             guides(x =  guide_axis(angle = 45))
         dev.off()
+        
+        
+        # SAVE PLOT VALUES 
+        write.csv(summary.results$prevalence.age.distribution,
+                  file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.csv"))
+        
     }
     
+    # income plots
+    if(simset.no.int@simulations[[1]]$location %in% c("all.low","all.lower.middle","all.upper.middle","all.high")){
+        age.labels = simset.no.int@simulations[[1]]$AGES
+        age.labels[length(age.labels)] = "80+"
+        age.labels = gsub("-", "\u2013", age.labels) # FOR LANCET FINAL VERSION
+        
+        # jpeg(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.jpeg"),
+        #      width = 2000,height = 1500,res=200)
+        # pdf(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.pdf"),
+        #      width = 10,height = 7.5)
+        svg(file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.svg"),
+            width = 10, height = 7.5)
+        generate.age.distribution(full.results.array, 
+                                  outcome="prevalence", 
+                                  intervention.1 = "no.int",year.1="2025",
+                                  intervention.2 = "no.int",year.2="2040",
+                                  intervention.3 = "no.int",year.3="2040",
+                                  percent=F,
+                                  sexes = c("female","male"),
+                                  plot.limits=c(0,plot.limit)) +
+            scale_fill_manual(labels = c("no.int/2025" = "2025",
+                                         "no.int/2040" = "Forecasted 2040",
+                                         "no.int/2040" = "Forecasted 2040"), 
+                              values=alpha(c("no.int/2025" = pal[1],
+                                             "no.int/2040" = pal[2], 
+                                             "no.int/2040" = pal[3]),alpha), 
+                              name=NULL) +
+            theme(text = element_text(size = 20),
+                  axis.title.y = element_text(colour = "black",vjust = 3,
+                                              margin = margin(l = 15)),
+                  axis.text = element_text(colour = "black"),
+                  legend.position = c(0.15, 0.87)
+            )+
+            labs(title = NULL,subtitle = NULL) +
+            ylab(label = "Number of people living with HIV") +
+            scale_y_continuous(
+                labels = label_number(big.mark = "\u2009")) +
+            scale_x_discrete( 
+                labels = age.labels) +
+            xlab(label = "Age (years)") +
+            guides(x =  guide_axis(angle = 45))
+        dev.off()
+        
+        
+        # SAVE PLOT VALUES 
+        write.csv(summary.results$prevalence.age.distribution,
+                  file=paste0("results/for_lancet_PAPER/",convert_string(simset.no.int@simulations[[1]]$location),"/",Sys.Date(),"/age_dist.csv"))
+        
+    }
+
     
     
     ### ALL YEARS ### 
@@ -153,6 +222,7 @@ country = COUNTRIES[13]
             ncol=4) +
         theme(strip.text.x = element_blank(),
               text = element_text(size = 20),
+              axis.text.x = element_text(angle = 30, hjust = 1),
               legend.position = "none")+
         scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
     dev.off() 
@@ -190,6 +260,7 @@ country = COUNTRIES[13]
             ncol=4) +
         theme(strip.text.x = element_blank(),
               text = element_text(size = 20),
+              axis.text.x = element_text(angle = 30, hjust = 1),
               legend.position = "none")+
         scale_y_continuous(labels = function(x){format(x,big.mark=",",scientific = FALSE)},name = NULL, limits = c(0,NA))
     dev.off() 

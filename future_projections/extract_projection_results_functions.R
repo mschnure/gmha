@@ -295,7 +295,7 @@ generate.full.results.array = function(simset.list,
                                            "lai.art.total","lai.art.es","lai.art.eu","lai.art.du","lai.removal"
                                            # lai.art.total is all three arrows minus removal 
                                        )){
-    sims = paste0("sim",c(1:simset.list[[1]]@n.sim))
+    sims = paste0("sim",c(1:length(simset.list[[1]]@simulations)))
     simset.list = simset.list
     if(is.null(names(simset.list)))
         stop("simset list must be named by intervention")
@@ -381,10 +381,9 @@ generate.age.distribution = function(results.array,
                                      sexes=c("female","male"),
                                      display="figure",
                                      plot.limits=c(0,200000)){
-    
-    if(outcome=="incidence"){
-        results.array = results.array[,-c(2:3),,,,]
-    }
+    # if(outcome=="incidence"){
+    #     results.array = results.array[,-c(2:3),,,,, drop=F]
+    # }
     
     results.array.1 = results.array[,,sexes,,,intervention.1]
     results.array.2 = results.array[,,sexes,,,intervention.2]

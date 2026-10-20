@@ -19,7 +19,11 @@ PARAMETER.VAR.BLOCKS = list(
     
     age.transmission.multipliers.01 = c("age.20.to.29.transmission.multiplier.0"),
     
-    age.transmission.multipliers.02 = c("age.40.to.49.transmission.multiplier.0"),
+    age.transmission.multipliers.02 = c("age.30.to.39.transmission.multiplier.0"),
+    
+    age.transmission.multipliers.03 = c("age.40.to.49.transmission.multiplier.0"),
+    
+    age.transmission.multipliers.04 = c("age.50.and.over.transmission.multiplier.0"),
     
     
     age.transmission.multipliers.1 = c("age.15.to.19.transmission.multiplier.1",
@@ -30,12 +34,15 @@ PARAMETER.VAR.BLOCKS = list(
                                        "age.20.to.29.transmission.multiplier.2",
                                        "age.20.to.29.transmission.multiplier.3"),
     
-    age.transmission.multipliers.3 = c("age.40.to.49.transmission.multiplier.1",
+    age.transmission.multipliers.3 = c("age.30.to.39.transmission.multiplier.1",
+                                       "age.30.to.39.transmission.multiplier.2",
+                                       "age.30.to.39.transmission.multiplier.3"),
+    
+    age.transmission.multipliers.4 = c("age.40.to.49.transmission.multiplier.1",
                                        "age.40.to.49.transmission.multiplier.2",
                                        "age.40.to.49.transmission.multiplier.3"),
     
-    age.transmission.multipliers.4 = c("age.50.and.over.transmission.multiplier.0",
-                                       "age.50.and.over.transmission.multiplier.1",
+    age.transmission.multipliers.5 = c("age.50.and.over.transmission.multiplier.1",
                                        "age.50.and.over.transmission.multiplier.2",
                                        "age.50.and.over.transmission.multiplier.3"),
     

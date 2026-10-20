@@ -3,24 +3,34 @@
 ##############################################
 
 source("model/run_systematic.R")
-source("future_projections/extract_projection_results.R")
+source("future_projections/extract_projection_results_functions.R")
 
+# only pick one of these
 RUN.INDIV.COUNTRY = T
+LOAD.REMAINDER.INCOME.SIMSET = F
+LOAD.COMBINED.INCOME.SIMSET = F
 LOAD.GLOBAL.SIMSET = F
-N.CHAINS = 2
+N.CHAINS = 1
+
+
+## THIS IS OUTDATED - AS OF 6/2026, ALL MCMCS ARE RUN THROUGH 2040 SO DON'T NEED TO RUN INTO THE FUTURE ## 
+
+
 
 if(LOAD.GLOBAL.SIMSET){
   COUNTRIES = "global"
 } else if(RUN.INDIV.COUNTRY){
   COUNTRIES = "South Africa"
   # COUNTRIES = c(#"Mozambique","Uganda","Kenya","Zambia"
-  #               #"Zimbabwe","unaids.remainder","non.unaids.remainder"
-  #               #"r1.low","r1.lower.middle","r1.upper.middle","r1.high"
-  #               #"Tanzania","South Africa",
-  #               #"Malawi" #,"Nigeria"
-  # 
-  #   )
-} else stop("can only select run.indiv.country or load.global.simset")
+    #"Zimbabwe","unaids.remainder","non.unaids.remainder"
+    #"Tanzania","South Africa",
+    #"Malawi" #,"Nigeria"
+  # )
+} else if(LOAD.REMAINDER.INCOME.SIMSET){
+  COUNTRIES = c("r1.low" ,"r1.lower.middle","r1.upper.middle","r1.high")
+} else if(LOAD.COMBINED.INCOME.SIMSET){
+  COUNTRIES = c("low_income" ,"lower_middle_income","upper_middle_income","high_income")
+} else stop("can only select run.indiv.country, load.income.simset, or load.global.simset")
 
 for(country in COUNTRIES){
   
@@ -30,18 +40,21 @@ for(country in COUNTRIES){
     if(N.CHAINS==1){
       mcmc.files = list.files("mcmc_runs/mcmc_files")
       if(country=="South Africa") country = "South_Africa"
-      mcmc.file = mcmc.files[grepl(paste0(tolower(country),"_2025"),mcmc.files)]
+      mcmc.file = mcmc.files[grepl(paste0(tolower(country),"_chain1_2026"),mcmc.files)]
       # if multiple, this will take the last one by date which is the most recent 
       mcmc.file = mcmc.file[length(mcmc.file)]
       
       print(paste0("loading file: ",mcmc.file))
       load(paste0("mcmc_runs/mcmc_files/",mcmc.file))
       
-      # If running from single chain, burn 10000 and thin by 20 to get to 1000 
+      # 6/15, REMOVED PRE-THINNING 
+      # If running from single chain of 100k (pre-thinned by 5 to 20k), burn 10k (to 10k) and thin by 10 to get to 1000 
+      # If running from single chain of 50k (pre-thinned by 5 to 10k), burn 5k (to 5k) and thin by 5 to get to 1000 
       simset = suppressWarnings(extract.simset(mcmc,
-                                               additional.burn=10000, 
-                                               additional.thin=10)) 
+                                               additional.burn=4999, # not sure why 5k doesn't work
+                                               additional.thin=5)) 
     } else if(N.CHAINS==2){
+      print("fix N.CHAINS = 2 loading process")
       mcmc.files = list.files("mcmc_runs/mcmc_files/merged")
       if(country=="South Africa") country = "South_Africa"
       mcmc.file = mcmc.files[grepl(paste0("chains12_",tolower(country),"_2025"),mcmc.files)]
@@ -61,12 +74,13 @@ for(country in COUNTRIES){
     } else
       stop("N.CHAINS must be either 1 or 2")
 
-    
-    RUN.SIMULATIONS.TO.YEAR = 2040
-    print("running no.int")
-    simset.no.int = run.intervention.on.simset(simset,
-                                               end.year = RUN.SIMULATIONS.TO.YEAR,
-                                               intervention = NO.INTERVENTION)
+    # new runs (as of 6/2026) already go to 2041
+    simset.no.int = simset
+    # RUN.SIMULATIONS.TO.YEAR = 2040
+    # print("running no.int")
+    # simset.no.int = run.intervention.on.simset(simset,
+    #                                            end.year = RUN.SIMULATIONS.TO.YEAR,
+    #                                            intervention = NO.INTERVENTION)
   }
   
   
@@ -74,7 +88,26 @@ for(country in COUNTRIES){
   if(LOAD.GLOBAL.SIMSET){
     print("loading global simset")
     #load("cached/simset_global_income_2025-08-26_.Rdata") # using income models 
-    load("cached/simset_global_2025-08-27_.Rdata") # using remainder model
+    #load("cached/simset_global_2025-08-27_.Rdata") # using remainder model
+    load("cached/simset_global_2026-04-14_.Rdata")
+    simset.no.int = simset
+  }
+  
+  # income remainder simsets already through 2040 
+  if(LOAD.REMAINDER.INCOME.SIMSET){
+    files = list.files("mcmc_runs")
+    file = files[grepl(paste0(tolower(country),"_chain1_2026"),files)]
+    print(paste0("loading file: ",file))
+    load(paste0("mcmc_runs/",file))
+    simset.no.int = simset
+  }
+  
+  # income combined simsets already through 2040 
+  if(LOAD.COMBINED.INCOME.SIMSET){
+    files = list.files("cached")
+    file = files[grepl(paste0(tolower(country),"_2026"),files)]
+    print(paste0("loading file: ",file))
+    load(paste0("cached/",file))
     simset.no.int = simset
   }
   
@@ -105,7 +138,7 @@ for(country in COUNTRIES){
                                                                                    age.point=65,
                                                                                    data.types = c("prevalence"),
                                                                                    years=c(2025,2040))
-  if(simset@simulations[[1]]$location %in% c("Uganda","non.unaids.remainder","r1.upper.middle")){
+  if(simset@simulations[[1]]$location %in% c("Uganda","non.unaids.remainder","r1.upper.middle","all.low")){
     summary.results$median.over.50.year = rep(NA,3)
   } else {
     summary.results$median.over.50.year = pull.year.for.statistic.for.simset(simset=simset.list.full$no.int,

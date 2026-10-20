@@ -199,8 +199,11 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$hiv.mortality$SEXES = c('male','female')
     rv$hiv.mortality$LOCATIONS = dimnames(rv$hiv.mortality$year.location)$location
     
+    ## PLHIV by country/year: used to weight cascade proportions when combining countries into remainder models
+    plhiv = rv$prevalence$year.location
+    
     ## Awareness denominator = all PLHIV
-    rv$awareness = read.cascade.data.type(sub.data.type = "status", denominator = "allPLHIV", suffix = "")
+    rv$awareness = read.cascade.data.type(sub.data.type = "status", denominator = "allPLHIV", suffix = "", plhiv = plhiv)
     rv$awareness$AGES = c('0-14','15+')
     rv$awareness$AGE.LOWERS = c(0,15)
     rv$awareness$AGE.UPPERS = c(15,Inf)
@@ -208,14 +211,14 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$awareness$LOCATIONS = dimnames(rv$awareness$year.location)$location
 
     ## Default engagement denominator = all aware PLHIV (option for all PLHIV below)
-    rv$engagement = read.cascade.data.type(sub.data.type = "ART", denominator = "aware", suffix = "")
+    rv$engagement = read.cascade.data.type(sub.data.type = "ART", denominator = "aware", suffix = "", plhiv = plhiv)
     rv$engagement$AGES = c('0-14','15+')
     rv$engagement$AGE.LOWERS = c(0,15)
     rv$engagement$AGE.UPPERS = c(15,Inf)
     rv$engagement$SEXES = c('male','female')
     rv$engagement$LOCATIONS = dimnames(rv$engagement$year.location)$location
         
-    rv$engagement.allPLHIV = read.cascade.data.type(sub.data.type = "ART", denominator = "allPLHIV", suffix = "")
+    rv$engagement.allPLHIV = read.cascade.data.type(sub.data.type = "ART", denominator = "allPLHIV", suffix = "", plhiv = plhiv)
     rv$engagement.allPLHIV$AGES = c('0-14','15+')
     rv$engagement.allPLHIV$AGE.LOWERS = c(0,15)
     rv$engagement.allPLHIV$AGE.UPPERS = c(15,Inf)
@@ -223,9 +226,9 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$engagement.allPLHIV$LOCATIONS = dimnames(rv$engagement.allPLHIV$year.location)$location
     
     ## Default suppression denominator = all aware PLHIV (option for all PLHIV below)
-    rv$suppression = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "")
+    rv$suppression = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "", plhiv = plhiv)
         # multiply (suppress/on ART) * (on ART/aware) in order to make denominator aware: 
-    rv$suppression$year = (rv$suppression$year*rv$engagement$year) 
+    rv$suppression$year = (rv$suppression$year*rv$engagement$year) # FIXED THIS STEP 10/3!! 
     rv$suppression$year.location = (rv$suppression$year.location*rv$engagement$year.location)
     rv$suppression$year.age = (rv$suppression$year.age*rv$engagement$year.age)
     rv$suppression$year.age.location = (rv$suppression$year.age.location*rv$engagement$year.age.location)
@@ -238,7 +241,7 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$suppression$SEXES = c('male','female')
     rv$suppression$LOCATIONS = dimnames(rv$suppression$year.location)$location
     
-    rv$suppression.allPLHIV = read.cascade.data.type(sub.data.type = "suppress", denominator = "allPLHIV", suffix = "")
+    rv$suppression.allPLHIV = read.cascade.data.type(sub.data.type = "suppress", denominator = "allPLHIV", suffix = "", plhiv = plhiv)
     rv$suppression.allPLHIV$AGES = c('0-14','15+')
     rv$suppression.allPLHIV$AGE.LOWERS = c(0,15)
     rv$suppression.allPLHIV$AGE.UPPERS = c(15,Inf)
@@ -285,8 +288,8 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$hiv.mortality.lowers$SEXES = rv$hiv.mortality.uppers$SEXES = c('male','female')
     rv$hiv.mortality.lowers$LOCATIONS = rv$hiv.mortality.uppers$LOCATIONS = dimnames(rv$hiv.mortality.lowers$year.location)$location
     
-    rv$awareness.lowers = read.cascade.data.type(sub.data.type = "status", denominator = "allPLHIV", suffix = "_lower")
-    rv$awareness.uppers = read.cascade.data.type(sub.data.type = "status", denominator = "allPLHIV", suffix = "_upper")
+    rv$awareness.lowers = read.cascade.data.type(sub.data.type = "status", denominator = "allPLHIV", suffix = "_lower", plhiv = plhiv)
+    rv$awareness.uppers = read.cascade.data.type(sub.data.type = "status", denominator = "allPLHIV", suffix = "_upper", plhiv = plhiv)
     rv$awareness.lowers$AGES = rv$awareness.uppers$AGES = c('0-14','15+')
     rv$awareness.lowers$AGE.LOWERS = rv$awareness.uppers$AGE.LOWERS = c(0,15)
     rv$awareness.lowers$AGE.UPPERS = rv$awareness.uppers$AGE.UPPERS = c(15,Inf)
@@ -294,16 +297,16 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$awareness.lowers$LOCATIONS = rv$awareness.uppers$LOCATIONS = dimnames(rv$awareness.lowers$year.location)$location
     
     ## Default engagement denominator = all aware PLHIV (option for all PLHIV below)
-    rv$engagement.lowers = read.cascade.data.type(sub.data.type = "ART", denominator = "aware", suffix = "_lower")
-    rv$engagement.uppers = read.cascade.data.type(sub.data.type = "ART", denominator = "aware", suffix = "_upper")
+    rv$engagement.lowers = read.cascade.data.type(sub.data.type = "ART", denominator = "aware", suffix = "_lower", plhiv = plhiv)
+    rv$engagement.uppers = read.cascade.data.type(sub.data.type = "ART", denominator = "aware", suffix = "_upper", plhiv = plhiv)
     rv$engagement.lowers$AGES = rv$engagement.uppers$AGES = c('0-14','15+')
     rv$engagement.lowers$AGE.LOWERS = rv$engagement.uppers$AGE.LOWERS = c(0,15)
     rv$engagement.lowers$AGE.UPPERS = rv$engagement.uppers$AGE.UPPERS = c(15,Inf)
     rv$engagement.lowers$SEXES = rv$engagement.uppers$SEXES = c('male','female')
     rv$engagement.lowers$LOCATIONS = rv$engagement.uppers$LOCATIONS = dimnames(rv$engagement.lowers$year.location)$location
     
-    rv$engagement.allPLHIV.lowers = read.cascade.data.type(sub.data.type = "ART", denominator = "allPLHIV", suffix = "_lower")
-    rv$engagement.allPLHIV.uppers = read.cascade.data.type(sub.data.type = "ART", denominator = "allPLHIV", suffix = "_upper")
+    rv$engagement.allPLHIV.lowers = read.cascade.data.type(sub.data.type = "ART", denominator = "allPLHIV", suffix = "_lower", plhiv = plhiv)
+    rv$engagement.allPLHIV.uppers = read.cascade.data.type(sub.data.type = "ART", denominator = "allPLHIV", suffix = "_upper", plhiv = plhiv)
     rv$engagement.allPLHIV.lowers$AGES = rv$engagement.allPLHIV.uppers$AGES = c('0-14','15+')
     rv$engagement.allPLHIV.lowers$AGE.LOWERS = rv$engagement.allPLHIV.uppers$AGE.LOWERS = c(0,15)
     rv$engagement.allPLHIV.lowers$AGE.UPPERS = rv$engagement.allPLHIV.uppers$AGE.UPPERS = c(15,Inf)
@@ -312,20 +315,22 @@ read.surveillance.data = function(dir = 'data_manager/data'){
         dimnames(rv$engagement.allPLHIV.lowers$year.location)$location
     
     ## Default suppression denominator = all aware PLHIV (option for all PLHIV below)
-    rv$suppression.lowers = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "_lower")
+    rv$suppression.lowers = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "_lower", plhiv = plhiv)
         # multiply (suppress/on ART) * (on ART/aware) in order to make denominator aware: 
-    rv$suppression.lowers$year = (rv$suppression.lowers$year*rv$engagement.lowers$year)
+    # lowers x engagement lowers for every stratification (10/15/26: year/year.location used to use point engagement)
+    rv$suppression.lowers$year = (rv$suppression.lowers$year*rv$engagement.lowers$year) # FIXED THIS STEP 10/3!! 
     rv$suppression.lowers$year.location = (rv$suppression.lowers$year.location*rv$engagement.lowers$year.location)
-    rv$suppression.lowers$year.age = (rv$suppression.lowers$year.age*rv$engagement$year.age)
-    rv$suppression.lowers$year.age.location = (rv$suppression.lowers$year.age.location*rv$engagement$year.age.location)
+    rv$suppression.lowers$year.age = (rv$suppression.lowers$year.age*rv$engagement.lowers$year.age) # nextgen 0-14 data; now uses engagement.lowers (was point engagement) to match master's 10/15/26 fix
+    rv$suppression.lowers$year.age.location = (rv$suppression.lowers$year.age.location*rv$engagement.lowers$year.age.location)
     rv$suppression.lowers$year.age.sex = (rv$suppression.lowers$year.age.sex*rv$engagement.lowers$year.age.sex)
     rv$suppression.lowers$year.age.sex.location = (rv$suppression.lowers$year.age.sex.location*rv$engagement.lowers$year.age.sex.location)
-    rv$suppression.uppers = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "_upper")
+    rv$suppression.uppers = read.cascade.data.type(sub.data.type = "suppress", denominator = "aware", suffix = "_upper", plhiv = plhiv)
         # multiply (suppress/on ART) * (on ART/aware) in order to make denominator aware: 
-    rv$suppression.uppers$year = (rv$suppression.uppers$year*rv$engagement.uppers$year) 
+    # uppers x engagement uppers for every stratification (10/15/26: year/year.location used to use point engagement)
+    rv$suppression.uppers$year = (rv$suppression.uppers$year*rv$engagement.uppers$year) # FIXED THIS STEP 10/3!! 
     rv$suppression.uppers$year.location = (rv$suppression.uppers$year.location*rv$engagement.uppers$year.location)
-    rv$suppression.uppers$year.age = (rv$suppression.uppers$year.age*rv$engagement$year.age)
-    rv$suppression.uppers$year.age.location = (rv$suppression.uppers$year.age.location*rv$engagement$year.age.location)
+    rv$suppression.uppers$year.age = (rv$suppression.uppers$year.age*rv$engagement.uppers$year.age) # nextgen 0-14 data; now uses engagement.uppers (was point engagement) to match master's 10/15/26 fix
+    rv$suppression.uppers$year.age.location = (rv$suppression.uppers$year.age.location*rv$engagement.uppers$year.age.location)
     rv$suppression.uppers$year.age.sex = (rv$suppression.uppers$year.age.sex*rv$engagement.uppers$year.age.sex)
     rv$suppression.uppers$year.age.sex.location = (rv$suppression.uppers$year.age.sex.location*rv$engagement.uppers$year.age.sex.location)
     
@@ -335,8 +340,8 @@ read.surveillance.data = function(dir = 'data_manager/data'){
     rv$suppression.lowers$SEXES = rv$suppression.uppers$SEXES = c('male','female')
     rv$suppression.lowers$LOCATIONS = rv$suppression.uppers$LOCATIONS = dimnames(rv$suppression.lowers$year.location)$location
     
-    rv$suppression.allPLHIV.lowers = read.cascade.data.type(sub.data.type = "suppress", denominator = "allPLHIV", suffix = "_lower")
-    rv$suppression.allPLHIV.uppers = read.cascade.data.type(sub.data.type = "suppress", denominator = "allPLHIV", suffix = "_upper")
+    rv$suppression.allPLHIV.lowers = read.cascade.data.type(sub.data.type = "suppress", denominator = "allPLHIV", suffix = "_lower", plhiv = plhiv)
+    rv$suppression.allPLHIV.uppers = read.cascade.data.type(sub.data.type = "suppress", denominator = "allPLHIV", suffix = "_upper", plhiv = plhiv)
     rv$suppression.allPLHIV.lowers$AGES = rv$suppression.allPLHIV.uppers$AGES = c('0-14','15+')
     rv$suppression.allPLHIV.lowers$AGE.LOWERS = rv$suppression.allPLHIV.uppers$AGE.LOWERS = c(0,15)
     rv$suppression.allPLHIV.lowers$AGE.UPPERS = rv$suppression.allPLHIV.uppers$AGE.UPPERS = c(15,Inf)
@@ -629,7 +634,8 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
 read.cascade.data.type = function(data.type="cascade",
                                   sub.data.type,
                                   denominator,
-                                  suffix){
+                                  suffix,
+                                  plhiv){
     rv=list()
     
     rv$year = read.cascade.data.files(data.type=data.type, 
@@ -637,7 +643,8 @@ read.cascade.data.type = function(data.type="cascade",
                                        denominator=denominator,
                                        age='All ages',
                                        sex="All",
-                                       suffix = suffix)
+                                       suffix = suffix,
+                                      plhiv = plhiv)
     
     rv$year.location = read.cascade.data.files(data.type=data.type,
                                           sub.data.type=sub.data.type,
@@ -645,7 +652,8 @@ read.cascade.data.type = function(data.type="cascade",
                                           age='All ages',
                                           sex="All",
                                           include.countries = T,
-                                          suffix = suffix)
+                                          suffix = suffix,
+                                      plhiv = plhiv)
     
     ## Year.Age (0-14) ##
     year.age = read.cascade.data.files(data.type=data.type,
@@ -654,7 +662,8 @@ read.cascade.data.type = function(data.type="cascade",
                                        age='0-14',
                                        sex="",
                                        include.countries = F,
-                                       suffix = suffix)
+                                       suffix = suffix,
+                                       plhiv = plhiv)
     # add 15+ as an age, add back in the age dimension
     year.age = array(c(year.age,rv$year), 
                      dim = c(dim(year.age)[1],age=2),
@@ -669,7 +678,8 @@ read.cascade.data.type = function(data.type="cascade",
                                                 age='0-14',
                                                 sex="",
                                                 include.countries = T,
-                                                suffix = suffix)
+                                                suffix = suffix,
+                                       plhiv = plhiv)
 
     # 1. Define combined dimensions
     all_years <- dimnames(year.age.location)[[1]]
@@ -718,13 +728,15 @@ read.cascade.data.type = function(data.type="cascade",
                                               sub.data.type=sub.data.type,
                                               denominator=denominator,
                                               include.countries = F,
-                                              suffix = suffix)
+                                              suffix = suffix,
+                                      plhiv = plhiv)
     ## Year.Age.Sex.Country ##
     rv$year.age.sex.location = read.cascade.data.stratified(data.type=data.type,
                                                        sub.data.type=sub.data.type,
                                                        denominator=denominator,
                                                        include.countries = T,
-                                                       suffix = suffix)
+                                                       suffix = suffix,
+                                      plhiv = plhiv)
     
     rv
 }
@@ -733,7 +745,8 @@ read.cascade.data.stratified = function(data.type,
                                         sub.data.type,
                                         denominator,
                                         include.countries=T,
-                                        suffix){
+                                        suffix,
+                                        plhiv){
     ## Pull AGE array by COUNTRY
     if(include.countries)
     {
@@ -743,7 +756,8 @@ read.cascade.data.stratified = function(data.type,
                                                    age="15+",
                                                    sex = "Female",
                                                    include.countries = T,
-                                                   suffix = suffix)
+                                                   suffix = suffix,
+                                      plhiv = plhiv)
         
         dim.names = c(dimnames(year.age.sex.location),list(age = "15+"),list(sex=c("male","female")))
         dim.names = dim.names[c(1,3,4,2)]
@@ -759,7 +773,8 @@ read.cascade.data.stratified = function(data.type,
                                                 age="15+",
                                                 sex = "Male",
                                                 include.countries = T,
-                                                suffix = suffix)
+                                                suffix = suffix,
+                                      plhiv = plhiv)
     }
     ## Pull TOTAL AGE array
     else 
@@ -770,7 +785,8 @@ read.cascade.data.stratified = function(data.type,
                                           age="15+",
                                           sex = "Male",
                                           include.countries = F,
-                                          suffix = suffix)
+                                          suffix = suffix,
+                                      plhiv = plhiv)
         
         dim.names = c(dimnames(year.age.sex),list(age = "15+"),list(sex=c("male","female")))
         
@@ -785,7 +801,8 @@ read.cascade.data.stratified = function(data.type,
                                                  age="15+",
                                                  sex = "Female",
                                                  include.countries = F,
-                                                 suffix = suffix)  
+                                                 suffix = suffix,
+                                      plhiv = plhiv)  
     }
     
     rv
@@ -798,7 +815,8 @@ read.cascade.data.files = function(dir = 'data_manager/data',
                                    include.countries = F,
                                    age,
                                    sex,
-                                   suffix){
+                                   suffix,
+                                   plhiv){
     sub.dir = file.path(dir, paste0(data.type,"_",denominator))
     files = list.files(file.path(sub.dir))
     
@@ -847,55 +865,103 @@ read.cascade.data.files = function(dir = 'data_manager/data',
                                         dim = sapply(dim.names.locations, length), 
                                         dimnames = dim.names.locations))
     
-    ## Adding in UNAIDS/NON-UNAIDS remainder countries using a weighted mean based on total prevalence (pre-calculated)
-    individual.countries = apply(locations[,INDIVIDUAL.COUNTRIES],1,mean,na.rm = T)
+    ## Combining countries into remainder models (rewritten 10/15/26)
+    # Each group's value = PLHIV-weighted mean over the countries in that group (previously an
+    # unweighted mean, which counted e.g. Afghanistan as much as DRC). Weights = all-ages PLHIV (prevalence) in that
+    # country/year. To keep the same countries in every year (so a group's value doesn't jump when a big country stops
+    # reporting), each country's gaps are filled first: linear interpolation between reported years; before its first /
+    # after its last report, its nearest reported value moved in proportion to the global value (capped at 1) - holding
+    # it flat instead biased early years upward, since many countries only start reporting ~2017-2018. Countries that
+    # never report are left out.
+    # non.unaids.remainder is backed out from the global value: global = w.indiv*indiv + w.unaids*unaids + w.non*non,
+    # with w = each group's share of global PLHIV (replaces the pre-calculated CASCADE.WEIGHTS)
+    plhiv.years = intersect(as.character(years), dimnames(plhiv)$year)
+    if(length(plhiv.years)!=length(years))
+        print(paste0("No PLHIV weights for cascade years: ",paste0(setdiff(years,plhiv.years),collapse=", "),
+                     " (",sub.data.type,", ",denominator,", ",age,", ",sex,") - remainder values NA for those years"))
     
-    LOW.REMAINDER = LOCATIONS.INCOME$low.remainder
-    LOWER.MIDDLE.REMAINDER = LOCATIONS.INCOME$lower.middle.remainder
-    UPPER.MIDDLE.REMAINDER = LOCATIONS.INCOME$upper.middle.remainder
-    HIGH.REMAINDER = LOCATIONS.INCOME$high.remainder
+    global.trend = as.numeric(global) # same years/order as rows of locations
+    fill.country.series = function(x){ # x = one country's values over the cascade years
+        observed = which(!is.na(x))
+        if(length(observed)==0)
+            return(x)
+        if(length(observed)==1)
+            rv = rep(x[observed], length(x))
+        else
+            rv = approx(observed, x[observed], xout = seq_along(x), rule = 2)$y # flat outside observed range (fallback)
+        first = min(observed)
+        last = max(observed)
+        before = seq_len(first-1)
+        after = seq_along(x)[seq_along(x) > last]
+        trend.before = x[first]*global.trend[before]/global.trend[first]
+        trend.after = x[last]*global.trend[after]/global.trend[last]
+        rv[before] = ifelse(is.na(trend.before), rv[before], pmin(1, trend.before))
+        rv[after] = ifelse(is.na(trend.after), rv[after], pmin(1, trend.after))
+        rv
+    }
+    
+    plhiv.weighted.mean = function(countries){
+        countries = intersect(countries, colnames(locations))
+        rv = rep(as.numeric(NA), length(years))
+        names(rv) = years
+        if(length(countries)==0 || length(plhiv.years)==0)
+            return(rv)
+        values = locations[, countries, drop=F]
+        values[] = apply(values, 2, fill.country.series) # same countries every year
+        values = values[plhiv.years, , drop=F]
+        weights = plhiv[plhiv.years, countries, drop=F]
+        weights[is.na(values)] = NA
+        values[is.na(weights)] = NA
+        total.weight = rowSums(weights, na.rm = T)
+        rv[plhiv.years] = ifelse(total.weight>0, rowSums(values*weights, na.rm = T)/total.weight, NA)
+        rv
+    }
+    
+    plhiv.share = function(countries){ # share of global PLHIV in these countries
+        rv = rep(as.numeric(NA), length(years))
+        names(rv) = years
+        rv[plhiv.years] = rowSums(plhiv[plhiv.years, intersect(countries, colnames(plhiv)), drop=F], na.rm = T)/
+            plhiv[plhiv.years, "Global"]
+        rv
+    }
     
     if(length(setdiff(REMAINDER.COUNTRIES.UNAIDS,dimnames(locations)[[2]]))!=0){
         countries.to.remove = setdiff(REMAINDER.COUNTRIES.UNAIDS,dimnames(locations)[[2]])
-        print(paste0("Removing the following countries from cascade datatype ",sub.data.type," (denominator = ",denominator,
+        print(paste0("Not in cascade datatype ",sub.data.type," (denominator = ",denominator,
                      "): ",paste0(countries.to.remove,collapse = ", "),"; age group: ",age))
-        REMAINDER.COUNTRIES.UNAIDS = REMAINDER.COUNTRIES.UNAIDS[!REMAINDER.COUNTRIES.UNAIDS %in% countries.to.remove]
-        
-        LOW.REMAINDER = LOW.REMAINDER[!LOCATIONS.INCOME$low.remainder %in% countries.to.remove]
-        LOWER.MIDDLE.REMAINDER = LOWER.MIDDLE.REMAINDER[!LOCATIONS.INCOME$lower.middle.remainder %in% countries.to.remove]
-        UPPER.MIDDLE.REMAINDER = UPPER.MIDDLE.REMAINDER[!LOCATIONS.INCOME$upper.middle.remainder %in% countries.to.remove]
-        HIGH.REMAINDER = HIGH.REMAINDER[!LOCATIONS.INCOME$high.remainder %in% countries.to.remove]
-        
     }
-
-    #print(c(data.type,sub.data.type,age,sex))
-    unaids.remainder.countries = apply(locations[,REMAINDER.COUNTRIES.UNAIDS],1,mean,na.rm = T)
-    low.income = apply(locations[,LOW.REMAINDER],1,mean,na.rm = T)
-    lower.middle.income = apply(locations[,LOWER.MIDDLE.REMAINDER],1,mean,na.rm = T)
-    upper.middle.income = apply(locations[,UPPER.MIDDLE.REMAINDER],1,mean,na.rm = T)
-    high.income = apply(locations[,HIGH.REMAINDER],1,mean,na.rm = T)
     
-    # use weights based on total prevalence 
-    #(prev for: individual countries we include, unaids remainder countries, and non-unaids remainder countries)
-    # I worked out the math separately and there's a check below to make sure it's right 
-    non.unaids.remainder.countries = (global - 
-        ((individual.countries*CASCADE.WEIGHTS[names(individual.countries),"indiv"])+
-             (unaids.remainder.countries*CASCADE.WEIGHTS[names(unaids.remainder.countries),"unaids"])))/
-        CASCADE.WEIGHTS[names(individual.countries),"non.unaids"]
+    individual.countries = plhiv.weighted.mean(INDIVIDUAL.COUNTRIES)
+    unaids.remainder.countries = plhiv.weighted.mean(REMAINDER.COUNTRIES.UNAIDS)
+    r1.low = plhiv.weighted.mean(LOCATIONS.INCOME$low.remainder)
+    r1.lower.middle = plhiv.weighted.mean(LOCATIONS.INCOME$lower.middle.remainder)
+    r1.upper.middle = plhiv.weighted.mean(LOCATIONS.INCOME$upper.middle.remainder)
+    r1.high = plhiv.weighted.mean(LOCATIONS.INCOME$high.remainder)
     
-    # CHECK: compare weighted mean to global value - should be the same 
-    # (individual.countries*CASCADE.WEIGHTS[names(individual.countries),"indiv"]) +
-    #     (unaids.remainder.countries*CASCADE.WEIGHTS[names(unaids.remainder.countries),"unaids"]) + 
-    #     (non.unaids.remainder.countries*CASCADE.WEIGHTS[names(individual.countries),"non.unaids"])
-    # global
+    all.low = plhiv.weighted.mean(LOCATIONS.INCOME$low.all)
+    all.lower.middle = plhiv.weighted.mean(LOCATIONS.INCOME$lower.middle.all)
+    all.upper.middle = plhiv.weighted.mean(LOCATIONS.INCOME$upper.middle.all)
+    all.high = plhiv.weighted.mean(LOCATIONS.INCOME$high.all)
+    
+    indiv.weight = plhiv.share(INDIVIDUAL.COUNTRIES)
+    unaids.weight = plhiv.share(REMAINDER.COUNTRIES.UNAIDS)
+    non.unaids.weight = 1 - indiv.weight - unaids.weight
+    
+    non.unaids.remainder.countries = (global - ((individual.countries*indiv.weight) + 
+                                                    (unaids.remainder.countries*unaids.weight)))/non.unaids.weight
+    
+    # CHECK: weighted mean of the three groups should reproduce global
+    # (individual.countries*indiv.weight) + (unaids.remainder.countries*unaids.weight) + (non.unaids.remainder.countries*non.unaids.weight) - global
     
     dim.names.locations.with.remainder = list(year=as.character(years),
                                               location=c(location.names,"unaids.remainder","non.unaids.remainder","Global",
-                                                         "r1.low","r1.lower.middle","r1.upper.middle","r1.high")
+                                                         "r1.low","r1.lower.middle","r1.upper.middle","r1.high",
+                                                         "all.low","all.lower.middle","all.upper.middle","all.high")
     )
     
     locations = array(c(locations,unaids.remainder.countries,non.unaids.remainder.countries,global,
-                        low.income,lower.middle.income,upper.middle.income,high.income),
+                        r1.low,r1.lower.middle,r1.upper.middle,r1.high,
+                        all.low,all.lower.middle,all.upper.middle,all.high),
                       dim = sapply(dim.names.locations.with.remainder,length),
                       dimnames = dim.names.locations.with.remainder)
     
@@ -907,6 +973,67 @@ read.cascade.data.files = function(dir = 'data_manager/data',
     
 }
 
+
+# Returns the UNAIDS locations whose all-ages PLHIV estimate is missing in every year (e.g., China, Russia,
+# United States). Their PLHIV only enter the model through non.unaids.remainder (global - reported), so their
+# population and deaths need to be assigned there too (see save_data_manager.R)
+get.countries.without.prevalence.data = function(dir = 'data_manager/data'){
+    sub.dir = file.path(dir, "prevalence")
+    files = list.files(sub.dir)
+    file = files[grepl("All ages", files)]
+    if (length(file)!=1)
+        stop("can only pull one file at a time")
+    
+    one.df = read.csv(file.path(sub.dir,file), row.names = 1, colClasses = "character")
+    point.cols = grepl("^X[0-9]{4}$", colnames(one.df)) # point estimates only (not _lower/_upper/_Footnote)
+    values = gsub("[ <>]", "", as.matrix(one.df[,point.cols]))
+    has.data = apply(values, 1, function(x){any(!is.na(suppressWarnings(as.numeric(x))))})
+    
+    rownames(one.df)[!has.data]
+}
+
+
+# Cleans up lower/upper bounds for count data (incidence, prevalence, hiv.mortality); called in save_data_manager.R
+# and again at the end of revise_overlapping_age_groups.R (10/15/26):
+#   1. non.unaids.remainder bounds were global bound - sum of country bounds, which isn't a bound (lower often above
+#      upper); now non.unaids gets the same relative interval as Global in that year/age
+#   2. any remaining lower > point or upper < point (from suppressed "<" values / remainder scaling) is clamped to the point
+#   3. negative counts are set to NA (dropped from the likelihood) - e.g., non.unaids.remainder hiv.mortality 10-19/15-24,
+#      where global - sum of countries goes negative because most country values are imputed "<" midpoints
+fix.count.bounds = function(data.manager,
+                            data.types = c("incidence","prevalence","hiv.mortality"),
+                            elements = c("year.location","year.age.location")){
+    for(data.type in data.types){
+        for(element in elements){
+            pt = data.manager[[data.type]][[element]]
+            lo = data.manager[[paste0(data.type,".lowers")]][[element]]
+            up = data.manager[[paste0(data.type,".uppers")]][[element]]
+            if(is.null(pt) || is.null(lo) || is.null(up))
+                next
+            if(!identical(dimnames(pt), dimnames(lo)) || !identical(dimnames(pt), dimnames(up)))
+                stop(paste0("point/lower/upper dimensions don't match for ",data.type,"$",element))
+            
+            if(element=="year.location"){
+                lo[,"non.unaids.remainder"] = pt[,"non.unaids.remainder"]*lo[,"Global"]/pt[,"Global"]
+                up[,"non.unaids.remainder"] = pt[,"non.unaids.remainder"]*up[,"Global"]/pt[,"Global"]
+            } else if(element=="year.age.location"){
+                lo[,,"non.unaids.remainder"] = pt[,,"non.unaids.remainder"]*lo[,,"Global"]/pt[,,"Global"]
+                up[,,"non.unaids.remainder"] = pt[,,"non.unaids.remainder"]*up[,,"Global"]/pt[,,"Global"]
+            } else stop("fix.count.bounds only set up for year.location and year.age.location")
+            
+            negative = !is.na(pt) & pt<0
+            if(any(negative)){
+                print(paste0("Setting ",sum(negative)," negative values to NA in ",data.type,"$",element))
+                pt[negative] = lo[negative] = up[negative] = NA
+                data.manager[[data.type]][[element]] = pt
+            }
+            
+            data.manager[[paste0(data.type,".lowers")]][[element]] = pmin(lo, pt) # pmin/pmax keep dims of first argument
+            data.manager[[paste0(data.type,".uppers")]][[element]] = pmax(up, pt)
+        }
+    }
+    data.manager
+}
 
 ##-------------------------##
 ##-- SPECIALTY FUNCTIONS --##
@@ -1193,7 +1320,8 @@ read.population.data.files = function(dir = 'data_manager/data',
                                        age = ages,
                                        sex = sexes,
                                        location = c(countries.to.pull,"unaids.remainder","non.unaids.remainder",
-                                                    "r1.low","r1.lower.middle","r1.upper.middle","r1.high"))
+                                                    "r1.low","r1.lower.middle","r1.upper.middle","r1.high",
+                                                    "all.low","all.lower.middle","all.upper.middle","all.high"))
     
     total.dim.names.remainder = age.sex.dim.names.remainder[c(1,4)] # year, location 
     
@@ -1244,20 +1372,50 @@ read.population.data.files = function(dir = 'data_manager/data',
     # y = rv$year.age.sex[,,,"World"]
     # table(y - (x+z)) # world - (remainder + individual)
     
+    ## 4/7/26 - adding "all.low", etc.
+    all.low = LOCATIONS.INCOME$low.all
+    all.lower.middle = LOCATIONS.INCOME$lower.middle.all
+    all.upper.middle = LOCATIONS.INCOME$upper.middle.all
+    all.high = LOCATIONS.INCOME$high.all[LOCATIONS.INCOME$high.all %in% remainder.without.st.kitts]
+    
+    all.low.year = rowSums(rv$year[,all.low])
+    all.lower.middle.year = rowSums(rv$year[,all.lower.middle])
+    all.upper.middle.year = rowSums(rv$year[,all.upper.middle])
+    all.high.year = rowSums(rv$year[,all.high])
+    
+    all.low.year.age = apply(rv$year.age[,,all.low],c(1:2),sum)
+    all.lower.middle.year.age = apply(rv$year.age[,,all.lower.middle],c(1:2),sum)
+    all.upper.middle.year.age = apply(rv$year.age[,,all.upper.middle],c(1:2),sum)
+    all.high.year.age = apply(rv$year.age[,,all.high],c(1:2),sum)
+        
+    all.low.year.sex = apply(rv$year.sex[,,all.low],c(1:2),sum)
+    all.lower.middle.year.sex = apply(rv$year.sex[,,all.lower.middle],c(1:2),sum)
+    all.upper.middle.year.sex = apply(rv$year.sex[,,all.upper.middle],c(1:2),sum)
+    all.high.year.sex = apply(rv$year.sex[,,all.high],c(1:2),sum)
+    
+    all.low.year.age.sex = apply(rv$year.age.sex[,,,all.low],c(1:3),sum)
+    all.lower.middle.year.age.sex = apply(rv$year.age.sex[,,,all.lower.middle],c(1:3),sum)
+    all.upper.middle.year.age.sex = apply(rv$year.age.sex[,,,all.upper.middle],c(1:3),sum)
+    all.high.year.age.sex = apply(rv$year.age.sex[,,,all.high],c(1:3),sum)
+    
     rv$year = array(c(rv$year,unaids.remainder.year,non.unaids.remainder.year,
-                      r1.low.year,r1.lower.middle.year,r1.upper.middle.year,r1.high.year),
+                      r1.low.year,r1.lower.middle.year,r1.upper.middle.year,r1.high.year,
+                      all.low.year,all.lower.middle.year,all.upper.middle.year,all.high.year),
                     dim = sapply(total.dim.names.remainder,length),
                     dimnames = total.dim.names.remainder)
     rv$year.age = array(c(rv$year.age,unaids.remainder.year.age,non.unaids.remainder.year.age,
-                          r1.low.year.age,r1.lower.middle.year.age,r1.upper.middle.year.age,r1.high.year.age),
+                          r1.low.year.age,r1.lower.middle.year.age,r1.upper.middle.year.age,r1.high.year.age,
+                          all.low.year.age,all.lower.middle.year.age,all.upper.middle.year.age,all.high.year.age),
                         dim = sapply(age.dim.names.remainder,length),
                         dimnames = age.dim.names.remainder)
     rv$year.sex = array(c(rv$year.sex,unaids.remainder.year.sex,non.unaids.remainder.year.sex,
-                          r1.low.year.sex,r1.lower.middle.year.sex,r1.upper.middle.year.sex,r1.high.year.sex),
+                          r1.low.year.sex,r1.lower.middle.year.sex,r1.upper.middle.year.sex,r1.high.year.sex,
+                          all.low.year.sex,all.lower.middle.year.sex,all.upper.middle.year.sex,all.high.year.sex),
                         dim = sapply(sex.dim.names.remainder,length),
                         dimnames = sex.dim.names.remainder)
     rv$year.age.sex = array(c(rv$year.age.sex,unaids.remainder.year.age.sex,non.unaids.remainder.year.age.sex,
-                              r1.low.year.age.sex,r1.lower.middle.year.age.sex,r1.upper.middle.year.age.sex,r1.high.year.age.sex),
+                              r1.low.year.age.sex,r1.lower.middle.year.age.sex,r1.upper.middle.year.age.sex,r1.high.year.age.sex,
+                              all.low.year.age.sex,all.lower.middle.year.age.sex,all.upper.middle.year.age.sex,all.high.year.age.sex),
                             dim = sapply(age.sex.dim.names.remainder,length),
                             dimnames = age.sex.dim.names.remainder)
     
@@ -1423,7 +1581,9 @@ read.death.data.files = function(dir = 'data_manager/data',
     year.sex.unaids.remainder = apply(year.sex.location[,,REMAINDER.COUNTRIES.UNAIDS],c("year","sex"),sum)
     year.age.sex.unaids.remainder = apply(year.age.sex.location[,,,REMAINDER.COUNTRIES.UNAIDS],c("year","age","sex"),sum)
     
-    # BY INCOME - low
+    
+    
+    # BY INCOME, REMAINDER - low
     year.r1.low = apply(year.location[,LOCATIONS.INCOME$low.remainder],c("year"),sum)
     year.age.r1.low = apply(year.age.location[,,LOCATIONS.INCOME$low.remainder],c("year","age"),sum)
     year.sex.r1.low = apply(year.sex.location[,,LOCATIONS.INCOME$low.remainder],c("year","sex"),sum)
@@ -1447,6 +1607,35 @@ read.death.data.files = function(dir = 'data_manager/data',
     year.sex.r1.high = apply(year.sex.location[,,LOCATIONS.INCOME$high.remainder],c("year","sex"),sum)
     year.age.sex.r1.high = apply(year.age.sex.location[,,,LOCATIONS.INCOME$high.remainder],c("year","age","sex"),sum)
     
+    
+    # BY INCOME, ALL - added 6/2/26
+    # low
+    year.all.low = apply(year.location[,LOCATIONS.INCOME$low.all],c("year"),sum)
+    year.age.all.low = apply(year.age.location[,,LOCATIONS.INCOME$low.all],c("year","age"),sum)
+    year.sex.all.low = apply(year.sex.location[,,LOCATIONS.INCOME$low.all],c("year","sex"),sum)
+    year.age.sex.all.low = apply(year.age.sex.location[,,,LOCATIONS.INCOME$low.all],c("year","age","sex"),sum)
+    
+    # lower middle
+    year.all.lower.middle = apply(year.location[,LOCATIONS.INCOME$lower.middle.all],c("year"),sum)
+    year.age.all.lower.middle = apply(year.age.location[,,LOCATIONS.INCOME$lower.middle.all],c("year","age"),sum)
+    year.sex.all.lower.middle = apply(year.sex.location[,,LOCATIONS.INCOME$lower.middle.all],c("year","sex"),sum)
+    year.age.sex.all.lower.middle = apply(year.age.sex.location[,,,LOCATIONS.INCOME$lower.middle.all],c("year","age","sex"),sum)
+    
+    # upper middle 
+    year.all.upper.middle = apply(year.location[,LOCATIONS.INCOME$upper.middle.all],c("year"),sum)
+    year.age.all.upper.middle = apply(year.age.location[,,LOCATIONS.INCOME$upper.middle.all],c("year","age"),sum)
+    year.sex.all.upper.middle = apply(year.sex.location[,,LOCATIONS.INCOME$upper.middle.all],c("year","sex"),sum)
+    year.age.sex.all.upper.middle = apply(year.age.sex.location[,,,LOCATIONS.INCOME$upper.middle.all],c("year","age","sex"),sum)
+    
+    # high 
+    year.all.high = apply(year.location[,LOCATIONS.INCOME$high.all],c("year"),sum)
+    year.age.all.high = apply(year.age.location[,,LOCATIONS.INCOME$high.all],c("year","age"),sum)
+    year.sex.all.high = apply(year.sex.location[,,LOCATIONS.INCOME$high.all],c("year","sex"),sum)
+    year.age.sex.all.high = apply(year.age.sex.location[,,,LOCATIONS.INCOME$high.all],c("year","age","sex"),sum)
+    
+    
+    
+    ## Global 
     year.age = apply(year.age.sex.location[,,,"Global"],c("year","age"),sum)
     year.sex = apply(year.age.sex.location[,,,"Global"],c("year","sex"),sum)
     year.age.sex = apply(year.age.sex.location[,,,"Global"],c("year","age","sex"),sum)
@@ -1464,7 +1653,8 @@ read.death.data.files = function(dir = 'data_manager/data',
                                        age = names(age.mapping),
                                        sex = sexes,
                                        location = c(locations,"unaids.remainder","non.unaids.remainder",
-                                                    "r1.low","r1.lower.middle","r1.upper.middle","r1.high"))
+                                                    "r1.low","r1.lower.middle","r1.upper.middle","r1.high",
+                                                    "all.low","all.lower.middle","all.upper.middle","all.high"))
     
     total.dim.names.remainder = age.sex.dim.names.remainder[c(1,4)] # year, location 
     
@@ -1480,20 +1670,24 @@ read.death.data.files = function(dir = 'data_manager/data',
     rv$year.age.sex = year.age.sex
     
     rv$year.location = array(c(year.location,year.unaids.remainder,year.non.unaids.remainder,
-                               year.r1.low,year.r1.lower.middle,year.r1.upper.middle,year.r1.high),
+                               year.r1.low,year.r1.lower.middle,year.r1.upper.middle,year.r1.high,
+                               year.all.low,year.all.lower.middle,year.all.upper.middle,year.all.high),
                              dim = sapply(total.dim.names.remainder,length),
                              dimnames = total.dim.names.remainder)
     rv$year.age.location =  array(c(year.age.location,year.age.unaids.remainder,year.age.non.unaids.remainder,
-                                    year.age.r1.low,year.age.r1.lower.middle,year.age.r1.upper.middle,year.age.r1.high),
+                                    year.age.r1.low,year.age.r1.lower.middle,year.age.r1.upper.middle,year.age.r1.high,
+                                    year.age.all.low,year.age.all.lower.middle,year.age.all.upper.middle,year.age.all.high),
                                   dim = sapply(age.dim.names.remainder,length),
                                   dimnames = age.dim.names.remainder)
     
     rv$year.sex.location =  array(c(year.sex.location,year.sex.unaids.remainder,year.sex.non.unaids.remainder,
-                                    year.sex.r1.low,year.sex.r1.lower.middle,year.sex.r1.upper.middle,year.sex.r1.high),
+                                    year.sex.r1.low,year.sex.r1.lower.middle,year.sex.r1.upper.middle,year.sex.r1.high,
+                                    year.sex.all.low,year.sex.all.lower.middle,year.sex.all.upper.middle,year.sex.all.high),
                                   dim = sapply(sex.dim.names.remainder,length),
                                   dimnames = sex.dim.names.remainder)
     rv$year.age.sex.location =  array(c(year.age.sex.location,year.age.sex.unaids.remainder,year.age.sex.non.unaids.remainder,
-                                        year.age.sex.r1.low,year.age.sex.r1.lower.middle,year.age.sex.r1.upper.middle,year.age.sex.r1.high),
+                                        year.age.sex.r1.low,year.age.sex.r1.lower.middle,year.age.sex.r1.upper.middle,year.age.sex.r1.high,
+                                        year.age.sex.all.low,year.age.sex.all.lower.middle,year.age.sex.all.upper.middle,year.age.sex.all.high),
                                       dim = sapply(age.sex.dim.names.remainder,length),
                                       dimnames = age.sex.dim.names.remainder)
     

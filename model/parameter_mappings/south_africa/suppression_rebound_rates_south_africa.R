@@ -38,7 +38,7 @@ get.unsuppression.rate.south.africa = function(){
 # Viral load suppression among patients 12 months after initiating ART, among those who had a viral load test recorded at 12 months after ART initiation
 # "Treatment Outcomes among Patients Initiating ART in Sub-Saharan Africa"
 get.suppression.rate.south.africa = function(){
-    max.proportion = 0.95
+    max.proportion = 0.99
 
     data = suppressMessages(readxl::read_xlsx("data_manager/IeDEA_data.xlsx",sheet="supp_sa",col_names=T))
     data = suppressWarnings(as.numeric(unlist(c(data[2:5,2:6],data[9:12,2:6]))))
@@ -59,7 +59,7 @@ get.suppression.rate.south.africa = function(){
     
     data.df$year = suppression.years
     
-    fit = suppressWarnings(glm(value ~ year+age+sex, family=binomial, data = data.df)) 
+    fit = suppressWarnings(glm(pmin(value/max.proportion,1) ~ year+age+sex, family=binomial, data = data.df)) 
     
     dim.names.projection = list(year = 1980:2040 - suppression.anchor.year,
                                 age = c("10-19","20-29","30-39","40-49","50 and over"),

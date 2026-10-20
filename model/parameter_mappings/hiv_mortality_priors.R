@@ -1,4 +1,4 @@
-LOCATIONS = c("Kenya","South Africa","France","Mozambique","Tanzania",
+HIV.MORTALITY.PRIOR.LOCATIONS = c("Kenya","South Africa","France","Mozambique","Tanzania",
               "Uganda","Zambia","Zimbabwe","Malawi","Nigeria","Thailand",
               "Cambodia",
               "unaids.remainder","non.unaids.remainder",
@@ -7,7 +7,7 @@ LOCATIONS = c("Kenya","South Africa","France","Mozambique","Tanzania",
 
 HIV.MORTALITY.PRIORS = list()
 
-for(LOCATION in LOCATIONS){
+for(LOCATION in HIV.MORTALITY.PRIOR.LOCATIONS){
 
     # 1990 AIDS-related deaths/1990 prevalence
     hiv.mortality.1990 = DATA.MANAGER$hiv.mortality$year.location["1990",LOCATION]/

@@ -25,8 +25,18 @@ get.age.mixing.proportions = function(sex.to,
                                       sampled.parameters){
     
     # returns a vector of length(ages) that sums to 1, which is the proportion of the to stratum's partners who are in each age 
-    # if(sex.from=="male" & age.to=="10-14")
-    #     browser()
+    get.age.mixing.matrix(sex.from = sex.from,
+                          parameters = parameters,
+                          sampled.parameters = sampled.parameters)[age.to,]
+}
+
+# Full matrix of age mixing proportions (rows = age.to, columns = partner age) for partners of sex 'sex.from'.
+# Doesn't depend on sex.to or age.to, so map.model.parameters computes it once per sex.from and takes rows
+# from it (get.age.mixing.proportions above returns one row)
+get.age.mixing.matrix = function(sex.from,
+                                 parameters,
+                                 sampled.parameters){
+    
     age.uppers = parameters$AGE.UPPERS
     age.lowers = parameters$AGE.LOWERS
     if (is.infinite(age.uppers[length(age.uppers)]))
@@ -57,7 +67,7 @@ get.age.mixing.proportions = function(sex.to,
     
     dimnames(rv)[[1]] = parameters$AGES
     
-    rv[age.to,]
+    rv
     
 }
 

@@ -2,7 +2,7 @@ load("data_manager/locations_income.Rdata")
 load("data_manager/remainder_countries.Rdata") # if doing for the first time, run lines 1==2 below 
 
 INDIVIDUAL.COUNTRIES = c("South Africa","Mozambique","Nigeria","Tanzania","Uganda","Kenya",
-                            "Zambia","Zimbabwe","Malawi","France","Thailand", "Cambodia",
+                            "Zambia","Zimbabwe","Malawi",# "France","Thailand", "Cambodia",
                          "r1.low","r1.lower.middle","r1.upper.middle","r1.high","Global")
 
 # need an old version of the DATA.MANAGER loaded to do this 

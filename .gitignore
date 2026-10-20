@@ -12,7 +12,10 @@ mcmc_runs
 cached
 mcmc_cache
 results/for_lancet_pres
+results/for_lancet_PAPER
 final_simsets_and_results
+manuscript/manuscript_figures
+
 
 # Project-specific
 /temp/

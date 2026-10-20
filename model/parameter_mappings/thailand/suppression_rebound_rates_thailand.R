@@ -51,7 +51,7 @@ get.unsuppression.rate.thailand = function(){
 # Eamsakulrat et al, 2022 (data are from 2016)
 # % virally suppressed at 12 months 
 get.suppression.rate.thailand = function(){
-    max.proportion = 0.95
+    max.proportion = 0.99
     
     # Oyomopito 2010 (TAHOD, from 2000-2010) 
     {
@@ -113,7 +113,7 @@ get.suppression.rate.thailand = function(){
     
     data.df$year = suppression.years
     
-    fit = suppressWarnings(glm(value ~ year+age+sex, family=binomial, data = data.df)) 
+    fit = suppressWarnings(glm(pmin(value/max.proportion,1) ~ year+age+sex, family=binomial, data = data.df)) 
     
     dim.names.projection = list(year = 1980:2040 - suppression.anchor.year,
                                 age = c("10-19","20-29","30-39","40-49","50 and over"),

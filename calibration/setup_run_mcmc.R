@@ -1,68 +1,27 @@
-library(bayesian.simulations)
-library(distributions)
-library(ggplot2) 
-source("model/run_systematic.R")
+################################################################################################
+# Description: Runs ONE chain of one MCMC step for one location in this R session
+#
+# For the usual workflow (Step 1, then all four Step 2 chains in parallel, then merging), use
+# calibration/run_mcmc_pipeline.R instead. This script is for running or resuming a single chain.
+#
+# Step settings (iterations, weights, chains, seeds), Nigeria's Step 1 starting values, and folders
+# are in calibration/mcmc_settings.R. Starting values are picked automatically:
+#   Step 1 -> prior medians (or the file in STEP1.START.VALUE.FILES)
+#   Step 2 -> most recent Step 2 starting values (saved automatically when Step 1 finishes)
+################################################################################################
 
-CHAIN = 2
-MCMC.CODE = 'youth.supp' # will paste this in the cache and mcmc files, use "" for original version (I think)
+# source this before the settings, so nothing it loads can overwrite them
+source("calibration/mcmc_worker_setup.R")
 
-set.seed(4321*CHAIN)
-# All countries, 8/04 - 4321
-# 8/18: updated with *CHAIN 
+LOCATION = "Nigeria"
+STEP = 1
+CHAIN = 1          # Step 1: chain 1; Step 2: chains 1-4 (seed = MCMC.BASE.SEED + 1000*step + chain)
+RESUME = FALSE     # TRUE = continue from this chain's existing cache
 
-LOCATION = "South Africa" 
+result = run.mcmc.step.chain(location = LOCATION, step = STEP, chain = CHAIN, resume = RESUME)
 
-# weight/iteration options 
-{
-    WEIGHTED.PREVALENCE = F # if set to T, will run with 4x prevalence weight 
-    WEIGHTED.CASCADE = F # if set to T, will run with 4x awareness, engagement, suppression weights
-    N.ITER = 100000
-}
+# Once all four Step 2 chains are finished (most recent file for each chain is used):
+# merge.step2.chains(LOCATION)
 
-# resume running option
-RESUME.RUNNING = T
-
-# if a fresh run (i.e., not resuming)
-if(!RESUME.RUNNING){
-    LOCATION.DETAILS = set.likelihood.and.prior.by.location(location=LOCATION,
-                                                            weighted.prevalence = WEIGHTED.PREVALENCE,
-                                                            weighted.cascade = WEIGHTED.CASCADE)
-  
-  control = create.adaptive.blockwise.metropolis.control(var.names = LOCATION.DETAILS$prior@var.names,
-                                                         simulation.function = SIMULATION.FUNCTION,
-                                                         log.prior.distribution = get.density.function(LOCATION.DETAILS$prior,default.log = T),
-                                                         log.likelihood = LOCATION.DETAILS$likelihood.to.run,
-                                                         var.blocks = PARAMETER.VAR.BLOCKS, # set in calibration/prior_distributions/var_blocks.R
-                                                         transformations = LOCATION.DETAILS$transformations,
-                                                         initial.covariance.mat = diag((LOCATION.DETAILS$sds/20)^2), # step size
-                                                         burn = 0,
-                                                         thin = 5)
-  
-  
-  print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION,": chain ",CHAIN, "; mcmc code: ",MCMC.CODE)))
-  
-  # set starting.values 
-  mcmc = run.mcmc.with.cache(control = control,
-                             n.iter = N.ITER,
-                             starting.values = LOCATION.DETAILS$params.start.values,
-                             update.frequency = 100,
-                             cache.frequency = 200,
-                             cache.dir = file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",MCMC.CODE,"_",CHAIN))
-  )
-
-}
-
-if(RESUME.RUNNING){
-  print(ggplot2::qplot(1,1) + ggplot2::ggtitle(paste0(LOCATION,": chain ",CHAIN, "; mcmc code: ",MCMC.CODE)))
-  mcmc = run.mcmc.from.cache(dir=file.path("mcmc_cache",paste0(convert_string(LOCATION),"_",MCMC.CODE,"_",CHAIN)),
-                             update.frequency = 100)
-  
-}
-
-save(mcmc,file=paste0("mcmc_runs/mcmc_files/mcmc_",convert_string(LOCATION),"_",MCMC.CODE,"_chain",CHAIN,"_",Sys.Date(),".Rdata"))
-
-simset = extract.simset(mcmc,
-                        additional.burn=200,
-                        additional.thin=20)
-
-save(simset,file=paste0("mcmc_runs/simset_",convert_string(LOCATION),"_",MCMC.CODE,"_chain",CHAIN,"_",Sys.Date(),".Rdata"))
+# To make Step 2 starting values from a Step 1 run done before this pipeline existed:
+# save.step2.start.values.from.file(LOCATION, "mcmc_runs/simset_nigeria_chain1_2026-10-14.Rdata")

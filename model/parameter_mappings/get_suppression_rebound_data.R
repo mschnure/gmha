@@ -34,13 +34,13 @@ get.unsuppression.rates = function(location){
     if(location=="South Africa"){
         rv = get.unsuppression.rate.south.africa() 
     } else if(location=="non.unaids.remainder"){
-        get.mean.non.unaids.unsuppression.rate() # using mean of India and US unsuppression data for non-UNAIDS remainder
+        rv = get.mean.non.unaids.unsuppression.rate() # using mean of India and US unsuppression data for non-UNAIDS remainder
     } else if(location=="France"){
-        get.unsuppression.rate.france() 
+        rv = get.unsuppression.rate.france() 
     } else if(location=="Thailand"){
-        get.unsuppression.rate.thailand() 
+        rv = get.unsuppression.rate.thailand() 
     } else if(location=="Cambodia"){
-        get.unsuppression.rate.cambodia() 
+        rv = get.unsuppression.rate.cambodia() 
     } else {
         rv = get.unsuppression.rate.kenya() # use KENYA'S unsuppression data for all other countries 
     }
@@ -93,3 +93,81 @@ plot.suppression.fit = function(location="South Africa",
     
     
 }
+
+
+
+
+generate.suppression.parameter.table = function(locations){
+    
+    rv = list()
+    
+    for(location in locations){
+        suppression.model = get.suppression.rates(location=location)
+
+        # Age 30-39, female 
+        sex="female"
+        age = "30-39"
+        year = 2015
+        
+        log.odds.ref = suppression.model$intercept + 
+            (suppression.model$slope*(year-suppression.model$anchor.year)) + 
+            (suppression.model$sex.female*(sex=="female"))  
+        #(suppression.model$age.10.19*(eng.cat=="10-19")) + 
+        #(suppression.model$age.20.29*(eng.cat=="20-29")) + 
+        #(suppression.model$age.40.49*(eng.cat=="40-49")) + 
+        #(suppression.model$age.50.plus*(eng.cat=="50 and over")) + 
+        
+        odds.ref = exp(log.odds.ref)
+        lower.odds.ref = odds.ref/4
+        upper.odds.ref = odds.ref*4
+        
+        lower.prob.ref = (lower.odds.ref/(1+lower.odds.ref))*suppression.model$max.proportion
+        upper.prob.ref = (upper.odds.ref/(1+upper.odds.ref))*suppression.model$max.proportion
+        
+        prob.ref = 1/(1+exp(-log.odds.ref)) 
+        prob.ref = prob.ref*suppression.model$max.proportion
+        
+        # ORs by age
+        age.10.19.OR = exp(suppression.model$age.10.19)  
+        age.10.19.OR.lower = age.10.19.OR/4
+        age.10.19.OR.upper = age.10.19.OR*4
+        
+        age.20.29.OR = exp(suppression.model$age.20.29)  
+        age.20.29.OR.lower = age.20.29.OR/4
+        age.20.29.OR.upper = age.20.29.OR*4
+        
+        age.40.49.OR = exp(suppression.model$age.40.49)  
+        age.40.49.OR.lower = age.40.49.OR/4
+        age.40.49.OR.upper = age.40.49.OR*4
+        
+        age.50.plus.OR = exp(suppression.model$age.50.plus)  
+        age.50.plus.OR.lower = age.50.plus.OR/4
+        age.50.plus.OR.upper = age.50.plus.OR*4
+        
+        table = data.frame(
+            Parameter = c("Probability of gaining suppression, Female, age 30-39, 2015",
+                          "Odds ratio of gaining suppression, age 10-19 vs 30-39",
+                          "Odds ratio of gaining suppression, age 20-29 vs 30-39",
+                          "Odds ratio of gaining suppression, age 40-49 vs 30-39",
+                          "Odds ratio of gaining suppression, age 50 and over vs 30-39",
+                          "Ratio of suppression probability among male versus female"),
+            Estimate.lower.upper=c(paste0(round(prob.ref,2), " (",round(lower.prob.ref,2),"-",
+                                          round(upper.prob.ref,2),")"),
+                                   paste0(round(age.10.19.OR,2), " (",round(age.10.19.OR.lower,2),"-",
+                                          round(age.10.19.OR.upper,2),")"),
+                                   paste0(round(age.20.29.OR,2), " (",round(age.20.29.OR.lower,2),"-",
+                                          round(age.20.29.OR.upper,2),")"),
+                                   paste0(round(age.40.49.OR,2), " (",round(age.40.49.OR.lower,2),"-",
+                                          round(age.40.49.OR.upper,2),")"),
+                                   paste0(round(age.50.plus.OR,2), " (",round(age.50.plus.OR.lower,2),"-",
+                                          round(age.50.plus.OR.upper,2),")"),
+                                   paste0("1 (0.25-4)")))
+        
+        rv[[location]] = table
+    }
+    
+    rv
+    
+}
+
+

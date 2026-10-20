@@ -10,8 +10,19 @@ source('model/diffeq.R')
 source('model/age_mappings.R') 
 NO.INTERVENTION = c()
 
-load('cached/data.manager_global_2025-12-02.Rdata') # added lai and oral placeholders to plot age/sex more easily
-#load('cached/data.manager_global_2025-10-06.Rdata') # added 0-14 suppression data 
+# NEXTGEN (merged with master 10/20/26): the data manager needs rebuilding on this merged code so it has both master's
+# updates (PLHIV-weighted cascade, revised ages) and nextgen's 0-14 cascade data + LAI/oral placeholders:
+#   1. source data_manager/save_data_manager.R            -> cached/data.manager_global_<date>.Rdata
+#   2. source data_manager/revise_overlapping_age_groups.R -> cached/data.manager_global_revised_ages_<date>.Rdata
+# then replace the placeholder file name below with the file from step 2
+load('cached/data.manager_global_NEXTGEN_REBUILD.Rdata')
+#load('cached/data.manager_global_2025-12-02.Rdata') # (old nextgen) added lai and oral placeholders to plot age/sex more easily
+#load("cached/data.manager_global_revised_ages_2026-10-15.Rdata") # updated with Claude fixes
+#load('cached/data.manager_global_revised_ages_2026-07-08.Rdata') # removed 15-49 and 15+, added 25-49
+#load('cached/data.manager_global_2026-06-25.Rdata') # added back median values for suppressed data
+#load('cached/data.manager_global_2026-06-15.Rdata') # removed France as individual country
+#load('cached/data.manager_global_2026-06-02.Rdata') # added all.low, etc. mortality and cascade data 
+#load('cached/data.manager_global_2026-04-07.Rdata') # added all.low, etc. population data
 #load('cached/data.manager_global_2025-10-03.Rdata') # fixed suppression data
 #load('cached/data.manager_global_2025-08-27.Rdata') # added merged income countries
 #load('cached/data.manager_global_2025-08-13.Rdata') # fixed r1 high and removed incorrect US data 
@@ -55,7 +66,10 @@ source('calibration/set_likelihood_and_prior.R') # sources all individual priors
 
 # future projections
 source('future_projections/create_and_run_interventions_functions.R')
-source('future_projections/extract_projection_results.R')
+source('future_projections/extract_projection_results_functions.R')
+
+# cache inputs that depend only on location (must come after the functions are defined)
+source('helpers/location_cache.R')
 
 
 

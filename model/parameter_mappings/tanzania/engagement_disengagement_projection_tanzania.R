@@ -6,7 +6,7 @@
 
 get.engagement.model.tanzania = function(){
     
-    max.proportion = 0.95
+    max.proportion = 0.99
     
     data = suppressMessages(readxl::read_xlsx("data_manager/IeDEA_data.xlsx",sheet="eng_tanz",col_names=T))
     data = suppressWarnings(as.numeric(unlist(c(data[2:5,2:6],data[9:12,2:6]))))
@@ -27,7 +27,7 @@ get.engagement.model.tanzania = function(){
     
     data.df$year = engagement.years
     
-    fit = suppressWarnings(glm(value ~ year+age+sex, family=binomial, data = data.df)) 
+    fit = suppressWarnings(glm(pmin(value/max.proportion,1) ~ year+age+sex, family=binomial, data = data.df)) 
     
     dim.names.projection = list(year = 1980:2040 - engagement.anchor.year,
                                 age = c("10-19","20-29","30-39","40-49","50 and over"),

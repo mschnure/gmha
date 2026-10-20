@@ -11,9 +11,12 @@ simplot(sim,
         years=c(1970:2030),
         data.types = c("incidence","prevalence"))
 
-simplot(sim,
+simplot(sim.low,
+        sim.high,
+        #simset.high,
         years=c(1980:2020),
         data.types = c("incidence"),
+        ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`All ages`,
         facet.by = 'age')
 
 simplot(sim,

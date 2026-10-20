@@ -96,6 +96,11 @@ get.default.parameters = function(location){
         age.20.to.29.transmission.multiplier.2=1,
         age.20.to.29.transmission.multiplier.3=1,
         
+        age.30.to.39.transmission.multiplier.0=1,
+        age.30.to.39.transmission.multiplier.1=1,
+        age.30.to.39.transmission.multiplier.2=1,
+        age.30.to.39.transmission.multiplier.3=1,
+        
         age.40.to.49.transmission.multiplier.0=1,
         age.40.to.49.transmission.multiplier.1=1,
         age.40.to.49.transmission.multiplier.2=1,
@@ -557,6 +562,14 @@ map.model.parameters <- function(parameters,
     
     # Mixing proportions: array where every combo of age.to, sex.to sums to 1 (capturing all of their partners)
     # This is country-specific, defined in parameters$male.to.female.age.model and parameters$female.to.male.age.model above 
+    # the full age mixing matrix depends only on the partner's sex (and age.assortativity), so compute it once per sex
+    age.mixing.matrices = lapply(parameters$SEXES, function(sex.from){
+        get.age.mixing.matrix(sex.from = sex.from,
+                              parameters = parameters,
+                              sampled.parameters = sampled.parameters)
+    })
+    names(age.mixing.matrices) = parameters$SEXES
+    
     mixing.proportions.0 = sapply(parameters$SEXES, function(sex.to){
         sapply(parameters$AGES, function(age.to){
             # if(age.to=="10-14")
@@ -569,12 +582,7 @@ map.model.parameters <- function(parameters,
             
             # then, for that sex-sex combination what proportion are in each age group
             sapply(parameters$SEXES, function(sex.from){
-                sex.proportions[sex.from]*get.age.mixing.proportions(parameters=parameters,
-                                                                     sex.to=sex.to,
-                                                                     age.to=age.to,
-                                                                     sex.from=sex.from,
-                                                                     ages=parameters$AGES,
-                                                                     sampled.parameters=sampled.parameters)
+                sex.proportions[sex.from]*age.mixing.matrices[[sex.from]][age.to,] # same as get.age.mixing.proportions(...)
             })
         })
     })
@@ -600,7 +608,12 @@ map.model.parameters <- function(parameters,
                                                                                  length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 15, upper = 20))),
                                                                              rep(sampled.parameters["age.20.to.29.transmission.multiplier.0"],
                                                                                  length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 20, upper = 30))),
-                                                                             rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                             
+                                                                             # updated 7/29/26
+                                                                             #rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                             rep(sampled.parameters["age.30.to.39.transmission.multiplier.0"],
+                                                                                 length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                             
                                                                              rep(sampled.parameters["age.40.to.49.transmission.multiplier.0"],
                                                                                  length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 40, upper = 50))),
                                                                              rep(sampled.parameters["age.50.and.over.transmission.multiplier.0"],
@@ -610,7 +623,12 @@ map.model.parameters <- function(parameters,
                                                                                length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 15, upper = 20))),
                                                                            rep(sampled.parameters["age.20.to.29.transmission.multiplier.0"],
                                                                                length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 20, upper = 30))),
-                                                                           rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                           
+                                                                           # updated 7/29/26
+                                                                           #rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                           rep(sampled.parameters["age.30.to.39.transmission.multiplier.0"],
+                                                                               length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                           
                                                                            rep(sampled.parameters["age.40.to.49.transmission.multiplier.0"],
                                                                                length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 40, upper = 50))),
                                                                            rep(sampled.parameters["age.50.and.over.transmission.multiplier.0"],
@@ -642,7 +660,12 @@ map.model.parameters <- function(parameters,
                                                                                  length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 15, upper = 20))),
                                                                              rep(sampled.parameters["age.20.to.29.transmission.multiplier.1"],
                                                                                  length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 20, upper = 30))),
-                                                                             rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                             
+                                                                             # updated 7/29/26
+                                                                             #rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                             rep(sampled.parameters["age.30.to.39.transmission.multiplier.1"],
+                                                                                 length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                             
                                                                              rep(sampled.parameters["age.40.to.49.transmission.multiplier.1"],
                                                                                  length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 40, upper = 50))),
                                                                              rep(sampled.parameters["age.50.and.over.transmission.multiplier.1"],
@@ -653,7 +676,12 @@ map.model.parameters <- function(parameters,
                                                                                length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 15, upper = 20))),
                                                                            rep(sampled.parameters["age.20.to.29.transmission.multiplier.1"],
                                                                                length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 20, upper = 30))),
-                                                                           rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                           
+                                                                           # updated 7/29/26
+                                                                           #rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                           rep(sampled.parameters["age.30.to.39.transmission.multiplier.1"],
+                                                                               length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                           
                                                                            rep(sampled.parameters["age.40.to.49.transmission.multiplier.1"],
                                                                                length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 40, upper = 50))),
                                                                            rep(sampled.parameters["age.50.and.over.transmission.multiplier.1"],
@@ -681,7 +709,12 @@ map.model.parameters <- function(parameters,
                                                                                  length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 15, upper = 20))),
                                                                              rep(sampled.parameters["age.20.to.29.transmission.multiplier.2"],
                                                                                  length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 20, upper = 30))),
-                                                                             rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                             
+                                                                             # updated 7/29/26
+                                                                             #rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                             rep(sampled.parameters["age.30.to.39.transmission.multiplier.2"],
+                                                                                 length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                             
                                                                              rep(sampled.parameters["age.40.to.49.transmission.multiplier.2"],
                                                                                  length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 40, upper = 50))),
                                                                              rep(sampled.parameters["age.50.and.over.transmission.multiplier.2"],
@@ -692,7 +725,12 @@ map.model.parameters <- function(parameters,
                                                                                length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 15, upper = 20))),
                                                                            rep(sampled.parameters["age.20.to.29.transmission.multiplier.2"],
                                                                                length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 20, upper = 30))),
-                                                                           rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                           
+                                                                           # updated 7/29/26
+                                                                           #rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                           rep(sampled.parameters["age.30.to.39.transmission.multiplier.2"],
+                                                                               length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                           
                                                                            rep(sampled.parameters["age.40.to.49.transmission.multiplier.2"],
                                                                                length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 40, upper = 50))),
                                                                            rep(sampled.parameters["age.50.and.over.transmission.multiplier.2"],
@@ -720,7 +758,12 @@ map.model.parameters <- function(parameters,
                                                                                  length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 15, upper = 20))),
                                                                              rep(sampled.parameters["age.20.to.29.transmission.multiplier.3"],
                                                                                  length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 20, upper = 30))),
-                                                                             rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                             
+                                                                             # updated 7/29/26
+                                                                             #rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                             rep(sampled.parameters["age.30.to.39.transmission.multiplier.3"],
+                                                                                 length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                             
                                                                              rep(sampled.parameters["age.40.to.49.transmission.multiplier.3"],
                                                                                  length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 40, upper = 50))),
                                                                              rep(sampled.parameters["age.50.and.over.transmission.multiplier.3"],
@@ -731,7 +774,12 @@ map.model.parameters <- function(parameters,
                                                                                length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 15, upper = 20))),
                                                                            rep(sampled.parameters["age.20.to.29.transmission.multiplier.3"],
                                                                                length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 20, upper = 30))),
-                                                                           rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                           
+                                                                           # updated 7/29/26
+                                                                           #rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                           rep(sampled.parameters["age.30.to.39.transmission.multiplier.3"],
+                                                                               length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                           
                                                                            rep(sampled.parameters["age.40.to.49.transmission.multiplier.3"],
                                                                                length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 40, upper = 50))),
                                                                            rep(sampled.parameters["age.50.and.over.transmission.multiplier.3"],
@@ -759,7 +807,12 @@ map.model.parameters <- function(parameters,
                                                                                  length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 15, upper = 20))),
                                                                              rep(sampled.parameters["age.20.to.29.transmission.multiplier.3"],
                                                                                  length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 20, upper = 30))),
-                                                                             rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                             
+                                                                             # updated 7/29/26
+                                                                             #rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                             rep(sampled.parameters["age.30.to.39.transmission.multiplier.3"],
+                                                                                 length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                             
                                                                              rep(sampled.parameters["age.40.to.49.transmission.multiplier.3"],
                                                                                  length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 40, upper = 50))),
                                                                              rep(sampled.parameters["age.50.and.over.transmission.multiplier.3"],
@@ -770,7 +823,12 @@ map.model.parameters <- function(parameters,
                                                                                length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 15, upper = 20))),
                                                                            rep(sampled.parameters["age.20.to.29.transmission.multiplier.3"],
                                                                                length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 20, upper = 30))),
-                                                                           rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                           
+                                                                           # updated 7/29/26
+                                                                           #rep(1,length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                           rep(sampled.parameters["age.30.to.39.transmission.multiplier.3"],
+                                                                               length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 30, upper = 40))),
+                                                                           
                                                                            rep(sampled.parameters["age.40.to.49.transmission.multiplier.3"],
                                                                                length(get.age.brackets.in.range(age.cutoffs = age.cutoffs, lower = 40, upper = 50))),
                                                                            rep(sampled.parameters["age.50.and.over.transmission.multiplier.3"],
@@ -830,6 +888,17 @@ map.model.parameters <- function(parameters,
     
     
     
+    # IeDEA age category of each model age, and sex, laid out over [age, sex] like the trans arrays
+    # (used by the engagement and suppression models below)
+    iedea.cat.by.age = sapply(trans.dim.names$age, function(age){
+        iedea.cat = names(MODEL.TO.IEDEA.AGE.MAPPING)[sapply(MODEL.TO.IEDEA.AGE.MAPPING, function(x) age %in% x)]
+        if (length(iedea.cat) != 1)
+            stop(paste0("model age '", age, "' must be in exactly one MODEL.TO.IEDEA.AGE.MAPPING category"))
+        iedea.cat
+    })
+    iedea.cat.by.trans = rep(iedea.cat.by.age, times = length(trans.dim.names$sex))
+    sex.by.trans = rep(trans.dim.names$sex, each = length(trans.dim.names$age))
+    
     #-- ENGAGEMENT --#
     engagement.model = get.engagement.model(location = location)
     engagement.times = c(1975:min(project.to.year,sampled.parameters["cascade.improvement.end.year"], na.rm = T))
@@ -857,23 +926,16 @@ map.model.parameters <- function(parameters,
     # using IeDEA dashboard method for all countries 
     engagement.rates = c(lapply(engagement.times, function(year){
         
-        projected.log.odds = as.numeric(sapply(trans.dim.names$sex, function(sex){
-            sapply(trans.dim.names$age, function(age){
-                eng.cat = names(MODEL.TO.IEDEA.AGE.MAPPING)[sapply(MODEL.TO.IEDEA.AGE.MAPPING, function(x) age %in% x)]
-                
-                slope = (engagement.model$slope+sampled.parameters['log.OR.engagement.slope']) # original slope 
-                slope = slope + (eng.cat=="10-19")*(sampled.parameters['log.OR.0.14.engagement.slope']) # if 0-14, add in multiplier 
-                
-                engagement.model$intercept + 
-                    slope*(year-engagement.model$anchor.year) + 
-                    (engagement.model$age.10.19*(eng.cat=="10-19")) + 
-                    (engagement.model$age.20.29*(eng.cat=="20-29")) + 
-                    (engagement.model$age.40.49*(eng.cat=="40-49")) + 
-                    (engagement.model$age.50.plus*(eng.cat=="50 and over")) + 
-                    (engagement.model$sex.female*(sex=="female"))  
-                
-            })
-        }))
+        # same terms, added in the same order, as a vector over [age, sex] (age category/sex lookups done once, above)
+        projected.log.odds = as.numeric(engagement.model$intercept + 
+                    (engagement.model$slope+sampled.parameters['log.OR.engagement.slope'] + 
+                     (iedea.cat.by.trans=="10-19")*sampled.parameters['log.OR.0.14.engagement.slope'])*  # nextgen: extra slope for youth (IeDEA 10-19 = model ages 0-19)
+                    (year-engagement.model$anchor.year) + 
+                    (engagement.model$age.10.19*(iedea.cat.by.trans=="10-19")) + 
+                    (engagement.model$age.20.29*(iedea.cat.by.trans=="20-29")) + 
+                    (engagement.model$age.40.49*(iedea.cat.by.trans=="40-49")) + 
+                    (engagement.model$age.50.plus*(iedea.cat.by.trans=="50 and over")) + 
+                    (engagement.model$sex.female*(sex.by.trans=="female")))
         dim(projected.log.odds) = sapply(trans.dim.names,length)
         dimnames(projected.log.odds) = trans.dim.names
         
@@ -928,23 +990,16 @@ map.model.parameters <- function(parameters,
     
     suppression.rates = c(lapply(suppression.times, function(year){
         
-        projected.log.odds = as.numeric(sapply(trans.dim.names$sex, function(sex){
-            sapply(trans.dim.names$age, function(age){
-                eng.cat = names(MODEL.TO.IEDEA.AGE.MAPPING)[sapply(MODEL.TO.IEDEA.AGE.MAPPING, function(x) age %in% x)]
-                
-                slope = (suppression.model$slope+sampled.parameters['log.OR.suppression.slope']) # original slope 
-                slope = slope + (eng.cat=="10-19")*(sampled.parameters['log.OR.0.14.suppression.slope']) # if 0-14, add in multiplier 
-                
-                suppression.model$intercept + 
-                    slope*(year-suppression.model$anchor.year) + 
-                    (suppression.model$age.10.19*(eng.cat=="10-19")) + 
-                    (suppression.model$age.20.29*(eng.cat=="20-29")) + 
-                    (suppression.model$age.40.49*(eng.cat=="40-49")) + 
-                    (suppression.model$age.50.plus*(eng.cat=="50 and over")) + 
-                    (suppression.model$sex.female*(sex=="female"))  
-                
-            })
-        }))
+        # same terms, added in the same order, as a vector over [age, sex] (age category/sex lookups done once, above)
+        projected.log.odds = as.numeric(suppression.model$intercept + 
+                    (suppression.model$slope+sampled.parameters['log.OR.suppression.slope'] + 
+                     (iedea.cat.by.trans=="10-19")*sampled.parameters['log.OR.0.14.suppression.slope'])*  # nextgen: extra slope for youth (IeDEA 10-19 = model ages 0-19)
+                    (year-suppression.model$anchor.year) + 
+                    (suppression.model$age.10.19*(iedea.cat.by.trans=="10-19")) + 
+                    (suppression.model$age.20.29*(iedea.cat.by.trans=="20-29")) + 
+                    (suppression.model$age.40.49*(iedea.cat.by.trans=="40-49")) + 
+                    (suppression.model$age.50.plus*(iedea.cat.by.trans=="50 and over")) + 
+                    (suppression.model$sex.female*(sex.by.trans=="female")))
         dim(projected.log.odds) = sapply(trans.dim.names,length)
         dimnames(projected.log.odds) = trans.dim.names
         

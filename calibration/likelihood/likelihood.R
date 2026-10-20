@@ -16,19 +16,7 @@
 
 library("mvtnorm")
 
-WEIGHT.YEARS = 1970:2030
-WEIGHTS.BY.YEAR = rep(1, length(WEIGHT.YEARS))
-WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2000) # before 2000, 1/4x
-WEIGHTS.BY.YEAR[WEIGHT.YEARS>=2018] = 4 # from 2018, 4x
-names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
-WEIGHT.MULTIPLIER = 1
-WEIGHTS.BY.YEAR = WEIGHTS.BY.YEAR*WEIGHT.MULTIPLIER
-print(paste0("Weights multiplied by ",WEIGHT.MULTIPLIER))
-
-# for france only, remove pre-1995 years 
-# WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
-# WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE[as.character(1995:2030)]
-# WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE/8
+# WEIGHTS.BY.YEAR AND POP.WEIGHTS set in set.likelihood.and.prior.by.location
 
 # Calls individual "create.likelihood.for.data.type" functions for each data type
 # Each data type function assembles the likelihood elements once (because it is time consuming - e.g., matrix M), 
@@ -38,7 +26,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              parameters,
                              location,
                              years = 1995:2023, # 1980:2023
-                             total.weight = WEIGHTS.BY.YEAR, 
+                             total.weight, # set this in set.likelihood.and.prior.by.location
                              #incidence
                              incidence.years=years,
                              incidence.weight=2, 
@@ -65,8 +53,8 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              suppression.obs.correlation=0.5,
                              suppression.correlation.structure="compound.symmetry",
                              #population
-                             population.years=years,
-                             population.weight=1/200000, # have to downweight a lot due to large pop size/number of strata
+                             population.years=1995:2040, # UPDATED 4/10/26
+                             population.weight,# set this in set.likelihood.and.prior.by.location
                              population.obs.correlation=0.5,
                              population.correlation.structure="auto.regressive",
                              #hiv.mortality
@@ -77,11 +65,11 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              #total.mortality
                              total.mortality.years=years,
                              total.mortality.weight=1/1000, 
-                             total.mortality.weight.by.age = c("80 and over" = 0.25), # changed from 0.25
+                             total.mortality.weight.by.age = c("80 and over" = 0.25),
                              total.mortality.obs.correlation=0.5, 
                              total.mortality.correlation.structure="auto.regressive"
                              ){ 
-    
+  
     incidence.lik = create.likelihood.for.data.type(data.type = "incidence",
                                                     data.manager=data.manager,
                                                     years=incidence.years,
@@ -154,7 +142,7 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                      parameters=parameters,
                                                      denominator.data.type=NULL, 
                                                      obs.is.proportion=F,
-                                                     weight=total.weight*population.weight,
+                                                     weight=population.weight, # UPDATED 4/10/26 removed *total weight because that's now factored in with extra years
                                                      obs.correlation=population.obs.correlation,
                                                      correlation.structure=population.correlation.structure,
                                                      calculate.sds.from.ci=F,
@@ -340,6 +328,10 @@ create.likelihood.for.data.type = function(data.type,
                                                                use.age.sex=use.age.sex
                                                                )
     
+    # With no denominator (population), the covariance matrix has no model-error term, so it is the
+    # same for every sim: compute.likelihood factors it once and keeps it here
+    chol.cache = if (is.null(denominator.data.type)) new.env() else NULL
+    
     function(sim,debug=F){ # this gets called every single time we invoke likelihood on a simulation; which is why we pre-compute above it
         
         compute.likelihood(sim=sim,
@@ -354,6 +346,7 @@ create.likelihood.for.data.type = function(data.type,
                            obs.cov.mat=likelihood.elements$obs.cov.mat,
                            weight=weight,
                            weight.by.age=weight.by.age,
+                           chol.cache=chol.cache,
                            debug=debug)
         
     }
@@ -513,12 +506,12 @@ get.likelihood.elements.by.data.type.and.dimension = function(data.type,
     # For data with upper/lower values (everything except pop), use these to calculate the SDs; only keep observations with all three values 
     if(calculate.sds.from.ci){
         obs.data.uppers = as.numeric(get.surveillance.data(data.manager = data.manager,
-                                                           data.type = paste0(data.type,".lowers"),
+                                                           data.type = paste0(data.type,".uppers"), # fixed 10/15/26 (was swapped with .lowers)
                                                            years = years,
                                                            locations = location,
                                                            keep.dimensions = keep.dimensions))
-        obs.data.lowers = as.numeric(get.surveillance.data(data.manager = data.manager,  # placeholder 
-                                                           data.type = paste0(data.type,".uppers"),
+        obs.data.lowers = as.numeric(get.surveillance.data(data.manager = data.manager,
+                                                           data.type = paste0(data.type,".lowers"),
                                                            years = years,
                                                            locations = location,
                                                            keep.dimensions = keep.dimensions))
@@ -619,6 +612,7 @@ compute.likelihood = function(sim,
                               obs.cov.mat, # pre-computed variance-covariance matrix
                               weight,
                               weight.by.age,
+                              chol.cache=NULL, # environment; only passed when the covariance doesn't depend on the sim
                               debug=F){
     
     ## Model component## 
@@ -685,7 +679,27 @@ compute.likelihood = function(sim,
     }
 
     # compute and return the density of the multivariate normal
-    rv = dmvnorm(x = obs,mean = mu,sigma = cov.mat,log = T)
+    if (!is.null(chol.cache) && isTRUE(getOption('gmha.cache.likelihood.chol', TRUE))) {
+        # covariance is the same for every sim here, so do the Cholesky factorization only once
+        if (is.null(chol.cache$dec)) {
+            dec = tryCatch(base::chol(cov.mat), error = function(e) NULL)
+            if (is.null(dec)) # not positive definite: fall back to dmvnorm (which returns -Inf)
+                return(dmvnorm(x = obs,mean = mu,sigma = cov.mat,log = T))
+            chol.cache$dec = dec
+        }
+        rv = dmvnorm.from.chol(x = obs, mean = mu, dec = chol.cache$dec)
+    } else
+        rv = dmvnorm(x = obs,mean = mu,sigma = cov.mat,log = T)
 
     
+}
+
+
+# Log density of a multivariate normal given the Cholesky factor of its covariance matrix
+# (dec = chol(sigma)). Same arithmetic as mvtnorm::dmvnorm(log = TRUE), minus the factorization.
+dmvnorm.from.chol = function(x, mean, dec){
+    p = length(x)
+    tmp = backsolve(dec, matrix(x, ncol = 1) - as.numeric(mean), transpose = TRUE)
+    rss = colSums(tmp^2)
+    -sum(log(diag(dec))) - 0.5 * p * log(2 * pi) - 0.5 * rss
 }

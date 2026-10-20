@@ -59,7 +59,7 @@ get.testing.model.thailand = function(){
     
     projection.times = 1980:2040
     dim.names.projection = list(age = model.ages$labels,
-                                sex = c("male","female"),
+                                sex = testing.sexes, # must match the order of intercepts/slopes (female, male)
                                 year = projection.times - testing.anchor.year)
     
     x = sapply(1:length(projection.times), function(year){

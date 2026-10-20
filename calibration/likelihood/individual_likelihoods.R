@@ -1,18 +1,11 @@
 source("calibration/likelihood/likelihood.R")
 library("mvtnorm")
 
-WEIGHT.YEARS = 1970:2030
-WEIGHTS.BY.YEAR = rep(1, length(WEIGHT.YEARS))
-WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2000) # before 2000, 1/4x
-WEIGHTS.BY.YEAR[WEIGHT.YEARS>=2018] = 4 # from 2018, 4x
-names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
+# WEIGHTS.BY.YEAR AND POP.WEIGHTS set in set.likelihood.and.prior.by.location
 
-# for france only, remove pre-1995 years 
-WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR
-WEIGHTS.BY.YEAR.FRANCE = WEIGHTS.BY.YEAR.FRANCE[as.character(1995:2030)]
 
-LOCATION = "r1.upper.middle"
-WEIGHTED.PREVALENCE = T # if set to T, will run with 4x prevalence weight 
+LOCATION = "Nigeria"
+WEIGHTED.PREVALENCE = F # if set to T, will run with 4x prevalence weight 
 
 
 if(WEIGHTED.PREVALENCE){
@@ -21,10 +14,6 @@ if(WEIGHTED.PREVALENCE){
     PREVALENCE.WEIGHT = 1
 }
 
-if(LOCATION=="France"){
-    WEIGHTS.BY.YEAR = WEIGHTS.BY.YEAR.FRANCE
-}
-    
 
 BASE.PARAMETERS=create.model.parameters(location = LOCATION)
 
@@ -60,19 +49,19 @@ create.individual.likelihood = function(data.type,
                                         suppression.obs.correlation=0.5,
                                         suppression.correlation.structure="compound.symmetry",
                                         #population
-                                        population.years=years,
-                                        population.weight=1/200000, # have to downweight a lot due to large pop size/number of strata
+                                        population.years=1995:2040, # UPDATED 4/10/26
+                                        population.weight=POP.WEIGHTS*(1/200000), # UPDATED 4/10/26 # have to downweight a lot due to large pop size/number of strata
                                         population.obs.correlation=0.5,
                                         population.correlation.structure="auto.regressive",
                                         #hiv.mortality
                                         hiv.mortality.years=years,
-                                        hiv.mortality.weight=1/1000000, 
+                                        hiv.mortality.weight=1/256, 
                                         hiv.mortality.obs.correlation=0.5, 
                                         hiv.mortality.correlation.structure="auto.regressive",
                                         #total.mortality
                                         total.mortality.years=years,
-                                        total.mortality.weight=1/200000, 
-                                        total.mortality.weight.by.age = c("80 and over" = 0.1),
+                                        total.mortality.weight, # removed default
+                                        total.mortality.weight.by.age = c("80 and over" = 0.25), # changed from 0.25
                                         total.mortality.obs.correlation=0.5, 
                                         total.mortality.correlation.structure="auto.regressive"
 ){
@@ -141,7 +130,7 @@ create.individual.likelihood = function(data.type,
                                               parameters=parameters,
                                               denominator.data.type=NULL, 
                                               obs.is.proportion=F,
-                                              weight=total.weight*population.weight,
+                                              weight=population.weight, # UPDATED 5/21 
                                               obs.correlation=population.obs.correlation,
                                               correlation.structure=population.correlation.structure,
                                               calculate.sds.from.ci=F,
@@ -231,8 +220,14 @@ aware.trend.lik = create.individual.likelihood(data.type = "awareness.trend",
                                                location = LOCATION)
 total.mortality.lik = create.individual.likelihood(data.type = "total.mortality",
                                                    parameters = BASE.PARAMETERS,
-                                                   location = LOCATION)
-full.lik = create.likelihood(parameters = BASE.PARAMETERS,location = LOCATION)
+                                                   location = LOCATION,
+                                                   total.mortality.weight = TOTAL.MORTALITY.WEIGHT)
+full.lik = create.likelihood(parameters = BASE.PARAMETERS,
+                             location = LOCATION,
+                             total.weight = WEIGHTS.BY.YEAR,
+                             population.weight=POP.WEIGHTS*(1/200000), #
+                             prevalence.weight = PREVALENCE.WEIGHT,
+                             total.mortality.weight = TOTAL.MORTALITY.WEIGHT)
 
 
 if(1==2){

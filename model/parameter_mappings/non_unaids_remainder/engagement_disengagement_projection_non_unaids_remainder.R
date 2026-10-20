@@ -54,7 +54,7 @@ get.disengagement.model.us = function(){
 # https://onlinelibrary.wiley.com/doi/10.1155/2013/384805
 get.engagement.model.india = function(){
     
-    max.proportion = 0.95
+    max.proportion = 0.99
     
     engagement.p.3.months = .673
     time = 3/12
@@ -82,7 +82,7 @@ get.engagement.model.india = function(){
     
     data.df$year = engagement.years
     
-    fit = suppressWarnings(glm(value ~ year+age+sex, family=binomial, data = data.df)) 
+    fit = suppressWarnings(glm(pmin(value/max.proportion,1) ~ year+age+sex, family=binomial, data = data.df)) 
     
     dim.names.projection = list(year = 1980:2040 - engagement.anchor.year,
                                 age = c("10-19","20-29","30-39","40-49","50 and over"),

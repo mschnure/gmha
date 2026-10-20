@@ -1,4 +1,14 @@
-#source('calibration/likelihood/likelihood.R') # should already be sourced in source code 
+source('calibration/likelihood/likelihood.R')
+source('calibration/mcmc_settings.R')      # MCMC step settings, seeds, Step 1 starting value files
+source('calibration/mcmc_start_values.R')  # get.location.prior, get.mcmc.start.values
+
+# Prior sd (log scale) for the 6 mortality slope multipliers, used in every location's prior below.
+# A slope multiplier m tilts the fitted non-HIV mortality trend around MORTALITY.SLOPE.ANCHOR.YEAR (2020;
+# model/parameter_mappings/calculate_death_rates.R): rate * m^(year - 2020), so it acts over 20 years to
+# 2040 and 40 years back to 1980. Allow up to a 4x (or 1/4) change by 2040 at 2 sd: (log(4)/2)/20.
+# (It was log(4)/2 with the trend tilted around 1980, which let mortality blow up - e.g., Zambia reached
+# a non-HIV mortality rate of ~76,000/year and its model runs became ~100x slower.)
+MORTALITY.SLOPE.MULTIPLIER.LOG.SD = (log(4)/2) / 20
 source('calibration/prior_distributions/kenya_prior.R')
 source('calibration/prior_distributions/south_africa_prior.R')
 source('calibration/prior_distributions/france_prior.R')
@@ -13,104 +23,56 @@ source('calibration/prior_distributions/unaids_remainder_prior.R')
 source('calibration/prior_distributions/non_unaids_remainder_prior.R')
 source('calibration/prior_distributions/thailand_prior.R')
 source('calibration/prior_distributions/cambodia_prior.R')
+source("calibration/prior_distributions/r1_low_prior.R")
+source("calibration/prior_distributions/r1_lower_middle_prior.R")
+source("calibration/prior_distributions/r1_upper_middle_prior.R")
+source("calibration/prior_distributions/r1_high_prior.R")
 
 set.likelihood.and.prior.by.location = function(location,
+                                                total.weight = 1,
+                                                total.mortality.weight = 1/1000, # added 6/2 to allow third step to have weight = 1
                                                 weighted.prevalence = F,
-                                                weighted.cascade = F){
+                                                weighted.cascade = F, # nextgen: if T, 4x awareness/engagement/suppression weights
+                                                step = 2, # which MCMC step's starting values to use (see calibration/mcmc_start_values.R)
+                                                params.start.values = NULL){ # or pass starting values directly
   
-  PREVALENCE.WEIGHT = 1
-  CASCADE.WEIGHT = 1
+  WEIGHT.YEARS = 1970:2030
+  WEIGHTS.BY.YEAR = rep(1, length(WEIGHT.YEARS))
+  WEIGHTS.BY.YEAR = (1/4)^(WEIGHT.YEARS<2000) # before 2000, 1/4x
+  WEIGHTS.BY.YEAR[WEIGHT.YEARS>=2018] = 4 # from 2018, 4x
+  names(WEIGHTS.BY.YEAR) = WEIGHT.YEARS
+  WEIGHTS.BY.YEAR = WEIGHTS.BY.YEAR*total.weight
   
-  if(weighted.prevalence){
-    PREVALENCE.WEIGHT = 4
-  }
+  # Population data extended through 2040
+  POP.WEIGHTS = c(WEIGHTS.BY.YEAR,rep(total.weight,10))
+  names(POP.WEIGHTS) = c(names(WEIGHTS.BY.YEAR),2031:2040)
   
-  if(weighted.cascade){
-    CASCADE.WEIGHT = 4
-  }
+    # nextgen option: 4x cascade weights; otherwise create.likelihood's defaults are used
+    cascade.weights = list()
+    if(weighted.cascade)
+        cascade.weights = list(awareness.weight = 4, engagement.weight = 4, suppression.weight = 4)
+    
+    if(weighted.prevalence){
+      likelihood.to.run = do.call(create.likelihood, c(list(parameters = create.model.parameters(location = location),
+                                              location=location,
+                                              total.weight = WEIGHTS.BY.YEAR,
+                                              population.weight=POP.WEIGHTS*(1/200000), # downweighted due to large pop size/number of strata
+                                              prevalence.weight = 4,
+                                              total.mortality.weight = total.mortality.weight), cascade.weights))
+    } else {
+        likelihood.to.run = do.call(create.likelihood, c(list(parameters = create.model.parameters(location = location),
+                                              location=location,
+                                              total.weight = WEIGHTS.BY.YEAR,
+                                              population.weight=POP.WEIGHTS*(1/200000), # downweighted due to large pop size/number of strata
+                                              total.mortality.weight = total.mortality.weight), cascade.weights))
+                                              }
 
-  print(paste0("prevalence weight set to ",PREVALENCE.WEIGHT," and cascade weight set to ",CASCADE.WEIGHT))
-  likelihood.to.run = create.likelihood(parameters = create.model.parameters(location = location),
-                                        location=location,
-                                        prevalence.weight = PREVALENCE.WEIGHT,
-                                        awareness.weight = CASCADE.WEIGHT,
-                                        engagement.weight = CASCADE.WEIGHT,
-                                        suppression.weight = CASCADE.WEIGHT)
-  
-    params.start.values = get.default.parameters(location = location)
-    
-    if(location=="Kenya"){
-        prior = KENYA.PRIOR
-        load("calibration/starting_values/2025_08_11_kenya_start_values.Rdata")
-        params.start.values = params.start.values
-    } else if(location=="South Africa"){
-        prior = SOUTH.AFRICA.PRIOR
-        # load("calibration/starting_values/2025_08_11_south_africa_start_values.Rdata")
-        #load("calibration/starting_values/2025_10_08_south_africa_start_values.Rdata")
-        load("calibration/starting_values/2025_10_23_south_africa_start_values.Rdata")
-        params.start.values = params.start.values
-    } else if(location=="France"){
-        prior = FRANCE.PRIOR
-        load("calibration/starting_values/2025_08_13_france_start_values.Rdata")
-        params.start.values = params.start.values
-    } else if(location=="Mozambique"){
-        prior = MOZAMBIQUE.PRIOR
-        load("calibration/starting_values/2025_08_13_mozambique_start_values.Rdata")
-        params.start.values = params.start.values
-    } else if(location=="Tanzania"){
-        prior = TANZANIA.PRIOR
-        load("calibration/starting_values/2025_08_13_tanzania_start_values.Rdata")
-        params.start.values = params.start.values
-    } else if(location=="Uganda"){
-        prior = UGANDA.PRIOR
-        load("calibration/starting_values/2025_08_13_uganda_start_values.Rdata")
-        params.start.values = params.start.values
-    } else if(location=="Zambia"){
-        prior = ZAMBIA.PRIOR
-        load("calibration/starting_values/2025_08_13_zambia_start_values.Rdata")
-        params.start.values = params.start.values
-    } else if(location=="Zimbabwe"){
-        prior = ZIMBABWE.PRIOR
-        load("calibration/starting_values/2025_08_13_zimbabwe_start_values.Rdata")
-        params.start.values = params.start.values
-    } else if(location=="Malawi"){
-        prior = MALAWI.PRIOR
-        load("calibration/starting_values/2025_08_12_malawi_start_values.Rdata")
-        params.start.values = params.start.values
-    } else if(location=="Nigeria"){
-        prior = NIGERIA.PRIOR
-        load("calibration/starting_values/2025_08_13_nigeria_start_values.Rdata")
-        params.start.values = params.start.values
-    } else if(location=="Thailand"){
-        prior = THAILAND.PRIOR
-        load("calibration/starting_values/2025_08_04_thailand_start_values.Rdata")
-        params.start.values = params.start.values
-    } else if(location=="Cambodia"){
-        prior = CAMBODIA.PRIOR
-        load("calibration/starting_values/2025_08_04_cambodia_start_values.Rdata")
-        params.start.values = params.start.values
-    } else if(location=="unaids.remainder"){
-        prior = UNAIDS.REMAINDER.PRIOR
-    } else if(location=="non.unaids.remainder"){
-        prior = NON.UNAIDS.REMAINDER.PRIOR
-    } else if(location %in% c("r1.high")){
-        prior = UNAIDS.REMAINDER.PRIOR
-        print("using UNAIDS remainder prior for all r1 models")
-    } else if(location=="r1.low"){
-      prior = UNAIDS.REMAINDER.PRIOR
-      load("calibration/starting_values/2025_08_12_r1_low_start_values.Rdata")
-      params.start.values = params.start.values
-    } else if(location=="r1.lower.middle"){
-        prior = UNAIDS.REMAINDER.PRIOR
-        load("calibration/starting_values/2025_08_12_r1_lower_middle_start_values.Rdata")
-        params.start.values = params.start.values
-    } else if(location=="r1.upper.middle"){
-      prior = UNAIDS.REMAINDER.PRIOR
-      load("calibration/starting_values/2025_08_12_r1_upper_middle_start_values.Rdata")
-      params.start.values = params.start.values
-    } else stop("Only set up for Kenya, South Africa, France, Mozambique, Tanzania, 
-             Uganda, Zambia, Zimbabwe, Malawi, Nigeria, Thailand, Cambodia, and remainder models for now")
-    
+    # prior for this location, and starting values for this MCMC step:
+    #   step 1 -> prior medians, or the file in STEP1.START.VALUE.FILES (calibration/mcmc_settings.R)
+    #   step 2 -> most recent Step 2 starting values file (saved automatically at the end of Step 1)
+    prior = get.location.prior(location)
+    if (is.null(params.start.values))
+        params.start.values = get.mcmc.start.values(location, step = step, prior = prior)
     params.start.values = params.start.values[prior@var.names]
     
     transformations = unlist(sapply(prior@subdistributions,function(dist){

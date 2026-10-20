@@ -379,6 +379,17 @@ run.model <- function(parameters,
                       location,
                       max.run.seconds=10){
     
+    # Use the C++ version of the ODE if requested (see model/diffeq_cpp.R; needs that file sourced)
+    # nextgen: the C++ ODE doesn't have the lai_art state, so always use the R version when LAI is in the model
+    if (isTRUE(getOption('gmha.use.cpp', FALSE)) && !('lai_art' %in% parameters$HIV.STATUS))
+        return(run.model.cpp(parameters=parameters,
+                             initial.state=initial.state,
+                             start.year=start.year,
+                             end.year=end.year,
+                             keep.years=keep.years,
+                             location=location,
+                             max.run.seconds=max.run.seconds))
+    
     # Error check on parameters - NA values
     mask = sapply(parameters$time.varying.parameters,function(param){any(sapply(param$values,function(val){any(is.na(val)) | any(is.infinite(val))}))})
     if(any(mask))
@@ -442,7 +453,8 @@ process.ode.results <- function(ode.results,
                            subgroup=parameters$SUBGROUPS,
                            hiv.status=parameters$HIV.STATUS)
     
-    prev.dim.names = list(age=parameters$AGES, 
+    prev.dim.names = list(year=keep.years,
+                          age=parameters$AGES,
                           sex=parameters$SEXES,
                           subgroup=parameters$SUBGROUPS,
                           hiv.status=parameters$HIV.STATES)
@@ -477,8 +489,8 @@ process.ode.results <- function(ode.results,
     index=index+state.length
     
     rv$prevalence=array(ode.results[keep.years,index+1:prev.length],
-                        dim = sapply(state.dim.names,length),
-                        dimnames = state.dim.names)
+                        dim = sapply(prev.dim.names,length),
+                        dimnames = prev.dim.names)
     index=index+prev.length
     
     #incidence

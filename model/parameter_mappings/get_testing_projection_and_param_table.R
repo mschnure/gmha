@@ -62,7 +62,7 @@ generate.testing.parameter.table = function(locations){
         
         # Young
         sex="female"
-        fit.young = suppressWarnings(glm(prop ~ year, family=binomial, data = master.df[master.df$sex==sex & master.df$age==17,]))
+        fit.young = suppressWarnings(glm(pmin(prop/max.proportion,1) ~ year, family=binomial, data = master.df[master.df$sex==sex & master.df$age==17,]))
         year = 2015
         young.log.odds  = fit.young$coefficients[1] + 
             fit.young$coefficients["year"]*(2015-anchor.year)
@@ -73,7 +73,7 @@ generate.testing.parameter.table = function(locations){
         young.p = young.p*max.proportion # probability, age <=17
         
         # Old
-        fit.old = suppressWarnings(glm(prop ~ year*age, family=binomial, data = master.df[master.df$sex==sex & master.df$age!=17,])) 
+        fit.old = suppressWarnings(glm(pmin(prop/max.proportion,1) ~ year*age, family=binomial, data = master.df[master.df$sex==sex & master.df$age!=17,])) 
         old.age=35
         old.log.odds = fit.old$coefficients[1] + # intercept 
             fit.old$coefficients["year"]*(2015-anchor.year) + # old*year
