@@ -96,6 +96,35 @@ simset.from.mcmc = function(mcmc, step = 1,
                    additional.thin = max(1, round(thin / mcmc@thin)))
 }
 
+# Light copies of mcmc files, for reviewing: the same mcmc without its simulations (the bulk of the file).
+# The review's acceptance rates, likelihood and trace plots and R-hats only need the samples, likelihoods
+# and acceptance counts, so loading a light copy takes seconds instead of minutes. Saved next to the full
+# file in a light/ subfolder (the full file is still what simsets are made from).
+light.mcmc.file = function(mcmc.file){
+    file.path(dirname(mcmc.file), "light", basename(mcmc.file))
+}
+
+save.light.mcmc = function(mcmc, mcmc.file){
+    file = light.mcmc.file(mcmc.file)
+    dir.create(dirname(file), recursive = TRUE, showWarnings = FALSE)
+    mcmc@simulations = list()
+    save(mcmc, file = file)
+    invisible(file)
+}
+
+# Loads the light copy of an mcmc file; makes it first if it doesn't exist or is older than the full file
+load.light.mcmc = function(mcmc.file){
+    light = light.mcmc.file(mcmc.file)
+    e = new.env()
+    if (file.exists(light) && file.mtime(light) >= file.mtime(mcmc.file))
+        return(get(load(light, envir = e)[1], envir = e))
+    print(paste0("loading ", mcmc.file, " (first time: also saving a light copy for next time)"))
+    mcmc = get(load(mcmc.file, envir = e)[1], envir = e)
+    save.light.mcmc(mcmc, mcmc.file)
+    mcmc@simulations = list()
+    mcmc
+}
+
 mcmc.seed = function(step, chain){
     MCMC.BASE.SEED + 1000*step + chain
 }
@@ -247,6 +276,7 @@ run.mcmc.step.chain = function(location,
     mcmc.file = file.path(MCMC.RUNS.DIR, "mcmc_files",
                           paste0("mcmc_", mcmc.run.name(location, step, chain), "_", Sys.Date(), ".Rdata"))
     save(mcmc, file = mcmc.file)
+    save.light.mcmc(mcmc, mcmc.file)
 
     simset = simset.from.mcmc(mcmc, step = step)
     simset.file = file.path(MCMC.RUNS.DIR, paste0("simset_", mcmc.run.name(location, step, chain), "_", Sys.Date(), ".Rdata"))
@@ -318,6 +348,7 @@ merge.step2.chains = function(location,
     merged.file = file.path(MCMC.RUNS.DIR, "mcmc_files", "merged",
                             paste0("mcmc_", convert_string(location), "_step2_", chains.label, "_", Sys.Date(), ".Rdata"))
     save(mcmc, file = merged.file)
+    save.light.mcmc(mcmc, merged.file)
     print(paste0("Saved merged mcmc: ", merged.file))
 
     # simset from the merged mcmc (if this fails, the merged mcmc and each chain's simset are still saved)
@@ -362,7 +393,9 @@ remake.step2.simsets = function(location, chains = mcmc.step.settings(2)$chains)
     mcmc.files = find.latest.mcmc.files(location, step = 2, chains = chains)
     for (i in seq_along(chains)) {
         if (is.na(mcmc.files[i])) { print(paste0("  no mcmc file for chain ", chains[i], " yet")); next }
-        simset = simset.from.mcmc(load.mcmc(mcmc.files[i]), step = 2)
+        mcmc = load.mcmc(mcmc.files[i])
+        save.light.mcmc(mcmc, mcmc.files[i])
+        simset = simset.from.mcmc(mcmc, step = 2)
         files[paste0("chain ", chains[i])] = save.simset(simset, file.path(MCMC.RUNS.DIR,
             paste0("simset_", mcmc.run.name(location, 2, chains[i]), "_", Sys.Date(), ".Rdata")))
     }
@@ -371,12 +404,14 @@ remake.step2.simsets = function(location, chains = mcmc.step.settings(2)$chains)
     if (is.na(merged.file))
         print("  no merged mcmc yet")
     else {
-        simset = simset.from.mcmc(load.mcmc(merged.file), step = 2)
+        mcmc = load.mcmc(merged.file)
+        save.light.mcmc(mcmc, merged.file)
+        simset = simset.from.mcmc(mcmc, step = 2)
         chains.label = sub(paste0("^mcmc_", convert_string(location), "_step2_(chains[0-9]+)_.*$"), "\\1", basename(merged.file))
         files["merged"] = save.simset(simset, file.path(MCMC.RUNS.DIR,
             paste0("simset_", convert_string(location), "_step2_", chains.label, "_", Sys.Date(), ".Rdata")))
     }
-    rm(simset); gc()
+    rm(list = intersect(c("simset", "mcmc"), ls())); gc()
     invisible(files)
 }
 

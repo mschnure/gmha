@@ -9,8 +9,8 @@
 #     4. review.to.pdf: all of the above for many locations at once, one PDF per location, plus an
 #        overview table across locations (see calibration/review_all_locations.R)
 #
-# Simsets are thinned to ~max.plot.sims simulations for plotting only (weights kept), since simplot
-# with the full ~20,000 is slow; the saved simsets aren't changed.
+# mcmc files are loaded as light copies without their simulations (see load.light.mcmc in mcmc_pipeline.R).
+# Simsets bigger than ~max.plot.sims are thinned for plotting only (weights kept); saved simsets aren't changed.
 #
 # Needs calibration/mcmc_pipeline.R sourced first. Chains are read from mcmc_runs/, so run this on
 # the machine that ran the MCMC (or copy the files over).
@@ -59,7 +59,7 @@ load.mcmc.chains = function(location,
         print(paste0("No files yet for chain(s) ", paste0(chains[!available], collapse = ", ")))
     chains = chains[available]
 
-    mcmcs = lapply(mcmc.files[available], function(f){ print(paste0("loading ", f)); load.saved.object(f) })
+    mcmcs = lapply(mcmc.files[available], load.light.mcmc)   # without the simulations (not needed here)
     simsets = lapply(simset.files[available], function(f) if (is.na(f)) NULL else load.saved.object(f))
     names(mcmcs) = names(simsets) = paste0("chain ", chains)
 
@@ -217,7 +217,8 @@ review.merged.simset = function(location,
 
 # Everything above for many locations: one PDF per location (summary table and R-hats, likelihood and
 # trace plots, each chain's simplots, then the merged simset's simplots) in `dir`, plus overview.csv
-# with one row per location. A location that fails is noted in the overview and the rest continue.
+# with one row per location (rows for other locations already in an overview.csv there are kept).
+# A location that fails is noted in the overview and the rest continue.
 review.to.pdf = function(locations = "all",
                          step = 2,
                          dir = file.path("results", paste0("mcmc_review_", Sys.Date())),
@@ -285,7 +286,15 @@ review.to.pdf = function(locations = "all",
         rm(list = intersect(c("chains", "merged"), ls())); gc()
     }
     overview = do.call(rbind, overview)
-    write.csv(overview, file.path(dir, "overview.csv"), row.names = FALSE)
+    # update the rows for these locations in an existing overview.csv, keeping the others
+    overview.file = file.path(dir, "overview.csv")
+    if (file.exists(overview.file)) {
+        old = read.csv(overview.file, stringsAsFactors = FALSE)
+        if (setequal(names(old), names(overview)))
+            overview = rbind(old[!old$location %in% overview$location, names(overview), drop = FALSE], overview)
+    }
+    overview = overview[order(match(overview$location, names(LOCATION.PRIOR.NAMES))), ]
+    write.csv(overview, overview.file, row.names = FALSE)
     print(overview, row.names = FALSE)
     print(paste0("PDFs and overview.csv in ", normalizePath(dir)))
     invisible(overview)
