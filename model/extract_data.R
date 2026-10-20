@@ -574,7 +574,7 @@ extract.total.suppressed <- function(sim,
         subgroups = subgroups,
         sexes = sexes,
         keep.dimensions = keep.dimensions,
-        hiv.status = c("engaged_suppressed","lai_art") # change this to both compartments
+        hiv.status = intersect(c("engaged_suppressed","lai_art"), sim$HIV.STATUS) # both compartments (sims made without LAI, e.g. on master, have no lai_art)
     )
 }
 
@@ -601,6 +601,10 @@ extract.suppressed.lai <- function(sim,
                                     subgroups = sim$SUBGROUPS,
                                     sexes = sim$SEXES,
                                     keep.dimensions = 'year'){
+    # sims made without LAI (e.g., on master) have no lai_art state: 0 on LAI
+    if(!("lai_art" %in% sim$HIV.STATUS))
+        return(0*extract.population(sim = sim, years = years, ages = ages, subgroups = subgroups, sexes = sexes,
+                                    keep.dimensions = keep.dimensions, hiv.status = "engaged_suppressed"))
     extract.population(
         sim = sim,
         years = years,

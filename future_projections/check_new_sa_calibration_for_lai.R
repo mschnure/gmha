@@ -4,12 +4,11 @@
 #   2. the usual fit checks
 #   3. re-runs a few sims on nextgen and compares them to the stored sims - should match, since the
 #      baseline LAI rates are 0 (differences = R vs C++ ODE, or something off in the merge)
-#   4. saves a smaller simset for future_projections/run_lai_interventions.R
+#   (uses the full simset for LAI: load NEW.SIMSET.FILE in future_projections/run_lai_interventions.R)
 ################################################################################################
 source("model/run_systematic.R")
 
-NEW.SIMSET.FILE = "mcmc_runs/simset_south_africa_step2_CHAINS_DATE.Rdata" # copy over from the other machine
-N.SIMS.FOR.LAI = 200
+NEW.SIMSET.FILE = "mcmc_runs/simset_south_africa_step2_chains1234_2026-10-20.Rdata" 
 
 simset = get(load(NEW.SIMSET.FILE)[1])
 print(paste0(simset@n.sim, " distinct simulations, total weight ", sum(simset@weights)))
@@ -41,8 +40,3 @@ for(data.type in c('incidence','prevalence','hiv.mortality')){
     print(paste0(data.type, ": max relative difference, nextgen vs stored = ", signif(max.rel.diff, 3)))
 }
 # expect ~0 (tiny if the stored sims came from the C++ ODE); anything over ~0.01 is worth a look
-
-## 4. Simset for the LAI runs (load this in future_projections/run_lai_interventions.R)
-simset = thin.simset(simset, thin = ceiling(sum(simset@weights)/N.SIMS.FOR.LAI))
-print(paste0("LAI simset: ", simset@n.sim, " simulations"))
-save(simset, file = paste0("cached/simset_", N.SIMS.FOR.LAI, "_for_lai_", Sys.Date(), ".Rdata"))
