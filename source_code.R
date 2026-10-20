@@ -10,12 +10,13 @@ source('model/diffeq.R')
 source('model/age_mappings.R') 
 NO.INTERVENTION = c()
 
-# NEXTGEN (merged with master 10/20/26): the data manager needs rebuilding on this merged code so it has both master's
-# updates (PLHIV-weighted cascade, revised ages) and nextgen's 0-14 cascade data + LAI/oral placeholders:
-#   1. source data_manager/save_data_manager.R            -> cached/data.manager_global_<date>.Rdata
-#   2. source data_manager/revise_overlapping_age_groups.R -> cached/data.manager_global_revised_ages_<date>.Rdata
-# then replace the placeholder file name below with the file from step 2
-load('cached/data.manager_global_NEXTGEN_REBUILD.Rdata')
+# NEXTGEN: use the LAI version of the data manager (0-14 cascade data + LAI/oral placeholders). To rebuild it:
+#   1. source data_manager/save_data_manager.R            -> cached/data.manager_global_lai_<date>.Rdata
+#   2. source data_manager/revise_overlapping_age_groups.R -> cached/data.manager_global_revised_ages_lai_<date>.Rdata
+# then put the step 2 file name here
+load('cached/data.manager_global_revised_ages_lai_YYYY-MM-DD.Rdata')
+if(!isTRUE(attr(DATA.MANAGER, "lai")))
+    stop("This isn't the LAI data manager - rebuild it on the nextgen branch (see source_code.R)")
 #load('cached/data.manager_global_2025-12-02.Rdata') # (old nextgen) added lai and oral placeholders to plot age/sex more easily
 #load("cached/data.manager_global_revised_ages_2026-10-15.Rdata") # updated with Claude fixes
 #load('cached/data.manager_global_revised_ages_2026-07-08.Rdata') # removed 15-49 and 15+, added 25-49

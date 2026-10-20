@@ -49,7 +49,14 @@ if(SCALE.REMAINDER.DATA){
 # non.unaids.remainder bounds relative to Global; clamp any lower > point / upper < point (10/15/26)
 DATA.MANAGER = fix.count.bounds(DATA.MANAGER)
 
-save(DATA.MANAGER,file=paste0("cached/data.manager_global_",Sys.Date(),".Rdata"))
+## NEXTGEN: flag this as the LAI version of the data manager (0-14 cascade data + LAI/oral suppression placeholders)
+## - stored on the object as attr(DATA.MANAGER, "lai") so source_code.R can check it
+## - and in the file name: cached/data.manager_global_lai_<date>.Rdata
+LAI.DATA.MANAGER = T
+attr(DATA.MANAGER, "lai") = LAI.DATA.MANAGER
+DM.FILE.TAG = ifelse(LAI.DATA.MANAGER, "lai_", "")
+
+save(DATA.MANAGER,file=paste0("cached/data.manager_global_",DM.FILE.TAG,Sys.Date(),".Rdata"))
 
 
 

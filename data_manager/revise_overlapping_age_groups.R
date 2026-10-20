@@ -1,7 +1,9 @@
 source("model/run_systematic.R")
 
 # load the most recent (non-revised) data manager made by save_data_manager.R
-base.dm.files = list.files("cached", pattern = "^data\\.manager_global_[0-9-]+\\.Rdata$")
+# NEXTGEN: uses the LAI version made by save_data_manager.R (cached/data.manager_global_lai_<date>.Rdata)
+base.dm.files = list.files("cached", pattern = "^data\\.manager_global_lai_[0-9-]+\\.Rdata$")
+if(length(base.dm.files)==0) stop("No LAI data manager in cached/ - run data_manager/save_data_manager.R first")
 print(paste0("Revising age groups in: ", max(base.dm.files)))
 load(file.path("cached", max(base.dm.files)))
 #load("cached/data.manager_global_2026-06-25.Rdata")
@@ -232,4 +234,5 @@ DATA.MANAGER$hiv.mortality.uppers$year.age.location = new.hiv.mortality.uppers.a
 # same bounds clean-up as in save_data_manager.R, now on the new 25-49 group (10/15/26)
 DATA.MANAGER = fix.count.bounds(DATA.MANAGER, elements = "year.age.location")
 
-save(DATA.MANAGER,file=paste0("cached/data.manager_global_revised_ages_",Sys.Date(),".Rdata"))
+attr(DATA.MANAGER, "lai") = TRUE # NEXTGEN: keep the LAI flag
+save(DATA.MANAGER,file=paste0("cached/data.manager_global_revised_ages_lai_",Sys.Date(),".Rdata"))
