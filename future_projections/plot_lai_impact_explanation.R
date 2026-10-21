@@ -30,10 +30,10 @@ for(cal in names(arrays)){
     yr.sum = function(outcome, ages, intervention = "no.int", years = YEARS)
         apply(arr[years, ages,, outcome,, intervention, drop = F], c("year","sim"), sum)
     prev = yr.sum("prevalence", AGES.15.24)
-    cascade[[length(cascade)+1]] = qdf(100*yr.sum("awareness", AGES.15.24)/prev, calibration = lab, measure = "Aware (% of PWH)")
-    cascade[[length(cascade)+1]] = qdf(100*yr.sum("engagement", AGES.15.24)/prev, calibration = lab, measure = "On ART (% of PWH)")
-    cascade[[length(cascade)+1]] = qdf(100*yr.sum("suppression", AGES.15.24)/prev, calibration = lab, measure = "Virally suppressed (% of PWH)")
-    cascade[[length(cascade)+1]] = qdf((prev - yr.sum("suppression", AGES.15.24))/1000, calibration = lab, measure = "Unsuppressed PWH (thousands)")
+    cascade[[length(cascade)+1]] = qdf(100*yr.sum("awareness", AGES.15.24)/prev, calibration = lab, measure = "Aware (%)")
+    cascade[[length(cascade)+1]] = qdf(100*yr.sum("engagement", AGES.15.24)/prev, calibration = lab, measure = "On ART (%)")
+    cascade[[length(cascade)+1]] = qdf(100*yr.sum("suppression", AGES.15.24)/prev, calibration = lab, measure = "Suppressed (%)")
+    cascade[[length(cascade)+1]] = qdf((prev - yr.sum("suppression", AGES.15.24))/1000, calibration = lab, measure = "Unsuppressed (1,000s)")
     incidence[[length(incidence)+1]] = qdf(yr.sum("incidence", dimnames(arr)$age)/1000, calibration = lab, panel = "All ages")
     incidence[[length(incidence)+1]] = qdf(yr.sum("incidence", AGES.15.24)/1000, calibration = lab, panel = "Ages 15-24")
     base.pct = 100*yr.sum("suppression", AGES.15.24, "no.int", as.character(2020:2030))/yr.sum("prevalence", AGES.15.24, "no.int", as.character(2020:2030))
@@ -51,7 +51,7 @@ for(cal in names(arrays)){
 fac = function(d){ d$calibration = factor(d$calibration, levels = CAL.LABELS); d }
 cascade = fac(do.call(rbind, cascade)); incidence = fac(do.call(rbind, incidence))
 gain = fac(do.call(rbind, gain)); per.unsupp = fac(do.call(rbind, per.unsupp))
-cascade$measure = factor(cascade$measure, levels = c("Aware (% of PWH)","On ART (% of PWH)","Virally suppressed (% of PWH)","Unsuppressed PWH (thousands)"))
+cascade$measure = factor(cascade$measure, levels = c("Aware (%)","On ART (%)","Suppressed (%)","Unsuppressed (1,000s)"))
 incidence$panel = factor(incidence$panel, levels = c("All ages","Ages 15-24"))
 gain$scenario = factor(gain$scenario, levels = SC.LABELS); per.unsupp$scenario = factor(per.unsupp$scenario, levels = SC.LABELS)
 
