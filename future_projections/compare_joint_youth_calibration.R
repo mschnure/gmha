@@ -7,7 +7,7 @@
 ################################################################################################
 source("model/run_systematic.R")
 
-JOINT.SIMSET.FILE = "mcmc_runs/nextgen/simset_south_africa_step2_chains1234_2026-10-20.Rdata"  # copied from the remote
+JOINT.SIMSET.FILE = "mcmc_runs/nextgen/simset_south_africa_step2_chains1234_2026-10-21.Rdata"  # copied from the remote
 MASTER.SIMSET.FILE = "mcmc_runs/simset_south_africa_step2_chains1234_2026-10-20.Rdata"
 PLOT.FILE = paste0("mcmc_runs/nextgen/joint_youth_calibration_review_", Sys.Date(), ".pdf")
 
