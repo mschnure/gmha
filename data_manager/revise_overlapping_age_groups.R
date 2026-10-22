@@ -1,7 +1,3 @@
-BUILDING.DATA.MANAGER = T # NEXTGEN: tells source_code.R not to load a data manager (we are making it)
-source("model/run_systematic.R")
-BUILDING.DATA.MANAGER = F
-
 # load the most recent (non-revised) data manager made by save_data_manager.R
 # NEXTGEN: uses the LAI version made by save_data_manager.R (cached/data.manager_global_lai_<date>.Rdata)
 base.dm.files = list.files("cached", pattern = "^data\\.manager_global_lai_[0-9-]+\\.Rdata$")
@@ -9,6 +5,12 @@ if(length(base.dm.files)==0) stop("No LAI data manager in cached/ - run data_man
 print(paste0("Revising age groups in: ", max(base.dm.files)))
 load(file.path("cached", max(base.dm.files)))
 #load("cached/data.manager_global_2026-06-25.Rdata")
+
+# load it BEFORE sourcing the model code: some sourced files (e.g. hiv_mortality_priors.R) use DATA.MANAGER at the top level
+BUILDING.DATA.MANAGER = T # NEXTGEN: tells source_code.R not to load a data manager (we are making it)
+source("model/run_systematic.R")
+BUILDING.DATA.MANAGER = F
+
 
 DATA.MANAGER.OLD = DATA.MANAGER
 
