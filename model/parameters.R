@@ -134,6 +134,9 @@ get.default.parameters = function(location){
         age.0.14.awareness.multiplier=1,
         age.0.14.engagement.multiplier=1,
         age.0.14.suppression.multiplier=1,
+        age.15.24.awareness.multiplier=1, # nextgen: 15-24 cascade multipliers (10/22/26), fit to SABSSM 15-24 targets
+        age.15.24.engagement.multiplier=1,
+        age.15.24.suppression.multiplier=1,
         cascade.improvement.end.year=2040,
         
         ## Mortality/fertility parameters ##
@@ -531,6 +534,7 @@ map.model.parameters <- function(parameters,
         projected.rate = -log(1-projected.p)
         projected.rate[,"male",] = projected.rate[,"male",]*sampled.parameters["male.awareness.multiplier"]
         projected.rate[c("0-4","5-9","10-14"),,] = projected.rate[c("0-4","5-9","10-14"),,]*sampled.parameters["age.0.14.awareness.multiplier"]
+        projected.rate[c("15-19","20-24"),,] = projected.rate[c("15-19","20-24"),,]*sampled.parameters["age.15.24.awareness.multiplier"] # nextgen
         
         projected.rate
         
@@ -919,6 +923,7 @@ map.model.parameters <- function(parameters,
                                            dimnames=trans.dim.names)
             projected.rate.age.sex[,"male",] = projected.rate.age.sex[,"male",]*sampled.parameters["male.engagement.multiplier"]
             projected.rate.age.sex[c("0-4","5-9","10-14"),,] = projected.rate.age.sex[c("0-4","5-9","10-14"),,]*sampled.parameters["age.0.14.engagement.multiplier"]
+            projected.rate.age.sex[c("15-19","20-24"),,] = projected.rate.age.sex[c("15-19","20-24"),,]*sampled.parameters["age.15.24.engagement.multiplier"] # nextgen
             
             projected.rate.age.sex
 
@@ -947,6 +952,7 @@ map.model.parameters <- function(parameters,
         projected.rate = -log(1-projected.p)   
         projected.rate[,"male",] = projected.rate[,"male",]*sampled.parameters["male.engagement.multiplier"]
         projected.rate[c("0-4","5-9","10-14"),,] = projected.rate[c("0-4","5-9","10-14"),,]*sampled.parameters["age.0.14.engagement.multiplier"]
+        projected.rate[c("15-19","20-24"),,] = projected.rate[c("15-19","20-24"),,]*sampled.parameters["age.15.24.engagement.multiplier"] # nextgen
         projected.rate
         
     }))
@@ -1015,6 +1021,7 @@ map.model.parameters <- function(parameters,
         projected.rate = -log(1-projected.p)   
         projected.rate[,"male",] = projected.rate[,"male",]*sampled.parameters["male.suppression.multiplier"]
         projected.rate[c("0-4","5-9","10-14"),,] = projected.rate[c("0-4","5-9","10-14"),,]*sampled.parameters["age.0.14.suppression.multiplier"]
+        projected.rate[c("15-19","20-24"),,] = projected.rate[c("15-19","20-24"),,]*sampled.parameters["age.15.24.suppression.multiplier"] # nextgen
         projected.rate
         
     }))

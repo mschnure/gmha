@@ -26,6 +26,10 @@ SOUTH.AFRICA.PRIOR = join.distributions(
     age.0.14.suppression.multiplier = Lognormal.Distribution(log(1), log(8)/2), # used the same as the male cascade multipliers since those are applied the same way 
     log.OR.0.14.engagement.slope = Normal.Distribution(0, log(4)/2),
     log.OR.0.14.suppression.slope = Normal.Distribution(0, log(4)/2),
+    # nextgen (10/22/26): 15-24 cascade multipliers, fit to the SABSSM 15-24 targets; same prior as the 0-14 multipliers
+    age.15.24.awareness.multiplier = Lognormal.Distribution(log(1), log(8)/2),
+    age.15.24.engagement.multiplier = Lognormal.Distribution(log(1), log(8)/2),
+    age.15.24.suppression.multiplier = Lognormal.Distribution(log(1), log(8)/2),
     
     # THE REST OF THESE DON'T CHANGE 
     proportion.trate.change.by.3.5 = Beta.Distribution(alpha = 21,beta = 7),
