@@ -37,11 +37,10 @@ print(round(head(shift[order(-abs(shift))], 15), 2))
 
 pdf(PLOT.FILE, width = 11, height = 8.5)
 # names in the legend: the simsets in the order given (1 = master, 2 = joint)
-invisible(simplot(simset.master, simset.joint, years = 2000:2040,
+invisible(simplot(simset.master, simset.joint, years = 2000:2030,
                   data.types = c('awareness','engagement','suppression'),
                   facet.by = 'age', ages = c('0-14','15+'), proportion = T))
-invisible(simplot(simset.master, simset.joint, years = 1980:2040, data.types = c('incidence','prevalence')))
-invisible(simplot(simset.master, simset.joint, years = 1980:2040, data.types = c('incidence','prevalence'), facet.by = 'age'))
-invisible(simplot(simset.master, simset.joint, years = 1980:2040, data.types = c('hiv.mortality')))
+invisible(simplot(simset.master, simset.joint, years = 1980:2030, data.types = c('incidence','prevalence')))
+invisible(simplot(simset.master, simset.joint, years = 1980:2030, data.types = c('incidence','prevalence'), facet.by = 'age'))
 dev.off()
 print(paste0("Plots saved to ", PLOT.FILE, " (1 = master, 2 = joint)"))
