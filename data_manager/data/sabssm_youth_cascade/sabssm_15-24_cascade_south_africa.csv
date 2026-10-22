@@ -1,0 +1,13 @@
+year,sex,indicator,estimate,lower,upper,n,ci_source,source
+2017,all,aware,74.0,63.6,82.2,336,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
+2017,all,art_among_aware,51.7,43.2,60.0,240,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
+2017,all,vls_among_art,85.2,77.3,90.6,131,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
+2017,male,aware,68.3,55.4,79.0,87,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
+2017,male,art_among_aware,58.8,41.1,74.5,50,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
+2017,male,vls_among_art,80.6,63.2,91.0,32,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
+2017,female,aware,76.4,62.2,86.5,249,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
+2017,female,art_among_aware,49.1,40.5,57.7,190,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
+2017,female,vls_among_art,87.1,77.7,92.9,99,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
+2022,all,aware,73.1,66.4,78.9,614,derived,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23"
+2022,all,art_among_aware,87.4,80.9,91.9,449,derived,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23"
+2022,all,vls_among_art,92.4,86.2,95.9,392,derived,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23"

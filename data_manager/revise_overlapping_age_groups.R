@@ -236,5 +236,9 @@ DATA.MANAGER$hiv.mortality.uppers$year.age.location = new.hiv.mortality.uppers.a
 # same bounds clean-up as in save_data_manager.R, now on the new 25-49 group (10/15/26)
 DATA.MANAGER = fix.count.bounds(DATA.MANAGER, elements = "year.age.location")
 
+# NEXTGEN: add South Africa 15-24 cascade targets (SABSSM 2017 + 2022) - see data_manager/add_sabssm_youth_cascade.R
+source("data_manager/add_sabssm_youth_cascade.R")
+DATA.MANAGER = add.sabssm.youth.cascade(DATA.MANAGER)
+
 attr(DATA.MANAGER, "lai") = TRUE # NEXTGEN: keep the LAI flag
 save(DATA.MANAGER,file=paste0("cached/data.manager_global_revised_ages_lai_",Sys.Date(),".Rdata"))

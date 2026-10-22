@@ -16,7 +16,8 @@ NO.INTERVENTION = c()
 # then put the step 2 file name here
 # (skipped when building the data manager - revise_overlapping_age_groups.R sets BUILDING.DATA.MANAGER = T)
 if(!isTRUE(get0("BUILDING.DATA.MANAGER"))){
-    load('cached/data.manager_global_revised_ages_lai_2026-10-20.Rdata')
+    load('cached/data.manager_global_revised_ages_lai_2026-10-22.Rdata') # + SA 15-24 cascade targets (SABSSM 2017, 2022)
+    #load('cached/data.manager_global_revised_ages_lai_2026-10-20.Rdata') # used for the 10/21 joint calibration
     if(!isTRUE(attr(DATA.MANAGER, "lai")))
         stop("This isn't the LAI data manager - rebuild it on the nextgen branch (see source_code.R)")
 }
