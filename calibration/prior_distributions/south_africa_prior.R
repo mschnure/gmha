@@ -30,6 +30,8 @@ SOUTH.AFRICA.PRIOR = join.distributions(
     age.15.24.awareness.multiplier = Lognormal.Distribution(log(1), log(8)/2),
     age.15.24.engagement.multiplier = Lognormal.Distribution(log(1), log(8)/2),
     age.15.24.suppression.multiplier = Lognormal.Distribution(log(1), log(8)/2),
+    log.OR.15.24.engagement.slope = Normal.Distribution(0, log(4)/2), # same prior as the 0-14 slopes
+    log.OR.15.24.suppression.slope = Normal.Distribution(0, log(4)/2),
     
     # THE REST OF THESE DON'T CHANGE 
     proportion.trate.change.by.3.5 = Beta.Distribution(alpha = 21,beta = 7),

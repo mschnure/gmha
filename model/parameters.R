@@ -123,10 +123,12 @@ get.default.parameters = function(location){
         log.OR.testing.slope=0,
         log.OR.engagement.slope=0,
         log.OR.0.14.engagement.slope=0,
+        log.OR.15.24.engagement.slope=0, # nextgen (10/22/26): extra slope for ages 15-24
         unsuppressed.disengagement.rates=0.1392621, # KENYA value, updated below 
         suppressed.disengagement.rates = 0.1025866, # KENYA value, updated below 
         log.OR.suppression.slope=0,
         log.OR.0.14.suppression.slope=0,
+        log.OR.15.24.suppression.slope=0, # nextgen (10/22/26): extra slope for ages 15-24
         unsuppression.rates=0.2196, # KENYA value, using for all except SA for now
         male.awareness.multiplier=1,
         male.engagement.multiplier=1,
@@ -904,6 +906,7 @@ map.model.parameters <- function(parameters,
     sex.by.trans = rep(trans.dim.names$sex, each = length(trans.dim.names$age))
     # NEXTGEN: model ages 0-14, laid out over [age, sex] (the youth cascade slopes apply only to these ages)
     is.0.14.by.trans = rep(trans.dim.names$age %in% c("0-4","5-9","10-14"), times = length(trans.dim.names$sex))
+    is.15.24.by.trans = rep(trans.dim.names$age %in% c("15-19","20-24"), times = length(trans.dim.names$sex)) # nextgen 15-24 slopes
     
     #-- ENGAGEMENT --#
     engagement.model = get.engagement.model(location = location)
@@ -936,7 +939,8 @@ map.model.parameters <- function(parameters,
         # same terms, added in the same order, as a vector over [age, sex] (age category/sex lookups done once, above)
         projected.log.odds = as.numeric(engagement.model$intercept + 
                     (engagement.model$slope+sampled.parameters['log.OR.engagement.slope'] + 
-                     is.0.14.by.trans*sampled.parameters['log.OR.0.14.engagement.slope'])*  # nextgen: extra slope for ages 0-14 only (10/20/26; was IeDEA 10-19 = ages 0-19)
+                     is.0.14.by.trans*sampled.parameters['log.OR.0.14.engagement.slope'] + 
+                     is.15.24.by.trans*sampled.parameters['log.OR.15.24.engagement.slope'])*  # nextgen: extra slope for ages 0-14 only (10/20/26; was IeDEA 10-19 = ages 0-19)
                     (year-engagement.model$anchor.year) + 
                     (engagement.model$age.10.19*(iedea.cat.by.trans=="10-19")) + 
                     (engagement.model$age.20.29*(iedea.cat.by.trans=="20-29")) + 
@@ -1001,7 +1005,8 @@ map.model.parameters <- function(parameters,
         # same terms, added in the same order, as a vector over [age, sex] (age category/sex lookups done once, above)
         projected.log.odds = as.numeric(suppression.model$intercept + 
                     (suppression.model$slope+sampled.parameters['log.OR.suppression.slope'] + 
-                     is.0.14.by.trans*sampled.parameters['log.OR.0.14.suppression.slope'])*  # nextgen: extra slope for ages 0-14 only (10/20/26; was IeDEA 10-19 = ages 0-19)
+                     is.0.14.by.trans*sampled.parameters['log.OR.0.14.suppression.slope'] + 
+                     is.15.24.by.trans*sampled.parameters['log.OR.15.24.suppression.slope'])*  # nextgen: extra slope for ages 0-14 only (10/20/26; was IeDEA 10-19 = ages 0-19)
                     (year-suppression.model$anchor.year) + 
                     (suppression.model$age.10.19*(iedea.cat.by.trans=="10-19")) + 
                     (suppression.model$age.20.29*(iedea.cat.by.trans=="20-29")) + 

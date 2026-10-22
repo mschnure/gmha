@@ -16,7 +16,9 @@ cascade.by.age = function(sim, ages){
 runs = list(baseline = c(),
             awareness.0.5 = c(age.15.24.awareness.multiplier = 0.5),
             engagement.0.5 = c(age.15.24.engagement.multiplier = 0.5),
-            suppression.0.5 = c(age.15.24.suppression.multiplier = 0.5))
+            suppression.0.5 = c(age.15.24.suppression.multiplier = 0.5),
+            engagement.slope.minus.0.2 = c(log.OR.15.24.engagement.slope = -0.2),
+            suppression.slope.minus.0.2 = c(log.OR.15.24.suppression.slope = -0.2))
 out = lapply(runs, function(v){
     sim = run.model.for.parameters(variable.parameters = v, parameters = params, location = LOCATION)
     rbind("15-24" = cascade.by.age(sim, c("15-19","20-24")),

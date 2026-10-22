@@ -3,8 +3,9 @@
 # household surveys (SABSSM 2017 total + by sex, SABSSM 2022 total; see data_manager/add_sabssm_youth_cascade.R).
 # Same set-up as calibration/run_youth_joint_calibration_sa.R (joint: all parameters recalibrated together,
 # Step 2 only, 4 chains x 100,000 iterations -> 1,000 simulations), except:
-#   - 3 new parameters: age.15.24.awareness/engagement/suppression.multiplier (model ages 15-19 and 20-24;
-#     applied like the 0-14 multipliers; prior lognormal median 1, 95% range 1/8-8), so 8 youth parameters in all
+#   - 5 new parameters for model ages 15-19 and 20-24, applied like the 0-14 ones (start at no effect):
+#     age.15.24.awareness/engagement/suppression.multiplier (prior lognormal median 1, 95% range 1/8-8) and
+#     log.OR.15.24.engagement/suppression.slope (prior normal mean 0, 95% range log(1/4)-log(4)); 10 youth parameters in all
 #   - data manager: cached/data.manager_global_revised_ages_lai_2026-10-22.Rdata (loaded by source_code.R)
 #   - warm start: the best of N.CANDIDATE.SIMS simulations from the 10/21 joint calibration, scored on the
 #     NEW likelihood (with the 15-24 targets)
@@ -35,7 +36,8 @@ N.CORES = 4
 JOINT.SIMSET.FILE = "mcmc_runs/nextgen/simset_south_africa_step2_chains1234_2026-10-21.Rdata"
 N.CANDIDATE.SIMS = 100
 NEW.YOUTH.START = c(age.15.24.awareness.multiplier = 1, age.15.24.engagement.multiplier = 1,
-                    age.15.24.suppression.multiplier = 1)
+                    age.15.24.suppression.multiplier = 1, log.OR.15.24.engagement.slope = 0,
+                    log.OR.15.24.suppression.slope = 0)
 
 ## Step 2 starting values (made once; a resumed run reuses them)
 if(is.null(find.step2.start.values.file("South Africa"))){
