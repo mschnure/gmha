@@ -10,8 +10,8 @@
 #     age.15.24.awareness/engagement/suppression.multiplier (prior lognormal median 1, 95% range 1/8-8) and
 #     log.OR.15.24.engagement/suppression.slope (prior normal mean 0, 95% range log(1/4)-log(4)); 10 youth parameters in all
 #   - data manager: cached/data.manager_global_revised_ages_lai_2026-10-23.Rdata (loaded by source_code.R)
-#   - warm start: the best of N.CANDIDATE.SIMS simulations from each of the 10/21 joint and 10/22 SABSSM
-#     calibrations, scored on the NEW likelihood
+#   - warm start: the best of N.CANDIDATE.SIMS simulations from the 10/21 joint calibration, scored on the NEW
+#     likelihood, 15-24 parameters starting at no effect (same start as the 10/22 run)
 #   - its own folders (so the 10/21 run's complete caches aren't picked up as "already done"):
 #     mcmc_cache/nextgen_sabssm_ratio, mcmc_runs/nextgen_sabssm_ratio, calibration/starting_values/nextgen_sabssm_ratio
 #
@@ -36,11 +36,9 @@ RESUME = FALSE
 RESUME = RESUME || "resume" %in% commandArgs(trailingOnly = TRUE)
 N.CORES = 4
 
-# Warm start: score N.CANDIDATE.SIMS random simulations from EACH of these on the new likelihood and start all
-# chains from the single best one. The 10/21 sims have no 15-24 parameters (same as multipliers 1, slopes 0),
-# the 10/22 sims have the fitted 15-24 parameters (youth faster than adults) - the new targets are in between.
-CANDIDATE.SIMSET.FILES = c("Oct 21 joint" = "mcmc_runs/nextgen/simset_south_africa_step2_chains1234_2026-10-21.Rdata",
-                           "Oct 22 SABSSM" = "mcmc_runs/nextgen_sabssm/simset_south_africa_step2_chains1234_2026-10-22.Rdata")
+# Warm start: the best of N.CANDIDATE.SIMS random simulations from the 10/21 joint calibration, scored on the new
+# likelihood, with the new 15-24 parameters at no effect (multipliers 1, slopes 0) - same start as the 10/22 run.
+CANDIDATE.SIMSET.FILES = c("Oct 21 joint" = "mcmc_runs/nextgen/simset_south_africa_step2_chains1234_2026-10-21.Rdata")
 NEUTRAL.15.24 = c(age.15.24.awareness.multiplier = 1, age.15.24.engagement.multiplier = 1,
                   age.15.24.suppression.multiplier = 1, log.OR.15.24.engagement.slope = 0,
                   log.OR.15.24.suppression.slope = 0)
