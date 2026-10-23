@@ -1,6 +1,8 @@
 ## NEXTGEN: check the SA 15-24 cascade targets made it into the data manager, and show what the likelihood will use
 source("source_code.R")
 stopifnot(isTRUE(attr(DATA.MANAGER, "sabssm.youth.cascade")))
+print(paste0("Method: ", attr(DATA.MANAGER, "sabssm.youth.cascade.method")))
+print(attr(DATA.MANAGER, "sabssm.youth.cascade.targets"), digits = 3, row.names = F)
 
 for(d in c("awareness","engagement","suppression")){
     cat("\n====", d, "(15-24, South Africa) ====\n")
