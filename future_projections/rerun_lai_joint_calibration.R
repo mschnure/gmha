@@ -19,8 +19,12 @@ source("model/run_systematic.R")
 source("model/diffeq_cpp.R")
 options(gmha.use.cpp = TRUE)
 
-SIMSET.FILE = "mcmc_runs/nextgen/simset_south_africa_step2_chains1234_2026-10-21.Rdata"
-OUT.DIR = file.path("cached", "nextgen_lai_rerun")
+# defaults = the 10/21 joint calibration; a wrapper script can set these before sourcing this file
+# (e.g. future_projections/rerun_lai_sabssm_calibration.R)
+if(!exists("SIMSET.FILE")) SIMSET.FILE = "mcmc_runs/nextgen/simset_south_africa_step2_chains1234_2026-10-21.Rdata"
+if(!exists("OUT.DIR")) OUT.DIR = file.path("cached", "nextgen_lai_rerun")
+if(!exists("FIGURE.TAG")) FIGURE.TAG = "joint"
+RUN.SIMSET.FILE = SIMSET.FILE; RUN.OUT.DIR = OUT.DIR; RUN.FIGURE.TAG = FIGURE.TAG # create_lai_interventions.R re-sources the model
 dir.create(OUT.DIR, recursive = TRUE, showWarnings = FALSE)
 END.YEAR = 2040
 YEARS.TO.SUMMARIZE = as.character(2022:2030)
@@ -37,6 +41,7 @@ simset.list = list()
 for(prob in c(0.25, 1)){
     PROB.1.YEAR = prob
     source("future_projections/create_lai_interventions.R") # interventions for this uptake (re-sources the model)
+    SIMSET.FILE = RUN.SIMSET.FILE; OUT.DIR = RUN.OUT.DIR; FIGURE.TAG = RUN.FIGURE.TAG
     simset = simset.joint
     label = ifelse(prob == 1, "100", "25")
     if(is.null(simset.list$no.int)){
@@ -120,7 +125,7 @@ df = data.frame(scenario = factor(scenario.labels, levels = scenario.labels),
                 est = sapply(SCENARIOS, function(s) metric.list[[s]]$averted.all[2]),
                 lower = sapply(SCENARIOS, function(s) metric.list[[s]]$averted.all[1]),
                 upper = sapply(SCENARIOS, function(s) metric.list[[s]]$averted.all[3]))
-jpeg(file = file.path(OUT.DIR, paste0("PanelB_joint_", Sys.Date(), ".jpeg")), width = 3000, height = 1500, res = 200)
+jpeg(file = file.path(OUT.DIR, paste0("PanelB_", FIGURE.TAG, "_", Sys.Date(), ".jpeg")), width = 3000, height = 1500, res = 200)
 print(ggplot(df, aes(x = scenario, y = est)) +
     geom_col(fill = cols[2:5], color = "black", width = 0.6) +
     geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2, color = "black") +
@@ -142,7 +147,7 @@ dev.off()
 point_idx = which(sapply(p$layers, function(l) inherits(l$geom, "GeomPoint")))
 p$layers[[point_idx]]$mapping$colour = NULL
 p$layers[[point_idx]]$aes_params$colour = "grey10"
-jpeg(file = file.path(OUT.DIR, paste0("PanelA_joint_", Sys.Date(), ".jpeg")), width = 3000, height = 1500, res = 200)
+jpeg(file = file.path(OUT.DIR, paste0("PanelA_", FIGURE.TAG, "_", Sys.Date(), ".jpeg")), width = 3000, height = 1500, res = 200)
 print(p + scale_color_manual(values = cols) + scale_fill_manual(values = lighten(cols, amount = 0.3)) +
       ylab("Annual New HIV infections,\n 2010-2030"))
 dev.off()
