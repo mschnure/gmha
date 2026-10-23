@@ -11,12 +11,15 @@
 #   expl3_summary_<date>.csv        the numbers behind the bar charts
 ################################################################################################
 source("model/run_systematic.R")
-OUT.DIR = file.path("cached", "nextgen_lai_rerun_sabssm")
-CAL.LABELS = c(aids2026 = "AIDS 2026", joint = "Oct 21 joint", sabssm = "SABSSM 15-24")
-CAL.COLS = c("AIDS 2026" = "#B45F1B", "Oct 21 joint" = "#1F6F8B", "SABSSM 15-24" = "#5E8C31")
+OUT.DIR = file.path("cached", "nextgen_lai_rerun_sabssm_ratio") # plots go here; ratio calibration added as a 4th column when its rerun exists
+CAL.LABELS = c(aids2026 = "AIDS 2026", joint = "Oct 21 joint", sabssm = "Oct 22 SABSSM", ratio = "SABSSM ratio")
+CAL.COLS = c("AIDS 2026" = "#B45F1B", "Oct 21 joint" = "#1F6F8B", "Oct 22 SABSSM" = "#5E8C31", "SABSSM ratio" = "#7B3F99")
 arrays = list(aids2026 = "cached/full.results.array_2026-01-22.Rdata",
               joint = "cached/nextgen_lai_rerun/full.results.array_2026-10-21.Rdata",
-              sabssm = max(list.files(OUT.DIR, pattern = "^full\\.results\\.array_[0-9-]+\\.Rdata$", full.names = T)))
+              sabssm = max(list.files("cached/nextgen_lai_rerun_sabssm", pattern = "^full\\.results\\.array_[0-9-]+\\.Rdata$", full.names = T)))
+ratio.files = list.files(OUT.DIR, pattern = "^full\\.results\\.array_[0-9-]+\\.Rdata$", full.names = T)
+if(length(ratio.files) > 0) arrays$ratio = max(ratio.files) else dir.create(OUT.DIR, showWarnings = FALSE)
+CAL.LABELS = CAL.LABELS[names(arrays)]
 SCENARIOS = c("all.25","all.direct.25","all.100","all.direct.100")
 SC.LABELS = c(all.25 = "25%, requirement", all.direct.25 = "25%, no requirement",
               all.100 = "100%, requirement", all.direct.100 = "100%, no requirement")
@@ -74,8 +77,12 @@ breakdown$group = factor(breakdown$group, levels = rev(c("Unaware","Aware, not o
 sources$source = factor(sources$source, levels = rev(SOURCE.LABELS))
 for(nm in c("sources","per.unsupp","gain")){ d = get(nm); d$scenario = factor(d$scenario, levels = SC.LABELS); assign(nm, d) }
 
-survey = data.frame(year = rep(c(2017, 2022), 3), median = c(0.740, 0.731, 0.517, 0.874, 0.440, 0.808),
-                    lower = c(0.636, 0.664, 0.432, 0.809, 0.334, 0.697), upper = c(0.822, 0.789, 0.600, 0.919, 0.544, 0.881),
+# calibration targets in the loaded data manager (ratio method: survey youth/adult ratio x UNAIDS 15+)
+tg = function(type, suffix = "") sapply(c("2017","2022"), function(y) DATA.MANAGER[[paste0(type, suffix)]]$year.age.location[y, "15-24", "South Africa"])
+survey = data.frame(year = rep(c(2017, 2022), 3),
+                    median = c(tg("awareness"), tg("engagement"), tg("suppression")),
+                    lower = c(tg("awareness",".lowers"), tg("engagement",".lowers"), tg("suppression",".lowers")),
+                    upper = c(tg("awareness",".uppers"), tg("engagement",".uppers"), tg("suppression",".uppers")),
                     measure = factor(rep(levels(cascade$measure), each = 2), levels = levels(cascade$measure)))
 
 th = theme_bw(base_size = 22) + theme(legend.position = "bottom", legend.title = element_blank(),
@@ -89,7 +96,7 @@ save.png(ggplot(cascade, aes(x = year, y = median)) + ribbon.lines(cascade) +
              geom_pointrange(data = survey, aes(x = year, y = median, ymin = lower, ymax = upper), color = "grey10", size = 0.8, inherit.aes = F) +
              geom_vline(xintercept = 2022, linetype = "dashed", color = "grey50") +
              facet_wrap(~measure, nrow = 1) + coord_cartesian(ylim = c(0, 1)) + th + labs(x = NULL, y = NULL,
-             caption = "Black points: SABSSM 2017 and 2022 (95% CI). Dashed line: LAI-ART starts."),
+             caption = paste0("Black points: 15-24 calibration targets (", attr(DATA.MANAGER, "sabssm.youth.cascade.method"), " method), 2017 and 2022, 95% CI. Dashed line: LAI-ART starts.")),
          "expl3_cascade_15-24.png")
 
 save.png(ggplot(breakdown, aes(x = calibration, y = median, fill = group)) + geom_col(color = "black", width = 0.65) +

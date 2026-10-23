@@ -6,11 +6,12 @@
 source("model/run_systematic.R")
 
 # newest merged simset copied from the remote
-new.files = list.files("mcmc_runs/nextgen_sabssm", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
-if(length(new.files)==0) stop("Copy the merged simset into mcmc_runs/nextgen_sabssm/ first")
+if(!exists("NEW.RUN.DIR")) NEW.RUN.DIR = "mcmc_runs/nextgen_sabssm_ratio" # set to "mcmc_runs/nextgen_sabssm" for the 10/22 run
+new.files = list.files(NEW.RUN.DIR, pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
+if(length(new.files)==0) stop(paste0("Copy the merged simset into ", NEW.RUN.DIR, "/ first"))
 NEW.SIMSET.FILE = max(new.files)
 OLD.SIMSET.FILE = "mcmc_runs/nextgen/simset_south_africa_step2_chains1234_2026-10-21.Rdata"
-PLOT.FILE = paste0("mcmc_runs/nextgen_sabssm/sabssm_youth_calibration_review_", Sys.Date(), ".pdf")
+PLOT.FILE = file.path(NEW.RUN.DIR, paste0("sabssm_youth_calibration_review_", Sys.Date(), ".pdf"))
 
 YOUTH.PARAMS = c("age.0.14.awareness.multiplier","age.0.14.engagement.multiplier","age.0.14.suppression.multiplier",
                  "log.OR.0.14.engagement.slope","log.OR.0.14.suppression.slope",
@@ -50,10 +51,14 @@ youth.cascade = function(simset, yrs = c(2017, 2022)){
     names(rv) = paste0(rep(c("aware.","on.art.","suppressed."), each = length(yrs)), yrs)
     rv
 }
-targets = c(aware.2017 = 0.740, aware.2022 = 0.731, on.art.2017 = 0.517, on.art.2022 = 0.874,
-            suppressed.2017 = 0.440, suppressed.2022 = 0.808)
+# targets as stored in the data manager (aware of PWH; on ART and suppressed of aware)
+tg = function(type, yr) DATA.MANAGER[[type]]$year.age.location[yr, "15-24", "South Africa"]
+targets = c(aware.2017 = tg("awareness","2017"), aware.2022 = tg("awareness","2022"),
+            on.art.2017 = tg("engagement","2017"), on.art.2022 = tg("engagement","2022"),
+            suppressed.2017 = tg("suppression","2017"), suppressed.2022 = tg("suppression","2022"))
+print(paste0("Targets: method = ", attr(DATA.MANAGER, "sabssm.youth.cascade.method")))
 print("15-24 cascade (medians) vs SABSSM:")
-print(round(rbind(SABSSM = targets, joint.10.21 = youth.cascade(simset.old), new = youth.cascade(simset.new)), 3))
+print(round(rbind(targets = targets, joint.10.21 = youth.cascade(simset.old), new = youth.cascade(simset.new)), 3))
 
 pdf(PLOT.FILE, width = 11, height = 8.5)
 invisible(simplot(simset.old, simset.new, years = 2000:2030,

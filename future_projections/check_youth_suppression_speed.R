@@ -16,7 +16,9 @@ N.SIMS = 200
 YEARS = c("2017","2022","2030")
 AGE.GROUPS = list("15-24" = c("15-19","20-24"), "25-49" = c("25-29","30-34","35-39","40-44","45-49"))
 SIMSETS = c("Oct 21 joint" = "mcmc_runs/nextgen/simset_south_africa_step2_chains1234_2026-10-21.Rdata",
-            "SABSSM 15-24" = max(list.files("mcmc_runs/nextgen_sabssm", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)))
+            "Oct 22 SABSSM" = max(list.files("mcmc_runs/nextgen_sabssm", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)))
+ratio.files = list.files("mcmc_runs/nextgen_sabssm_ratio", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
+if(length(ratio.files) > 0) SIMSETS["SABSSM ratio"] = max(ratio.files)
 RATES = c(suppression = "SUPPRESSION.RATES", unsuppression = "UNSUPPRESSION.RATES",
           disengagement.unsuppressed = "UNSUPPRESSED.DISENGAGEMENT.RATES", engagement = "ENGAGEMENT.RATES", testing = "TESTING.RATES")
 
@@ -65,7 +67,8 @@ summ = do.call(rbind, lapply(split(d, list(d$calibration, d$year, d$age), drop =
                measure = measures, median = q[1,], lower = q[2,], upper = q[3,], row.names = NULL)
 }))
 summ = summ[order(summ$measure, summ$age, summ$year, summ$calibration), ]
-write.csv(summ, file.path("cached/nextgen_lai_rerun_sabssm", paste0("youth_suppression_speed_", Sys.Date(), ".csv")), row.names = F)
+dir.create("cached/nextgen_lai_rerun_sabssm_ratio", showWarnings = FALSE)
+write.csv(summ, file.path("cached/nextgen_lai_rerun_sabssm_ratio", paste0("youth_suppression_speed_", Sys.Date(), ".csv")), row.names = F)
 
 wide = reshape(summ[, c("calibration","year","age","measure","median")], idvar = c("measure","age","year"),
                timevar = "calibration", direction = "wide")

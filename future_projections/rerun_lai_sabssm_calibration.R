@@ -8,11 +8,12 @@
 #   lai_comparison_3way_<date>.csv
 # Run in RStudio (source this file) or Terminal; ~20-40 min.
 ################################################################################################
-new.files = list.files("mcmc_runs/nextgen_sabssm", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
-if(length(new.files)==0) stop("No merged simset in mcmc_runs/nextgen_sabssm/")
+if(!exists("NEW.RUN.DIR")) NEW.RUN.DIR = "mcmc_runs/nextgen_sabssm_ratio" # set to "mcmc_runs/nextgen_sabssm" for the 10/22 run
+new.files = list.files(NEW.RUN.DIR, pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
+if(length(new.files)==0) stop(paste0("No merged simset in ", NEW.RUN.DIR, "/"))
 SIMSET.FILE = max(new.files)
-OUT.DIR = file.path("cached", "nextgen_lai_rerun_sabssm")
-FIGURE.TAG = "sabssm"
+OUT.DIR = file.path("cached", sub("^mcmc_runs/nextgen_", "nextgen_lai_rerun_", NEW.RUN.DIR)) # e.g. cached/nextgen_lai_rerun_sabssm_ratio
+FIGURE.TAG = sub("^mcmc_runs/nextgen_", "", NEW.RUN.DIR)
 source("future_projections/rerun_lai_joint_calibration.R")
 
 ## 3-way comparison: AIDS 2026 vs 10/21 joint vs SABSSM calibration (medians)
