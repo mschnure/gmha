@@ -537,6 +537,7 @@ map.model.parameters <- function(parameters,
         projected.rate[,"male",] = projected.rate[,"male",]*sampled.parameters["male.awareness.multiplier"]
         projected.rate[c("0-4","5-9","10-14"),,] = projected.rate[c("0-4","5-9","10-14"),,]*sampled.parameters["age.0.14.awareness.multiplier"]
         projected.rate[c("15-19","20-24"),,] = projected.rate[c("15-19","20-24"),,]*sampled.parameters["age.15.24.awareness.multiplier"] # nextgen
+        projected.rate = cap.youth.cascade.rate.at.adult(projected.rate) # nextgen: off unless options(gmha.cap.youth.cascade = TRUE)
         
         projected.rate
         
@@ -927,6 +928,7 @@ map.model.parameters <- function(parameters,
             projected.rate.age.sex[,"male",] = projected.rate.age.sex[,"male",]*sampled.parameters["male.engagement.multiplier"]
             projected.rate.age.sex[c("0-4","5-9","10-14"),,] = projected.rate.age.sex[c("0-4","5-9","10-14"),,]*sampled.parameters["age.0.14.engagement.multiplier"]
             projected.rate.age.sex[c("15-19","20-24"),,] = projected.rate.age.sex[c("15-19","20-24"),,]*sampled.parameters["age.15.24.engagement.multiplier"] # nextgen
+            projected.rate.age.sex = cap.youth.cascade.rate.at.adult(projected.rate.age.sex) # nextgen: off unless options(gmha.cap.youth.cascade = TRUE)
             
             projected.rate.age.sex
 
@@ -957,6 +959,7 @@ map.model.parameters <- function(parameters,
         projected.rate[,"male",] = projected.rate[,"male",]*sampled.parameters["male.engagement.multiplier"]
         projected.rate[c("0-4","5-9","10-14"),,] = projected.rate[c("0-4","5-9","10-14"),,]*sampled.parameters["age.0.14.engagement.multiplier"]
         projected.rate[c("15-19","20-24"),,] = projected.rate[c("15-19","20-24"),,]*sampled.parameters["age.15.24.engagement.multiplier"] # nextgen
+        projected.rate = cap.youth.cascade.rate.at.adult(projected.rate) # nextgen: off unless options(gmha.cap.youth.cascade = TRUE)
         projected.rate
         
     }))
@@ -1027,6 +1030,7 @@ map.model.parameters <- function(parameters,
         projected.rate[,"male",] = projected.rate[,"male",]*sampled.parameters["male.suppression.multiplier"]
         projected.rate[c("0-4","5-9","10-14"),,] = projected.rate[c("0-4","5-9","10-14"),,]*sampled.parameters["age.0.14.suppression.multiplier"]
         projected.rate[c("15-19","20-24"),,] = projected.rate[c("15-19","20-24"),,]*sampled.parameters["age.15.24.suppression.multiplier"] # nextgen
+        projected.rate = cap.youth.cascade.rate.at.adult(projected.rate) # nextgen: off unless options(gmha.cap.youth.cascade = TRUE)
         projected.rate
         
     }))
@@ -1202,6 +1206,20 @@ compute.time.varying.parameters <- function(parameters, time){
 
 ##---------------------------##
 #-- OTHER/HELPER FUNCTIONS --#
+
+# NEXTGEN (10/26/26): cap the 15-24 cascade rates (testing, engagement, suppression) at the adult rate, so youth never
+# move through the cascade faster than adults. Adult rate = mean over model ages 25-29 ... 45-49, for the same
+# sex/subgroup, same year. Only on when options(gmha.cap.youth.cascade = TRUE); otherwise returns rate unchanged.
+# rate: array [age, sex, subgroup]
+cap.youth.cascade.rate.at.adult = function(rate){
+    if(!isTRUE(getOption("gmha.cap.youth.cascade", FALSE)))
+        return(rate)
+    adult.ages = c("25-29","30-34","35-39","40-44","45-49")
+    adult = apply(rate[adult.ages,,,drop = F], c(2,3), mean)
+    for(a in c("15-19","20-24"))
+        rate[a,,] = pmin(rate[a,,,drop = F][1,,], adult)
+    rate
+}
 ##---------------------------##
 
 # Multiplies global transmission rate by age and sex multipliers; called in map.model.parameters function 
