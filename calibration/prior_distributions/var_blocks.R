@@ -65,6 +65,14 @@ PARAMETER.VAR.BLOCKS = list(
                                  "age.15.24.engagement.multiplier",
                                  "log.OR.15.24.engagement.slope"),
 
+    # nextgen (10/26/26): youth disengagement/unsuppression multipliers in their own block (keeps blocks small)
+    youth.retention = c("age.0.14.unsuppressed.disengagement.multiplier",
+                        "age.0.14.suppressed.disengagement.multiplier",
+                        "age.0.14.unsuppression.multiplier",
+                        "age.15.24.unsuppressed.disengagement.multiplier",
+                        "age.15.24.suppressed.disengagement.multiplier",
+                        "age.15.24.unsuppression.multiplier"),
+
     suppression = c("log.OR.suppression.slope",
                     "unsuppression.rates",
                     "age.0.14.suppression.multiplier",

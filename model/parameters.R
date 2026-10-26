@@ -139,6 +139,13 @@ get.default.parameters = function(location){
         age.15.24.awareness.multiplier=1, # nextgen: 15-24 cascade multipliers (10/22/26), fit to SABSSM 15-24 targets
         age.15.24.engagement.multiplier=1,
         age.15.24.suppression.multiplier=1,
+        # nextgen (10/26/26): youth multipliers for the other cascade rates (disengagement and unsuppression)
+        age.0.14.unsuppressed.disengagement.multiplier=1,
+        age.0.14.suppressed.disengagement.multiplier=1,
+        age.0.14.unsuppression.multiplier=1,
+        age.15.24.unsuppressed.disengagement.multiplier=1,
+        age.15.24.suppressed.disengagement.multiplier=1,
+        age.15.24.unsuppression.multiplier=1,
         cascade.improvement.end.year=2040,
         
         ## Mortality/fertility parameters ##
@@ -974,9 +981,9 @@ map.model.parameters <- function(parameters,
     
     #-- DISENGAGEMENT --#
     unsuppressed.disengagement.times = c(2000)
-    unsuppressed.disengagement.rates = list(array(sampled.parameters['unsuppressed.disengagement.rates'],
+    unsuppressed.disengagement.rates = list(apply.youth.cascade.multipliers(array(sampled.parameters['unsuppressed.disengagement.rates'],
                                                   dim=sapply(trans.dim.names, length),
-                                                  dimnames=trans.dim.names))
+                                                  dimnames=trans.dim.names), sampled.parameters, "unsuppressed.disengagement"))
     
     parameters = set.rates.for.interventions(baseline.rates = unsuppressed.disengagement.rates, # list 
                                              baseline.times = unsuppressed.disengagement.times, # vector
@@ -986,9 +993,9 @@ map.model.parameters <- function(parameters,
                                              parameter.name = "UNSUPPRESSED.DISENGAGEMENT.RATES")
     
     suppressed.disengagement.times = c(2000)
-    suppressed.disengagement.rates = list(array(sampled.parameters['suppressed.disengagement.rates'],
+    suppressed.disengagement.rates = list(apply.youth.cascade.multipliers(array(sampled.parameters['suppressed.disengagement.rates'],
                                                   dim=sapply(trans.dim.names, length),
-                                                  dimnames=trans.dim.names))
+                                                  dimnames=trans.dim.names), sampled.parameters, "suppressed.disengagement"))
     
     parameters = set.rates.for.interventions(baseline.rates = suppressed.disengagement.rates, # list 
                                              baseline.times = suppressed.disengagement.times, # vector
@@ -1043,9 +1050,9 @@ map.model.parameters <- function(parameters,
                                              parameter.name = "SUPPRESSION.RATES") 
 
     unsuppression.times = c(2000)
-    unsuppression.rates = c(list(array(sampled.parameters['unsuppression.rates'],
+    unsuppression.rates = c(list(apply.youth.cascade.multipliers(array(sampled.parameters['unsuppression.rates'],
                                        dim=sapply(trans.dim.names, length),
-                                       dimnames=trans.dim.names)))
+                                       dimnames=trans.dim.names), sampled.parameters, "unsuppression")))
     
     parameters = set.rates.for.interventions(baseline.rates = unsuppression.rates, # list 
                                              baseline.times = unsuppression.times, # vector
@@ -1206,6 +1213,18 @@ compute.time.varying.parameters <- function(parameters, time){
 
 ##---------------------------##
 #-- OTHER/HELPER FUNCTIONS --#
+
+# NEXTGEN (10/26/26): multiply a cascade rate array [age, sex, subgroup] by the 0-14 and 15-24 multipliers
+# age.0.14.<rate.name>.multiplier and age.15.24.<rate.name>.multiplier (missing -> 1, so other locations are unchanged)
+apply.youth.cascade.multipliers = function(rate, sampled.parameters, rate.name){
+    groups = list(age.0.14 = c("0-4","5-9","10-14"), age.15.24 = c("15-19","20-24"))
+    for(g in names(groups)){
+        m = sampled.parameters[paste0(g, ".", rate.name, ".multiplier")]
+        if(length(m)==1 && !is.na(m))
+            rate[groups[[g]],,] = rate[groups[[g]],,] * m
+    }
+    rate
+}
 
 # NEXTGEN (10/26/26): cap the 15-24 cascade rates (testing, engagement, suppression) at the adult rate, so youth never
 # move through the cascade faster than adults. Adult rate = mean over model ages 25-29 ... 45-49, for the same

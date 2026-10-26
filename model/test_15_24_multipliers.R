@@ -1,4 +1,5 @@
-## NEXTGEN: quick check that the new 15-24 cascade multipliers move the 15-24 cascade and nothing else
+## NEXTGEN: quick check that the youth cascade multipliers move the matching age group's cascade and nothing else
+## (10/26/26: also the disengagement and unsuppression multipliers for 0-14 and 15-24)
 ## (default parameters, South Africa; each multiplier set to 0.5 in turn). Takes ~1 minute.
 source("model/run_systematic.R")
 LOCATION = "South Africa"
@@ -18,10 +19,18 @@ runs = list(baseline = c(),
             engagement.0.5 = c(age.15.24.engagement.multiplier = 0.5),
             suppression.0.5 = c(age.15.24.suppression.multiplier = 0.5),
             engagement.slope.minus.0.2 = c(log.OR.15.24.engagement.slope = -0.2),
-            suppression.slope.minus.0.2 = c(log.OR.15.24.suppression.slope = -0.2))
+            suppression.slope.minus.0.2 = c(log.OR.15.24.suppression.slope = -0.2),
+            # 10/26/26: disengagement/unsuppression multipliers (x3, so the effect is easy to see)
+            unsupp.disengagement.15.24.x3 = c(age.15.24.unsuppressed.disengagement.multiplier = 3),
+            supp.disengagement.15.24.x3 = c(age.15.24.suppressed.disengagement.multiplier = 3),
+            unsuppression.15.24.x3 = c(age.15.24.unsuppression.multiplier = 3),
+            unsupp.disengagement.0.14.x3 = c(age.0.14.unsuppressed.disengagement.multiplier = 3),
+            supp.disengagement.0.14.x3 = c(age.0.14.suppressed.disengagement.multiplier = 3),
+            unsuppression.0.14.x3 = c(age.0.14.unsuppression.multiplier = 3))
 out = lapply(runs, function(v){
     sim = run.model.for.parameters(variable.parameters = v, parameters = params, location = LOCATION)
-    rbind("15-24" = cascade.by.age(sim, c("15-19","20-24")),
+    rbind("0-14" = cascade.by.age(sim, c("0-4","5-9","10-14")),
+          "15-24" = cascade.by.age(sim, c("15-19","20-24")),
           "25-49" = cascade.by.age(sim, c("25-29","30-34","35-39","40-44","45-49")))
 })
 for(n in names(out)){ cat("\n==", n, "==\n"); print(out[[n]]) }
