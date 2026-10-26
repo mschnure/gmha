@@ -17,7 +17,9 @@ options(gmha.cap.youth.cascade = CHECK.CAP)
 N.SIMS = 200
 YEARS = c("2017","2022","2030")
 AGE.GROUPS = list("15-24" = c("15-19","20-24"), "25-49" = c("25-29","30-34","35-39","40-44","45-49"))
-SIMSETS = c("Oct 21 joint" = "mcmc_runs/nextgen/simset_south_africa_step2_chains1234_2026-10-21.Rdata",
+SIMSETS = c("AIDS 2026" = "cached/simset.noint_25_1yr_2026-01-22.Rdata",                       # Oct 2025 calibration (200 sims)
+            "Master Oct 20" = "mcmc_runs/simset_south_africa_step2_chains1234_2026-10-20.Rdata", # main GMHA South Africa calibration
+            "Oct 21 joint" = "mcmc_runs/nextgen/simset_south_africa_step2_chains1234_2026-10-21.Rdata",
             "Oct 22 SABSSM" = max(list.files("mcmc_runs/nextgen_sabssm", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)))
 ratio.files = list.files("mcmc_runs/nextgen_sabssm_ratio", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
 if(length(ratio.files) > 0) SIMSETS["SABSSM ratio"] = max(ratio.files)
@@ -27,9 +29,13 @@ RATES = c(suppression = "SUPPRESSION.RATES", unsuppression = "UNSUPPRESSION.RATE
 
 get.tvp = function(sim, i, simset){
     p = sim$parameters
+    if(!is.null(p$time.varying.parameters)) STORED.RATES[[cal]] <<- TRUE
     if(is.null(p$time.varying.parameters) || CHECK.CAP){ # with the cap on, re-map so the stored (uncapped) rates aren't used
+        sp = get.default.parameters(location = "South Africa") # fill in any parameters an older simset doesn't have
+        pars = simset@parameters[i,]; pars = pars[names(pars) %in% names(sp)]
+        sp[names(pars)] = pars
         p = map.model.parameters(create.model.parameters(location = "South Africa"), location = "South Africa",
-                                 sampled.parameters = simset@parameters[i,])
+                                 sampled.parameters = sp)
     }
     p$time.varying.parameters
 }
@@ -39,7 +45,7 @@ rate.at = function(tvp, name, year, ages){
     mean(v[ages,,])   # average over sexes/subgroups (equal weights)
 }
 
-rows = list()
+rows = list(); STORED.RATES = list(); DIS.PARAMS = list()
 for(cal in names(SIMSETS)){
     simset = get(load(SIMSETS[[cal]])[1])
     set.seed(1); idx = sort(sample(seq_len(simset@n.sim), min(N.SIMS, simset@n.sim)))
@@ -51,9 +57,15 @@ for(cal in names(SIMSETS)){
             rows[[length(rows)+1]] = data.frame(calibration = cal, sim = i, year = y, age = a, t(r))
         }
     }
+    dis = intersect(c("unsuppressed.disengagement.rates","suppressed.disengagement.rates"), colnames(simset@parameters))
+    DIS.PARAMS[[cal]] = t(apply(simset@parameters[, dis, drop = F], 2, quantile, c(0.025, 0.5, 0.975)))
     rm(simset); invisible(gc())
 }
+print("Disengagement parameters (prior median 0.155 per year, 95% range ~0.039-0.62; IeDEA 14.4% lost by 12 months):")
+for(cal in names(DIS.PARAMS)){ cat(cal, "\n"); print(round(DIS.PARAMS[[cal]], 3)) }
 d = do.call(rbind, rows)
+print("Rates taken from the stored simulation (TRUE) or re-mapped from the sampled parameters with the current code (not listed):")
+print(unlist(STORED.RATES))
 d$p.suppressed.6mo = 1 - exp(-d$suppression/2)
 d$p.suppressed.1yr = 1 - exp(-d$suppression)
 d$median.months.to.suppression = 12*log(2)/d$suppression
