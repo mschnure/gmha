@@ -10,8 +10,10 @@ SOUTH.AFRICA.PRIOR = join.distributions(
     trate.4 = Lognormal.Distribution(log(.1), log(4)/2), 
 
     # COUNTRY-SPECIFIC; MUST EDIT:
-    unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.1554849), log(4)/2),
-    suppressed.disengagement.rates = Lognormal.Distribution(log(0.1554849), log(4)/2),
+    # nextgen (10/27/26): tighter dropout priors around the IeDEA value (Cornell 2010: 14.4% lost by 12 months);
+    # 95% range ~0.08-0.31/yr (was log(4)/2: ~0.04-0.62)
+    unsuppressed.disengagement.rates = Lognormal.Distribution(log(0.1554849), log(2)/2),
+    suppressed.disengagement.rates = Lognormal.Distribution(log(0.1554849), log(2)/2),
     unsuppression.rates = Lognormal.Distribution(log(0.07548439), log(4)/2), 
     hiv.specific.mortality.rates.0 = Lognormal.Distribution(log(0.03030303), log(4)/2), # see hiv.mortality.priors.R
     hiv.specific.mortality.rates.1 = Lognormal.Distribution(log(0.05306122), log(4)/2),
@@ -21,24 +23,23 @@ SOUTH.AFRICA.PRIOR = join.distributions(
     # see Kenya prior for notes on a Logitnormal distribution 
     
     # NEW FOR YOUTH CASCADE CALIBRATION: 
-    age.0.14.awareness.multiplier = Lognormal.Distribution(log(1), log(8)/2), 
-    age.0.14.engagement.multiplier = Lognormal.Distribution(log(1), log(8)/2), 
-    age.0.14.suppression.multiplier = Lognormal.Distribution(log(1), log(8)/2), # used the same as the male cascade multipliers since those are applied the same way 
-    log.OR.0.14.engagement.slope = Normal.Distribution(0, log(4)/2),
-    log.OR.0.14.suppression.slope = Normal.Distribution(0, log(4)/2),
+    # nextgen (10/27/26): youth multipliers tightened to a 95% range of ~1/4-4 (was log(8)/2: ~1/8-8, same as the male
+    # multipliers) and youth slopes to +/-log(2) (was +/-log(4)) - the youth data alone can't pin these down
+    age.0.14.awareness.multiplier = Lognormal.Distribution(log(1), log(4)/2), 
+    age.0.14.engagement.multiplier = Lognormal.Distribution(log(1), log(4)/2), 
+    age.0.14.suppression.multiplier = Lognormal.Distribution(log(1), log(4)/2),
+    log.OR.0.14.engagement.slope = Normal.Distribution(0, log(2)/2),
+    log.OR.0.14.suppression.slope = Normal.Distribution(0, log(2)/2),
     # nextgen (10/22/26): 15-24 cascade multipliers, fit to the SABSSM 15-24 targets; same prior as the 0-14 multipliers
-    age.15.24.awareness.multiplier = Lognormal.Distribution(log(1), log(8)/2),
-    age.15.24.engagement.multiplier = Lognormal.Distribution(log(1), log(8)/2),
-    age.15.24.suppression.multiplier = Lognormal.Distribution(log(1), log(8)/2),
-    log.OR.15.24.engagement.slope = Normal.Distribution(0, log(4)/2), # same prior as the 0-14 slopes
-    log.OR.15.24.suppression.slope = Normal.Distribution(0, log(4)/2),
-    # nextgen (10/26/26): youth multipliers for disengagement and unsuppression, same prior as the other youth multipliers
-    age.0.14.unsuppressed.disengagement.multiplier = Lognormal.Distribution(log(1), log(8)/2),
-    age.0.14.suppressed.disengagement.multiplier = Lognormal.Distribution(log(1), log(8)/2),
-    age.0.14.unsuppression.multiplier = Lognormal.Distribution(log(1), log(8)/2),
-    age.15.24.unsuppressed.disengagement.multiplier = Lognormal.Distribution(log(1), log(8)/2),
-    age.15.24.suppressed.disengagement.multiplier = Lognormal.Distribution(log(1), log(8)/2),
-    age.15.24.unsuppression.multiplier = Lognormal.Distribution(log(1), log(8)/2),
+    age.15.24.awareness.multiplier = Lognormal.Distribution(log(1), log(4)/2),
+    age.15.24.engagement.multiplier = Lognormal.Distribution(log(1), log(4)/2),
+    age.15.24.suppression.multiplier = Lognormal.Distribution(log(1), log(4)/2),
+    log.OR.15.24.engagement.slope = Normal.Distribution(0, log(2)/2),
+    log.OR.15.24.suppression.slope = Normal.Distribution(0, log(2)/2),
+    # nextgen (10/27/26): youth dropout multipliers (both dropout rates), median 1.5 (youth lose to follow-up more
+    # than adults), 95% range ~0.75-3
+    age.0.14.disengagement.multiplier = Lognormal.Distribution(log(1.5), log(2)/2),
+    age.15.24.disengagement.multiplier = Lognormal.Distribution(log(1.5), log(2)/2),
     
     # THE REST OF THESE DON'T CHANGE 
     proportion.trate.change.by.3.5 = Beta.Distribution(alpha = 21,beta = 7),

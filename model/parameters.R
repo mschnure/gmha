@@ -139,13 +139,10 @@ get.default.parameters = function(location){
         age.15.24.awareness.multiplier=1, # nextgen: 15-24 cascade multipliers (10/22/26), fit to SABSSM 15-24 targets
         age.15.24.engagement.multiplier=1,
         age.15.24.suppression.multiplier=1,
-        # nextgen (10/26/26): youth multipliers for the other cascade rates (disengagement and unsuppression)
-        age.0.14.unsuppressed.disengagement.multiplier=1,
-        age.0.14.suppressed.disengagement.multiplier=1,
-        age.0.14.unsuppression.multiplier=1,
-        age.15.24.unsuppressed.disengagement.multiplier=1,
-        age.15.24.suppressed.disengagement.multiplier=1,
-        age.15.24.unsuppression.multiplier=1,
+        # nextgen (10/27/26): one youth dropout multiplier per age group, on both disengagement rates
+        # (10/26 version had separate suppressed/unsuppressed dropout + rebound multipliers - not identifiable)
+        age.0.14.disengagement.multiplier=1,
+        age.15.24.disengagement.multiplier=1,
         cascade.improvement.end.year=2040,
         
         ## Mortality/fertility parameters ##
@@ -983,7 +980,7 @@ map.model.parameters <- function(parameters,
     unsuppressed.disengagement.times = c(2000)
     unsuppressed.disengagement.rates = list(apply.youth.cascade.multipliers(array(sampled.parameters['unsuppressed.disengagement.rates'],
                                                   dim=sapply(trans.dim.names, length),
-                                                  dimnames=trans.dim.names), sampled.parameters, "unsuppressed.disengagement"))
+                                                  dimnames=trans.dim.names), sampled.parameters, "disengagement"))
     
     parameters = set.rates.for.interventions(baseline.rates = unsuppressed.disengagement.rates, # list 
                                              baseline.times = unsuppressed.disengagement.times, # vector
@@ -995,7 +992,7 @@ map.model.parameters <- function(parameters,
     suppressed.disengagement.times = c(2000)
     suppressed.disengagement.rates = list(apply.youth.cascade.multipliers(array(sampled.parameters['suppressed.disengagement.rates'],
                                                   dim=sapply(trans.dim.names, length),
-                                                  dimnames=trans.dim.names), sampled.parameters, "suppressed.disengagement"))
+                                                  dimnames=trans.dim.names), sampled.parameters, "disengagement"))
     
     parameters = set.rates.for.interventions(baseline.rates = suppressed.disengagement.rates, # list 
                                              baseline.times = suppressed.disengagement.times, # vector
@@ -1050,9 +1047,9 @@ map.model.parameters <- function(parameters,
                                              parameter.name = "SUPPRESSION.RATES") 
 
     unsuppression.times = c(2000)
-    unsuppression.rates = c(list(apply.youth.cascade.multipliers(array(sampled.parameters['unsuppression.rates'],
+    unsuppression.rates = c(list(array(sampled.parameters['unsuppression.rates'],
                                        dim=sapply(trans.dim.names, length),
-                                       dimnames=trans.dim.names), sampled.parameters, "unsuppression")))
+                                       dimnames=trans.dim.names)))
     
     parameters = set.rates.for.interventions(baseline.rates = unsuppression.rates, # list 
                                              baseline.times = unsuppression.times, # vector

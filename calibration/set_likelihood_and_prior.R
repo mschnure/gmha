@@ -51,6 +51,9 @@ set.likelihood.and.prior.by.location = function(location,
     cascade.weights = list()
     if(weighted.cascade)
         cascade.weights = list(awareness.weight = 4, engagement.weight = 4, suppression.weight = 4)
+    # nextgen (10/27/26): down-weight the youth cascade observations (YOUTH.CASCADE.LIKELIHOOD.WEIGHT, calibration/mcmc_settings.R)
+    if(location == "South Africa" && !is.null(get0("YOUTH.CASCADE.LIKELIHOOD.WEIGHT")))
+        cascade.weights$cascade.weight.by.obs.age = YOUTH.CASCADE.LIKELIHOOD.WEIGHT
     
     if(weighted.prevalence){
       likelihood.to.run = do.call(create.likelihood, c(list(parameters = create.model.parameters(location = location),

@@ -59,9 +59,14 @@ MCMC.CACHE.DIR = "mcmc_cache"
 MCMC.RUNS.DIR = "mcmc_runs"
 STARTING.VALUES.DIR = "calibration/starting_values"
 
+# NEXTGEN (10/27/26): weight on the South Africa youth cascade observations (awareness/engagement/suppression for
+# surveillance ages 0-14 and 15-24), on top of the usual cascade weights; e.g. c("0-14" = 0.25, "15-24" = 0.25).
+# NULL = no extra weighting (as before). Set in the run script.
+YOUTH.CASCADE.LIKELIHOOD.WEIGHT = NULL
+
 # Names of the settings above (the pipeline copies these to its worker R sessions, so any changes
 # made in the current session after sourcing this file also apply to the workers)
 MCMC.SETTING.NAMES = c("MCMC.STEP.SETTINGS", "MCMC.BASE.SEED", "STEP1.START.VALUE.FILES",
                        "MCMC.UPDATE.FREQUENCY", "MCMC.CACHE.FREQUENCY", "MCMC.INITIAL.STEP.SIZE.DIVISOR", "MCMC.THIN",
                        "SIMSET.ADDITIONAL.BURN", "SIMSET.ADDITIONAL.THIN", "STEP2.SIMSET.BURN", "STEP2.SIMSET.THIN",
-                       "MCMC.CACHE.DIR", "MCMC.RUNS.DIR", "STARTING.VALUES.DIR")
+                       "MCMC.CACHE.DIR", "MCMC.RUNS.DIR", "STARTING.VALUES.DIR", "YOUTH.CASCADE.LIKELIHOOD.WEIGHT")

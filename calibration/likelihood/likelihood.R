@@ -67,7 +67,10 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              total.mortality.weight=1/1000, 
                              total.mortality.weight.by.age = c("80 and over" = 0.25),
                              total.mortality.obs.correlation=0.5, 
-                             total.mortality.correlation.structure="auto.regressive"
+                             total.mortality.correlation.structure="auto.regressive",
+                             # nextgen (10/27/26): extra weight on the awareness/engagement/suppression observations of
+                             # given surveillance age groups, e.g. c("0-14" = 0.25, "15-24" = 0.25); NULL = none
+                             cascade.weight.by.obs.age=NULL
                              ){ 
   
     incidence.lik = create.likelihood.for.data.type(data.type = "incidence",
@@ -111,7 +114,8 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                     obs.is.proportion=T, # awareness data is reported as a proportion 
                                                     weight=total.weight*awareness.weight,
                                                     obs.correlation=awareness.obs.correlation,
-                                                    correlation.structure=awareness.correlation.structure)
+                                                    correlation.structure=awareness.correlation.structure,
+                                                    weight.by.obs.age=cascade.weight.by.obs.age)
     
     engagement.lik = create.likelihood.for.data.type(data.type = "engagement",
                                                      data.manager=data.manager,
@@ -122,7 +126,8 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                      obs.is.proportion=T, # engagement data is reported as a proportion 
                                                      weight=total.weight*engagement.weight,
                                                      obs.correlation=engagement.obs.correlation,
-                                                     correlation.structure=engagement.correlation.structure)
+                                                     correlation.structure=engagement.correlation.structure,
+                                                     weight.by.obs.age=cascade.weight.by.obs.age)
     
     suppression.lik = create.likelihood.for.data.type(data.type = "suppression",
                                                       data.manager=data.manager,
@@ -133,7 +138,8 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                                                       obs.is.proportion=T, # suppression data is reported as a proportion 
                                                       weight=total.weight*suppression.weight,
                                                       obs.correlation=suppression.obs.correlation,
-                                                      correlation.structure=suppression.correlation.structure)
+                                                      correlation.structure=suppression.correlation.structure,
+                                                      weight.by.obs.age=cascade.weight.by.obs.age)
     
     population.lik = create.likelihood.for.data.type(data.type = "population",
                                                      data.manager=data.manager,
@@ -302,6 +308,7 @@ create.likelihood.for.data.type = function(data.type,
                                            obs.is.proportion,
                                            weight,
                                            weight.by.age=NULL,
+                                           weight.by.obs.age=NULL, # nextgen: named by surveillance age group of the observation
                                            obs.correlation,
                                            correlation.structure,
                                            parameters,
@@ -346,6 +353,7 @@ create.likelihood.for.data.type = function(data.type,
                            obs.cov.mat=likelihood.elements$obs.cov.mat,
                            weight=weight,
                            weight.by.age=weight.by.age,
+                           weight.by.obs.age=weight.by.obs.age,
                            chol.cache=chol.cache,
                            debug=debug)
         
@@ -612,6 +620,7 @@ compute.likelihood = function(sim,
                               obs.cov.mat, # pre-computed variance-covariance matrix
                               weight,
                               weight.by.age,
+                              weight.by.obs.age=NULL,
                               chol.cache=NULL, # environment; only passed when the covariance doesn't depend on the sim
                               debug=F){
     
@@ -672,6 +681,15 @@ compute.likelihood = function(sim,
         cov.mat = cov.mat/weight.matrix
     }
     
+    # nextgen (10/27/26): weight observations by their (surveillance) age group, e.g. down-weight the youth cascade.
+    # obs.dimensions are "<age>_<sex>" (or "all"), so the age group is the part before "_"
+    if(!is.null(weight.by.obs.age)){
+        obs.age = sub("_.*$", "", obs.dimensions)
+        weight.per.obs = ifelse(obs.age %in% names(weight.by.obs.age), weight.by.obs.age[obs.age], 1)
+        weight.matrix = sqrt(weight.per.obs) %*% t(sqrt(weight.per.obs))
+        cov.mat = cov.mat/weight.matrix
+    }
+
     if(debug){
         df = data.frame(year=obs.year,dimension=obs.dimensions,obs=obs,mean=mu,sd=sqrt(diag(cov.mat)))
         df$standard.error = (df$obs-df$mean)/df$sd
