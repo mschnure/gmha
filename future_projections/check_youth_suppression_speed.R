@@ -23,6 +23,8 @@ SIMSETS = c("AIDS 2026" = "cached/simset.noint_25_1yr_2026-01-22.Rdata",        
             "Oct 22 SABSSM" = max(list.files("mcmc_runs/nextgen_sabssm", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)))
 ratio.files = list.files("mcmc_runs/nextgen_sabssm_ratio", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
 if(length(ratio.files) > 0) SIMSETS["SABSSM ratio"] = max(ratio.files)
+retention.files = list.files("mcmc_runs/nextgen_sabssm_ratio_retention", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
+if(length(retention.files) > 0) SIMSETS["Retention fresh"] = max(retention.files)
 RATES = c(suppression = "SUPPRESSION.RATES", unsuppression = "UNSUPPRESSION.RATES",
           disengagement.unsuppressed = "UNSUPPRESSED.DISENGAGEMENT.RATES", disengagement.suppressed = "SUPPRESSED.DISENGAGEMENT.RATES",
           engagement = "ENGAGEMENT.RATES", testing = "TESTING.RATES")
