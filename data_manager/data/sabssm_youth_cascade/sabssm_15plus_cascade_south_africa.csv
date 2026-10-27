@@ -1,19 +1,19 @@
-year,sex,indicator,estimate,lower,upper,n,ci_source,source
-2017,all,aware,84.8,81.6,87.6,2819,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
-2017,all,art_among_aware,70.7,67.6,73.7,2247,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
-2017,all,vls_among_art,87.4,84.9,89.6,1587,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
-2017,male,aware,78.2,72.4,83.1,808,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
-2017,male,art_among_aware,67.7,62.2,72.7,566,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
-2017,male,vls_among_art,82.3,76.7,86.7,384,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
-2017,female,aware,88.7,85.7,91.1,2011,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
-2017,female,art_among_aware,72.3,68.9,75.4,1681,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
-2017,female,vls_among_art,89.8,87.0,92.0,1203,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1"
-2022,all,aware,89.6,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23"
-2022,all,art_among_aware,90.7,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23"
-2022,all,vls_among_art,93.9,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23"
-2022,male,aware,85.1,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23"
-2022,male,art_among_aware,90.1,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23"
-2022,male,vls_among_art,93.8,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23"
-2022,female,aware,91.6,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23"
-2022,female,art_among_aware,91.0,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23"
-2022,female,vls_among_art,93.9,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23"
+year,sex,indicator,estimate,lower,upper,n,ci_source,source,url
+2017,all,aware,84.8,81.6,87.6,2819,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1",https://doi.org/10.1186/s12889-020-09457-z
+2017,all,art_among_aware,70.7,67.6,73.7,2247,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1",https://doi.org/10.1186/s12889-020-09457-z
+2017,all,vls_among_art,87.4,84.9,89.6,1587,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1",https://doi.org/10.1186/s12889-020-09457-z
+2017,male,aware,78.2,72.4,83.1,808,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1",https://doi.org/10.1186/s12889-020-09457-z
+2017,male,art_among_aware,67.7,62.2,72.7,566,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1",https://doi.org/10.1186/s12889-020-09457-z
+2017,male,vls_among_art,82.3,76.7,86.7,384,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1",https://doi.org/10.1186/s12889-020-09457-z
+2017,female,aware,88.7,85.7,91.1,2011,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1",https://doi.org/10.1186/s12889-020-09457-z
+2017,female,art_among_aware,72.3,68.9,75.4,1681,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1",https://doi.org/10.1186/s12889-020-09457-z
+2017,female,vls_among_art,89.8,87.0,92.0,1203,published,"Marinda et al. 2020 BMC Public Health 20:1375 (SABSSM V), Table 1",https://doi.org/10.1186/s12889-020-09457-z
+2022,all,aware,89.6,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23",https://hsrc.ac.za/wp-content/uploads/2024/07/SABSSM_VI_EXEC_REPORT_2PP.pdf
+2022,all,art_among_aware,90.7,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23",https://hsrc.ac.za/wp-content/uploads/2024/07/SABSSM_VI_EXEC_REPORT_2PP.pdf
+2022,all,vls_among_art,93.9,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23",https://hsrc.ac.za/wp-content/uploads/2024/07/SABSSM_VI_EXEC_REPORT_2PP.pdf
+2022,male,aware,85.1,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23",https://hsrc.ac.za/wp-content/uploads/2024/07/SABSSM_VI_EXEC_REPORT_2PP.pdf
+2022,male,art_among_aware,90.1,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23",https://hsrc.ac.za/wp-content/uploads/2024/07/SABSSM_VI_EXEC_REPORT_2PP.pdf
+2022,male,vls_among_art,93.8,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23",https://hsrc.ac.za/wp-content/uploads/2024/07/SABSSM_VI_EXEC_REPORT_2PP.pdf
+2022,female,aware,91.6,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23",https://hsrc.ac.za/wp-content/uploads/2024/07/SABSSM_VI_EXEC_REPORT_2PP.pdf
+2022,female,art_among_aware,91.0,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23",https://hsrc.ac.za/wp-content/uploads/2024/07/SABSSM_VI_EXEC_REPORT_2PP.pdf
+2022,female,vls_among_art,93.9,,,,point only,"SABSSM VI summary report (Zuma et al., HSRC 2024), p23",https://hsrc.ac.za/wp-content/uploads/2024/07/SABSSM_VI_EXEC_REPORT_2PP.pdf

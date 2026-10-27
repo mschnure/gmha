@@ -1,4 +1,18 @@
 ## NEXTGEN: South Africa 15-24 cascade calibration targets from the national household surveys (SABSSM V 2017, SABSSM VI 2022)
+##
+## SOURCES (also in the url column of the data files):
+##   2017 - SABSSM V. Marinda E, Simbayi L, Zuma K, et al. Towards achieving the 90-90-90 HIV targets: results from the
+##          South African 2017 national HIV survey. BMC Public Health 2020;20:1375. Table 1 (90-90-90 by age and sex;
+##          15-24 and 15+, total/male/female, % with 95% CI and n).
+##          https://doi.org/10.1186/s12889-020-09457-z   (full text: https://pmc.ncbi.nlm.nih.gov/articles/PMC7487872/)
+##   2022 - SABSSM VI. Zuma K, et al. The Sixth South African National HIV Prevalence, Incidence and Behaviour Survey,
+##          2022: A Summary Report. HSRC Press, 2024. 95-95-95 section (15-24: 73.1% aware, 87.4% on ART of aware,
+##          92.4% VLS of on ART; 15+ total and by sex). Point estimates only - no CIs or n for these.
+##          https://hsrc.ac.za/wp-content/uploads/2024/07/SABSSM_VI_EXEC_REPORT_2PP.pdf
+##          n = 614 (PLHIV aged 15-24 with a viral load result) and the 15-24 VLS estimate used for the design effect
+##          (70.1%, 95% CI 63.3-76.1) are from the SABSSM VI launch presentation (HSRC, 27 Nov 2023):
+##          https://www.sahivsoc.org/Files/SABSSM-FINAL-LAUNCH-presentation-27November2023-1.pdf
+##          (same estimate in the summary sheet: https://www.sahivsoc.org/Files/SABSSMVI-SUMMARY-SHEET-2023.pdf)
 ## Data: data_manager/data/sabssm_youth_cascade/sabssm_15-24_cascade_south_africa.csv
 ##
 ## Stored with the SAME definitions as the UNAIDS 95-95-95 cascade data already in the data manager:
