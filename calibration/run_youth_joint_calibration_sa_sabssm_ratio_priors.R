@@ -5,8 +5,7 @@
 #     and ONE dropout multiplier per age group (on both disengagement rates) - 12 youth parameters
 #   - tighter priors (calibration/prior_distributions/south_africa_prior.R): all-ages dropout ~0.08-0.31/yr around
 #     IeDEA 0.155; youth dropout multiplier median 1.5 (0.75-3); youth multipliers 1/4-4; youth slopes +/-log(2)
-#   - youth cascade observations (0-14, 15-24) down-weighted to YOUTH.CASCADE.LIKELIHOOD.WEIGHT; all other
-#     likelihood weights as before
+#   - likelihood weights as before (no extra youth weighting: YOUTH.CASCADE.LIKELIHOOD.WEIGHT = NULL)
 #   - Step 1 doubled to 50,000 iterations; Step 2 as usual (4 chains x 100,000 -> 1,000 simulations)
 # Replaces the 10/26 retention run (run_youth_joint_calibration_sa_sabssm_ratio_retention.R), whose 4 chains
 # didn't agree (66 of 93 parameters with R-hat > 1.1; calibration/check_chain_agreement.R).
@@ -35,9 +34,10 @@ RESUME = FALSE
 RESUME = RESUME || "resume" %in% commandArgs(trailingOnly = TRUE)
 N.CORES = 4
 
-YOUTH.CASCADE.LIKELIHOOD.WEIGHT = c("0-14" = 0.25, "15-24" = 0.25) # x the usual cascade weights, youth observations only
+YOUTH.CASCADE.LIKELIHOOD.WEIGHT = NULL # cascade weights as before; e.g. c("0-14" = 0.25, "15-24" = 0.25) would down-weight the youth cascade
 MCMC.STEP.SETTINGS$step1$n.iter = 50000                              # doubled (calibration/mcmc_settings.R: 25,000)
-print(paste0("Youth cascade likelihood weight: ", paste(names(YOUTH.CASCADE.LIKELIHOOD.WEIGHT), YOUTH.CASCADE.LIKELIHOOD.WEIGHT, sep = " = ", collapse = ", "),
+print(paste0("Youth cascade likelihood weight: ", if(is.null(YOUTH.CASCADE.LIKELIHOOD.WEIGHT)) "none (as before)" else
+             paste(names(YOUTH.CASCADE.LIKELIHOOD.WEIGHT), YOUTH.CASCADE.LIKELIHOOD.WEIGHT, sep = " = ", collapse = ", "),
              "; Step 1 iterations: ", MCMC.STEP.SETTINGS$step1$n.iter))
 
 # FRESH START: the full two-step pipeline, as for master - Step 1 (1 chain, 50,000 iterations here,
@@ -52,4 +52,4 @@ results = run.mcmc.pipeline(locations = "South Africa",
                             resume = RESUME,
                             merge = TRUE,
                             max.retries = 1)
-print("Joint South Africa youth calibration (SABSSM ratio targets, tighter priors, down-weighted youth cascade) finished")
+print("Joint South Africa youth calibration (SABSSM ratio targets, tighter priors) finished")
