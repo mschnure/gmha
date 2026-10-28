@@ -11,9 +11,9 @@
 #   expl3_summary_<date>.csv        the numbers behind the bar charts
 ################################################################################################
 source("model/run_systematic.R")
-OUT.DIR = file.path("cached", "nextgen_lai_rerun_sabssm_ratio") # plots go here; ratio calibration added as a 4th column when its rerun exists
-CAL.LABELS = c(aids2026 = "AIDS 2026", joint = "Oct 21 joint", sabssm = "Oct 22 SABSSM", ratio = "SABSSM ratio")
-CAL.COLS = c("AIDS 2026" = "#B45F1B", "Oct 21 joint" = "#1F6F8B", "Oct 22 SABSSM" = "#5E8C31", "SABSSM ratio" = "#7B3F99")
+OUT.DIR = file.path("cached", "nextgen_lai_rerun_sabssm_ratio_priors") # plots go here; the 10/27 priors calibration is added as a 4th column when its LAI rerun exists
+CAL.LABELS = c(aids2026 = "AIDS 2026", joint = "Oct 21 joint", sabssm = "Oct 22 SABSSM", ratio = "Oct 27 priors")
+CAL.COLS = c("AIDS 2026" = "#B45F1B", "Oct 21 joint" = "#1F6F8B", "Oct 22 SABSSM" = "#5E8C31", "Oct 27 priors" = "#7B3F99")
 arrays = list(aids2026 = "cached/full.results.array_2026-01-22.Rdata",
               joint = "cached/nextgen_lai_rerun/full.results.array_2026-10-21.Rdata",
               sabssm = max(list.files("cached/nextgen_lai_rerun_sabssm", pattern = "^full\\.results\\.array_[0-9-]+\\.Rdata$", full.names = T)))
