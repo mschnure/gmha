@@ -50,10 +50,12 @@ show = prior@var.names[prior@var.names %in% c("unsuppressed.disengagement.rates"
                      "log.OR.testing.intercept","log.OR.testing.slope","log.OR.engagement.slope","log.OR.suppression.slope",
                      "male.awareness.multiplier","male.engagement.multiplier","male.suppression.multiplier") |
                      grepl("^age\\.(0\\.14|15\\.24)\\.|^log\\.OR\\.(0\\.14|15\\.24)\\.", prior@var.names)]
-cat("(sd is on the sampling scale; check: male.awareness.multiplier should show sd = log(8)/2 = 1.04)\n")
+cat("(sd shown on the log scale for lognormal priors; check: male.awareness.multiplier should show sd = log(8)/2 = 1.04)\n")
 for(nm in show){
     m = med[nm]; s = sds[nm]
-    if(tf[nm] == "log"){ q = exp(log(m) + c(0, -2, 2)*s); lab = "value" }
+    if(tf[nm] == "log"){ # get.sds gives the lognormal's natural-scale sd: recover sdlog from median and sd
+        x = (1 + sqrt(1 + 4*(s/m)^2))/2; s = sqrt(log(x))
+        q = exp(log(m) + c(0, -2, 2)*s); lab = "value" }
     else { q = exp(m + c(0, -2, 2)*s); lab = "odds ratio (exp of log OR)" }
     line = sprintf("%-50s [%s, sd %.3f] %s: %s", nm, tf[nm], s, lab, paste(r3(q), collapse = " / "))
     if(grepl("rates$", nm)) line = paste0(line, "  -> annual probability: ", paste(r3(1 - exp(-q)), collapse = " / "))
