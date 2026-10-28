@@ -39,7 +39,9 @@ SOUTH.AFRICA.PRIOR = join.distributions(
     # nextgen (10/27/26): youth dropout multipliers (both dropout rates), median 1.5 (youth lose to follow-up more
     # than adults), 95% range ~0.75-3
     age.0.14.disengagement.multiplier = Lognormal.Distribution(log(1.5), log(2)/2),
-    age.15.24.disengagement.multiplier = Lognormal.Distribution(log(1.5), log(2)/2),
+    # 10/28/26: 15-24 tightened to a 95% range of ~1.0-2.25 (log(1.5)/2; was log(2)/2, ~0.75-3, used in the 10/27 run,
+    # where the fit pulled it to ~0.4 - youth dropping out less than adults)
+    age.15.24.disengagement.multiplier = Lognormal.Distribution(log(1.5), log(1.5)/2),
     
     # THE REST OF THESE DON'T CHANGE 
     proportion.trate.change.by.3.5 = Beta.Distribution(alpha = 21,beta = 7),
