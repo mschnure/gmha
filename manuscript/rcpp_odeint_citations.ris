@@ -1,0 +1,24 @@
+TY  - JOUR
+AU  - Eddelbuettel, Dirk
+AU  - François, Romain
+TI  - Rcpp: Seamless R and C++ Integration
+JO  - Journal of Statistical Software
+PY  - 2011
+VL  - 40
+IS  - 8
+SP  - 1
+EP  - 18
+DO  - 10.18637/jss.v040.i08
+ER  - 
+
+TY  - CONF
+AU  - Ahnert, Karsten
+AU  - Mulansky, Mario
+TI  - Odeint – Solving Ordinary Differential Equations in C++
+T2  - AIP Conference Proceedings
+PY  - 2011
+VL  - 1389
+SP  - 1586
+EP  - 1589
+DO  - 10.1063/1.3637934
+ER  - 
