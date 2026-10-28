@@ -1,7 +1,7 @@
 ################################################################################################
 # NEXTGEN (10/28/26): same as calibration/run_youth_joint_calibration_sa_sabssm_ratio_priors.R (the 10/27 run), plus a
-# soft one-sided constraint on PROJECTED youth (15-24) : adult (25-49) ratios for awareness, engagement and suppression
-# in 2025 and 2030: free up to 1.2, then a half-normal penalty on log(ratio/1.2) with SD log(1.5)/2 (a ratio of 1.8
+# soft one-sided constraint on PROJECTED youth (15-24) : adult (25-49) ratios of the testing, engagement and suppression
+# RATES in 2025 and 2030: free up to 1.2, then a half-normal penalty on log(ratio/1.2) with SD log(1.5)/2 (a ratio of 1.8
 # costs 2 SDs). Reason: in the 10/27 run youth overtook adults after 2022 (no data there), which drives LAI impact.
 #
 # 10/27 description:

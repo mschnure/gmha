@@ -235,24 +235,38 @@ create.likelihood = function(data.manager=DATA.MANAGER,
     rv
 }
 
-# NEXTGEN (10/28/26): soft, one-sided penalty on PROJECTED youth (15-24) : adult (25-49) cascade ratios (no data).
-# For each year and each of awareness (aware/PWH), engagement (on ART/aware) and suppression (suppressed/aware):
-#   r = youth value / adult value; if r > threshold, log-likelihood += -0.5*(log(r/threshold)/log.sd)^2, else 0.
+# NEXTGEN (10/28/26): soft, one-sided penalty on PROJECTED youth (15-24) : adult (25-49) cascade RATES (no data).
+# For each year and each of the testing, engagement (starting ART) and suppression rates:
+#   r = mean rate over model ages 15-19, 20-24 / mean rate over 25-29 ... 45-49 (both sexes, as used in the model);
+#   if r > threshold, log-likelihood += -0.5*(log(r/threshold)/log.sd)^2, else 0.
 # With threshold 1.2 and log.sd = log(1.5)/2, a ratio of 1.8 (= 1.2 x 1.5) costs 2 (two SDs); anything up to 1.2 is free.
+# Rates are read from sim$parameters (the calibrated, time-varying rates the model ran with).
 create.likelihood.for.youth.ratio = function(years = c(2025, 2030), threshold = 1.2, log.sd = log(1.5)/2,
+                                            rates = c(testing = "TESTING.RATES", engagement = "ENGAGEMENT.RATES",
+                                                      suppression = "SUPPRESSION.RATES"),
                                             youth.ages = c("15-19","20-24"),
                                             adult.ages = c("25-29","30-34","35-39","40-44","45-49")){
     function(sim){
-        get = function(type, ages) as.numeric(extract.data(sim = sim, data.type = type, years = years, ages = ages, keep.dimensions = "year"))
-        cascade = function(ages){
-            prev = get("prevalence", ages); aware = get("awareness", ages)
-            cbind(awareness = aware/prev, engagement = get("engagement", ages)/aware, suppression = get("suppression", ages)/aware)
-        }
-        r = cascade(youth.ages)/cascade(adult.ages)
+        r = youth.adult.rate.ratios(sim, years = years, rates = rates, youth.ages = youth.ages, adult.ages = adult.ages)
         excess = pmax(0, log(r/threshold))
         rv = -0.5*sum((excess/log.sd)^2)
         if(is.na(rv)) -Inf else rv
     }
+}
+
+# youth : adult ratio of the calibrated rates in each year (matrix: year x rate)
+youth.adult.rate.ratios = function(sim, years = c(2025, 2030),
+                                   rates = c(testing = "TESTING.RATES", engagement = "ENGAGEMENT.RATES", suppression = "SUPPRESSION.RATES"),
+                                   youth.ages = c("15-19","20-24"), adult.ages = c("25-29","30-34","35-39","40-44","45-49")){
+    tvp = sim$parameters$time.varying.parameters
+    rv = sapply(rates, function(nm){
+        x = tvp[[nm]]
+        sapply(years, function(y){
+            v = x$values[[max(which(x$times <= y))]] # rate in force in that year
+            mean(v[youth.ages,,]) / mean(v[adult.ages,,])
+        })
+    })
+    matrix(rv, nrow = length(years), dimnames = list(year = as.character(years), rate = names(rates)))
 }
 
 create.likelihood.for.trend = function(data.type,
