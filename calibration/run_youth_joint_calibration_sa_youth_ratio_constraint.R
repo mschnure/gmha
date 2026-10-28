@@ -1,8 +1,8 @@
 ################################################################################################
 # NEXTGEN (10/28/26): same as calibration/run_youth_joint_calibration_sa_sabssm_ratio_priors.R (the 10/27 run), plus a
 # soft one-sided constraint on PROJECTED youth (15-24) : adult (25-49) ratios of the testing, engagement and suppression
-# RATES in 2025 and 2030: free up to 1.2, then a half-normal penalty on log(ratio/1.2) with SD log(1.5)/2 (a ratio of 1.8
-# costs 2 SDs). Reason: in the 10/27 run youth overtook adults after 2022 (no data there), which drives LAI impact.
+# RATES in 2025 and 2030, relative to the same simulation's 2022 ratio: penalty -0.5*(log(ratio/ratio.2022)/(log(1.5)/2))^2
+# (one-sided: increases only; a ratio 1.5x its 2022 value costs 2 SDs). Reason: in the 10/27 run youth overtook adults after 2022 (no data there), which drives LAI impact.
 #
 # 10/27 description:
 # NEXTGEN (10/27/26): fresh joint recalibration of South Africa (Step 1 + Step 2, from the prior medians) with
@@ -40,14 +40,15 @@ RESUME = FALSE
 RESUME = RESUME || "resume" %in% commandArgs(trailingOnly = TRUE)
 N.CORES = 4
 
-YOUTH.ADULT.RATIO.CONSTRAINT = list(years = c(2025, 2030), threshold = 1.2, log.sd = log(1.5)/2)
+YOUTH.ADULT.RATIO.CONSTRAINT = list(years = c(2025, 2030), reference.year = 2022, log.sd = log(1.5)/2, two.sided = FALSE)
 YOUTH.CASCADE.LIKELIHOOD.WEIGHT = NULL # cascade weights as before; e.g. c("0-14" = 0.25, "15-24" = 0.25) would down-weight the youth cascade
 MCMC.STEP.SETTINGS$step1$n.iter = 50000                              # doubled (calibration/mcmc_settings.R: 25,000)
 print(paste0("Youth cascade likelihood weight: ", if(is.null(YOUTH.CASCADE.LIKELIHOOD.WEIGHT)) "none (as before)" else
              paste(names(YOUTH.CASCADE.LIKELIHOOD.WEIGHT), YOUTH.CASCADE.LIKELIHOOD.WEIGHT, sep = " = ", collapse = ", "),
              "; Step 1 iterations: ", MCMC.STEP.SETTINGS$step1$n.iter,
-             "; youth:adult ratio constraint: threshold ", YOUTH.ADULT.RATIO.CONSTRAINT$threshold, ", years ",
-             paste(YOUTH.ADULT.RATIO.CONSTRAINT$years, collapse = "/")))
+             "; youth:adult rate ratio constraint: relative to each sim's ", YOUTH.ADULT.RATIO.CONSTRAINT$reference.year,
+             " ratio, years ", paste(YOUTH.ADULT.RATIO.CONSTRAINT$years, collapse = "/"),
+             ifelse(YOUTH.ADULT.RATIO.CONSTRAINT$two.sided, ", two-sided", ", one-sided (increases only)")))
 
 # FRESH START: the full two-step pipeline, as for master - Step 1 (1 chain, 50,000 iterations here,
 # prevalence weighted, from the prior medians) hands its last simulation to Step 2 (4 chains x 100,000).

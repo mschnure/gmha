@@ -65,7 +65,7 @@ STARTING.VALUES.DIR = "calibration/starting_values"
 YOUTH.CASCADE.LIKELIHOOD.WEIGHT = NULL
 
 # NEXTGEN (10/28/26): soft one-sided constraint on PROJECTED South Africa youth (15-24) : adult (25-49) ratios of the
-# testing, engagement and suppression rates, e.g. list(years = c(2025, 2030), threshold = 1.2, log.sd = log(1.5)/2)
+# testing, engagement and suppression rates, e.g. list(years = c(2025, 2030), reference.year = 2022, log.sd = log(1.5)/2, two.sided = FALSE)
 # (see create.likelihood.for.youth.ratio in calibration/likelihood/likelihood.R). NULL = off. Set in the run script.
 YOUTH.ADULT.RATIO.CONSTRAINT = NULL
 

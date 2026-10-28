@@ -235,21 +235,26 @@ create.likelihood = function(data.manager=DATA.MANAGER,
     rv
 }
 
-# NEXTGEN (10/28/26): soft, one-sided penalty on PROJECTED youth (15-24) : adult (25-49) cascade RATES (no data).
-# For each year and each of the testing, engagement (starting ART) and suppression rates:
-#   r = mean rate over model ages 15-19, 20-24 / mean rate over 25-29 ... 45-49 (both sexes, as used in the model);
-#   if r > threshold, log-likelihood += -0.5*(log(r/threshold)/log.sd)^2, else 0.
-# With threshold 1.2 and log.sd = log(1.5)/2, a ratio of 1.8 (= 1.2 x 1.5) costs 2 (two SDs); anything up to 1.2 is free.
+# NEXTGEN (10/28/26): soft penalty on how far the PROJECTED youth (15-24) : adult (25-49) ratio of the cascade RATES
+# moves away from its own 2022 value (no data after 2022). For each year y and each of the testing, engagement (starting
+# ART) and suppression rates:
+#   r(y) = mean rate over model ages 15-19, 20-24 / mean rate over 25-29 ... 45-49 (both sexes, as used in the model)
+#   d    = log( r(y) / r(reference.year) )          (reference.year = 2022: the same simulation's own 2022 ratio)
+#   two.sided = TRUE : log-likelihood += -0.5*(d/log.sd)^2
+#   two.sided = FALSE: only a ratio ABOVE the 2022 value is penalized (d > 0); a ratio below is free
+# With log.sd = log(1.5)/2, a ratio 1.5x its 2022 value (or 1/1.5x, if two-sided) costs 2 (two SDs).
 # Rates are read from sim$parameters (the calibrated, time-varying rates the model ran with).
-create.likelihood.for.youth.ratio = function(years = c(2025, 2030), threshold = 1.2, log.sd = log(1.5)/2,
+create.likelihood.for.youth.ratio = function(years = c(2025, 2030), reference.year = 2022, log.sd = log(1.5)/2,
+                                            two.sided = FALSE,
                                             rates = c(testing = "TESTING.RATES", engagement = "ENGAGEMENT.RATES",
                                                       suppression = "SUPPRESSION.RATES"),
                                             youth.ages = c("15-19","20-24"),
                                             adult.ages = c("25-29","30-34","35-39","40-44","45-49")){
     function(sim){
-        r = youth.adult.rate.ratios(sim, years = years, rates = rates, youth.ages = youth.ages, adult.ages = adult.ages)
-        excess = pmax(0, log(r/threshold))
-        rv = -0.5*sum((excess/log.sd)^2)
+        r = youth.adult.rate.ratios(sim, years = c(reference.year, years), rates = rates, youth.ages = youth.ages, adult.ages = adult.ages)
+        d = log(sweep(r[-1,, drop = F], 2, r[1,], "/"))
+        if(!two.sided) d = pmax(0, d)
+        rv = -0.5*sum((d/log.sd)^2)
         if(is.na(rv)) -Inf else rv
     }
 }
