@@ -6,7 +6,7 @@
 source("model/run_systematic.R")
 
 # newest merged simset copied from the remote
-if(!exists("NEW.RUN.DIR")) NEW.RUN.DIR = "mcmc_runs/nextgen_sabssm_ratio_retention" # earlier runs: mcmc_runs/nextgen_sabssm_ratio, mcmc_runs/nextgen_sabssm
+if(!exists("NEW.RUN.DIR")) NEW.RUN.DIR = "mcmc_runs/nextgen_sabssm_ratio_priors" # earlier runs: mcmc_runs/nextgen_sabssm_ratio_retention, mcmc_runs/nextgen_sabssm_ratio, mcmc_runs/nextgen_sabssm
 new.files = list.files(NEW.RUN.DIR, pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
 if(length(new.files)==0) stop(paste0("Copy the merged simset into ", NEW.RUN.DIR, "/ first"))
 NEW.SIMSET.FILE = max(new.files)
@@ -21,7 +21,8 @@ YOUTH.PARAMS = c("age.0.14.awareness.multiplier","age.0.14.engagement.multiplier
                  "log.OR.15.24.engagement.slope","log.OR.15.24.suppression.slope",
                  "age.0.14.unsuppressed.disengagement.multiplier","age.0.14.suppressed.disengagement.multiplier",
                  "age.0.14.unsuppression.multiplier","age.15.24.unsuppressed.disengagement.multiplier",
-                 "age.15.24.suppressed.disengagement.multiplier","age.15.24.unsuppression.multiplier")
+                 "age.15.24.suppressed.disengagement.multiplier","age.15.24.unsuppression.multiplier",
+                 "age.0.14.disengagement.multiplier","age.15.24.disengagement.multiplier")
 
 simset.new = get(load(NEW.SIMSET.FILE)[1])
 simset.old = get(load(OLD.SIMSET.FILE)[1])

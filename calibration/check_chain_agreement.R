@@ -11,7 +11,7 @@
 # Output: <RUN.DIR>/chain_agreement_<date>.csv (R-hat) and printed summary
 ################################################################################################
 source("model/run_systematic.R")
-if(!exists("RUN.DIR")) RUN.DIR = "mcmc_runs/nextgen_sabssm_ratio_retention"
+if(!exists("RUN.DIR")) RUN.DIR = "mcmc_runs/nextgen_sabssm_ratio_priors"
 N.LIK.SIMS = 50
 
 files = list.files(RUN.DIR, pattern = "^simset_south_africa_step2_chain[1-4]_[0-9-]+\\.Rdata$", full.names = T)
@@ -54,7 +54,8 @@ KEY = c("unsuppressed.disengagement.rates","suppressed.disengagement.rates","uns
         "log.OR.15.24.engagement.slope","log.OR.15.24.suppression.slope",
         "age.15.24.unsuppressed.disengagement.multiplier","age.15.24.suppressed.disengagement.multiplier",
         "age.15.24.unsuppression.multiplier",
-        "age.0.14.awareness.multiplier","age.0.14.suppressed.disengagement.multiplier","trate.2","trate.3")
+        "age.0.14.awareness.multiplier","age.0.14.suppressed.disengagement.multiplier",
+        "age.0.14.disengagement.multiplier","age.15.24.disengagement.multiplier","trate.2","trate.3")
 KEY = intersect(KEY, par.names)
 print("Per-chain medians of key parameters:")
 print(round(sapply(pars, function(m) apply(m[, KEY, drop = F], 2, median)), 3))

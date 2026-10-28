@@ -25,6 +25,8 @@ ratio.files = list.files("mcmc_runs/nextgen_sabssm_ratio", pattern = "^simset_so
 if(length(ratio.files) > 0) SIMSETS["SABSSM ratio"] = max(ratio.files)
 retention.files = list.files("mcmc_runs/nextgen_sabssm_ratio_retention", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
 if(length(retention.files) > 0) SIMSETS["Retention fresh"] = max(retention.files)
+priors.files = list.files("mcmc_runs/nextgen_sabssm_ratio_priors", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
+if(length(priors.files) > 0) SIMSETS["Priors fresh"] = max(priors.files)
 RATES = c(suppression = "SUPPRESSION.RATES", unsuppression = "UNSUPPRESSION.RATES",
           disengagement.unsuppressed = "UNSUPPRESSED.DISENGAGEMENT.RATES", disengagement.suppressed = "SUPPRESSED.DISENGAGEMENT.RATES",
           engagement = "ENGAGEMENT.RATES", testing = "TESTING.RATES")
