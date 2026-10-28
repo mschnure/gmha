@@ -54,6 +54,9 @@ set.likelihood.and.prior.by.location = function(location,
     # nextgen (10/27/26): down-weight the youth cascade observations (YOUTH.CASCADE.LIKELIHOOD.WEIGHT, calibration/mcmc_settings.R)
     if(location == "South Africa" && !is.null(get0("YOUTH.CASCADE.LIKELIHOOD.WEIGHT")))
         cascade.weights$cascade.weight.by.obs.age = YOUTH.CASCADE.LIKELIHOOD.WEIGHT
+    # nextgen (10/28/26): soft one-sided constraint on projected youth:adult cascade ratios (YOUTH.ADULT.RATIO.CONSTRAINT)
+    if(location == "South Africa" && !is.null(get0("YOUTH.ADULT.RATIO.CONSTRAINT")))
+        cascade.weights$youth.ratio.constraint = YOUTH.ADULT.RATIO.CONSTRAINT
     
     if(weighted.prevalence){
       likelihood.to.run = do.call(create.likelihood, c(list(parameters = create.model.parameters(location = location),

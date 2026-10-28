@@ -64,9 +64,15 @@ STARTING.VALUES.DIR = "calibration/starting_values"
 # NULL = no extra weighting (as before). Set in the run script.
 YOUTH.CASCADE.LIKELIHOOD.WEIGHT = NULL
 
+# NEXTGEN (10/28/26): soft one-sided constraint on PROJECTED South Africa youth (15-24) : adult (25-49) ratios for
+# awareness, engagement and suppression, e.g. list(years = c(2025, 2030), threshold = 1.2, log.sd = log(1.5)/2)
+# (see create.likelihood.for.youth.ratio in calibration/likelihood/likelihood.R). NULL = off. Set in the run script.
+YOUTH.ADULT.RATIO.CONSTRAINT = NULL
+
 # Names of the settings above (the pipeline copies these to its worker R sessions, so any changes
 # made in the current session after sourcing this file also apply to the workers)
 MCMC.SETTING.NAMES = c("MCMC.STEP.SETTINGS", "MCMC.BASE.SEED", "STEP1.START.VALUE.FILES",
                        "MCMC.UPDATE.FREQUENCY", "MCMC.CACHE.FREQUENCY", "MCMC.INITIAL.STEP.SIZE.DIVISOR", "MCMC.THIN",
                        "SIMSET.ADDITIONAL.BURN", "SIMSET.ADDITIONAL.THIN", "STEP2.SIMSET.BURN", "STEP2.SIMSET.THIN",
-                       "MCMC.CACHE.DIR", "MCMC.RUNS.DIR", "STARTING.VALUES.DIR", "YOUTH.CASCADE.LIKELIHOOD.WEIGHT")
+                       "MCMC.CACHE.DIR", "MCMC.RUNS.DIR", "STARTING.VALUES.DIR", "YOUTH.CASCADE.LIKELIHOOD.WEIGHT",
+                       "YOUTH.ADULT.RATIO.CONSTRAINT")

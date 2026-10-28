@@ -70,7 +70,10 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                              total.mortality.correlation.structure="auto.regressive",
                              # nextgen (10/27/26): extra weight on the awareness/engagement/suppression observations of
                              # given surveillance age groups, e.g. c("0-14" = 0.25, "15-24" = 0.25); NULL = none
-                             cascade.weight.by.obs.age=NULL
+                             cascade.weight.by.obs.age=NULL,
+                             # nextgen (10/28/26): soft one-sided constraint on projected youth:adult cascade ratios,
+                             # e.g. list(years = c(2025, 2030), threshold = 1.2, log.sd = log(1.5)/2); NULL = none
+                             youth.ratio.constraint=NULL
                              ){ 
   
     incidence.lik = create.likelihood.for.data.type(data.type = "incidence",
@@ -208,6 +211,8 @@ create.likelihood = function(data.manager=DATA.MANAGER,
                       total.mortality.lik=total.mortality.lik,
                       awareness.trend=awareness.trend.lik
                       ) # CHANGE THIS IF SWITCHING ABOVE 
+    if(!is.null(youth.ratio.constraint))
+        components$youth.ratio = do.call(create.likelihood.for.youth.ratio, youth.ratio.constraint)
     
     rv = function(sim){ 
         
@@ -228,6 +233,26 @@ create.likelihood = function(data.manager=DATA.MANAGER,
     
     # returns a function that can then be run on a sim to return the likelihood 
     rv
+}
+
+# NEXTGEN (10/28/26): soft, one-sided penalty on PROJECTED youth (15-24) : adult (25-49) cascade ratios (no data).
+# For each year and each of awareness (aware/PWH), engagement (on ART/aware) and suppression (suppressed/aware):
+#   r = youth value / adult value; if r > threshold, log-likelihood += -0.5*(log(r/threshold)/log.sd)^2, else 0.
+# With threshold 1.2 and log.sd = log(1.5)/2, a ratio of 1.8 (= 1.2 x 1.5) costs 2 (two SDs); anything up to 1.2 is free.
+create.likelihood.for.youth.ratio = function(years = c(2025, 2030), threshold = 1.2, log.sd = log(1.5)/2,
+                                            youth.ages = c("15-19","20-24"),
+                                            adult.ages = c("25-29","30-34","35-39","40-44","45-49")){
+    function(sim){
+        get = function(type, ages) as.numeric(extract.data(sim = sim, data.type = type, years = years, ages = ages, keep.dimensions = "year"))
+        cascade = function(ages){
+            prev = get("prevalence", ages); aware = get("awareness", ages)
+            cbind(awareness = aware/prev, engagement = get("engagement", ages)/aware, suppression = get("suppression", ages)/aware)
+        }
+        r = cascade(youth.ages)/cascade(adult.ages)
+        excess = pmax(0, log(r/threshold))
+        rv = -0.5*sum((excess/log.sd)^2)
+        if(is.na(rv)) -Inf else rv
+    }
 }
 
 create.likelihood.for.trend = function(data.type,
