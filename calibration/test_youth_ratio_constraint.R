@@ -10,6 +10,8 @@ ratios = t(sapply(sims, function(sim){
     setNames(c(as.numeric(t(r)), pen(sim)), c(paste0(rep(colnames(r), 2), ".", rep(rownames(r), each = ncol(r))), "penalty"))
 }))
 print("Youth (15-24) : adult (25-49) RATE ratios and the penalty, 20 sims of the 10/27 calibration:")
+print(round(ratios, 3))
+print("Medians:"); print(round(apply(ratios, 2, median), 3))
 YOUTH.ADULT.RATIO.CONSTRAINT = NULL; a = sapply(sims, set.likelihood.and.prior.by.location("South Africa", params.start.values = simset@parameters[1,])$likelihood.to.run)
 YOUTH.ADULT.RATIO.CONSTRAINT = CON;  b = sapply(sims, set.likelihood.and.prior.by.location("South Africa", params.start.values = simset@parameters[1,])$likelihood.to.run)
 YOUTH.ADULT.RATIO.CONSTRAINT = NULL
