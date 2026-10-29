@@ -6,13 +6,13 @@
 source("model/run_systematic.R")
 
 # newest merged simset copied from the remote
-if(!exists("NEW.RUN.DIR")) NEW.RUN.DIR = "mcmc_runs/nextgen_sabssm_ratio_priors" # earlier runs: mcmc_runs/nextgen_sabssm_ratio_retention, mcmc_runs/nextgen_sabssm_ratio, mcmc_runs/nextgen_sabssm
+if(!exists("NEW.RUN.DIR")) NEW.RUN.DIR = "mcmc_runs/nextgen_youth_dropout_prior" # 10/28 run; earlier: nextgen_sabssm_ratio_priors # earlier runs: mcmc_runs/nextgen_sabssm_ratio_retention, mcmc_runs/nextgen_sabssm_ratio, mcmc_runs/nextgen_sabssm
 new.files = list.files(NEW.RUN.DIR, pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
 if(length(new.files)==0) stop(paste0("Copy the merged simset into ", NEW.RUN.DIR, "/ first"))
 NEW.SIMSET.FILE = max(new.files)
-# comparison calibration (10/27/26: master by default - the fresh nextgen run uses the same two-step pipeline)
-if(!exists("OLD.SIMSET.FILE")) OLD.SIMSET.FILE = "mcmc_runs/simset_south_africa_step2_chains1234_2026-10-20.Rdata"
-if(!exists("OLD.LABEL")) OLD.LABEL = "master.10.20"
+# comparison calibration (10/29/26: AIDS 2026 - the Oct 2025 calibration behind the abstract, 200 sims)
+if(!exists("OLD.SIMSET.FILE")) OLD.SIMSET.FILE = "cached/simset.noint_25_1yr_2026-01-22.Rdata"
+if(!exists("OLD.LABEL")) OLD.LABEL = "aids2026"
 PLOT.FILE = file.path(NEW.RUN.DIR, paste0("sabssm_youth_calibration_review_", Sys.Date(), ".pdf"))
 
 YOUTH.PARAMS = c("age.0.14.awareness.multiplier","age.0.14.engagement.multiplier","age.0.14.suppression.multiplier",

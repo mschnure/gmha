@@ -17,16 +17,9 @@ options(gmha.cap.youth.cascade = CHECK.CAP)
 N.SIMS = 200
 YEARS = c("2017","2022","2030")
 AGE.GROUPS = list("15-24" = c("15-19","20-24"), "25-49" = c("25-29","30-34","35-39","40-44","45-49"))
-SIMSETS = c("AIDS 2026" = "cached/simset.noint_25_1yr_2026-01-22.Rdata",                       # Oct 2025 calibration (200 sims)
-            "Master Oct 20" = "mcmc_runs/simset_south_africa_step2_chains1234_2026-10-20.Rdata", # main GMHA South Africa calibration
-            "Oct 21 joint" = "mcmc_runs/nextgen/simset_south_africa_step2_chains1234_2026-10-21.Rdata",
-            "Oct 22 SABSSM" = max(list.files("mcmc_runs/nextgen_sabssm", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)))
-ratio.files = list.files("mcmc_runs/nextgen_sabssm_ratio", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
-if(length(ratio.files) > 0) SIMSETS["SABSSM ratio"] = max(ratio.files)
-retention.files = list.files("mcmc_runs/nextgen_sabssm_ratio_retention", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
-if(length(retention.files) > 0) SIMSETS["Retention fresh"] = max(retention.files)
-priors.files = list.files("mcmc_runs/nextgen_sabssm_ratio_priors", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
-if(length(priors.files) > 0) SIMSETS["Priors fresh"] = max(priors.files)
+# 10/29/26: AIDS 2026 vs the current calibration only
+SIMSETS = c("AIDS 2026" = "cached/simset.noint_25_1yr_2026-01-22.Rdata",   # Oct 2025 calibration (200 sims)
+            "Current" = max(list.files("mcmc_runs/nextgen_youth_dropout_prior", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)))
 RATES = c(suppression = "SUPPRESSION.RATES", unsuppression = "UNSUPPRESSION.RATES",
           disengagement.unsuppressed = "UNSUPPRESSED.DISENGAGEMENT.RATES", disengagement.suppressed = "SUPPRESSED.DISENGAGEMENT.RATES",
           engagement = "ENGAGEMENT.RATES", testing = "TESTING.RATES")
@@ -102,8 +95,8 @@ summ = do.call(rbind, lapply(split(d, list(d$calibration, d$year, d$age), drop =
                measure = measures, median = q[1,], lower = q[2,], upper = q[3,], row.names = NULL)
 }))
 summ = summ[order(summ$measure, summ$age, summ$year, summ$calibration), ]
-dir.create("cached/nextgen_lai_rerun_sabssm_ratio", showWarnings = FALSE)
-write.csv(summ, file.path("cached/nextgen_lai_rerun_sabssm_ratio", paste0("youth_suppression_speed_", Sys.Date(), ".csv")), row.names = F)
+dir.create("cached/nextgen_lai_rerun_youth_dropout_prior", showWarnings = FALSE)
+write.csv(summ, file.path("cached/nextgen_lai_rerun_youth_dropout_prior", paste0("youth_suppression_speed_", Sys.Date(), ".csv")), row.names = F)
 
 wide = reshape(summ[, c("calibration","year","age","measure","median")], idvar = c("measure","age","year"),
                timevar = "calibration", direction = "wide")

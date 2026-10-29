@@ -11,7 +11,7 @@
 # Output: <RUN.DIR>/chain_agreement_<date>.csv (R-hat) and printed summary
 ################################################################################################
 source("model/run_systematic.R")
-if(!exists("RUN.DIR")) RUN.DIR = "mcmc_runs/nextgen_sabssm_ratio_priors"
+if(!exists("RUN.DIR")) RUN.DIR = "mcmc_runs/nextgen_youth_dropout_prior"
 N.LIK.SIMS = 50
 
 files = list.files(RUN.DIR, pattern = "^simset_south_africa_step2_chain[1-4]_[0-9-]+\\.Rdata$", full.names = T)

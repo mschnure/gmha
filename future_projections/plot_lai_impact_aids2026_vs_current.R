@@ -12,13 +12,14 @@
 #   cmp_summary_<date>.csv         numbers behind the bar charts
 ################################################################################################
 source("model/run_systematic.R")
-OUT.DIR = file.path("cached", "nextgen_lai_rerun_sabssm_ratio_priors")
-CAL.LABELS = c(aids2026 = "AIDS 2026", current = "Current (Oct 27)")
-CAL.COLS = c("AIDS 2026" = "#B45F1B", "Current (Oct 27)" = "#1F6F8B")
+if(!exists("CURRENT.RUN")) CURRENT.RUN = "youth_dropout_prior" # 10/28 run (earlier: sabssm_ratio_priors)
+OUT.DIR = file.path("cached", paste0("nextgen_lai_rerun_", CURRENT.RUN))
+CAL.LABELS = c(aids2026 = "AIDS 2026", current = "Current")
+CAL.COLS = c("AIDS 2026" = "#B45F1B", "Current" = "#1F6F8B")
 arrays = list(aids2026 = "cached/full.results.array_2026-01-22.Rdata",
               current = max(list.files(OUT.DIR, pattern = "^full\\.results\\.array_[0-9-]+\\.Rdata$", full.names = T)))
 SIMSETS = c(aids2026 = "cached/simset.noint_25_1yr_2026-01-22.Rdata",
-            current = max(list.files("mcmc_runs/nextgen_sabssm_ratio_priors", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)))
+            current = max(list.files(paste0("mcmc_runs/nextgen_", CURRENT.RUN), pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)))
 SCENARIOS = c("all.25","all.direct.25","all.100","all.direct.100")
 SC.LABELS = c(all.25 = "25%, requirement", all.direct.25 = "25%, no requirement",
               all.100 = "100%, requirement", all.direct.100 = "100%, no requirement")
