@@ -1,53 +1,40 @@
 
 PARAMETER.VAR.BLOCKS = list(
     
-    trate0 = "trate.0",
-    trate1 = "trate.1",
-    trate2 = "trate.2",
-    trate3 = "trate.3", 
+    # 10/29/26 (master-convergence): transmission parameters grouped BY TIME POINT - each trate with every age group's
+    # multiplier for that time point - so the sampler can learn the trade-off between them (trate.k up / all age
+    # multipliers .k down gives the same incidence). Previously each trate was alone and the age multipliers were grouped
+    # by age (times 1-3 together), which mixed poorly (South Africa: 38 of 77 parameters with R-hat > 1.1).
+    transmission.time.0 = c("trate.0",
+                             "age.15.to.19.transmission.multiplier.0",
+                             "age.20.to.29.transmission.multiplier.0",
+                             "age.30.to.39.transmission.multiplier.0",
+                             "age.40.to.49.transmission.multiplier.0",
+                             "age.50.and.over.transmission.multiplier.0"),
+    transmission.time.1 = c("trate.1",
+                             "age.15.to.19.transmission.multiplier.1",
+                             "age.20.to.29.transmission.multiplier.1",
+                             "age.30.to.39.transmission.multiplier.1",
+                             "age.40.to.49.transmission.multiplier.1",
+                             "age.50.and.over.transmission.multiplier.1"),
+    transmission.time.2 = c("trate.2",
+                             "age.15.to.19.transmission.multiplier.2",
+                             "age.20.to.29.transmission.multiplier.2",
+                             "age.30.to.39.transmission.multiplier.2",
+                             "age.40.to.49.transmission.multiplier.2",
+                             "age.50.and.over.transmission.multiplier.2"),
+    transmission.time.3 = c("trate.3",
+                             "age.15.to.19.transmission.multiplier.3",
+                             "age.20.to.29.transmission.multiplier.3",
+                             "age.30.to.39.transmission.multiplier.3",
+                             "age.40.to.49.transmission.multiplier.3",
+                             "age.50.and.over.transmission.multiplier.3"),
     trate4 = c("trate.4", 
                "proportion.trate.change.by.3.5"),
     
-    # time.0 = "time.0",
-    # time.1 = "time.1",
-    # time.2 = "time.2",
-    # time.3 = "time.3",
-    
-    sex.transmission.multiplier = c("female.to.male.multiplier"),
-    
-    age.transmission.multipliers.00 = c("age.15.to.19.transmission.multiplier.0"),
-    
-    age.transmission.multipliers.01 = c("age.20.to.29.transmission.multiplier.0"),
-    
-    age.transmission.multipliers.02 = c("age.30.to.39.transmission.multiplier.0"),
-    
-    age.transmission.multipliers.03 = c("age.40.to.49.transmission.multiplier.0"),
-    
-    age.transmission.multipliers.04 = c("age.50.and.over.transmission.multiplier.0"),
-    
-    
-    age.transmission.multipliers.1 = c("age.15.to.19.transmission.multiplier.1",
-                                       "age.15.to.19.transmission.multiplier.2",
-                                       "age.15.to.19.transmission.multiplier.3"),
-    
-    age.transmission.multipliers.2 = c("age.20.to.29.transmission.multiplier.1",
-                                       "age.20.to.29.transmission.multiplier.2",
-                                       "age.20.to.29.transmission.multiplier.3"),
-    
-    age.transmission.multipliers.3 = c("age.30.to.39.transmission.multiplier.1",
-                                       "age.30.to.39.transmission.multiplier.2",
-                                       "age.30.to.39.transmission.multiplier.3"),
-    
-    age.transmission.multipliers.4 = c("age.40.to.49.transmission.multiplier.1",
-                                       "age.40.to.49.transmission.multiplier.2",
-                                       "age.40.to.49.transmission.multiplier.3"),
-    
-    age.transmission.multipliers.5 = c("age.50.and.over.transmission.multiplier.1",
-                                       "age.50.and.over.transmission.multiplier.2",
-                                       "age.50.and.over.transmission.multiplier.3"),
-    
-    
-    age.assortativity = c("age.assortativity"),
+    # who infects whom: sex and age mixing together (10/29/26; previously each alone)
+    transmission.mixing = c("female.to.male.multiplier",
+                            "age.assortativity"),
     
     birth.transmission = c("birth.transmission.risk.0",
                            "birth.transmission.risk.1"),
