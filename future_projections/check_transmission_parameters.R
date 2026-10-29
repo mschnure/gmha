@@ -16,14 +16,14 @@ fmt = function(v) ifelse(is.na(v[1]), "-", sprintf("%.3f (%.3f-%.3f)", v[1], v[2
 
 rows = list()
 for(cal in names(SIMSETS)){
-    P = get(load(SIMSETS[[cal]])[1])@parameters
-    get = function(nm) if(nm %in% colnames(P)) P[, nm] else NULL
+    P = base::get(load(SIMSETS[[cal]])[1])@parameters
+    par = function(nm) if(nm %in% colnames(P)) P[, nm] else NULL
     for(nm in c("trate.0","trate.1","trate.2","trate.3","trate.4","proportion.trate.change.by.3.5","female.to.male.multiplier","age.assortativity"))
-        rows[[length(rows)+1]] = data.frame(calibration = cal, parameter = nm, time = "", value = fmt(q(get(nm))), median = q(get(nm))[1])
+        rows[[length(rows)+1]] = data.frame(calibration = cal, parameter = nm, time = "", value = fmt(q(par(nm))), median = q(par(nm))[1])
     for(a in AGES) for(t in names(TIMES)){
-        m = get(paste0(a, ".transmission.multiplier", t))
+        m = par(paste0(a, ".transmission.multiplier", t))
         rows[[length(rows)+1]] = data.frame(calibration = cal, parameter = paste0(a, " multiplier"), time = TIMES[[t]], value = fmt(q(m)), median = q(m)[1])
-        tr = get(TRATE[[t]])
+        tr = par(TRATE[[t]])
         eff = if(is.null(m) || is.null(tr)) NULL else tr*m
         rows[[length(rows)+1]] = data.frame(calibration = cal, parameter = paste0(a, " trate x multiplier"), time = TIMES[[t]], value = fmt(q(eff)), median = q(eff)[1])
     }
