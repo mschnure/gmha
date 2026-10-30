@@ -487,8 +487,18 @@ read.surveillance.data.stratified = function(data.type,
                                                  age=ages[i],
                                                  include.countries = T,
                                                  suffix = suffix)
-                
-                rv[,i,] = x 
+                # by name (10/30/26), not position - files can differ in which countries they list (e.g., the 2025-round
+                # AIDS-deaths 10-19/15-24/15-49/50+ files have no Hungary or Latvia rows); countries a file doesn't list stay NA
+                extra = setdiff(dimnames(x)$location, dimnames(rv)$location)
+                if(length(extra)>0)
+                    print(paste0(data.type," ",ages[i],suffix,": not in the ",ages[1]," file, so dropped: ",paste0(extra, collapse = ", ")))
+                missing = setdiff(dimnames(rv)$location, dimnames(x)$location)
+                if(length(missing)>0)
+                    print(paste0(data.type," ",ages[i],suffix,": no rows for ",paste0(missing, collapse = ", ")," - set to NA"))
+                years.to.fill = intersect(dimnames(rv)$year, dimnames(x)$year)
+                locations.to.fill = intersect(dimnames(rv)$location, dimnames(x)$location)
+                rv[years.to.fill,i,locations.to.fill] = x[years.to.fill, locations.to.fill]
+
             }
         } else {
         ## Pull TOTAL AGE array
@@ -596,6 +606,23 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
                                         dimnames = dim.names.locations))
     if(sex!="all")
         return(locations) # by-sex files: countries (+ Global) only; remainders aren't built from these
+    
+    # 10/30/26: some files leave countries out entirely (e.g., the 2025-round AIDS deaths 15-24/15-49/10-19/50+ files have
+    # no rows for Hungary or Latvia) - add them as NA so every file has the same countries (and the remainder sums work)
+    expected.countries = unique(c(REMAINDER.COUNTRIES.UNAIDS, "United States",
+                                  unlist(LOCATIONS.INCOME[c("low.remainder","lower.middle.remainder","upper.middle.remainder","high.remainder",
+                                                            "low.all","lower.middle.all","upper.middle.all","high.all")])))
+    missing.countries = setdiff(expected.countries, colnames(locations))
+    if(length(missing.countries)>0){
+        print(paste0(data.type, " ", age, suffix, ": no rows for ", paste0(missing.countries, collapse = ", "), " - set to NA"))
+        global.column = which(colnames(locations)=="Global")
+        padded = cbind(locations[,-global.column,drop=F],
+                       matrix(NA, nrow = nrow(locations), ncol = length(missing.countries), dimnames = list(NULL, missing.countries)),
+                       Global = locations[,global.column])
+        names(dimnames(padded)) = names(dimnames(locations))
+        locations = padded
+        location.names = colnames(locations)
+    }
     locations[,"United States"] = NA
     
     # if(data.type=="prevalence") browser()
@@ -1023,7 +1050,7 @@ read.cascade.data.files = function(dir = 'data_manager/data',
 get.countries.without.prevalence.data = function(dir = 'data_manager/data'){
     sub.dir = file.path(dir, "prevalence")
     files = list.files(sub.dir)
-    file = files[grepl("All ages", files)]
+    file = files[grepl("All ages", files) & sapply(files, unaids.file.sex)=="all"] # 10/30/26: skip the by-sex files
     if (length(file)!=1)
         stop("can only pull one file at a time")
     
