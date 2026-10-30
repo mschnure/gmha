@@ -2,7 +2,7 @@
 # 10/30/26: check the UNAIDS by-sex targets (AIDSinfo by-sex files) in the newest revised data manager.
 # For each data type and location: total vs male + female (ratio should be ~1; the by-sex files can come from a
 # newer UNAIDS estimates round than the totals, so differences point to mixed rounds), for a few years, and how
-# many by-sex observations there are in the calibration years (1995-2023).
+# many by-sex observations there are in the calibration years (1995-2025).
 # Run after data_manager/save_data_manager.R and data_manager/revise_overlapping_age_groups.R.
 ################################################################################################
 dm.files = list.files("cached", pattern = "^data\\.manager_global_revised_ages_(lai_)?[0-9-]+\\.Rdata$")
@@ -12,7 +12,7 @@ load(dm.file)
 
 LOCATIONS = c("South Africa","Kenya","Nigeria")
 YEARS = c("2000","2010","2020","2023")
-CALIBRATION.YEARS = as.character(1995:2023)
+CALIBRATION.YEARS = as.character(1995:2025)
 options(width = 200)
 for(data.type in c("incidence","prevalence","hiv.mortality")){
     by.sex = DATA.MANAGER[[data.type]]$year.age.sex.location
@@ -32,7 +32,7 @@ for(data.type in c("incidence","prevalence","hiv.mortality")){
         tab = rbind(tab, "all ages" = all.ages)
         n.obs = sum(!is.na(by.sex[intersect(CALIBRATION.YEARS, dimnames(by.sex)$year), ages, , location])) +
             sum(!is.na(sex.all.ages[intersect(CALIBRATION.YEARS, dimnames(sex.all.ages)$year), , location]))
-        print(paste0("==== ", data.type, ", ", location, ": ", n.obs, " by-sex observations in 1995-2023"))
+        print(paste0("==== ", data.type, ", ", location, ": ", n.obs, " by-sex observations in 1995-2025"))
         print(noquote(tab))
     }
 }
