@@ -714,12 +714,11 @@ compute.likelihood = function(sim,
     }
 
     if(!is.null(weight.by.age)){ # named vector e.g., c("80 and over" = 0.5)
-        weight.per.obs = sapply(as.character(y.star.with.dim$age),function(age){
-            if(is.na(weight.by.age[age]))
-                1
-            else
-                weight.by.age[age]
-        })
+        # one weight per OBSERVATION, from its age (obs.dimensions = "<age>_<sex>"). Fixed 10/30/26: this used to take
+        # the ages of the model strata (y.star), which only lines up when every year has data - with likelihood years
+        # to 2025 and total mortality data to 2023 it gave "non-conformable arrays"
+        obs.ages = sub("_[^_]*$", "", obs.dimensions)
+        weight.per.obs = ifelse(is.na(weight.by.age[obs.ages]), 1, weight.by.age[obs.ages])
         
         weight.matrix = sqrt(weight.per.obs) %*% t(sqrt(weight.per.obs))
         cov.mat = cov.mat/weight.matrix
