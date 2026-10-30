@@ -466,9 +466,17 @@ read.surveillance.data.stratified = function(data.type,
                                                  age=ages[i],
                                                  include.countries = T,
                                                  suffix = suffix)
-                if(!setequal(dimnames(x)$location, dimnames(rv)$location) || !setequal(dimnames(x)$year, dimnames(rv)$year))
-                    stop(paste0("locations/years in the ",data.type," ",ages[i]," file don't match the ",ages[1]," file"))
-                rv[,i,] = x[dimnames(rv)$year, dimnames(rv)$location] # by name (10/30/26), not position
+                # by name (10/30/26), not position - files can differ in which countries they list (e.g., the 2025-round
+                # AIDS-deaths 10-19/15-24/15-49/50+ files have no Hungary or Latvia rows); countries a file doesn't list stay NA
+                extra = setdiff(dimnames(x)$location, dimnames(rv)$location)
+                if(length(extra)>0)
+                    print(paste0(data.type," ",ages[i],suffix,": not in the ",ages[1]," file, so dropped: ",paste0(extra, collapse = ", ")))
+                missing = setdiff(dimnames(rv)$location, dimnames(x)$location)
+                if(length(missing)>0)
+                    print(paste0(data.type," ",ages[i],suffix,": no rows for ",paste0(missing, collapse = ", ")," - set to NA"))
+                years.to.fill = intersect(dimnames(rv)$year, dimnames(x)$year)
+                locations.to.fill = intersect(dimnames(rv)$location, dimnames(x)$location)
+                rv[years.to.fill,i,locations.to.fill] = x[years.to.fill, locations.to.fill]
 
             }
         } else {
