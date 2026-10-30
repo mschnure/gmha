@@ -69,6 +69,12 @@ YOUTH.CASCADE.LIKELIHOOD.WEIGHT = NULL
 # (see create.likelihood.for.youth.ratio in calibration/likelihood/likelihood.R). NULL = off. Set in the run script.
 YOUTH.ADULT.RATIO.CONSTRAINT = NULL
 
+# NEXTGEN (10/30/26): anchor South Africa's transmission priors (trates, age-by-time multipliers, female-to-male, age
+# assortativity) to master's Oct 20 calibration - see calibration/prior_distributions/south_africa_prior.R. Only takes
+# effect once calibration/prior_distributions/south_africa_transmission_anchor.Rdata exists (made by
+# calibration/make_master_anchored_transmission_prior.R). Read when the priors are built (sourcing), so set it here.
+USE.SA.TRANSMISSION.ANCHOR = TRUE
+
 # Names of the settings above (the pipeline copies these to its worker R sessions, so any changes
 # made in the current session after sourcing this file also apply to the workers)
 MCMC.SETTING.NAMES = c("MCMC.STEP.SETTINGS", "MCMC.BASE.SEED", "STEP1.START.VALUE.FILES",

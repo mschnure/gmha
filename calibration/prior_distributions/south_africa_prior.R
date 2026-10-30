@@ -1,13 +1,47 @@
 source('calibration/make_joint_distribution.R')
 
-SOUTH.AFRICA.PRIOR = join.distributions(
-    
-    # general 
+# NEXTGEN (10/30/26): transmission priors split out so they can be ANCHORED to the main GMHA (master) South Africa
+# calibration - see calibration/make_master_anchored_transmission_prior.R and USE.SA.TRANSMISSION.ANCHOR in
+# calibration/mcmc_settings.R. These are the original (un-anchored) transmission priors.
+SA.TRANSMISSION.PRIOR.ORIGINAL = join.distributions(
     trate.0 = Lognormal.Distribution(log(.4), log(4)/2),
     trate.1 = Lognormal.Distribution(log(.1), log(4)/2), 
     trate.2 = Lognormal.Distribution(log(.1), log(4)/2), 
     trate.3 = Lognormal.Distribution(log(.1), log(4)/2), 
     trate.4 = Lognormal.Distribution(log(.1), log(4)/2), 
+    # sex transmission multipliers
+    female.to.male.multiplier = Lognormal.Distribution(log(1), log(4)/2), 
+    # age transmission multipliers -  updated 7/29/26 to include age 30-39
+    # age transmission multipliers -  updated 5/21/26 so that they are correlated by both age and time
+    age.time.multipliers = make.joint.distribution.age.time.all.ages(median.r2.age.15.to.19 = 1,
+                                                                     median.r2.age.20.to.29 = 1,
+                                                                     median.r2.age.30.to.39 = 1,
+                                                                     median.r2.age.40.to.49 = 1,
+                                                                     median.r2.age.50.and.over = .5,
+                                                                     median.r0.to.r1 = 1, #time 0 relative to 1
+                                                                     median.r1.to.r2 = 1, #time 1 relative to 2
+                                                                     median.r3.to.r2 = 1, #time 3 relative to 2
+                                                                     sd.r2 = log(2)/2,
+                                                                     sd.r0.to.r1 = log(2)/2,
+                                                                     sd.r1.to.r2= log(2)/2,
+                                                                     sd.r3.to.r2 = log(2)/2,
+                                                                     corr.15.to.19.with.20.to.29 = 0.5, # age 15 * age 20 correlation 
+                                                                     corr.20.to.29.with.30.to.39 = 0.5, # age 20 * age 30 correlation 
+                                                                     corr.30.to.39.with.40.to.49 = 0.5, # age 3 * age 40 correlation 
+                                                                     corr.40.to.49.with.50.and.over = 0.5, # age 4 * age 5 correlation 
+                                                                     age.prefix.names = c("age.15.to.19.transmission.multiplier",
+                                                                                          "age.20.to.29.transmission.multiplier",
+                                                                                          "age.30.to.39.transmission.multiplier",
+                                                                                          "age.40.to.49.transmission.multiplier",
+                                                                                          "age.50.and.over.transmission.multiplier"),
+                                                                     time.suffixes = c(".0",".1",".2",".3")),
+    # other transmission multipliers
+    age.assortativity = Lognormal.Distribution(log(1), log(1.5)/2)
+)
+
+SA.OTHER.PRIOR = join.distributions(
+    
+    # general 
 
     # COUNTRY-SPECIFIC; MUST EDIT:
     # nextgen (10/27/26): tighter dropout priors around the IeDEA value (Cornell 2010: 14.4% lost by 12 months);
@@ -46,37 +80,9 @@ SOUTH.AFRICA.PRIOR = join.distributions(
     # THE REST OF THESE DON'T CHANGE 
     proportion.trate.change.by.3.5 = Beta.Distribution(alpha = 21,beta = 7),
     
-    # sex transmission multipliers
-    female.to.male.multiplier = Lognormal.Distribution(log(1), log(4)/2), 
-    
-    # age transmission multipliers -  updated 7/29/26 to include age 30-39
-    # age transmission multipliers -  updated 5/21/26 so that they are correlated by both age and time
-    age.time.multipliers = make.joint.distribution.age.time.all.ages(median.r2.age.15.to.19 = 1,
-                                                                     median.r2.age.20.to.29 = 1,
-                                                                     median.r2.age.30.to.39 = 1,
-                                                                     median.r2.age.40.to.49 = 1,
-                                                                     median.r2.age.50.and.over = .5,
-                                                                     median.r0.to.r1 = 1, #time 0 relative to 1
-                                                                     median.r1.to.r2 = 1, #time 1 relative to 2
-                                                                     median.r3.to.r2 = 1, #time 3 relative to 2
-                                                                     sd.r2 = log(2)/2,
-                                                                     sd.r0.to.r1 = log(2)/2,
-                                                                     sd.r1.to.r2= log(2)/2,
-                                                                     sd.r3.to.r2 = log(2)/2,
-                                                                     corr.15.to.19.with.20.to.29 = 0.5, # age 15 * age 20 correlation 
-                                                                     corr.20.to.29.with.30.to.39 = 0.5, # age 20 * age 30 correlation 
-                                                                     corr.30.to.39.with.40.to.49 = 0.5, # age 3 * age 40 correlation 
-                                                                     corr.40.to.49.with.50.and.over = 0.5, # age 4 * age 5 correlation 
-                                                                     age.prefix.names = c("age.15.to.19.transmission.multiplier",
-                                                                                          "age.20.to.29.transmission.multiplier",
-                                                                                          "age.30.to.39.transmission.multiplier",
-                                                                                          "age.40.to.49.transmission.multiplier",
-                                                                                          "age.50.and.over.transmission.multiplier"),
-                                                                     time.suffixes = c(".0",".1",".2",".3")),
     
     
-    # other transmission multipliers
-    age.assortativity = Lognormal.Distribution(log(1), log(1.5)/2), 
+    
     
     # cascade parameters
     log.OR.testing.intercept = Normal.Distribution(0, log(4)/2), 
@@ -137,3 +143,22 @@ SOUTH.AFRICA.PRIOR = join.distributions(
     # changed 2/18 to log(1.5) from log(2) - (1/17), log(4)/2 - original
     
 )
+
+
+# NEXTGEN (10/30/26): transmission priors anchored to master's Oct 20 South Africa calibration, if switched on and the
+# anchor file exists: each transmission parameter gets an independent lognormal centred on master's posterior median,
+# with a log-scale SD of twice master's posterior log-scale SD (floored). The anchor file is made by
+# calibration/make_master_anchored_transmission_prior.R.
+SA.TRANSMISSION.ANCHOR.FILE = "calibration/prior_distributions/south_africa_transmission_anchor.Rdata"
+SA.TRANSMISSION.PRIOR = SA.TRANSMISSION.PRIOR.ORIGINAL
+SA.TRANSMISSION.ANCHORED = FALSE
+if(isTRUE(get0("USE.SA.TRANSMISSION.ANCHOR"))){
+    if(file.exists(SA.TRANSMISSION.ANCHOR.FILE)){
+        load(SA.TRANSMISSION.ANCHOR.FILE) # SA.TRANSMISSION.ANCHOR: data.frame(parameter, meanlog, sdlog)
+        SA.TRANSMISSION.PRIOR = do.call(join.distributions, setNames(lapply(seq_len(nrow(SA.TRANSMISSION.ANCHOR)), function(i)
+            Lognormal.Distribution(SA.TRANSMISSION.ANCHOR$meanlog[i], SA.TRANSMISSION.ANCHOR$sdlog[i])), SA.TRANSMISSION.ANCHOR$parameter))
+        SA.TRANSMISSION.ANCHORED = TRUE
+    } else
+        print(paste0("USE.SA.TRANSMISSION.ANCHOR is TRUE but ", SA.TRANSMISSION.ANCHOR.FILE, " doesn't exist - using the original transmission priors"))
+}
+SOUTH.AFRICA.PRIOR = join.distributions(transmission = SA.TRANSMISSION.PRIOR, other = SA.OTHER.PRIOR)
