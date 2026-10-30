@@ -9,7 +9,10 @@
 #   - the same calibration plots for the merged Step 2 simset
 # plus overview.csv: one row per location (acceptance, worst R-hat, merged simset size, problems).
 #
-# Run on the machine that ran the MCMC (it reads mcmc_runs/). Takes a few minutes per location.
+# Run on the machine that ran the MCMC (it reads mcmc_runs/). The first review of a run loads each full
+# mcmc file once to save a light copy without the simulations (runs from now on save these as they go);
+# after that it takes about a minute per location. Reviewing only some locations updates just their
+# PDFs and rows in overview.csv.
 # Step 2 simsets have 250 simulations per chain and 1,000 merged (STEP2.SIMSET.BURN/THIN), so they're
 # plotted in full; anything bigger is thinned to ~MAX.PLOT.SIMS for the plots only.
 # To look at one location interactively in RStudio instead, see calibration/review_mcmc_chains.R.
@@ -21,10 +24,9 @@ source("calibration/mcmc_review.R")
 
 LOCATIONS = "all"        # "all" = all 15, or e.g. c("Kenya", "Zambia")
 MAX.PLOT.SIMS = 1000     # simulations per simset in the plots
-REMAKE.STEP2.SIMSETS = TRUE   # first remake the Step 2 simsets (each chain's and the merged one) from the
-                              # saved mcmc files with the current STEP2.SIMSET.BURN/THIN (mcmc_settings.R:
-                              # burn 50,000, thin 200 -> 250 per chain, 1,000 merged); needed for
-                              # simsets made before that setting existed. FALSE once they're remade.
+REMAKE.STEP2.SIMSETS = FALSE  # TRUE only after changing STEP2.SIMSET.BURN/THIN (mcmc_settings.R): remakes
+                              # each location's Step 2 simsets from its mcmc files first (slow: loads every
+                              # full mcmc file). The pipeline already makes them with the current settings.
 
 mcmc.progress()          # a location whose chains aren't all done gets reviewed with what's saved so far
 

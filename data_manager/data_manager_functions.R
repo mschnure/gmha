@@ -444,12 +444,14 @@ read.surveillance.data.type = function(data.type,
                                                         suffix = suffix)
     
     ## Sexes ##
-    rv$year.age.sex.location = read.surveillance.data.stratified(data.type=data.type,
-                                                                 strata = 'year.age.sex',
-                                                                 include.countries = T,
-                                                                 suffix = suffix) 
-    
-    rv$sex.location = NULL
+    # 10/30/26: by-sex data now from the UNAIDS AIDSinfo by-sex files ("..._Population_ Female adults (15+).csv", etc.) for
+    # every age group that has them (10-19, 15-24, 15-49, 15+, 50 and over, All ages; none for 0-14), individual
+    # countries + Global only (remainder locations NA). Replaces the hand-entered 15+ by-sex values from the UNAIDS
+    # data book PDFs (data_manager/combined_pdfs.csv, read.pdf.data). "All ages" by sex also goes in year.sex.location.
+    rv$year.age.sex.location = read.surveillance.data.by.sex(data.type=data.type,
+                                                             suffix = suffix,
+                                                             template = rv$year.age.location) 
+    rv$year.sex.location = rv$year.age.sex.location[,"All ages",,]
 
     rv
 }
@@ -524,7 +526,8 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
                                         data.type,
                                         include.countries = F,
                                         age,
-                                        suffix){
+                                        suffix,
+                                        sex = "all"){ # "all", "male" or "female" (10/30/26: by-sex AIDSinfo files)
    sub.dir = file.path(dir, data.type)
     # if(data.type=="incidence" & include.countries==T & age=="50 and over")
     #     browser()
@@ -532,10 +535,12 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
     
     ## Total and locations
     age.to.match = gsub("\\+", "\\\\+", age)
-    file = files[grepl(age.to.match,files)]
+    file = files[grepl(age.to.match,files) & sapply(files, unaids.file.sex)==sex]
     
+    if(sex!="all" && length(file)==0)
+        return(NULL) # no by-sex file for this age group (e.g., 0-14)
     if (length(file)!=1)
-        stop("can only pull one file at a time")
+        stop(paste0("can only pull one file at a time (",data.type,", ",age,", ",sex,"): ",paste0(file, collapse = "; ")))
     
     one.df = read.csv(file.path(sub.dir,file), row.names = 1)
     colnames(one.df) = substring(colnames(one.df),2)
@@ -589,6 +594,8 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
     locations =  suppressWarnings(array(as.integer(sapply(one.df.t[paste0(years, suffix),1:(length(location.names))], gsub, pattern = " ",replacement = "")),
                                         dim = sapply(dim.names.locations, length), 
                                         dimnames = dim.names.locations))
+    if(sex!="all")
+        return(locations) # by-sex files: countries (+ Global) only; remainders aren't built from these
     locations[,"United States"] = NA
     
     # if(data.type=="prevalence") browser()
@@ -629,6 +636,44 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
         return(global)
     
     
+}
+
+# 10/30/26: which sex a UNAIDS AIDSinfo file is for, from the "_Population_ ..." part of its name
+#   e.g. "..._Population_ Young women (15-24).csv" -> "female"; "..._Population_ Men aged 50 and over.csv" -> "male";
+#   "..._Population_ All adults (15+).csv" or no "_Population_" part (e.g. Children (0-14)) -> "all"
+unaids.file.sex = function(file){
+    if(!grepl("_Population_", file))
+        return("all")
+    population = tolower(sub(".*_Population_", "", file))
+    if(grepl("female|women", population)) "female"
+    else if(grepl("male|men", population)) "male"
+    else "all"
+}
+
+# 10/30/26: by-sex incidence/prevalence/hiv mortality from the AIDSinfo by-sex files; returns a year x age x sex x location
+# array with the same years/ages/locations as template (the year.age.location array of totals). Filled for
+# locations.to.fill (individual countries + Global); everything else (remainders, 0-14) is NA.
+read.surveillance.data.by.sex = function(data.type,
+                                         suffix,
+                                         template,
+                                         locations.to.fill = c(INDIVIDUAL.COUNTRIES, "Global")){
+    dim.names = list(year = dimnames(template)$year,
+                     age = dimnames(template)$age,
+                     sex = c("male","female"),
+                     location = dimnames(template)$location)
+    rv = array(as.numeric(NA), dim = sapply(dim.names, length), dimnames = dim.names)
+    for(age in dim.names$age){
+        for(sex in dim.names$sex){
+            x = read.surveillance.data.files(data.type = data.type, age = age, sex = sex,
+                                             include.countries = T, suffix = suffix)
+            if(is.null(x))
+                next
+            years = intersect(dim.names$year, dimnames(x)$year)
+            locations = intersect(locations.to.fill, dimnames(x)$location)
+            rv[years, age, sex, locations] = x[years, locations]
+        }
+    }
+    rv
 }
 
 read.cascade.data.type = function(data.type="cascade",
@@ -1002,7 +1047,7 @@ get.countries.without.prevalence.data = function(dir = 'data_manager/data'){
 #      where global - sum of countries goes negative because most country values are imputed "<" midpoints
 fix.count.bounds = function(data.manager,
                             data.types = c("incidence","prevalence","hiv.mortality"),
-                            elements = c("year.location","year.age.location")){
+                            elements = c("year.location","year.age.location","year.sex.location","year.age.sex.location")){
     for(data.type in data.types){
         for(element in elements){
             pt = data.manager[[data.type]][[element]]
@@ -1019,7 +1064,8 @@ fix.count.bounds = function(data.manager,
             } else if(element=="year.age.location"){
                 lo[,,"non.unaids.remainder"] = pt[,,"non.unaids.remainder"]*lo[,,"Global"]/pt[,,"Global"]
                 up[,,"non.unaids.remainder"] = pt[,,"non.unaids.remainder"]*up[,,"Global"]/pt[,,"Global"]
-            } else stop("fix.count.bounds only set up for year.location and year.age.location")
+            } else if(!element %in% c("year.sex.location","year.age.sex.location")) # by-sex: countries only, nothing to rescale (10/30/26)
+                stop("fix.count.bounds only set up for year.location, year.age.location, year.sex.location and year.age.sex.location")
             
             negative = !is.na(pt) & pt<0
             if(any(negative)){
@@ -1038,7 +1084,8 @@ fix.count.bounds = function(data.manager,
 ##-------------------------##
 ##-- SPECIALTY FUNCTIONS --##
 ##-------------------------##
-# Called for sex-specific incidence/prevalence/hiv mortality data in read.surveillance.data.stratified
+# NO LONGER USED (10/30/26) - by-sex data now come from the AIDSinfo by-sex files (read.surveillance.data.by.sex).
+# Was called for sex-specific incidence/prevalence/hiv mortality data in read.surveillance.data.stratified
 read.pdf.data = function(dir = 'data_manager',
                          data.type,
                          suffix){
