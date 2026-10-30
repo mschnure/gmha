@@ -889,9 +889,7 @@ read.cascade.data.files = function(dir = 'data_manager/data',
     rownames(one.df.t) = colnames(one.df)
     colnames(one.df.t) = rownames(one.df)
 
-    if("2024" %in% years){
-        years = years[years!="2024"]
-    }
+    # (10/30/26: no longer dropping 2024 - the 2025 UNAIDS cascade files have complete 2024 and 2025 data; master had already removed this)
         
     dim.names.global = list(year=as.character(years, suffix))
 
