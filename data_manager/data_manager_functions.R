@@ -466,8 +466,10 @@ read.surveillance.data.stratified = function(data.type,
                                                  age=ages[i],
                                                  include.countries = T,
                                                  suffix = suffix)
-                
-                rv[,i,] = x 
+                if(!setequal(dimnames(x)$location, dimnames(rv)$location) || !setequal(dimnames(x)$year, dimnames(rv)$year))
+                    stop(paste0("locations/years in the ",data.type," ",ages[i]," file don't match the ",ages[1]," file"))
+                rv[,i,] = x[dimnames(rv)$year, dimnames(rv)$location] # by name (10/30/26), not position
+
             }
         } else {
         ## Pull TOTAL AGE array
@@ -575,6 +577,23 @@ read.surveillance.data.files = function(dir = 'data_manager/data',
                                         dimnames = dim.names.locations))
     if(sex!="all")
         return(locations) # by-sex files: countries (+ Global) only; remainders aren't built from these
+    
+    # 10/30/26: some files leave countries out entirely (e.g., the 2025-round AIDS deaths 15-24/15-49/10-19/50+ files have
+    # no rows for Hungary or Latvia) - add them as NA so every file has the same countries (and the remainder sums work)
+    expected.countries = unique(c(REMAINDER.COUNTRIES.UNAIDS, "United States",
+                                  unlist(LOCATIONS.INCOME[c("low.remainder","lower.middle.remainder","upper.middle.remainder","high.remainder",
+                                                            "low.all","lower.middle.all","upper.middle.all","high.all")])))
+    missing.countries = setdiff(expected.countries, colnames(locations))
+    if(length(missing.countries)>0){
+        print(paste0(data.type, " ", age, suffix, ": no rows for ", paste0(missing.countries, collapse = ", "), " - set to NA"))
+        global.column = which(colnames(locations)=="Global")
+        padded = cbind(locations[,-global.column,drop=F],
+                       matrix(NA, nrow = nrow(locations), ncol = length(missing.countries), dimnames = list(NULL, missing.countries)),
+                       Global = locations[,global.column])
+        names(dimnames(padded)) = names(dimnames(locations))
+        locations = padded
+        location.names = colnames(locations)
+    }
     locations[,"United States"] = NA
     
     # if(data.type=="prevalence") browser()
