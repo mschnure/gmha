@@ -25,7 +25,7 @@ library("mvtnorm")
 create.likelihood = function(data.manager=DATA.MANAGER,
                              parameters,
                              location,
-                             years = 1995:2023, # 1980:2023
+                             years = 1995:2024, # 1980:2023; 1995:2024 from 10/30/26 (UNAIDS estimates now go to 2025)
                              total.weight, # set this in set.likelihood.and.prior.by.location
                              #incidence
                              incidence.years=years,
