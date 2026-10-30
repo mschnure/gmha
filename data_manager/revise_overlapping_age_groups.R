@@ -228,6 +228,30 @@ DATA.MANAGER$hiv.mortality$year.age.location = new.hiv.mortality.age
 DATA.MANAGER$hiv.mortality.lowers$year.age.location = new.hiv.mortality.lowers.age
 DATA.MANAGER$hiv.mortality.uppers$year.age.location = new.hiv.mortality.uppers.age
 
+# BY SEX (10/30/26, UNAIDS AIDSinfo by-sex files): the same new age groups for year.age.sex.location -
+# 25-49 = 15-49 - 15-24 within each sex, with 15-49's relative interval for the bounds (as above). No by-sex data for 0-14.
+# year.sex.location (all ages by sex) is unchanged.
+for(data.type in c("incidence","prevalence","hiv.mortality")){
+  old.pt = DATA.MANAGER.OLD[[data.type]]$year.age.sex.location
+  if(is.null(old.pt) || !all(c("15-24","15-49") %in% dimnames(old.pt)$age))
+    next
+  new.25.to.49.by.sex = old.pt[,"15-49",,] - old.pt[,"15-24",,]
+  for(suffix in c("", ".lowers", ".uppers")){
+    old = DATA.MANAGER.OLD[[paste0(data.type, suffix)]]$year.age.sex.location
+    dim.names = dimnames(old)
+    dim.names$age = new.ages
+    new = array(as.numeric(NA), dim = sapply(dim.names, length), dimnames = dim.names)
+    for(age in intersect(c("0-14","10-19","15-24","50 and over"), dimnames(old)$age))
+      new[,age,,] = old[,age,,]
+    if(suffix=="")
+      new[,"25-49",,] = new.25.to.49.by.sex
+    else
+      new[,"25-49",,] = new.25.to.49.by.sex * old[,"15-49",,]/old.pt[,"15-49",,]
+    DATA.MANAGER[[paste0(data.type, suffix)]]$year.age.sex.location = new
+  }
+}
+DATA.MANAGER = fix.count.bounds(DATA.MANAGER, elements = "year.age.sex.location")
+
 
 # same bounds clean-up as in save_data_manager.R, now on the new 25-49 group (10/15/26)
 DATA.MANAGER = fix.count.bounds(DATA.MANAGER, elements = "year.age.location")
