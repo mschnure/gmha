@@ -32,9 +32,11 @@ print(paste0(OLD.LABEL, " (", OLD.SIMSET.FILE, "): ", simset.old@n.sim, " distin
 ## Youth parameters (weighted quantiles)
 wq = function(x, w, p){ o = order(x); cw = cumsum(w[o])/sum(w); sapply(p, function(pp) x[o][which(cw >= pp)[1]]) }
 YOUTH.PARAMS = intersect(YOUTH.PARAMS, colnames(simset.new@parameters))
-youth.summary = sapply(YOUTH.PARAMS, function(p) wq(simset.new@parameters[,p], simset.new@weights, c(0.025,0.5,0.975)))
-rownames(youth.summary) = c("2.5%","50%","97.5%")
-print("Youth parameters, new calibration:"); print(round(t(youth.summary), 3))
+if(length(YOUTH.PARAMS) > 0){
+    youth.summary = sapply(YOUTH.PARAMS, function(p) wq(simset.new@parameters[,p], simset.new@weights, c(0.025,0.5,0.975)))
+    rownames(youth.summary) = c("2.5%","50%","97.5%")
+    print("Youth parameters, new calibration:"); print(round(t(youth.summary), 3))
+} else print("No youth parameters in this calibration (e.g. a master-model run)")
 
 ## How far the other parameters moved (new median - old median, as a fraction of old 95% interval width)
 shared = setdiff(intersect(colnames(simset.new@parameters), colnames(simset.old@parameters)), YOUTH.PARAMS)
