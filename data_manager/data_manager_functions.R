@@ -934,7 +934,7 @@ read.cascade.data.files = function(dir = 'data_manager/data',
 get.countries.without.prevalence.data = function(dir = 'data_manager/data'){
     sub.dir = file.path(dir, "prevalence")
     files = list.files(sub.dir)
-    file = files[grepl("All ages", files)]
+    file = files[grepl("All ages", files) & sapply(files, unaids.file.sex)=="all"] # 10/30/26: skip the by-sex files
     if (length(file)!=1)
         stop("can only pull one file at a time")
     
