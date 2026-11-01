@@ -8,7 +8,7 @@
 #   lai_comparison_3way_<date>.csv
 # Run in RStudio (source this file) or Terminal; ~20-40 min.
 ################################################################################################
-if(!exists("NEW.RUN.DIR")) NEW.RUN.DIR = "mcmc_runs/nextgen_youth_dropout_prior" # 10/28 run (earlier: nextgen_sabssm_ratio_priors)
+if(!exists("NEW.RUN.DIR")) NEW.RUN.DIR = "mcmc_runs/nextgen_transmission_anchor" # 11/01 run (earlier: nextgen_youth_dropout_prior, nextgen_sabssm_ratio_priors)
 new.files = list.files(NEW.RUN.DIR, pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
 if(length(new.files)==0) stop(paste0("No merged simset in ", NEW.RUN.DIR, "/"))
 SIMSET.FILE = max(new.files)
