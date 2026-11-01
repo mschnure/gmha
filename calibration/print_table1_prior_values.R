@@ -42,9 +42,11 @@ print.iedea(get.suppression.rates(location = LOC), "SUPPRESSION (annual probabil
 cat("\n==== PRIORS (South Africa): median and +/- 2 SD range ====\n")
 prior = get.location.prior(LOC)
 med = get.medians(prior); sds = get.sds(prior)
-tf = unlist(sapply(prior@subdistributions, function(dist){
-    if(.hasSlot(dist,"transformations")) sapply(dist@transformations, function(t) t@name)
-    else if(is.null(dist@transformation)) "identity" else dist@transformation@name }))
+prior.transformations = function(dist){ # recursive: South Africa's prior has joint distributions inside it (10/30/26)
+    if(.hasSlot(dist,"subdistributions")) unlist(lapply(dist@subdistributions, prior.transformations))
+    else if(.hasSlot(dist,"transformations")) sapply(dist@transformations, function(t) t@name)
+    else if(is.null(dist@transformation)) "identity" else dist@transformation@name }
+tf = prior.transformations(prior)
 names(tf) = prior@var.names
 show = prior@var.names[prior@var.names %in% c("unsuppressed.disengagement.rates","suppressed.disengagement.rates","unsuppression.rates",
                      "log.OR.testing.intercept","log.OR.testing.slope","log.OR.engagement.slope","log.OR.suppression.slope",

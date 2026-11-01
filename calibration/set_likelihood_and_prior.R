@@ -81,18 +81,7 @@ set.likelihood.and.prior.by.location = function(location,
         params.start.values = get.mcmc.start.values(location, step = step, prior = prior)
     params.start.values = params.start.values[prior@var.names]
     
-    transformations = unlist(sapply(prior@subdistributions,function(dist){
-        
-        if(.hasSlot(dist,"transformations"))
-            sapply(dist@transformations,function(tf){
-                tf@name
-            })
-        else if(is.null(dist@transformation))
-            "identity"
-        else
-            dist@transformation@name
-        
-    }))
+    transformations = get.prior.transformations(prior)
     
     names(transformations) = prior@var.names
     
@@ -112,3 +101,17 @@ set.likelihood.and.prior.by.location = function(location,
 
 
 
+
+
+# Names of each parameter's transformation, in the order of dist@var.names. Recursive (10/30/26): a joint distribution can
+# now contain joint distributions (South Africa's prior = join(transmission = ..., other = ...) - south_africa_prior.R)
+get.prior.transformations = function(dist){
+    if(.hasSlot(dist,"subdistributions"))
+        unlist(lapply(dist@subdistributions, get.prior.transformations))
+    else if(.hasSlot(dist,"transformations"))
+        sapply(dist@transformations, function(tf){ tf@name })
+    else if(is.null(dist@transformation))
+        "identity"
+    else
+        dist@transformation@name
+}
