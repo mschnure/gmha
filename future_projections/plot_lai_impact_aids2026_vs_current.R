@@ -12,7 +12,7 @@
 #   cmp_summary_<date>.csv         numbers behind the bar charts
 ################################################################################################
 source("model/run_systematic.R")
-if(!exists("CURRENT.RUN")) CURRENT.RUN = "youth_dropout_prior" # 10/28 run (earlier: sabssm_ratio_priors)
+if(!exists("CURRENT.RUN")) CURRENT.RUN = "transmission_anchor" # 11/01 run (earlier: youth_dropout_prior, sabssm_ratio_priors)
 OUT.DIR = file.path("cached", paste0("nextgen_lai_rerun_", CURRENT.RUN))
 CAL.LABELS = c(aids2026 = "AIDS 2026", current = "Current")
 CAL.COLS = c("AIDS 2026" = "#B45F1B", "Current" = "#1F6F8B")

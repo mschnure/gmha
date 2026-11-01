@@ -6,7 +6,7 @@
 source("model/run_systematic.R")
 
 # newest merged simset copied from the remote
-if(!exists("NEW.RUN.DIR")) NEW.RUN.DIR = "mcmc_runs/nextgen_youth_dropout_prior" # 10/28 run; earlier: nextgen_sabssm_ratio_priors # earlier runs: mcmc_runs/nextgen_sabssm_ratio_retention, mcmc_runs/nextgen_sabssm_ratio, mcmc_runs/nextgen_sabssm
+if(!exists("NEW.RUN.DIR")) NEW.RUN.DIR = "mcmc_runs/nextgen_transmission_anchor" # 11/01 run; earlier: nextgen_youth_dropout_prior (10/28), earlier: nextgen_sabssm_ratio_priors # earlier runs: mcmc_runs/nextgen_sabssm_ratio_retention, mcmc_runs/nextgen_sabssm_ratio, mcmc_runs/nextgen_sabssm
 new.files = list.files(NEW.RUN.DIR, pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
 if(length(new.files)==0) stop(paste0("Copy the merged simset into ", NEW.RUN.DIR, "/ first"))
 NEW.SIMSET.FILE = max(new.files)
