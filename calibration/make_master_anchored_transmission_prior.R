@@ -9,7 +9,12 @@
 # Run once on the nextgen branch:  source("calibration/make_master_anchored_transmission_prior.R")
 ################################################################################################
 source("model/run_systematic.R")
-MASTER.SIMSET.FILE = "mcmc_runs/simset_south_africa_step2_chains1234_2026-10-20.Rdata"
+# master's South Africa calibration to anchor to: the newest merged Step 2 simset in mcmc_runs/ (copy it from Windows first),
+# unless MASTER.SIMSET.FILE is set before sourcing this. 10/30/26 placeholder: the 10/20 run; final: the 10/30 rerun.
+if(!exists("MASTER.SIMSET.FILE")){
+    master.files = list.files("mcmc_runs", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = TRUE)
+    MASTER.SIMSET.FILE = max(master.files) # dates in the names sort correctly
+}
 SD.MULTIPLIER = 2
 SDLOG.FLOOR = 0.1   # never tighter than about x/÷1.2 at 2 SD
 OUT = "calibration/prior_distributions/south_africa_transmission_anchor.Rdata"
