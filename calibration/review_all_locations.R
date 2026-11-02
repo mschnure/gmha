@@ -7,7 +7,10 @@
 #   - likelihood and parameter trace plots (all 4 chains)
 #   - the calibration plots from analyze_parallel_mcmc.R with each chain's simset on the same plot
 #   - the same calibration plots for the merged Step 2 simset
-# plus overview.csv: one row per location (acceptance, worst R-hat, merged simset size, problems).
+#   - (11/02/26) a fit check: every calibration target (total, by age, by sex, by age and sex) against the merged
+#     simset, with the targets that fit badly listed on the summary page and in <location>_fit_check.csv
+# plus overview.csv: one row per location (acceptance, worst R-hat, merged simset size, targets flagged, problems)
+# and fit_issues.csv: every flagged target across locations, worst first.
 #
 # Run on the machine that ran the MCMC (it reads mcmc_runs/). The first review of a run loads each full
 # mcmc file once to save a light copy without the simulations (runs from now on save these as they go);
