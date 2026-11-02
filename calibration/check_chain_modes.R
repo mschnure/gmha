@@ -34,7 +34,16 @@ projection.summary = function(sim){
     prev.age = by.age("prevalence"); prev = rowSums(prev.age)
     prev50 = rowSums(prev.age[, MODEL.TO.SURVEILLANCE.AGE.MAPPING[["50 and over"]], drop = FALSE])
     aware = rowSums(by.age("awareness")); supp = rowSums(by.age("suppression"))
-    c(setNames(inc, paste0("new.infections.", years)),
+    # median age of PLHIV (interpolated within 5-year age groups; 80+ treated as 80-90)
+    lowers = as.numeric(sub("[- ].*", "", colnames(prev.age))); widths = c(diff(lowers), 10)
+    median.age = apply(prev.age, 1, function(n){
+        cum = cumsum(n) / sum(n); k = which(cum >= 0.5)[1]
+        before = if (k == 1) 0 else cum[k - 1]
+        lowers[k] + widths[k] * (0.5 - before) / (cum[k] - before)
+    })
+    c(setNames(median.age[c(1, 3)], paste0("median.age.plhiv.", years[c(1, 3)])),
+      change.median.age.2025.2040 = unname(median.age[3] - median.age[1]),
+      setNames(inc, paste0("new.infections.", years)),
       setNames(prev, paste0("plhiv.", years)),
       setNames(100 * prev50 / prev, paste0("pct.plhiv.50plus.", years)),
       setNames(100 * aware[1:2] / prev[1:2], paste0("pct.aware.", years[1:2])),
@@ -95,10 +104,10 @@ for (location in LOCATIONS) {
     proj = do.call(cbind, proj); colnames(proj) = paste0("chain", CHAINS)
     best.col = paste0("chain", best.chain)
     pct.diff = round(100 * (proj - proj[, best.col]) / proj[, best.col], 1)
-    is.pct = grepl("^pct", rownames(proj))
+    is.pct = grepl("^pct|median.age", rownames(proj))   # differences in points / years, not %
     pct.diff[is.pct, ] = round(proj[is.pct, ] - proj[is.pct, best.col], 1)  # percentage points for the percentages
     cat("\nProjections (chain medians):\n"); print(round(proj, ifelse(any(proj > 1000), 0, 1)))
-    cat("\nDifference from the best chain (", best.chain, "): % for counts, percentage points for the percentages:\n", sep = "")
+    cat("\nDifference from the best chain (", best.chain, "): % for counts, percentage points for the percentages, years for median age:\n", sep = "")
     print(pct.diff)
 
     # parameters: spread of chain medians vs within-chain spread (log scale for positive parameters)
@@ -126,7 +135,9 @@ for (location in LOCATIONS) {
                                          stuck.chains = paste(ll$chain[ll$stuck], collapse = ", "),
                                          worst.gap = min(ll$gap.to.best),
                                          extra.targets.flagged.in.stuck = if (any(ll$stuck)) max(ll$targets.flagged[ll$stuck]) - ll$targets.flagged[ll$chain == best.chain] else 0,
-                                         biggest.projection.diff.in.stuck.pct = biggest)
+                                         biggest.projection.diff.in.stuck.pct = biggest,
+                                         change.median.age.by.chain = paste(round(proj["change.median.age.2025.2040", ], 1), collapse = " / "),
+                                         change.median.age.spread.years = round(diff(range(proj["change.median.age.2025.2040", ])), 1))
 }
 summary = do.call(rbind, all.summary)
 write.csv(summary, file.path(dir, "summary.csv"), row.names = FALSE)
