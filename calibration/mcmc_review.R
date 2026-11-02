@@ -39,7 +39,15 @@ make.simset.plots = function(simsets, years, try.plot){
          population.by.age = p("population.by.age", data.types = 'population', facet.by = 'age'),
          cascade = p("cascade", data.types = c('awareness', 'engagement', 'suppression'), proportion = T),
          cascade.by.age.sex = p("cascade.by.age.sex", data.types = c('awareness', 'engagement', 'suppression'),
-                                facet.by = c('age', 'sex'), proportion = T))
+                                facet.by = c('age', 'sex'), proportion = T),
+         # 11/02/26: the by-sex UNAIDS targets and AIDS deaths
+         incidence.by.sex = p("incidence.by.sex", facet.by = 'sex', data.types = 'incidence'),
+         prevalence.by.sex = p("prevalence.by.sex", facet.by = 'sex', data.types = 'prevalence'),
+         hiv.mortality.by.sex = p("hiv.mortality.by.sex", facet.by = 'sex', data.types = 'hiv.mortality'),
+         incidence.by.age.sex = p("incidence.by.age.sex", facet.by = c('age', 'sex'), data.types = 'incidence'),
+         prevalence.by.age.sex = p("prevalence.by.age.sex", facet.by = c('age', 'sex'), data.types = 'prevalence'),
+         hiv.mortality.by.age = p("hiv.mortality.by.age", facet.by = 'age', data.types = 'hiv.mortality'),
+         hiv.mortality.by.age.sex = p("hiv.mortality.by.age.sex", facet.by = c('age', 'sex'), data.types = 'hiv.mortality'))
 }
 
 default.plot.years = function(simset){
@@ -205,6 +213,8 @@ review.merged.simset = function(location,
     }
     plots = make.simset.plots(list(thin.for.plotting(simset, max.plot.sims)), years, try.plot)
     plots = plots[!sapply(plots, is.null)]
+    fit = tryCatch(fit.check(simset, location),
+                   error = function(e){ print(paste0("Fit check failed: ", conditionMessage(e))); NULL })
     if (plot)
         for (nm in names(plots)) {
             p = plots[[nm]]
@@ -212,7 +222,8 @@ review.merged.simset = function(location,
                 p = p + ggplot2::ggtitle(paste0(location, " merged Step 2 simset: ", nm))
             print(p)
         }
-    invisible(list(info = info, plots = plots, plot.errors = plot.errors, simset.file = simset.file))
+    if (!is.null(fit)) print.fit.flags(fit)
+    invisible(list(info = info, plots = plots, plot.errors = plot.errors, simset.file = simset.file, fit = fit))
 }
 
 # Everything above for many locations: one PDF per location (summary table and R-hats, likelihood and
@@ -239,6 +250,7 @@ review.to.pdf = function(locations = "all",
     }
 
     overview = list()
+    fit.all = list()
     for (location in locations) {
         print(paste0("==== ", location, " ===="))
         pdf.file = file.path(dir, paste0(convert_string(location), "_step", step, "_review.pdf"))
@@ -257,6 +269,7 @@ review.to.pdf = function(locations = "all",
                         if (!is.null(chains$rhats)) c("Worst R-hats (> 1.1 suggests the chains haven't converged):",
                                                       capture.output(print(round(head(chains$rhats, 25), 3)))),
                         if (!is.null(merged)) c("", "Merged simset:", capture.output(print(merged$info, row.names = FALSE))),
+                        if (!is.null(merged$fit)) c("", fit.flag.lines(merged$fit)),
                         if (length(chains$plot.errors) > 0) c("", "Plots that failed:", paste0("  ", names(chains$plot.errors), ": ", chains$plot.errors))))
             for (nm in names(chains$plots))
                 print.titled(chains$plots[[nm]], paste0(location, " step ", step, ": ", nm,
@@ -266,6 +279,10 @@ review.to.pdf = function(locations = "all",
                     print.titled(merged$plots[[nm]], paste0(location, ": ", nm, " (merged Step 2 simset)"))
             grDevices::dev.off()
             pdf.open = FALSE
+            if (!is.null(merged$fit)) {
+                write.csv(merged$fit, file.path(dir, paste0(convert_string(location), "_fit_check.csv")), row.names = FALSE)
+                fit.all[[location]] = merged$fit # (this block runs in review.to.pdf's environment)
+            }
 
             data.frame(location = location,
                        chains = nrow(chains$summary),
@@ -275,12 +292,15 @@ review.to.pdf = function(locations = "all",
                        errored.proposals = sum(chains$summary$errored.proposals),
                        merged.simulations = if (is.null(merged)) NA else merged$info$simulations,
                        merged.total.weight = if (is.null(merged)) NA else merged$info$total.weight,
+                       fit.targets.checked = if (is.null(merged$fit)) NA else nrow(merged$fit),
+                       fit.targets.flagged = if (is.null(merged$fit)) NA else sum(merged$fit$flag != ""),
                        pdf = pdf.file, problem = "")
         }, error = function(e){
             if (pdf.open) grDevices::dev.off()
             print(paste0("Could not review ", location, ": ", conditionMessage(e)))
             data.frame(location = location, chains = NA, min.acceptance = NA, max.acceptance = NA, worst.rhat = NA,
                        errored.proposals = NA, merged.simulations = NA, merged.total.weight = NA,
+                       fit.targets.checked = NA, fit.targets.flagged = NA,
                        pdf = NA, problem = conditionMessage(e))
         })
         rm(list = intersect(c("chains", "merged"), ls())); gc()
@@ -296,9 +316,103 @@ review.to.pdf = function(locations = "all",
     overview = overview[order(match(overview$location, names(LOCATION.PRIOR.NAMES))), ]
     write.csv(overview, overview.file, row.names = FALSE)
     print(overview, row.names = FALSE)
+    if (length(fit.all) > 0) {
+        fit.all = do.call(rbind, fit.all)
+        flagged = fit.all[fit.all$flag != "", , drop = FALSE]
+        flagged = flagged[order(-flagged$severity), , drop = FALSE]
+        write.csv(flagged, file.path(dir, "fit_issues.csv"), row.names = FALSE)
+        print(paste0(nrow(flagged), " of ", nrow(fit.all), " calibration targets flagged across these locations (fit_issues.csv); worst 40:"))
+        print(head(flagged[, c("location","data.type","age","sex","years.with.data","pct.years.in.sim.95","median.sim.vs.data","last.year","last.sim.vs.data","flag")], 40), row.names = FALSE)
+    }
     print(paste0("PDFs and overview.csv in ", normalizePath(dir)))
     invisible(overview)
 }
+
+
+##----------------------------------------------------------------------------------------------##
+## Fit check (11/02/26): every calibration target (incidence, PLHIV, AIDS deaths, aware, on ART,
+## suppressed; total, by age, by sex, by age and sex) against the merged simset, year by year.
+## For each target: the share of years where the data point is inside the simulations' 95% range,
+## and how far the simulations' median is from the data (counts: sim/data ratio; proportions:
+## difference in percentage points), over all years with data and in the last one.
+## Flagged when the data are inside the 95% range in under half the years, or the typical gap is
+## big (counts: off by more than 25%; proportions: more than 10 points).
+##----------------------------------------------------------------------------------------------##
+FIT.CHECK.DATA.TYPES = list(incidence = NULL, prevalence = NULL, hiv.mortality = NULL,     # counts
+                            awareness = "prevalence", engagement = "awareness",           # proportions (denominators
+                            suppression = "awareness")                                    # as in the likelihood)
+
+fit.sim.array = function(sim, data.type, years){
+    x = extract.data(sim, data.type = data.type, years = years, keep.dimensions = c("year","age","sex"))
+    aperm(x, match(c("year","age","sex"), names(dimnames(x))))
+}
+
+fit.check = function(simset, location, years = 2000:2025, max.sims = 200,
+                     flag.coverage = 50, flag.ratio = 0.25, flag.points = 0.10){
+    idx = unique(round(seq(1, simset@n.sim, length.out = min(max.sims, simset@n.sim))))
+    sims = simset@simulations[idx]
+    years = intersect(years, sims[[1]]$years)
+    yrs = as.character(years)
+    rows = list()
+    for (data.type in names(FIT.CHECK.DATA.TYPES)) {
+        denominator.type = FIT.CHECK.DATA.TYPES[[data.type]]
+        is.proportion = !is.null(denominator.type)
+        num = tryCatch(lapply(sims, fit.sim.array, data.type = data.type, years = years), error = function(e) NULL)
+        den = if (is.proportion) tryCatch(lapply(sims, fit.sim.array, data.type = denominator.type, years = years), error = function(e) NULL) else NULL
+        if (is.null(num) || (is.proportion && is.null(den))) { print(paste0("  fit check: couldn't extract ", data.type, " from the simulations")); next }
+        for (keep in list(c("year","location"), c("year","age","location"), c("year","sex","location"), c("year","age","sex","location"))) {
+            obs = tryCatch(get.surveillance.data(DATA.MANAGER, data.type, years = years, locations = location, keep.dimensions = keep),
+                           error = function(e) NULL)
+            if (is.null(obs) || all(is.na(obs))) next
+            ages = if ("age" %in% keep) dimnames(obs)$age else "All ages"
+            sexes = if ("sex" %in% keep) dimnames(obs)$sex else "both"
+            for (age in ages) for (sex in sexes) {
+                index = c(list(yrs), if ("age" %in% keep) list(age), if ("sex" %in% keep) list(sex), list(1))
+                o = as.numeric(do.call(`[`, c(list(obs), index)))
+                ok = !is.na(o)
+                model.ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING[[age]]
+                if (!any(ok) || is.null(model.ages)) next
+                model.sexes = if (sex == "both") c("male","female") else sex
+                sum.over = function(x) apply(x[yrs, model.ages, model.sexes, drop = FALSE], 1, sum)
+                sim.values = sapply(seq_along(sims), function(i){
+                    v = sum.over(num[[i]])
+                    if (is.proportion) v / sum.over(den[[i]]) else v
+                })
+                q = apply(matrix(sim.values, nrow = length(yrs)), 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE)
+                inside = o[ok] >= q[1, ok] & o[ok] <= q[3, ok]
+                gap = if (is.proportion) q[2, ok] - o[ok] else q[2, ok] / o[ok]
+                typical = median(gap, na.rm = TRUE)
+                last = gap[length(gap)]
+                coverage = round(100 * mean(inside, na.rm = TRUE))
+                too.far = if (is.proportion) abs(typical) > flag.points else (typical > 1 + flag.ratio || typical < 1/(1 + flag.ratio))
+                flag = paste0(if (coverage < flag.coverage) "data outside sims' 95% range in most years" else "",
+                              if (coverage < flag.coverage && too.far) "; " else "",
+                              if (too.far) (if (is.proportion) "median off by >10 points" else "median off by >25%") else "")
+                rows[[length(rows) + 1]] = data.frame(
+                    location = location, data.type = data.type, age = age, sex = sex,
+                    years.with.data = sum(ok), first.year = min(yrs[ok]), last.year = max(yrs[ok]),
+                    pct.years.in.sim.95 = coverage,
+                    median.sim.vs.data = if (is.proportion) sprintf("%+.1f pts", 100 * typical) else sprintf("x%.2f", typical),
+                    last.sim.vs.data = if (is.proportion) sprintf("%+.1f pts", 100 * last) else sprintf("x%.2f", last),
+                    severity = round((100 - coverage) / 100 + (if (is.proportion) abs(typical) / flag.points else abs(log(typical)) / log(1 + flag.ratio)), 2),
+                    flag = flag, stringsAsFactors = FALSE)
+            }
+        }
+    }
+    if (length(rows) == 0) return(NULL)
+    do.call(rbind, rows)
+}
+
+fit.flag.lines = function(fit, n = 30){
+    flagged = fit[fit$flag != "", , drop = FALSE]
+    flagged = flagged[order(-flagged$severity), , drop = FALSE]
+    c(paste0("Fit check (merged simset vs every calibration target, 2000-2025): ", nrow(flagged), " of ", nrow(fit), " targets flagged",
+             if (nrow(flagged) > n) paste0(" (worst ", n, " shown; all in <location>_fit_check.csv)") else ""),
+      if (nrow(flagged) > 0) capture.output(print(head(flagged[, c("data.type","age","sex","years.with.data","pct.years.in.sim.95",
+                                                                     "median.sim.vs.data","last.year","last.sim.vs.data","flag")], n), row.names = FALSE)))
+}
+
+print.fit.flags = function(fit) cat(fit.flag.lines(fit), sep = "\n")
 
 
 # Re-runs a proposal that errored during an MCMC (a row of an <run>_errors_<date>.csv file in
