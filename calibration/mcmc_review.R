@@ -322,7 +322,7 @@ review.to.pdf = function(locations = "all",
         flagged = flagged[order(-flagged$severity), , drop = FALSE]
         write.csv(flagged, file.path(dir, "fit_issues.csv"), row.names = FALSE)
         print(paste0(nrow(flagged), " of ", nrow(fit.all), " calibration targets flagged across these locations (fit_issues.csv); worst 40:"))
-        print(head(flagged[, c("location","data.type","age","sex","years.with.data","pct.years.in.sim.95","median.sim.vs.data","last.year","last.sim.vs.data","flag")], 40), row.names = FALSE)
+        print(head(flagged[, c("location","data.type","age","sex","years.with.data","pct.years.overlap","median.sim.vs.data","last.year","last.sim.vs.data","flag")], 40), row.names = FALSE)
     }
     print(paste0("PDFs and overview.csv in ", normalizePath(dir)))
     invisible(overview)
@@ -332,11 +332,14 @@ review.to.pdf = function(locations = "all",
 ##----------------------------------------------------------------------------------------------##
 ## Fit check (11/02/26): every calibration target (incidence, PLHIV, AIDS deaths, aware, on ART,
 ## suppressed; total, by age, by sex, by age and sex) against the merged simset, year by year.
-## For each target: the share of years where the data point is inside the simulations' 95% range,
-## and how far the simulations' median is from the data (counts: sim/data ratio; proportions:
-## difference in percentage points), over all years with data and in the last one.
-## Flagged when the data are inside the 95% range in under half the years, or the typical gap is
-## big (counts: off by more than 25%; proportions: more than 10 points).
+## For each target: the share of years where the simulations' 95% range overlaps the data's own 95%
+## interval (the UNAIDS lower-upper bounds, which the likelihood uses for the observation error), and
+## how far the simulations' median is from the data point (counts: sim/data ratio; proportions:
+## difference in percentage points), typically (median over years) and in the last year with data.
+## Flagged when the two ranges overlap in under half the years, or the typical gap is big (counts:
+## off by more than 25%; proportions: more than 10 points).
+## (11/02/26 first version compared the data point with the simulations' range only - too strict, since
+## that range is just parameter uncertainty and is narrow; it flagged 615 of 774 targets.)
 ##----------------------------------------------------------------------------------------------##
 FIT.CHECK.DATA.TYPES = list(incidence = NULL, prevalence = NULL, hiv.mortality = NULL,     # counts
                             awareness = "prevalence", engagement = "awareness",           # proportions (denominators
@@ -364,11 +367,18 @@ fit.check = function(simset, location, years = 2000:2025, max.sims = 200,
             obs = tryCatch(get.surveillance.data(DATA.MANAGER, data.type, years = years, locations = location, keep.dimensions = keep),
                            error = function(e) NULL)
             if (is.null(obs) || all(is.na(obs))) next
+            get.bound = function(suffix) tryCatch(get.surveillance.data(DATA.MANAGER, paste0(data.type, suffix), years = years,
+                                                                        locations = location, keep.dimensions = keep),
+                                                  error = function(e) NULL)
+            obs.lower = get.bound(".lowers"); obs.upper = get.bound(".uppers")
             ages = if ("age" %in% keep) dimnames(obs)$age else "All ages"
             sexes = if ("sex" %in% keep) dimnames(obs)$sex else "both"
             for (age in ages) for (sex in sexes) {
                 index = c(list(yrs), if ("age" %in% keep) list(age), if ("sex" %in% keep) list(sex), list(1))
                 o = as.numeric(do.call(`[`, c(list(obs), index)))
+                o.lower = if (is.null(obs.lower)) o else as.numeric(do.call(`[`, c(list(obs.lower), index)))
+                o.upper = if (is.null(obs.upper)) o else as.numeric(do.call(`[`, c(list(obs.upper), index)))
+                o.lower[is.na(o.lower)] = o[is.na(o.lower)]; o.upper[is.na(o.upper)] = o[is.na(o.upper)]
                 ok = !is.na(o)
                 model.ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING[[age]]
                 if (!any(ok) || is.null(model.ages)) next
@@ -379,19 +389,19 @@ fit.check = function(simset, location, years = 2000:2025, max.sims = 200,
                     if (is.proportion) v / sum.over(den[[i]]) else v
                 })
                 q = apply(matrix(sim.values, nrow = length(yrs)), 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE)
-                inside = o[ok] >= q[1, ok] & o[ok] <= q[3, ok]
+                inside = q[1, ok] <= o.upper[ok] & q[3, ok] >= o.lower[ok]   # sims' 95% range overlaps the data's 95% interval
                 gap = if (is.proportion) q[2, ok] - o[ok] else q[2, ok] / o[ok]
                 typical = median(gap, na.rm = TRUE)
                 last = gap[length(gap)]
                 coverage = round(100 * mean(inside, na.rm = TRUE))
                 too.far = if (is.proportion) abs(typical) > flag.points else (typical > 1 + flag.ratio || typical < 1/(1 + flag.ratio))
-                flag = paste0(if (coverage < flag.coverage) "data outside sims' 95% range in most years" else "",
+                flag = paste0(if (coverage < flag.coverage) "sims and data ranges don't overlap in most years" else "",
                               if (coverage < flag.coverage && too.far) "; " else "",
                               if (too.far) (if (is.proportion) "median off by >10 points" else "median off by >25%") else "")
                 rows[[length(rows) + 1]] = data.frame(
                     location = location, data.type = data.type, age = age, sex = sex,
                     years.with.data = sum(ok), first.year = min(yrs[ok]), last.year = max(yrs[ok]),
-                    pct.years.in.sim.95 = coverage,
+                    pct.years.overlap = coverage,
                     median.sim.vs.data = if (is.proportion) sprintf("%+.1f pts", 100 * typical) else sprintf("x%.2f", typical),
                     last.sim.vs.data = if (is.proportion) sprintf("%+.1f pts", 100 * last) else sprintf("x%.2f", last),
                     severity = round((100 - coverage) / 100 + (if (is.proportion) abs(typical) / flag.points else abs(log(typical)) / log(1 + flag.ratio)), 2),
@@ -408,7 +418,7 @@ fit.flag.lines = function(fit, n = 30){
     flagged = flagged[order(-flagged$severity), , drop = FALSE]
     c(paste0("Fit check (merged simset vs every calibration target, 2000-2025): ", nrow(flagged), " of ", nrow(fit), " targets flagged",
              if (nrow(flagged) > n) paste0(" (worst ", n, " shown; all in <location>_fit_check.csv)") else ""),
-      if (nrow(flagged) > 0) capture.output(print(head(flagged[, c("data.type","age","sex","years.with.data","pct.years.in.sim.95",
+      if (nrow(flagged) > 0) capture.output(print(head(flagged[, c("data.type","age","sex","years.with.data","pct.years.overlap",
                                                                      "median.sim.vs.data","last.year","last.sim.vs.data","flag")], n), row.names = FALSE)))
 }
 
