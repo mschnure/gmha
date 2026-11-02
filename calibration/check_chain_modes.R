@@ -20,6 +20,7 @@ source("calibration/mcmc_pipeline.R")
 source("calibration/mcmc_review.R")
 
 if (!exists("LOCATIONS")) LOCATIONS = c("Tanzania", "Zimbabwe", "Kenya", "Zambia", "r1.high")
+if (identical(LOCATIONS, "all")) LOCATIONS = names(LOCATION.PRIOR.NAMES)
 STUCK.GAP = 20
 CHAINS = 1:4
 dir = file.path("results", paste0("chain_modes_", Sys.Date()))
