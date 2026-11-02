@@ -8,8 +8,8 @@ source("model/run_systematic.R")
 source("calibration/mcmc_pipeline.R")
 source("calibration/mcmc_review.R")
 
-LOCATIONS = "all"
-SIMSET.DATE = NULL   # e.g. "2026-10-20" for the previous master calibration
+if (!exists("LOCATIONS")) LOCATIONS = "all"
+if (!exists("SIMSET.DATE")) SIMSET.DATE = NULL   # e.g. SIMSET.DATE = "2026-10-20" (set before sourcing) for the previous master calibration
 
 if (identical(LOCATIONS, "all")) LOCATIONS = names(LOCATION.PRIOR.NAMES)
 dir = file.path("results", paste0("fit_check_", if (is.null(SIMSET.DATE)) "latest" else SIMSET.DATE, "_checked_", Sys.Date()))
