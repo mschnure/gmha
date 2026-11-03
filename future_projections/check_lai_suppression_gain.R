@@ -31,7 +31,7 @@ YOUTH = c("15-19","20-24")
 med = function(x) median(x, na.rm = TRUE)
 options(width = 200)
 
-summary.rows = list(); by.year = list(); starts.by.year = list()
+summary.rows = list(); by.year = list(); starts.by.year = list(); baseline.rows = list()
 for(cal in names(arrays)){
     print(paste0(cal, ": ", arrays[[cal]]))
     arr = get(load(arrays[[cal]])[1])
@@ -68,7 +68,6 @@ for(cal in names(arrays)){
                       pct.suppressed.of.pwh.2030 = med(100*supp.b["2030",]/prev.b["2030",]),
                       unsuppressed.2030.k = med(prev.b["2030",] - supp.b["2030",])/1000,
                       pct.suppressed.leaving.care.per.year.2025 = med(100*dis.supp.b["2025",]/supp.b["2025",]))
-    if(!exists("baseline.rows")) baseline.rows = list()
     baseline.rows[[cal]] = base
     rm(arr); invisible(gc())
 }
