@@ -62,6 +62,7 @@ for(outcome in c("averted.all","averted.15.24","percent.averted.all")){
     colnames(tab)[1:4] = paste0("chain", 1:4)
     if(outcome=="averted.all") tab = cbind(tab, aids2026 = format(AIDS2026[SCENARIOS], big.mark = ","))
     if(outcome=="averted.15.24") tab = cbind(tab, aids2026 = format(AIDS2026.1524[SCENARIOS], big.mark = ","))
+    if(outcome=="percent.averted.all") tab = cbind(tab, aids2026 = "") # same columns in every table (for the csv)
     tables[[outcome]] = tab
     print(paste0("==== ", outcome, ", 2022-2030: median (95% interval) by chain; spread = (max - min chain median) / overall median ===="))
     print(noquote(tab))
