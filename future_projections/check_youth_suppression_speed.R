@@ -14,10 +14,11 @@
 source("model/run_systematic.R")
 if(!exists("CHECK.CAP")) CHECK.CAP = FALSE # TRUE: re-map rates with options(gmha.cap.youth.cascade = TRUE)
 options(gmha.cap.youth.cascade = CHECK.CAP)
-N.SIMS = 200
+if(!exists("N.SIMS")) N.SIMS = 200
 YEARS = c("2017","2022","2030")
 AGE.GROUPS = list("15-24" = c("15-19","20-24"), "25-49" = c("25-29","30-34","35-39","40-44","45-49"))
 # 10/29/26: AIDS 2026 vs the current calibration only
+if(!exists("SIMSETS")) # a wrapper can set SIMSETS (named vector of simset files) before sourcing, e.g. compare_youth_dropout_all_rounds.R
 SIMSETS = c("AIDS 2026" = "cached/simset.noint_25_1yr_2026-01-22.Rdata",   # Oct 2025 calibration (200 sims)
             "Current" = max(list.files("mcmc_runs/nextgen_transmission_anchor", pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)))
 RATES = c(suppression = "SUPPRESSION.RATES", unsuppression = "UNSUPPRESSION.RATES",
@@ -54,7 +55,7 @@ for(cal in names(SIMSETS)){
             rows[[length(rows)+1]] = data.frame(calibration = cal, sim = i, year = y, age = a, t(r))
         }
     }
-    dis = intersect(c("unsuppressed.disengagement.rates","suppressed.disengagement.rates"), colnames(simset@parameters))
+    dis = intersect(c("unsuppressed.disengagement.rates","suppressed.disengagement.rates","age.15.24.disengagement.multiplier"), colnames(simset@parameters))
     DIS.PARAMS[[cal]] = t(apply(simset@parameters[, dis, drop = F], 2, quantile, c(0.025, 0.5, 0.975)))
     rm(simset); invisible(gc())
 }
