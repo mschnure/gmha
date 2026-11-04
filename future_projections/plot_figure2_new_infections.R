@@ -45,7 +45,7 @@ p = ggplot(sims, aes(x = year)) +
     theme_bw() +
     theme(strip.background = element_blank(), strip.text = element_text(size = 15, hjust = 0),
           axis.text = element_text(size = 12), axis.title.y = element_text(size = 13),
-          legend.position = "inside", legend.position.inside = c(0.015, 0.04), legend.justification = c(0, 0),
+          legend.position = c(0.015, 0.04), legend.justification = c(0, 0),   # c() works with old and new ggplot2
           legend.background = element_rect(color = "black"), legend.title = element_text(size = 11),
           legend.text = element_text(size = 10), legend.key.size = unit(0.45, "cm"))
 out = file.path(OUT.DIR, paste0("Figure2_new_infections_", Sys.Date()))
