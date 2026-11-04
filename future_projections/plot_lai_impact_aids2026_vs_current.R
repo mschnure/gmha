@@ -11,6 +11,9 @@
 #   cmp_transmission_rates.png     calibrated transmission rate at each time point
 #   cmp_summary_<date>.csv         numbers behind the bar charts
 ################################################################################################
+# NOTE (11/04/26): this compares with AIDS 2026, which used the 2022-2027 program and 2022-2030 impact window. LAI reruns from
+# 11/04/26 on use 2025-2030 / 2025-2035, so point this at a 2022-timed rerun (set LAI.START.YEAR = 2022, LAI.END.YEAR = 2027,
+# IMPACT.YEARS = 2022:2030 before rerun_lai_sabssm_calibration.R) for a like-for-like comparison.
 source("model/run_systematic.R")
 if(!exists("CURRENT.RUN")) CURRENT.RUN = "transmission_anchor" # 11/01 run (earlier: youth_dropout_prior, sabssm_ratio_priors)
 OUT.DIR = file.path("cached", paste0("nextgen_lai_rerun_", CURRENT.RUN))

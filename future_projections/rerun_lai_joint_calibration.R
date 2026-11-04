@@ -27,7 +27,10 @@ if(!exists("FIGURE.TAG")) FIGURE.TAG = "joint"
 RUN.SIMSET.FILE = SIMSET.FILE; RUN.OUT.DIR = OUT.DIR; RUN.FIGURE.TAG = FIGURE.TAG # create_lai_interventions.R re-sources the model
 dir.create(OUT.DIR, recursive = TRUE, showWarnings = FALSE)
 END.YEAR = 2040
-YEARS.TO.SUMMARIZE = as.character(2022:2030)
+# 11/04/26: program 2025-2030 (create_lai_interventions.R), impact measured 2025-2035 (was 2022-2030)
+if(!exists("IMPACT.YEARS")) IMPACT.YEARS = 2025:2035
+YEARS.TO.SUMMARIZE = as.character(IMPACT.YEARS)
+IMPACT.LABEL = paste0(min(IMPACT.YEARS), "-", max(IMPACT.YEARS))
 SCENARIOS = c("all.25","all.direct.25","all.100","all.direct.100")
 
 simset = get(load(SIMSET.FILE)[1])
@@ -100,6 +103,8 @@ print("Results (medians and 95% intervals across simulations):")
 print(long, digits = 4, row.names = F)
 
 ##-- 4. Comparison with the AIDS 2026 abstract (medians, Jan 2026 runs on the Oct 2025 calibration, 200 sims) --##
+# only meaningful with the AIDS 2026 timing (program 2022-2027, impact 2022-2030)
+if(identical(as.numeric(IMPACT.YEARS), as.numeric(2022:2030))){
 aids2026 = rbind(
     data.frame(scenario = "no.int", metric = c("new.infections.all","new.infections.15.24"), aids2026 = c(1131909, 412442)),
     data.frame(scenario = rep(SCENARIOS, each = 9),
@@ -116,6 +121,7 @@ comparison$percent.change = round(100*comparison$difference/comparison$aids2026,
 write.csv(comparison, file.path(OUT.DIR, paste0("lai_comparison_aids2026_", Sys.Date(), ".csv")), row.names = F)
 print("Comparison with AIDS 2026 (joint calibration median vs abstract median):")
 print(comparison[, c("scenario","metric","aids2026","joint.median","percent.change")], digits = 4, row.names = F)
+} else print(paste0("Skipping the AIDS 2026 comparison: AIDS 2026 measured impact over 2022-2030, this run over ", IMPACT.LABEL))
 
 ##-- 5. Figures, same style as the poster panels --##
 cols = c("#D55E00", "#0072B2", "#009E73", "#CC79A7", "#56B4E9")
@@ -129,7 +135,7 @@ jpeg(file = file.path(OUT.DIR, paste0("PanelB_", FIGURE.TAG, "_", Sys.Date(), ".
 print(ggplot(df, aes(x = scenario, y = est)) +
     geom_col(fill = cols[2:5], color = "black", width = 0.6) +
     geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2, color = "black") +
-    theme_minimal() + ylab("Cumulative infections averted,\n2022-2030") + xlab(NULL) +
+    theme_minimal() + ylab(paste0("Cumulative infections averted,\n", IMPACT.LABEL)) + xlab(NULL) +
     scale_y_continuous(labels = function(x){ paste0(x / 1000, "k") }) +
     theme(axis.title.y = element_text(size = 30, margin = margin(r = 15)),
           axis.text.x = element_text(size = 25), axis.text.y = element_text(size = 28)))
@@ -137,7 +143,7 @@ dev.off()
 
 pdf(NULL) # simplot prints as it builds; keep that off the jpeg below
 p = simplot(simset.list$no.int, simset.list$all.25, simset.list$all.direct.25, simset.list$all.100, simset.list$all.direct.100,
-            data.types = "incidence", ages = c("All ages"), facet.by = "age", years = 2010:2030,
+            data.types = "incidence", ages = c("All ages"), facet.by = "age", years = 2010:max(IMPACT.YEARS),
             show.individual.sims = F, for.paper = T, ncol = 1) +
     theme(strip.text.x = element_blank(), axis.title.x = element_blank(),
           axis.title.y = element_text(size = 30, margin = margin(r = 15)),
@@ -149,7 +155,7 @@ p$layers[[point_idx]]$mapping$colour = NULL
 p$layers[[point_idx]]$aes_params$colour = "grey10"
 jpeg(file = file.path(OUT.DIR, paste0("PanelA_", FIGURE.TAG, "_", Sys.Date(), ".jpeg")), width = 3000, height = 1500, res = 200)
 print(p + scale_color_manual(values = cols) + scale_fill_manual(values = lighten(cols, amount = 0.3)) +
-      ylab("Annual New HIV infections,\n 2010-2030"))
+      ylab(paste0("Annual New HIV infections,\n 2010-", max(IMPACT.YEARS))))
 dev.off()
 
 print(paste0("LAI rerun finished - outputs in ", OUT.DIR))

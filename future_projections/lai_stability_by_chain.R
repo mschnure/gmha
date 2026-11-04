@@ -37,11 +37,13 @@ print("Simulations per chain:"); print(table(chain = chain.of.sim, useNA = "ifan
 if(any(is.na(chain.of.sim))) warning("Some simulations couldn't be matched to a chain - they're left out of the per-chain summaries")
 
 ## per-simulation outcomes, 2022-2030 (as in rerun_lai_joint_calibration.R)
-YEARS = as.character(2022:2030)
+if(!exists("IMPACT.YEARS")) IMPACT.YEARS = 2025:2035   # 11/04/26: was 2022:2030 (program now 2025-2030)
+YEARS = as.character(IMPACT.YEARS); IMPACT.LABEL = paste0(min(IMPACT.YEARS), "-", max(IMPACT.YEARS))
 inc = full.results.array[YEARS,,,"incidence",,,drop = FALSE]
 new.all = apply(inc, c("sim","intervention"), sum)
 new.1524 = apply(inc[,c("15-19","20-24"),,,,,drop = FALSE], c("sim","intervention"), sum)
 SCENARIOS = c("all.25","all.direct.25","all.100","all.direct.100")
+# AIDS 2026 values are for 2022-2030 (program 2022-2027) - shown only when IMPACT.YEARS is 2022:2030
 AIDS2026 = c(all.25 = 68721, all.direct.25 = 78053, all.100 = 191551, all.direct.100 = 220588)  # infections averted, all ages
 AIDS2026.1524 = c(all.25 = 38881, all.direct.25 = 44284, all.100 = 108960, all.direct.100 = 125837)
 
@@ -60,11 +62,12 @@ for(outcome in c("averted.all","averted.15.24","percent.averted.all")){
                    else sprintf("%.0f%%", 100*diff(range(sapply(1:4, function(ch) median(v[which(chain.of.sim==ch)]))))/median(v)))
     }))
     colnames(tab)[1:4] = paste0("chain", 1:4)
-    if(outcome=="averted.all") tab = cbind(tab, aids2026 = format(AIDS2026[SCENARIOS], big.mark = ","))
-    if(outcome=="averted.15.24") tab = cbind(tab, aids2026 = format(AIDS2026.1524[SCENARIOS], big.mark = ","))
+    same.timing = identical(as.numeric(IMPACT.YEARS), as.numeric(2022:2030))
+    if(outcome=="averted.all") tab = cbind(tab, aids2026 = if(same.timing) format(AIDS2026[SCENARIOS], big.mark = ",") else "-")
+    if(outcome=="averted.15.24") tab = cbind(tab, aids2026 = if(same.timing) format(AIDS2026.1524[SCENARIOS], big.mark = ",") else "-")
     if(outcome=="percent.averted.all") tab = cbind(tab, aids2026 = "") # same columns in every table (for the csv)
     tables[[outcome]] = tab
-    print(paste0("==== ", outcome, ", 2022-2030: median (95% interval) by chain; spread = (max - min chain median) / overall median ===="))
+    print(paste0("==== ", outcome, ", ", IMPACT.LABEL, ": median (95% interval) by chain; spread = (max - min chain median) / overall median ===="))
     print(noquote(tab))
 }
 

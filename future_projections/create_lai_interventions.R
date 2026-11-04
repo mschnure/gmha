@@ -12,58 +12,63 @@ source("model/parameter_mappings/get_lai_art_rates_intervention.R")
 #             annual.lai.suppression.rate.du)) # 4 months to start ART, 3 months to suppress 
 # calculated in model/parameter_mappings/get_lai_art_rates_intervention.R, based on PROB.5.YEAR above
 
-START.TIME = 2022
+# 11/04/26: program timing moved from 2022-2027 to 2025-2030 (a wrapper can set these before sourcing):
+#   offered from LAI.START.YEAR, fully scaled up one year later, no new starts after LAI.END.YEAR;
+#   users switch back to oral ART at 25 throughout
+if(!exists("LAI.START.YEAR")) LAI.START.YEAR = 2025   # was 2022
+if(!exists("LAI.END.YEAR")) LAI.END.YEAR = 2030       # was 2027
+START.TIME = LAI.START.YEAR
 NO.INTERVENTION = create.intervention.from.units(code="no.int")
 
 # Individual arrows, base rates 
 lai.from.es.unit = create.intervention.unit(parameter = "LAI.ES.RATES", 
                                             scale = "rate",
                                             start.time = START.TIME, # time when intervention starts scaling up
-                                            effect.time = 2023, # times when intervention reaches value
-                                            end.time = 2027, # when intervention should end, default to Inf
+                                            effect.time = START.TIME + 1, # times when intervention reaches value
+                                            end.time = LAI.END.YEAR, # when intervention should end, default to Inf
                                             effect.value = final.rate.baseline['ES'], 
                                             allow.lower.than.baseline = F)
 lai.from.eu.unit = create.intervention.unit(parameter = "LAI.EU.RATES", 
                                             scale = "rate",
                                             start.time = START.TIME,
-                                            effect.time = 2023,
-                                            end.time = 2027,
+                                            effect.time = START.TIME + 1,
+                                            end.time = LAI.END.YEAR,
                                             effect.value = final.rate.baseline['EU'], 
                                             allow.lower.than.baseline = F)
 lai.from.du.unit = create.intervention.unit(parameter = "LAI.DU.RATES", 
                                             scale = "rate",
                                             start.time = START.TIME,
-                                            effect.time = 2023,
-                                            end.time = 2027, 
+                                            effect.time = START.TIME + 1,
+                                            end.time = LAI.END.YEAR, 
                                             effect.value = final.rate.baseline['DU'], 
                                             allow.lower.than.baseline = F)
 # EU and DU, using ES rate (faster)
 lai.from.es.direct.unit = create.intervention.unit(parameter = "LAI.ES.RATES", 
                                                   scale = "rate",
                                                   start.time = START.TIME,
-                                                  effect.time = 2023,
-                                                  end.time = 2027,
+                                                  effect.time = START.TIME + 1,
+                                                  end.time = LAI.END.YEAR,
                                                   effect.value = final.rate.direct['ES'], # changed this 
                                                   allow.lower.than.baseline = F)
 lai.from.eu.direct.unit = create.intervention.unit(parameter = "LAI.EU.RATES", 
                                             scale = "rate",
                                             start.time = START.TIME,
-                                            effect.time = 2023,
-                                            end.time = 2027,
+                                            effect.time = START.TIME + 1,
+                                            end.time = LAI.END.YEAR,
                                             effect.value = final.rate.direct['EU'], # changed this 
                                             allow.lower.than.baseline = F)
 lai.from.du.direct.unit = create.intervention.unit(parameter = "LAI.DU.RATES", 
                                             scale = "rate",
                                             start.time = START.TIME,
-                                            effect.time = 2023,
-                                            end.time = 2027, 
+                                            effect.time = START.TIME + 1,
+                                            end.time = LAI.END.YEAR, 
                                             effect.value = final.rate.direct['DU'], # changed this 
                                             allow.lower.than.baseline = F)
 
 # Removal 
 lai.removal.by.age.unit = create.intervention.unit(parameter = "LAI.REMOVAL.RATES", 
                                                    scale = "rate",
-                                                   start.time = START.TIME, # start in 2022 - immediately start removing 25+ 
+                                                   start.time = START.TIME, # start with the program - immediately start removing 25+ 
                                                    effect.time = START.TIME, 
                                                    effect.value = 52, 
                                                    allow.lower.than.baseline = F)
@@ -103,7 +108,7 @@ lai.from.all.direct = create.intervention.from.units(lai.from.es.direct.unit,
                                                     target.ages = c("15-19","20-24"),
                                                     code="lai.all.direct")
 
-lai.removal.by.age = create.intervention.from.units(lai.removal.by.age.unit, # this unit starts in 2022
+lai.removal.by.age = create.intervention.from.units(lai.removal.by.age.unit, # this unit starts with the program (START.TIME)
                                                     target.ages = MODEL.TO.SURVEILLANCE.AGE.MAPPING$`25 and over`,
                                                     code="lai.rem.by.age")
 

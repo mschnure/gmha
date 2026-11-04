@@ -17,6 +17,7 @@ FIGURE.TAG = sub("^mcmc_runs/nextgen_", "", NEW.RUN.DIR)
 source("future_projections/rerun_lai_joint_calibration.R")
 
 ## Comparison with AIDS 2026 only (10/29/26): AIDS 2026 abstract medians vs this calibration (median, 95% interval)
+if(exists("comparison") && identical(as.numeric(IMPACT.YEARS), as.numeric(2022:2030))){
 cmp = merge(comparison[, c("scenario","metric","aids2026")], long[, c("scenario","metric","median","lower","upper")],
             by = c("scenario","metric"), sort = F)
 names(cmp)[names(cmp) %in% c("median","lower","upper")] = c("current.median","current.lower","current.upper")
@@ -25,3 +26,4 @@ cmp = cmp[order(match(cmp$scenario, c("no.int", SCENARIOS))), ]
 write.csv(cmp, file.path(OUT.DIR, paste0("lai_comparison_aids2026_vs_current_", Sys.Date(), ".csv")), row.names = F)
 print(paste0("AIDS 2026 vs current calibration (", NEW.RUN.DIR, "):"))
 print(cmp, digits = 4, row.names = F)
+} # (AIDS 2026 comparison only with the AIDS 2026 timing)

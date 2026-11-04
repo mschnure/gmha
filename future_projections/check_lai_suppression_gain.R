@@ -17,6 +17,9 @@
 #   6. the gain per 1,000 who started, year by year
 # Source it:  source("future_projections/check_lai_suppression_gain.R")
 ################################################################################################
+# NOTE (11/04/26): this compares with AIDS 2026, which used the 2022-2027 program and 2022-2030 impact window. LAI reruns from
+# 11/04/26 on use 2025-2030 / 2025-2035, so point this at a 2022-timed rerun (set LAI.START.YEAR = 2022, LAI.END.YEAR = 2027,
+# IMPACT.YEARS = 2022:2030 before rerun_lai_sabssm_calibration.R) for a like-for-like comparison.
 source("model/run_systematic.R")
 if(!exists("CURRENT.RUN")) CURRENT.RUN = "transmission_anchor"
 OUT.DIR = file.path("cached", paste0("nextgen_lai_rerun_", CURRENT.RUN))

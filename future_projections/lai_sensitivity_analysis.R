@@ -34,7 +34,8 @@ print(paste0("Parameters: ", simset.file)); print(paste0("Outcomes: ", results.f
 
 ## outcome, one value per simulation
 load(results.file) # full.results.array [year, age, sex, outcome, sim, intervention]
-YEARS = as.character(2022:2030)
+if(!exists("IMPACT.YEARS")) IMPACT.YEARS = 2025:2035   # 11/04/26: was 2022:2030 (program now 2025-2030)
+YEARS = as.character(IMPACT.YEARS); IMPACT.LABEL = paste0(min(IMPACT.YEARS), "-", max(IMPACT.YEARS))
 ages = if(OUTCOME == "percent.averted.15.24") c("15-19","20-24") else dimnames(full.results.array)$age
 inc = apply(full.results.array[YEARS, ages,, "incidence",, c("no.int", SCENARIO), drop = FALSE], c("sim","intervention"), sum)
 outcome = 100*(inc[,"no.int"] - inc[, SCENARIO])/inc[,"no.int"]
@@ -118,7 +119,7 @@ p = ggplot(d) +
     scale_fill_manual(name = element_blank(), values = cols,
                       labels = c(low = paste0("Simulations with the lowest ", round(100*QUARTILE), "% of parameter values"),
                                  high = paste0("Simulations with the highest ", round(100*QUARTILE), "% of parameter values"))) +
-    labs(x = paste0("\n% of ", outcome.label, ", 2022-2030"), y = "") +
+    labs(x = paste0("\n% of ", outcome.label, ", ", IMPACT.LABEL), y = "") +
     theme(panel.background = element_blank(), legend.position = "bottom", legend.direction = "vertical",
           legend.text = element_text(size = 10), axis.ticks.y = element_blank(),
           axis.text.y = element_text(size = 10), axis.text.x = element_text(size = 10))
