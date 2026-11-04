@@ -105,7 +105,7 @@ label.parameter = function(p){
                 male.awareness.multiplier = "Testing, male vs female", male.engagement.multiplier = "ART start, male vs female",
                 male.suppression.multiplier = "Suppression, male vs female",
                 hiv.specific.mortality.rates.0 = "HIV mortality, 1990", hiv.specific.mortality.rates.1 = "HIV mortality, 2005",
-                hiv.specific.mortality.rates.2 = "HIV mortality, latest period")
+                hiv.specific.mortality.rates.2 = "HIV mortality, 2020")
     knots = c("0" = "1990", "1" = "1997", "2" = "2008", "3" = "2018", "4" = "2040")
     if(p %in% names(special)) return(special[[p]])
     if(grepl("^trate\\.[0-4]$", p)) return(paste0("Transmission rate, ", knots[[sub("trate\\.", "", p)]]))
