@@ -8,7 +8,7 @@
 #   NEW.RUN.DIR = "mcmc_runs/nextgen_transmission_anchor"; source("future_projections/lai_stability_by_chain.R")
 ################################################################################################
 if(!exists("NEW.RUN.DIR")) NEW.RUN.DIR = "mcmc_runs/nextgen_transmission_anchor"
-OUT.DIR = file.path("cached", sub("^mcmc_runs/nextgen_", "nextgen_lai_rerun_", NEW.RUN.DIR))
+OUT.DIR = file.path("lai_runs", sub("^mcmc_runs/nextgen_", "nextgen_lai_rerun_", NEW.RUN.DIR))
 newest = function(dir, pattern){
     f = list.files(dir, pattern = pattern, full.names = TRUE)
     if(length(f)==0) stop(paste0("Nothing matching ", pattern, " in ", dir))

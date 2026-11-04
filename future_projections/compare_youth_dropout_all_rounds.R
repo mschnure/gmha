@@ -38,4 +38,4 @@ tab$youth.dropout.multiplier = sapply(names(SIMSETS), function(cal){
     else "none (youth = adults)" })
 cat("\n==== Dropout from care in 2022, youth (15-24) vs adults (25-49), medians ====\n")
 print(format(tab, digits = 2), row.names = FALSE)
-write.csv(tab, file.path("cached/nextgen_lai_rerun_transmission_anchor", paste0("youth_dropout_all_rounds_", Sys.Date(), ".csv")), row.names = FALSE)
+write.csv(tab, file.path("lai_runs/nextgen_lai_rerun_transmission_anchor", paste0("youth_dropout_all_rounds_", Sys.Date(), ".csv")), row.names = FALSE)

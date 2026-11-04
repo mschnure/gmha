@@ -8,11 +8,11 @@
 #   3. calibrated transmission parameters: age multipliers and transmission rates, old vs new
 #   4. plots: % of PWH virally suppressed (oral ART or LAI-ART) by age group, 2010-2030, for baseline and
 #      each LAI-ART scenario; and the gain over baseline (percentage points)
-# Outputs: cached/nextgen_lai_rerun/lai_impact_comparison_<date>.csv (and printed)
-#          cached/nextgen_lai_rerun/lai_suppression_by_age_<date>.pdf
+# Outputs: lai_runs/nextgen_lai_rerun/lai_impact_comparison_<date>.csv (and printed)
+#          lai_runs/nextgen_lai_rerun/lai_suppression_by_age_<date>.pdf
 ################################################################################################
 source("model/run_systematic.R")
-OUT.DIR = file.path("cached", "nextgen_lai_rerun")
+OUT.DIR = file.path("lai_runs", "nextgen_lai_rerun")
 SCENARIOS = c("all.25","all.direct.25","all.100","all.direct.100")
 YEARS = as.character(2022:2030)
 AGES.15.24 = c("15-19","20-24")

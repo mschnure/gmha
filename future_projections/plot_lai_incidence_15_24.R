@@ -2,11 +2,11 @@
 # NEXTGEN: poster Panel A (annual new HIV infections, 2010-2030, baseline + 4 LAI-ART scenarios) for
 # ages 15-24, for the AIDS 2026 runs (Jan 2026, Oct 2025 calibration, 200 sims) and the updated runs
 # (joint calibration, 1,000 sims). Same style and colors as the poster; both on the same y-axis.
-# Outputs: cached/nextgen_lai_rerun/PanelA_15-24_aids2026.jpeg and PanelA_15-24_updated.jpeg
+# Outputs: lai_runs/nextgen_lai_rerun/PanelA_15-24_aids2026.jpeg and PanelA_15-24_updated.jpeg
 ################################################################################################
 library(colorspace)
 source("model/run_systematic.R")
-OUT.DIR = file.path("cached", "nextgen_lai_rerun")
+OUT.DIR = file.path("lai_runs", "nextgen_lai_rerun")
 AGES = "15-24"
 YEARS = 2010:2030
 cols = c("#D55E00", "#0072B2", "#009E73", "#CC79A7", "#56B4E9")

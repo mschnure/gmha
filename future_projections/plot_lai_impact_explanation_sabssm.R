@@ -2,7 +2,7 @@
 # NEXTGEN: why LAI-ART averts fewer infections on the SABSSM 15-24 calibration than on the 10/21 joint
 # calibration (and AIDS 2026). Three calibrations side by side:
 #   AIDS 2026 (Oct 2025 calibration, 200 sims) | Oct 21 joint (1,000) | SABSSM 15-24 (1,000)
-# Outputs in cached/nextgen_lai_rerun_sabssm/:
+# Outputs in lai_runs/nextgen_lai_rerun_sabssm/:
 #   expl3_cascade_15-24.png         baseline 15-24 cascade 2010-2030 (aware of PWH; on ART and suppressed of aware) + SABSSM points
 #   expl3_pwh_breakdown_2022.png    where 15-24 PWH are in 2022 (baseline): unaware / aware not on ART / on ART unsuppressed / suppressed
 #   expl3_initiations_by_source.png LAI-ART initiations 2022-2030 by where people came from (suppressed / unsuppressed on ART / disengaged)
@@ -11,12 +11,12 @@
 #   expl3_summary_<date>.csv        the numbers behind the bar charts
 ################################################################################################
 source("model/run_systematic.R")
-OUT.DIR = file.path("cached", "nextgen_lai_rerun_sabssm_ratio_priors") # plots go here; the 10/27 priors calibration is added as a 4th column when its LAI rerun exists
+OUT.DIR = file.path("lai_runs", "nextgen_lai_rerun_sabssm_ratio_priors") # plots go here; the 10/27 priors calibration is added as a 4th column when its LAI rerun exists
 CAL.LABELS = c(aids2026 = "AIDS 2026", joint = "Oct 21 joint", sabssm = "Oct 22 SABSSM", ratio = "Oct 27 priors")
 CAL.COLS = c("AIDS 2026" = "#B45F1B", "Oct 21 joint" = "#1F6F8B", "Oct 22 SABSSM" = "#5E8C31", "Oct 27 priors" = "#7B3F99")
 arrays = list(aids2026 = "cached/full.results.array_2026-01-22.Rdata",
-              joint = "cached/nextgen_lai_rerun/full.results.array_2026-10-21.Rdata",
-              sabssm = max(list.files("cached/nextgen_lai_rerun_sabssm", pattern = "^full\\.results\\.array_[0-9-]+\\.Rdata$", full.names = T)))
+              joint = "lai_runs/nextgen_lai_rerun/full.results.array_2026-10-21.Rdata",
+              sabssm = max(list.files("lai_runs/nextgen_lai_rerun_sabssm", pattern = "^full\\.results\\.array_[0-9-]+\\.Rdata$", full.names = T)))
 ratio.files = list.files(OUT.DIR, pattern = "^full\\.results\\.array_[0-9-]+\\.Rdata$", full.names = T)
 if(length(ratio.files) > 0) arrays$ratio = max(ratio.files) else dir.create(OUT.DIR, showWarnings = FALSE)
 CAL.LABELS = CAL.LABELS[names(arrays)]

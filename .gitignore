@@ -10,6 +10,7 @@
 data_manager/data
 mcmc_runs
 cached
+lai_runs
 mcmc_cache
 results/for_lancet_pres
 results/for_lancet_PAPER

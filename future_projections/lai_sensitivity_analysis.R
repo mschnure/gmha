@@ -22,7 +22,7 @@ if(!exists("SCENARIO")) SCENARIO = "all.direct.100"          # 100% offered, no 
 if(!exists("OUTCOME")) OUTCOME = "percent.averted.all"       # or "percent.averted.15.24"
 if(!exists("N.PLOT")) N.PLOT = 10                            # parameters in the figure
 if(!exists("QUARTILE")) QUARTILE = 0.20                    # lowest / highest 20% of simulations (Figure 4 used 25%)
-OUT.DIR = file.path("cached", sub("^mcmc_runs/nextgen_", "nextgen_lai_rerun_", NEW.RUN.DIR))
+OUT.DIR = file.path("lai_runs", sub("^mcmc_runs/nextgen_", "nextgen_lai_rerun_", NEW.RUN.DIR))
 newest = function(dir, pattern){
     f = list.files(dir, pattern = pattern, full.names = TRUE)
     if(length(f)==0) stop(paste0("Nothing matching ", pattern, " in ", dir))

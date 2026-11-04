@@ -2,10 +2,10 @@
 # NEXTGEN: cascade fit for ages 0-14 and 15+ (where there is UNAIDS data), AIDS 2026 baseline
 # (Oct 2025 calibration, 200 sims) vs updated (joint calibration, 1,000 sims), 2010-2030.
 # Same colors as the other AIDS 2026 vs updated comparison plots.
-# Output: cached/nextgen_lai_rerun/expl_cascade_0-14_15plus.png
+# Output: lai_runs/nextgen_lai_rerun/expl_cascade_0-14_15plus.png
 ################################################################################################
 source("model/run_systematic.R")
-OUT.DIR = file.path("cached", "nextgen_lai_rerun")
+OUT.DIR = file.path("lai_runs", "nextgen_lai_rerun")
 CAL.LABELS = c("1" = "AIDS 2026 (Oct 2025 calibration)", "2" = "Updated (joint calibration)")
 CAL.COLS = c("1" = "#B45F1B", "2" = "#1F6F8B")
 simset.aids2026 = get(load("cached/simset.noint_25_1yr_2026-01-22.Rdata")[1])

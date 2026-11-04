@@ -5,12 +5,12 @@
 # panel: median lines, 95% credible bands, legend box "Simulations".
 # Uses the saved LAI rerun (future_projections/rerun_lai_sabssm_calibration.R) - no new simulations.
 #   source("future_projections/plot_figure3_new_infections.R")
-# Output: cached/nextgen_lai_rerun_<run>/Figure3_new_infections_<date>.jpeg (and .pdf)
+# Output: lai_runs/nextgen_lai_rerun_<run>/Figure3_new_infections_<date>.jpeg (and .pdf)
 ################################################################################################
 source("model/run_systematic.R")   # loads DATA.MANAGER (UNAIDS estimates for the points)
 library(ggplot2)
 if(!exists("NEW.RUN.DIR")) NEW.RUN.DIR = "mcmc_runs/nextgen_transmission_anchor"
-OUT.DIR = file.path("cached", sub("^mcmc_runs/nextgen_", "nextgen_lai_rerun_", NEW.RUN.DIR))
+OUT.DIR = file.path("lai_runs", sub("^mcmc_runs/nextgen_", "nextgen_lai_rerun_", NEW.RUN.DIR))
 f = list.files(OUT.DIR, pattern = "^full\\.results\\.array_[0-9-]+\\.Rdata$", full.names = TRUE)
 load(f[order(f)][length(f)])   # full.results.array [year, age, sex, outcome, sim, intervention]
 if(!exists("LAI.START.YEAR")) LAI.START.YEAR = 2025

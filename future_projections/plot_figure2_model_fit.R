@@ -7,12 +7,12 @@
 #   - 15-24 incidence and PLHIV: UNAIDS; 15-24 cascade: SABSSM 2017/2022 youth-to-adult ratio x UNAIDS 15+ (Table 2, §)
 # Years: incidence and PLHIV 1995-2025, cascade 2010-2025 (UNAIDS cascade data start in 2015).
 #   source("future_projections/plot_figure2_model_fit.R")
-# Output: cached/nextgen_lai_rerun_<run>/Figure2_model_fit_<date>.jpeg (and .pdf)
+# Output: lai_runs/nextgen_lai_rerun_<run>/Figure2_model_fit_<date>.jpeg (and .pdf)
 ################################################################################################
 source("model/run_systematic.R")   # also loads DATA.MANAGER (the calibration targets)
 library(ggplot2)
 if(!exists("NEW.RUN.DIR")) NEW.RUN.DIR = "mcmc_runs/nextgen_transmission_anchor"
-OUT.DIR = file.path("cached", sub("^mcmc_runs/nextgen_", "nextgen_lai_rerun_", NEW.RUN.DIR))
+OUT.DIR = file.path("lai_runs", sub("^mcmc_runs/nextgen_", "nextgen_lai_rerun_", NEW.RUN.DIR))
 dir.create(OUT.DIR, showWarnings = FALSE, recursive = TRUE)
 f = list.files(NEW.RUN.DIR, pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = TRUE)
 simset = get(load(f[order(f)][length(f)])[1])

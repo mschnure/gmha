@@ -3,7 +3,7 @@
 #   overall transmission rates (trate.0-4), age transmission multipliers by time point (.0-.3), sex and assortativity,
 #   and the implied age-specific transmission level = trate at each time point x age multiplier at that time point.
 # Time points: trate.0 / multiplier .0 = 1990 and before, .1 = 1997, .2 = 2008, .3 = 2018 (trate.4 = 2040).
-# Output: printed tables (medians, 95% intervals) and cached/nextgen_lai_rerun_transmission_anchor/transmission_parameters_<date>.csv
+# Output: printed tables (medians, 95% intervals) and lai_runs/nextgen_lai_rerun_transmission_anchor/transmission_parameters_<date>.csv
 ################################################################################################
 source("model/run_systematic.R")
 SIMSETS = c("AIDS 2026" = "cached/simset.noint_25_1yr_2026-01-22.Rdata",
@@ -33,8 +33,8 @@ wide = reshape(d[, c("calibration","parameter","time","value")], idvar = c("para
 names(wide) = sub("^value\\.", "", names(wide))
 med = reshape(d[, c("calibration","parameter","time","median")], idvar = c("parameter","time"), timevar = "calibration", direction = "wide")
 wide$ratio.current.vs.aids2026 = round(med[["median.Current"]]/med[["median.AIDS 2026"]], 2)
-dir.create("cached/nextgen_lai_rerun_transmission_anchor", showWarnings = F)
-write.csv(wide, file.path("cached/nextgen_lai_rerun_transmission_anchor", paste0("transmission_parameters_", Sys.Date(), ".csv")), row.names = F)
+dir.create("lai_runs/nextgen_lai_rerun_transmission_anchor", showWarnings = F)
+write.csv(wide, file.path("lai_runs/nextgen_lai_rerun_transmission_anchor", paste0("transmission_parameters_", Sys.Date(), ".csv")), row.names = F)
 options(width = 200)
 print("Overall transmission parameters (median, 95% interval):")
 print(wide[wide$time == "", ], row.names = F)

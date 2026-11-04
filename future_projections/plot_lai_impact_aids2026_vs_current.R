@@ -1,7 +1,7 @@
 ################################################################################################
 # NEXTGEN (10/28/26): why LAI-ART averts fewer infections now than in AIDS 2026. Two calibrations only:
 #   AIDS 2026 (Oct 2025 calibration, 200 sims) vs Current (Oct 27 fresh calibration with SABSSM 15-24 ratio targets,
-#   tighter priors; 1,000 sims). Outputs in cached/nextgen_lai_rerun_sabssm_ratio_priors/:
+#   tighter priors; 1,000 sims). Outputs in lai_runs/nextgen_lai_rerun_sabssm_ratio_priors/:
 #   cmp_cascade_15-24.png          baseline 15-24 cascade 2010-2030 (aware of PWH; on ART and suppressed of aware) + targets
 #   cmp_pwh_breakdown_2022.png     15-24 PWH in 2022 (baseline): unaware / aware not on ART / on ART unsuppressed / suppressed
 #   cmp_initiations_by_source.png  LAI-ART initiations 2022-2030 by where people came from
@@ -16,7 +16,7 @@
 # IMPACT.YEARS = 2022:2030 before rerun_lai_sabssm_calibration.R) for a like-for-like comparison.
 source("model/run_systematic.R")
 if(!exists("CURRENT.RUN")) CURRENT.RUN = "transmission_anchor" # 11/01 run (earlier: youth_dropout_prior, sabssm_ratio_priors)
-OUT.DIR = file.path("cached", paste0("nextgen_lai_rerun_", CURRENT.RUN))
+OUT.DIR = file.path("lai_runs", paste0("nextgen_lai_rerun_", CURRENT.RUN))
 CAL.LABELS = c(aids2026 = "AIDS 2026", current = "Current")
 CAL.COLS = c("AIDS 2026" = "#B45F1B", "Current" = "#1F6F8B")
 arrays = list(aids2026 = "cached/full.results.array_2026-01-22.Rdata",

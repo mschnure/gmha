@@ -1,7 +1,7 @@
 ################################################################################################
 # NEXTGEN (11/03/26): why does each LAI-ART user add less 15-24 suppression in 2030 now than in AIDS 2026?
 # Uses the saved results arrays (no new simulations): AIDS 2026 (cached/full.results.array_2026-01-22.Rdata) vs the current
-# run (cached/nextgen_lai_rerun_<CURRENT.RUN>/), plus the two calibrations' simsets for the retention parameters.
+# run (lai_runs/nextgen_lai_rerun_<CURRENT.RUN>/), plus the two calibrations' simsets for the retention parameters.
 #
 # Model facts this relies on (model/diffeq.R, model/diffeq_cpp.cpp): people on LAI-ART (lai_art) are always suppressed and have
 # NO unsuppression or disengagement - their only exit is removal back to oral (engaged_suppressed) at 25+ (LAI.REMOVAL.RATES =
@@ -22,7 +22,7 @@
 # IMPACT.YEARS = 2022:2030 before rerun_lai_sabssm_calibration.R) for a like-for-like comparison.
 source("model/run_systematic.R")
 if(!exists("CURRENT.RUN")) CURRENT.RUN = "transmission_anchor"
-OUT.DIR = file.path("cached", paste0("nextgen_lai_rerun_", CURRENT.RUN))
+OUT.DIR = file.path("lai_runs", paste0("nextgen_lai_rerun_", CURRENT.RUN))
 arrays = list("AIDS 2026" = "cached/full.results.array_2026-01-22.Rdata",
               "Current" = max(list.files(OUT.DIR, pattern = "^full\\.results\\.array_[0-9-]+\\.Rdata$", full.names = TRUE)))
 simsets = list("AIDS 2026" = "cached/simset.noint_25_1yr_2026-01-22.Rdata",

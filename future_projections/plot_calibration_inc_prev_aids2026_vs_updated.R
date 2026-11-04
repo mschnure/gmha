@@ -1,10 +1,10 @@
 ################################################################################################
 # NEXTGEN: calibration fit for new HIV infections and PWH, all ages and ages 15-24, 2010-2030,
 # AIDS 2026 (Oct 2025 calibration, 200 sims) vs updated (joint calibration, 1,000 sims), with UNAIDS data.
-# Output: cached/nextgen_lai_rerun/expl_calibration_inc_prev.png
+# Output: lai_runs/nextgen_lai_rerun/expl_calibration_inc_prev.png
 ################################################################################################
 source("model/run_systematic.R")
-OUT.DIR = file.path("cached", "nextgen_lai_rerun")
+OUT.DIR = file.path("lai_runs", "nextgen_lai_rerun")
 CAL.LABELS = c(aids2026 = "AIDS 2026 (Oct 2025 calibration)", updated = "Updated (joint calibration)")
 CAL.COLS = setNames(c("#B45F1B", "#1F6F8B"), CAL.LABELS)
 YEARS = as.character(2010:2030)

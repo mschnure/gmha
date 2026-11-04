@@ -22,7 +22,7 @@ options(gmha.use.cpp = TRUE)
 # defaults = the 10/21 joint calibration; a wrapper script can set these before sourcing this file
 # (e.g. future_projections/rerun_lai_sabssm_calibration.R)
 if(!exists("SIMSET.FILE")) SIMSET.FILE = "mcmc_runs/nextgen/simset_south_africa_step2_chains1234_2026-10-21.Rdata"
-if(!exists("OUT.DIR")) OUT.DIR = file.path("cached", "nextgen_lai_rerun")
+if(!exists("OUT.DIR")) OUT.DIR = file.path("lai_runs", "nextgen_lai_rerun")
 if(!exists("FIGURE.TAG")) FIGURE.TAG = "joint"
 RUN.SIMSET.FILE = SIMSET.FILE; RUN.OUT.DIR = OUT.DIR; RUN.FIGURE.TAG = FIGURE.TAG # create_lai_interventions.R re-sources the model
 dir.create(OUT.DIR, recursive = TRUE, showWarnings = FALSE)

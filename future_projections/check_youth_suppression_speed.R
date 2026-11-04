@@ -9,7 +9,7 @@
 #   median time to suppression (months) = 12*log(2)/rate
 #   P(suppress before disengaging) = s/(s + d)
 #   long-run share suppressed among those on ART ~ s/(s + u)
-# Output: cached/nextgen_lai_rerun_sabssm/youth_suppression_speed_<date>.csv, printed summary
+# Output: lai_runs/nextgen_lai_rerun_sabssm/youth_suppression_speed_<date>.csv, printed summary
 ################################################################################################
 source("model/run_systematic.R")
 if(!exists("CHECK.CAP")) CHECK.CAP = FALSE # TRUE: re-map rates with options(gmha.cap.youth.cascade = TRUE)
@@ -96,8 +96,8 @@ summ = do.call(rbind, lapply(split(d, list(d$calibration, d$year, d$age), drop =
                measure = measures, median = q[1,], lower = q[2,], upper = q[3,], row.names = NULL)
 }))
 summ = summ[order(summ$measure, summ$age, summ$year, summ$calibration), ]
-dir.create("cached/nextgen_lai_rerun_transmission_anchor", showWarnings = FALSE)
-write.csv(summ, file.path("cached/nextgen_lai_rerun_transmission_anchor", paste0("youth_suppression_speed_", Sys.Date(), ".csv")), row.names = F)
+dir.create("lai_runs/nextgen_lai_rerun_transmission_anchor", showWarnings = FALSE)
+write.csv(summ, file.path("lai_runs/nextgen_lai_rerun_transmission_anchor", paste0("youth_suppression_speed_", Sys.Date(), ".csv")), row.names = F)
 
 wide = reshape(summ[, c("calibration","year","age","measure","median")], idvar = c("measure","age","year"),
                timevar = "calibration", direction = "wide")

@@ -8,7 +8,7 @@
 # AIDS 2026 = Jan 2026 runs (Oct 2025 calibration, 200 sims); Updated = joint calibration (1,000 sims)
 ################################################################################################
 source("model/run_systematic.R")
-OUT.DIR = file.path("cached", "nextgen_lai_rerun")
+OUT.DIR = file.path("lai_runs", "nextgen_lai_rerun")
 CAL.LABELS = c(aids2026 = "AIDS 2026 (Oct 2025 calibration)", updated = "Updated (joint calibration)")
 CAL.COLS = c("AIDS 2026 (Oct 2025 calibration)" = "#B45F1B", "Updated (joint calibration)" = "#1F6F8B")
 SCENARIOS = c("all.25","all.direct.25","all.100","all.direct.100")

@@ -4,7 +4,7 @@
 # then compare with the AIDS 2026 abstract.
 #
 # Same scenarios and outputs as future_projections/rerun_lai_joint_calibration.R, written to
-# cached/nextgen_lai_rerun_sabssm/ (figures tagged "sabssm"), plus
+# lai_runs/nextgen_lai_rerun_sabssm/ (figures tagged "sabssm"), plus
 #   lai_comparison_3way_<date>.csv
 # Run in RStudio (source this file) or Terminal; ~20-40 min.
 ################################################################################################
@@ -12,7 +12,7 @@ if(!exists("NEW.RUN.DIR")) NEW.RUN.DIR = "mcmc_runs/nextgen_transmission_anchor"
 new.files = list.files(NEW.RUN.DIR, pattern = "^simset_south_africa_step2_chains1234_[0-9-]+\\.Rdata$", full.names = T)
 if(length(new.files)==0) stop(paste0("No merged simset in ", NEW.RUN.DIR, "/"))
 SIMSET.FILE = max(new.files)
-OUT.DIR = file.path("cached", sub("^mcmc_runs/nextgen_", "nextgen_lai_rerun_", NEW.RUN.DIR)) # e.g. cached/nextgen_lai_rerun_sabssm_ratio
+OUT.DIR = file.path("lai_runs", sub("^mcmc_runs/nextgen_", "nextgen_lai_rerun_", NEW.RUN.DIR)) # e.g. lai_runs/nextgen_lai_rerun_sabssm_ratio
 FIGURE.TAG = sub("^mcmc_runs/nextgen_", "", NEW.RUN.DIR)
 source("future_projections/rerun_lai_joint_calibration.R")
 
