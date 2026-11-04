@@ -1,11 +1,11 @@
 ################################################################################################
-# NEXTGEN (11/04/26): manuscript Figure 2 - annual new HIV infections 2018-2030, baseline and the four LAI-ART scenarios,
+# NEXTGEN (11/04/26): manuscript Figure 3 - annual new HIV infections 2018-2030, baseline and the four LAI-ART scenarios,
 # (A) all ages and (B) ages 15-24, with the UNAIDS estimates (2025 round) as points;
 # dashed line = 2022, when LAI-ART starts. The y-axis starts at 0 and its top fits each panel's 2018-2030 values. Same style as the AIDS 2026 poster
 # panel: median lines, 95% credible bands, legend box "Simulations".
 # Uses the saved LAI rerun (future_projections/rerun_lai_sabssm_calibration.R) - no new simulations.
-#   source("future_projections/plot_figure2_new_infections.R")
-# Output: cached/nextgen_lai_rerun_<run>/Figure2_new_infections_<date>.jpeg (and .pdf)
+#   source("future_projections/plot_figure3_new_infections.R")
+# Output: cached/nextgen_lai_rerun_<run>/Figure3_new_infections_<date>.jpeg (and .pdf)
 ################################################################################################
 source("model/run_systematic.R")   # loads DATA.MANAGER (UNAIDS estimates for the points)
 library(ggplot2)
@@ -50,7 +50,7 @@ p = ggplot(sims, aes(x = year)) +
           legend.position = c(0.015, 0.04), legend.justification = c(0, 0),   # c() works with old and new ggplot2
           legend.background = element_rect(color = "black"), legend.title = element_text(size = 11),
           legend.text = element_text(size = 10), legend.key.size = unit(0.45, "cm"))
-out = file.path(OUT.DIR, paste0("Figure2_new_infections_", Sys.Date()))
+out = file.path(OUT.DIR, paste0("Figure3_new_infections_", Sys.Date()))
 jpeg(paste0(out, ".jpeg"), width = 3600, height = 1600, res = 300); print(p); dev.off()
 pdf(paste0(out, ".pdf"), width = 12, height = 5.3); print(p); dev.off()
 print(paste0("Saved ", out, ".jpeg and .pdf"))
