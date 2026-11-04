@@ -97,7 +97,15 @@ label.parameter = function(p){
                 female.to.male.multiplier = "Female-to-male transmission",
                 age.assortativity = "Age assortativity of partnerships",
                 log.OR.testing.intercept = "Testing (intercept)", log.OR.testing.slope = "Testing trend",
-                log.OR.engagement.slope = "ART start trend", log.OR.suppression.slope = "Suppression trend")
+                log.OR.engagement.slope = "ART start trend", log.OR.suppression.slope = "Suppression trend",
+                log.OR.15.24.engagement.slope = "Youth (15-24) ART start trend", log.OR.15.24.suppression.slope = "Youth (15-24) suppression trend",
+                log.OR.0.14.engagement.slope = "Child (0-14) ART start trend", log.OR.0.14.suppression.slope = "Child (0-14) suppression trend",
+                age.0.14.disengagement.multiplier = "Child (0-14) dropout multiplier", age.0.14.awareness.multiplier = "Child (0-14) testing multiplier",
+                age.0.14.engagement.multiplier = "Child (0-14) ART start multiplier", age.0.14.suppression.multiplier = "Child (0-14) suppression multiplier",
+                male.awareness.multiplier = "Testing, male vs female", male.engagement.multiplier = "ART start, male vs female",
+                male.suppression.multiplier = "Suppression, male vs female",
+                hiv.specific.mortality.rates.0 = "HIV mortality, 1990", hiv.specific.mortality.rates.1 = "HIV mortality, 2005",
+                hiv.specific.mortality.rates.2 = "HIV mortality, latest period")
     knots = c("0" = "1990", "1" = "1997", "2" = "2008", "3" = "2018", "4" = "2040")
     if(p %in% names(special)) return(special[[p]])
     if(grepl("^trate\\.[0-4]$", p)) return(paste0("Transmission rate, ", knots[[sub("trate\\.", "", p)]]))

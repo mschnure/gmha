@@ -44,7 +44,7 @@ p = ggplot(sims, aes(x = year)) +
     facet_wrap(~ panel, scales = "free_y") +
     scale_color_manual(name = "Simulations", values = COLS) + scale_fill_manual(name = "Simulations", values = COLS) +
     scale_y_continuous(labels = scales::comma, limits = c(0, NA), expand = expansion(mult = c(0, 0.05))) +
-    scale_x_continuous(breaks = seq(2019, max(IMPACT.YEARS), 4)) +
+    scale_x_continuous(breaks = seq(2020, max(IMPACT.YEARS), 5)) +
     labs(x = NULL, y = "New HIV infections") +
     theme_bw() +
     theme(strip.background = element_blank(), strip.text = element_text(size = 15, hjust = 0),
