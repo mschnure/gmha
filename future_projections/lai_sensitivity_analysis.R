@@ -7,7 +7,7 @@
 #   1. PRCCs: partial rank correlation of each parameter with the outcome, holding the others fixed (rank-transform
 #      everything, regress the parameter and the outcome on all the other parameters, correlate the residuals - the same
 #      quantity as epiR::epi.prcc; written out here so no extra package is needed), with 95% CIs
-#   2. low/high: outcome in the 25% of simulations with the lowest vs highest value of each parameter (median, IQR, 95%)
+#   2. low/high: outcome in the 20% of simulations with the lowest vs highest value of each parameter (median, IQR, 95%)
 #   3. Figure: the top N.PLOT parameters, ordered by the low-high difference in median outcome, labelled with their PRCC,
 #      dashed line = median of all simulations (as in Figure 4)
 #   4. Scatterplots of the outcome against each plotted parameter, to check the relationships are monotonic (PRCCs assume it)
@@ -21,7 +21,7 @@ if(!exists("NEW.RUN.DIR")) NEW.RUN.DIR = "mcmc_runs/nextgen_transmission_anchor"
 if(!exists("SCENARIO")) SCENARIO = "all.direct.100"          # 100% offered, no suppression requirement
 if(!exists("OUTCOME")) OUTCOME = "percent.averted.all"       # or "percent.averted.15.24"
 if(!exists("N.PLOT")) N.PLOT = 10                            # parameters in the figure
-QUARTILE = 0.25                                              # lowest / highest 25% of simulations
+if(!exists("QUARTILE")) QUARTILE = 0.20                    # lowest / highest 20% of simulations (Figure 4 used 25%)
 OUT.DIR = file.path("cached", sub("^mcmc_runs/nextgen_", "nextgen_lai_rerun_", NEW.RUN.DIR))
 newest = function(dir, pattern){
     f = list.files(dir, pattern = pattern, full.names = TRUE)
@@ -79,7 +79,7 @@ summary$median.low = sapply(summary$parameter, function(p) lh$median[lh$paramete
 summary$median.high = sapply(summary$parameter, function(p) lh$median[lh$parameter==p & lh$subset=="high"])
 summary = summary[order(-abs(summary$low.high.difference)), ]
 options(width = 200)
-cat("\n==== Parameters ordered by the difference in median outcome, highest vs lowest 25% of simulations (top 20) ====\n")
+cat(paste0("\n==== Parameters ordered by the difference in median outcome, highest vs lowest ", round(100*QUARTILE), "% of simulations (top 20) ====\n"))
 print(format(head(summary, 20), digits = 2), row.names = FALSE)
 cat("\n==== Largest PRCCs (top 15) ====\n")
 print(format(head(prccs[order(-abs(prccs$prcc)), ], 15), digits = 2), row.names = FALSE)
@@ -116,8 +116,8 @@ p = ggplot(d) +
                  stat = "identity", position = "dodge") +
     geom_vline(xintercept = median(outcome), linetype = "dashed") +
     scale_fill_manual(name = element_blank(), values = cols,
-                      labels = c(low = "Simulations with the lowest 25% of parameter values",
-                                 high = "Simulations with the highest 25% of parameter values")) +
+                      labels = c(low = paste0("Simulations with the lowest ", round(100*QUARTILE), "% of parameter values"),
+                                 high = paste0("Simulations with the highest ", round(100*QUARTILE), "% of parameter values"))) +
     labs(x = paste0("\n% of ", outcome.label, ", 2022-2030"), y = "") +
     theme(panel.background = element_blank(), legend.position = "bottom", legend.direction = "vertical",
           legend.text = element_text(size = 10), axis.ticks.y = element_blank(),
